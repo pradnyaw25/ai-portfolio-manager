@@ -3,6 +3,7 @@
 <head>
   <title>AI Portfolio Manager</title>
   <meta charset="UTF-8" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
       font-family: system-ui, sans-serif;
@@ -48,6 +49,16 @@
   </div>
 
   <div class="card">
+    <h2>Performance</h2>
+    <p>
+      AI Portfolio: <strong id="portfolio-return">Loading...</strong><br />
+      SPY: <strong id="spy-return">Loading...</strong><br />
+      QQQ: <strong id="qqq-return">Loading...</strong>
+    </p>
+    <canvas id="performance-chart"></canvas>
+  </div>
+
+  <div class="card">
     <h2>Holdings</h2>
     <table>
       <thead>
@@ -81,6 +92,30 @@
     });
 
     const pct = (x) => `${(x * 100).toFixed(2)}%`;
+
+    async function fetchCsv(path) {
+      const res = await fetch(path);
+      const text = await res.text();
+
+      const [headerLine, ...lines] = text.trim().split("\n");
+      const headers = headerLine.split(",");
+
+      return lines.map(line => {
+        const values = line.split(",");
+        return Object.fromEntries(headers.map((h, i) => [h, values[i]]));
+      });
+    }
+
+    function calculateReturn(values) {
+      if (values.length < 2) return 0;
+
+      const start = Number(values[0]);
+      const end = Number(values[values.length - 1]);
+
+      if (!start) return 0;
+
+      return end / start - 1;
+    }
 
     async function loadDashboard() {
       const [portfolioRes, tradesRes, tweetRes] = await Promise.all([
@@ -129,6 +164,60 @@
       }
 
       document.getElementById("tweet").textContent = tweet.text;
+
+      const portfolioHistory = await fetchCsv("./portfolio_history.csv");
+      const benchmarkHistory = await fetchCsv("./benchmark_history.csv");
+
+      const portfolioValues = portfolioHistory.map(r => Number(r.total_value));
+      const portfolioReturn = calculateReturn(portfolioValues);
+
+      const spyRows = benchmarkHistory.filter(r => r.symbol === "SPY");
+      const qqqRows = benchmarkHistory.filter(r => r.symbol === "QQQ");
+
+      const spyReturn = calculateReturn(spyRows.map(r => Number(r.price)));
+      const qqqReturn = calculateReturn(qqqRows.map(r => Number(r.price)));
+
+      document.getElementById("portfolio-return").textContent = pct(portfolioReturn);
+      document.getElementById("spy-return").textContent = pct(spyReturn);
+      document.getElementById("qqq-return").textContent = pct(qqqReturn);
+
+      new Chart(document.getElementById("performance-chart"), {
+        type: "line",
+        data: {
+          labels: portfolioHistory.map(r => r.date),
+          datasets: [
+            {
+              label: "AI Portfolio",
+              data: portfolioValues.map(v => (v / portfolioValues[0] - 1) * 100),
+            },
+            {
+              label: "SPY",
+              data: spyRows.map(r => (Number(r.price) / Number(spyRows[0].price) - 1) * 100),
+            },
+            {
+              label: "QQQ",
+              data: qqqRows.map(r => (Number(r.price) / Number(qqqRows[0].price) - 1) * 100),
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(2)}%`
+              }
+            }
+          },
+          scales: {
+            y: {
+              ticks: {
+                callback: value => `${value}%`
+              }
+            }
+          }
+        }
+      });
     }
 
     loadDashboard();
