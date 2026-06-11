@@ -3,3 +3,6 @@
 2026-06-07 20:22:09,283 - INFO - Processing request of type ListResourcesRequest
 2026-06-07 20:52:07,907 - INFO - Processing request of type ListToolsRequest
 2026-06-07 20:52:07,909 - INFO - Processing request of type ListPromptsRequest
+2026-06-11 15:13:31,594 - INFO - Processing request of type ListToolsRequest
+2026-06-11 15:13:31,597 - INFO - Processing request of type ListPromptsRequest
+2026-06-11 15:13:31,600 - INFO - Processing request of type ListResourcesRequest
