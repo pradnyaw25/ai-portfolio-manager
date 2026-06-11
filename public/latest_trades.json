@@ -1,0 +1,83 @@
+[
+  {
+    "date": "2026-06-11",
+    "symbol": "AAPL",
+    "action": "BUY",
+    "shares": 10,
+    "price": 295.6300048828125,
+    "total": 2956.300048828125,
+    "reasoning": "Apple has shown resilience and consistent performance, with strong earnings potential. Current valuation appears stable."
+  },
+  {
+    "date": "2026-06-11",
+    "symbol": "MSFT",
+    "action": "BUY",
+    "shares": 5,
+    "price": 390.3399963378906,
+    "total": 1951.6999816894531,
+    "reasoning": "Microsoft's cloud business continues to grow, and with low downside risk, it's a strategic addition to the portfolio."
+  },
+  {
+    "date": "2026-06-11",
+    "symbol": "V",
+    "action": "BUY",
+    "shares": 5,
+    "price": 319.04998779296875,
+    "total": 1595.2499389648438,
+    "reasoning": "Visa is a leader in digital payments with strong fundamentals and growth prospects, making it a good addition during market volatility."
+  },
+  {
+    "date": "2026-06-11",
+    "symbol": "HD",
+    "action": "BUY",
+    "shares": 5,
+    "price": 326.010009765625,
+    "total": 1630.050048828125,
+    "reasoning": "Home Depot has a strong position in the home improvement market, and recent price action indicates positive momentum."
+  },
+  {
+    "date": "2026-06-11",
+    "symbol": "AAPL",
+    "action": "BUY",
+    "shares": 7,
+    "price": 295.6300048828125,
+    "total": 2069.4100341796875,
+    "reasoning": "AAPL has strong fundamentals and is a leading company in technology with potential for growth despite recent volatility."
+  },
+  {
+    "date": "2026-06-11",
+    "symbol": "MSFT",
+    "action": "BUY",
+    "shares": 5,
+    "price": 390.3399963378906,
+    "total": 1951.6999816894531,
+    "reasoning": "MSFT has a robust business model and continues to show resilience; it's a core holding that benefits from cloud and AI growth."
+  },
+  {
+    "date": "2026-06-11",
+    "symbol": "GOOGL",
+    "action": "BUY",
+    "shares": 3,
+    "price": 357.7699890136719,
+    "total": 1073.3099670410156,
+    "reasoning": "GOOGL has strong revenue growth from advertising and cloud, making it a favorable long-term buy, especially after recent price dips."
+  },
+  {
+    "date": "2026-06-11",
+    "symbol": "NVDA",
+    "action": "BUY",
+    "shares": 4,
+    "price": 204.8699951171875,
+    "total": 819.47998046875,
+    "reasoning": "Despite recent downturns, NVDA is a leader in the semiconductor industry and has growth potential driven by AI and gaming."
+  },
+  {
+    "date": "2026-06-11",
+    "symbol": "TSLA",
+    "action": "BUY",
+    "shares": 2,
+    "price": 399.1499938964844,
+    "total": 798.2999877929688,
+    "reasoning": "TSLA is a growth stock with high volatility; it presents an opportunity for upside despite its recent losses."
+  }
+]

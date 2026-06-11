@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AI Portfolio Manager</title>
+  <meta charset="UTF-8" />
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+      line-height: 1.5;
+    }
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .metric {
+      font-size: 28px;
+      font-weight: 700;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border-bottom: 1px solid #eee;
+      padding: 8px;
+      text-align: left;
+    }
+    .muted {
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <h1>AI Portfolio Manager</h1>
+  <p class="muted">
+    A simulated $1M AI-managed portfolio. Not investment advice.
+  </p>
+
+  <div class="card">
+    <h2>Portfolio</h2>
+    <div class="metric" id="portfolio-value">Loading...</div>
+    <p id="portfolio-summary"></p>
+  </div>
+
+  <div class="card">
+    <h2>Holdings</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Symbol</th>
+          <th>Shares</th>
+          <th>Price</th>
+          <th>Market Value</th>
+          <th>Return</th>
+        </tr>
+      </thead>
+      <tbody id="holdings"></tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>Latest Trades</h2>
+    <div id="trades">Loading...</div>
+  </div>
+
+  <div class="card">
+    <h2>Latest Tweet Draft</h2>
+    <p id="tweet">Loading...</p>
+  </div>
+
+  <script>
+    const money = new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 0
+    });
+
+    const pct = (x) => `${(x * 100).toFixed(2)}%`;
+
+    async function loadDashboard() {
+      const [portfolioRes, tradesRes, tweetRes] = await Promise.all([
+        fetch("./portfolio.json"),
+        fetch("./latest_trades.json"),
+        fetch("./latest_tweet.json")
+      ]);
+
+      const portfolio = await portfolioRes.json();
+      const trades = await tradesRes.json();
+      const tweet = await tweetRes.json();
+
+      document.getElementById("portfolio-value").textContent =
+        money.format(portfolio.total_value);
+
+      document.getElementById("portfolio-summary").textContent =
+        `Cash: ${money.format(portfolio.cash)} (${pct(portfolio.cash_pct)}) · Positions: ${portfolio.positions.length}`;
+
+      const holdingsBody = document.getElementById("holdings");
+      holdingsBody.innerHTML = "";
+
+      portfolio.positions.forEach((p) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${p.symbol}</td>
+          <td>${p.shares}</td>
+          <td>${money.format(p.current_price)}</td>
+          <td>${money.format(p.market_value)}</td>
+          <td>${pct(p.return_pct)}</td>
+        `;
+        holdingsBody.appendChild(row);
+      });
+
+      const tradesDiv = document.getElementById("trades");
+
+      if (trades.length === 0) {
+        tradesDiv.textContent = "No trades today.";
+      } else {
+        tradesDiv.innerHTML = trades.map(t => `
+          <p>
+            <strong>${t.action} ${t.shares} ${t.symbol}</strong>
+            at ${money.format(t.price)}<br />
+            <span class="muted">${t.reasoning}</span>
+          </p>
+        `).join("");
+      }
+
+      document.getElementById("tweet").textContent = tweet.text;
+    }
+
+    loadDashboard();
+  </script>
+</body>
+</html>
