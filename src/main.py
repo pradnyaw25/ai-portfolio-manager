@@ -15,6 +15,8 @@ from src.simulator.portfolio_engine import PortfolioEngine
 from src.simulator.performance import PerformanceTracker
 from src.reporting.markdown_report import MarkdownReportGenerator
 from src.reporting.public_exporter import PublicExporter
+from src.storage.prediction_store import PredictionStore
+from src.scoring.prediction_scorer import PredictionScorer
 from src.utils.logger import get_logger
 from src.simulator.benchmark_tracker import BenchmarkTracker
 
@@ -46,6 +48,12 @@ def run_daily_cycle():
     benchmark_client = BenchmarkClient()
 
     engine.mark_to_market(market_data)
+
+    # Score any due predictions
+    scorer = PredictionScorer()
+    scored = scorer.score_due_predictions(market_data)
+    if scored:
+        logger.info("Scored %d predictions", len(scored))
 
     logger.info(
         "After mark-to-market: cash=$%.2f total=$%.2f",
@@ -110,6 +118,22 @@ def run_daily_cycle():
     trades = engine.execute_trades(all_approved, market_data)
     for trade in trades:
         trade_store.save(trade)
+
+    # 6. Track predictions for BUY trades
+    prediction_store = PredictionStore()
+    try:
+        spy_price = market_data.get_price("SPY")
+    except Exception:
+        spy_price = 0
+
+    confidence_map = {t.symbol: t.confidence for t in all_approved}
+    for trade in trades:
+        if trade.action.value == "BUY" and spy_price > 0:
+            prediction_store.create_from_trade(
+                trade=trade,
+                confidence=confidence_map.get(trade.symbol, 0.5),
+                spy_price=spy_price,
+            )
 
     # 6. Journal
     DecisionStore().save(

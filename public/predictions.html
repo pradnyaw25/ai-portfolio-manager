@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Predictions — AI Portfolio Manager</title>
+  <meta charset="UTF-8" />
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+      line-height: 1.5;
+      color: #222;
+    }
+    a { color: #222; }
+    .nav { margin-bottom: 20px; }
+    .nav a { margin-right: 16px; text-decoration: none; font-weight: 600; }
+    .muted { color: #666; }
+    .stats {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 20px;
+    }
+    .stat-box {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 12px 16px;
+      text-align: center;
+    }
+    .stat-value { font-size: 24px; font-weight: 700; }
+    .stat-label { font-size: 13px; color: #666; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border-bottom: 1px solid #eee;
+      padding: 8px;
+      text-align: left;
+      font-size: 14px;
+    }
+    th { font-weight: 600; color: #666; font-size: 13px; }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .badge-open { background: #fff3cd; color: #856404; }
+    .badge-win { background: #d4edda; color: #155724; }
+    .badge-loss { background: #f8d7da; color: #721c24; }
+    .confidence {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .conf-high { background: #d4edda; color: #155724; }
+    .conf-med { background: #fff3cd; color: #856404; }
+    .conf-low { background: #f8d7da; color: #721c24; }
+  </style>
+</head>
+<body>
+  <div class="nav">
+    <a href="index.html">Dashboard</a>
+    <a href="decisions.html">Decision Journal</a>
+    <a href="predictions.html">Predictions</a>
+  </div>
+
+  <h1>Prediction Tracker</h1>
+  <p class="muted">Every BUY generates a testable prediction: will it outperform SPY over 30 days?</p>
+
+  <div class="stats" id="stats"></div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Symbol</th>
+        <th>Prediction</th>
+        <th>Confidence</th>
+        <th>Start Price</th>
+        <th>SPY Start</th>
+        <th>Due Date</th>
+        <th>Status</th>
+        <th>Result</th>
+      </tr>
+    </thead>
+    <tbody id="predictions"></tbody>
+  </table>
+
+  <div id="empty" style="display:none;" class="muted">No predictions yet. Predictions are created for each BUY trade.</div>
+
+  <script>
+    const symbolNames = {
+      AAPL: "Apple Inc.", MSFT: "Microsoft Corp.", GOOGL: "Alphabet Inc.",
+      AMZN: "Amazon.com Inc.", META: "Meta Platforms Inc.", NVDA: "NVIDIA Corp.",
+      AMD: "Advanced Micro Devices", AVGO: "Broadcom Inc.", TSLA: "Tesla Inc.",
+      JPM: "JPMorgan Chase & Co.", V: "Visa Inc.", MA: "Mastercard Inc.",
+      UNH: "UnitedHealth Group", JNJ: "Johnson & Johnson", WMT: "Walmart Inc.",
+      PG: "Procter & Gamble", HD: "The Home Depot", XOM: "Exxon Mobil Corp.",
+      CAT: "Caterpillar Inc.", SPY: "SPDR S&P 500 ETF", QQQ: "Invesco QQQ Trust",
+    };
+
+    function confClass(c) {
+      if (c >= 0.7) return "conf-high";
+      if (c >= 0.5) return "conf-med";
+      return "conf-low";
+    }
+
+    async function loadPredictions() {
+      const res = await fetch("./predictions.jsonl");
+      const text = await res.text();
+
+      const predictions = text.trim().split("\n")
+        .filter(line => line.trim())
+        .map(line => JSON.parse(line))
+        .reverse();
+
+      if (predictions.length === 0) {
+        document.getElementById("empty").style.display = "block";
+        return;
+      }
+
+      const total = predictions.length;
+      const open = predictions.filter(p => p.status === "open").length;
+      const scored = predictions.filter(p => p.status === "scored");
+      const wins = scored.filter(p => p.result && p.result.outperformed).length;
+      const losses = scored.length - wins;
+      const winRate = scored.length > 0 ? ((wins / scored.length) * 100).toFixed(0) : "—";
+
+      document.getElementById("stats").innerHTML = `
+        <div class="stat-box"><div class="stat-value">${total}</div><div class="stat-label">Total</div></div>
+        <div class="stat-box"><div class="stat-value">${open}</div><div class="stat-label">Open</div></div>
+        <div class="stat-box"><div class="stat-value">${wins}</div><div class="stat-label">Wins</div></div>
+        <div class="stat-box"><div class="stat-value">${losses}</div><div class="stat-label">Losses</div></div>
+        <div class="stat-box"><div class="stat-value">${winRate}%</div><div class="stat-label">Win Rate</div></div>
+      `;
+
+      const tbody = document.getElementById("predictions");
+      tbody.innerHTML = predictions.map(p => {
+        const conf = p.confidence || 0;
+        let statusBadge = `<span class="badge badge-open">Open</span>`;
+        let resultText = `Due ${p.due_date}`;
+
+        if (p.status === "scored" && p.result) {
+          const won = p.result.outperformed;
+          statusBadge = won
+            ? `<span class="badge badge-win">WIN</span>`
+            : `<span class="badge badge-loss">LOSS</span>`;
+          resultText = `${p.symbol}: ${(p.result.symbol_return * 100).toFixed(2)}% vs SPY: ${(p.result.spy_return * 100).toFixed(2)}%`;
+        }
+
+        return `
+          <tr>
+            <td title="${symbolNames[p.symbol] || p.symbol}"><strong>${p.symbol}</strong></td>
+            <td>${p.prediction}</td>
+            <td><span class="confidence ${confClass(conf)}">${(conf * 100).toFixed(0)}%</span></td>
+            <td>$${Number(p.start_price).toFixed(2)}</td>
+            <td>$${Number(p.spy_start_price).toFixed(2)}</td>
+            <td>${p.due_date}</td>
+            <td>${statusBadge}</td>
+            <td>${resultText}</td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    loadPredictions();
+  </script>
+</body>
+</html>
