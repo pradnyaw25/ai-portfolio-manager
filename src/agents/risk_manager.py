@@ -38,10 +38,12 @@ class RiskManagerAgent:
         raw_trades: list[dict[str, Any]],
         portfolio: PortfolioSnapshot,
         prices: dict[str, float],
+        turnover_override: float | None = None,
     ) -> RiskReview:
         approved: list[TradePrediction] = []
         rejected: list[RejectedTrade] = []
-        remaining_turnover = portfolio.total_value * MAX_DAILY_TURNOVER
+        turnover_pct = turnover_override if turnover_override is not None else MAX_DAILY_TURNOVER
+        remaining_turnover = portfolio.total_value * turnover_pct
 
         for raw in raw_trades:
             symbol = str(raw.get("symbol", "")).upper().strip()

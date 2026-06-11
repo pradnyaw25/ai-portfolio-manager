@@ -29,15 +29,29 @@ def run_daily_cycle():
     portfolio = portfolio_store.load()
 
     if portfolio is None:
+        logger.info("No saved portfolio found — initializing fresh with $%.2f", INITIAL_CAPITAL)
         engine = PortfolioEngine(initial_capital=INITIAL_CAPITAL)
     else:
         engine = PortfolioEngine.from_portfolio(portfolio)
+
+    logger.info(
+        "Loaded portfolio: cash=$%.2f positions=%d total=$%.2f",
+        engine.cash,
+        len(engine.positions),
+        engine.get_snapshot().total_value,
+    )
 
     market_data = MarketDataClient()
     news_client = NewsClient()
     benchmark_client = BenchmarkClient()
 
     engine.mark_to_market(market_data)
+
+    logger.info(
+        "After mark-to-market: cash=$%.2f total=$%.2f",
+        engine.cash,
+        engine.get_snapshot().total_value,
+    )
 
     # 1. Research
     context_builder = MarketContextBuilder()

@@ -119,6 +119,12 @@ class PortfolioEngine:
     def mark_to_market(self, market_data: MarketDataClient) -> None:
         for symbol, position in self.positions.items():
             try:
+                old_price = position.current_price
                 position.current_price = market_data.get_price(symbol)
+                if old_price != position.current_price:
+                    logger.info(
+                        "Price update %s: $%.2f -> $%.2f",
+                        symbol, old_price, position.current_price,
+                    )
             except Exception as e:
                 logger.warning("Failed to update price for %s: %s", symbol, e)

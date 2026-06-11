@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from openai import OpenAI
 
 from src.agents.risk_manager import RiskManagerAgent
-from src.config import TARGET_CASH_PCT, REBALANCE_MIN_DEPLOY_PCT
+from src.config import TARGET_CASH_PCT, REBALANCE_MIN_DEPLOY_PCT, REBALANCE_TURNOVER
 from src.models.portfolio import PortfolioSnapshot
 from src.models.prediction import TradePrediction
 from src.utils.logger import get_logger
@@ -87,6 +87,8 @@ class RebalanceChecker:
         watchlist = research.get("watchlist", [])
         movers = research.get("top_movers", [])
 
+        per_position_budget = excess_cash / 5
+
         prompt = f"""
 You are a portfolio rebalance assistant. The portfolio has too much cash and needs to deploy it.
 
@@ -101,11 +103,20 @@ Watchlist: {watchlist}
 Recent top movers: {json.dumps(movers[:5])}
 Market news: {json.dumps(research.get("market_news", [])[:3])}
 
+CRITICAL SIZING RULES:
+- You must deploy approximately ${excess_cash:,.0f} total across your trades.
+- Split into 4-6 positions, each approximately ${per_position_budget:,.0f}.
+- Calculate shares as: shares = floor(${per_position_budget:,.0f} / stock_price).
+- Example: If AAPL is $200, buy {int(per_position_budget / 200)} shares (${per_position_budget:,.0f} / $200).
+- Example: If NVDA is $140, buy {int(per_position_budget / 140)} shares (${per_position_budget:,.0f} / $140).
+- DO NOT propose single-digit share counts for stocks under $500. That deploys too little cash.
+
+Available prices:
+{json.dumps({s: p for s, p in prices.items() if s in (watchlist if watchlist else list(prices.keys())[:20])}, indent=2)}
+
 You MUST do exactly one of these:
 
-OPTION A — Deploy cash: Propose BUY trades to bring cash to ~{TARGET_CASH_PCT * 100:.0f}% or below.
-  - Spread across 3-5 positions for diversification
-  - Each position should be 5-10% of portfolio value
+OPTION A — Deploy cash: Propose BUY trades totaling ~${excess_cash:,.0f}.
   - Include confidence scores (0.0-1.0) and reasoning
 
 OPTION B — Justify cash: If there is a compelling macro reason to hold cash above target
@@ -116,7 +127,7 @@ Return ONLY valid JSON:
 {{
   "action": "deploy" or "hold_cash",
   "trades": [
-    {{"symbol": "AAPL", "action": "BUY", "shares": 10, "confidence": 0.75, "reason": "..."}}
+    {{"symbol": "AAPL", "action": "BUY", "shares": {int(per_position_budget / 200)}, "confidence": 0.75, "reason": "..."}}
   ],
   "cash_thesis": null or "detailed justification..."
 }}
@@ -148,6 +159,7 @@ Return ONLY valid JSON:
             raw_trades=raw_trades,
             portfolio=portfolio,
             prices=prices,
+            turnover_override=REBALANCE_TURNOVER,
         )
 
         if review.rejected:
@@ -158,4 +170,33 @@ Return ONLY valid JSON:
             )
 
         logger.info("Rebalance: %d additional trades approved for cash deployment", len(review.approved))
+
+        estimated_deploy = sum(
+            trade.shares * prices[trade.symbol]
+            for trade in review.approved
+            if trade.symbol in prices
+        )
+
+        logger.info(
+            "Rebalance proposed deployment: $%.2f across %d trades",
+            estimated_deploy,
+            len(review.approved),
+        )
+
+        required_deploy = portfolio.total_value * (cash_pct - TARGET_CASH_PCT)
+
+        max_deployable = portfolio.total_value * REBALANCE_TURNOVER
+        required_deploy = min(required_deploy, max_deployable)
+
+        if estimated_deploy < required_deploy * 0.3:
+            logger.warning(
+                "Rebalance rejected: proposed deployment $%.2f is too small vs required $%.2f",
+                estimated_deploy,
+                required_deploy,
+            )
+            return RebalanceResult(
+                extra_trades=[],
+                cash_thesis="[AUTO] Rebalance trades were too small to meaningfully reduce cash position.",
+            )
+
         return RebalanceResult(extra_trades=review.approved, cash_thesis=cash_thesis)
