@@ -5,7 +5,7 @@ from src.storage.decision_store import DecisionStore
 from src.data_sources.market_data import MarketDataClient
 from src.data_sources.news import NewsClient
 from src.data_sources.benchmarks import BenchmarkClient
-from src.agents.researcher import ResearchAgent
+from src.research.market_context import MarketContextBuilder
 from src.agents.portfolio_manager import PortfolioManagerAgent
 from src.agents.tweet_generator import TweetGeneratorAgent
 from src.agents.risk_manager import RiskManagerAgent
@@ -40,12 +40,21 @@ def run_daily_cycle():
     engine.mark_to_market(market_data)
 
     # 1. Research
-    researcher = ResearchAgent()
-    research = researcher.analyze(
-        holdings=engine.get_holdings(),
+    context_builder = MarketContextBuilder()
+    market_context = context_builder.build(
+        snapshot=engine.get_snapshot(),
         market_data=market_data,
         news_client=news_client,
     )
+
+    research = market_context.to_dict()
+
+    prices = {}
+    for sym in research.get("symbols", []):
+        symbol = sym.get("symbol", "")
+        price = sym.get("price")
+        if price is not None and price > 0:
+            prices[symbol] = price
 
     # 2. Decision
     manager = PortfolioManagerAgent()
@@ -60,7 +69,7 @@ def run_daily_cycle():
     risk_review = risk_manager.review(
         raw_trades=decisions.get("trades", []),
         portfolio=engine.get_snapshot(),
-        prices=research.get("prices", {}),
+        prices=prices,
     )
 
     # 4. Rebalance check
@@ -68,7 +77,7 @@ def run_daily_cycle():
     rebalance_result = rebalance.check(
         portfolio=engine.get_snapshot(),
         approved_trades=risk_review.approved,
-        prices=research.get("prices", {}),
+        prices=prices,
         research=research,
     )
     all_approved = risk_review.approved + rebalance_result.extra_trades
