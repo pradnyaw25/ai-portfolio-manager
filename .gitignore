@@ -1,0 +1,11 @@
+# Generated data
+data/
+reports/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Environment
+.env
