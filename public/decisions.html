@@ -91,6 +91,16 @@
       maximumFractionDigits: 0
     });
 
+    const symbolNames = {
+      AAPL: "Apple Inc.", MSFT: "Microsoft Corp.", GOOGL: "Alphabet Inc.",
+      AMZN: "Amazon.com Inc.", META: "Meta Platforms Inc.", NVDA: "NVIDIA Corp.",
+      AMD: "Advanced Micro Devices", AVGO: "Broadcom Inc.", TSLA: "Tesla Inc.",
+      JPM: "JPMorgan Chase & Co.", V: "Visa Inc.", MA: "Mastercard Inc.",
+      UNH: "UnitedHealth Group", JNJ: "Johnson & Johnson", WMT: "Walmart Inc.",
+      PG: "Procter & Gamble", HD: "The Home Depot", XOM: "Exxon Mobil Corp.",
+      CAT: "Caterpillar Inc.", SPY: "SPDR S&P 500 ETF", QQQ: "Invesco QQQ Trust",
+    };
+
     function confClass(c) {
       if (c >= 0.7) return "conf-high";
       if (c >= 0.5) return "conf-med";
@@ -110,7 +120,7 @@
       if (rejected) {
         return `
           <div class="trade rejected">
-            <strong>${action} ${shares} ${symbol}</strong>
+            <strong>${action} ${shares} <span title="${symbolNames[symbol] || symbol}">${symbol}</span></strong>
             <span class="confidence conf-low">${(confidence * 100).toFixed(0)}%</span>
             <br /><span class="muted">Rejected: ${rejectReason}</span>
           </div>

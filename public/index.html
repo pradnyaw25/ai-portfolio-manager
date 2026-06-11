@@ -98,6 +98,16 @@
 
     const pct = (x) => `${(x * 100).toFixed(2)}%`;
 
+    const symbolNames = {
+      AAPL: "Apple Inc.", MSFT: "Microsoft Corp.", GOOGL: "Alphabet Inc.",
+      AMZN: "Amazon.com Inc.", META: "Meta Platforms Inc.", NVDA: "NVIDIA Corp.",
+      AMD: "Advanced Micro Devices", AVGO: "Broadcom Inc.", TSLA: "Tesla Inc.",
+      JPM: "JPMorgan Chase & Co.", V: "Visa Inc.", MA: "Mastercard Inc.",
+      UNH: "UnitedHealth Group", JNJ: "Johnson & Johnson", WMT: "Walmart Inc.",
+      PG: "Procter & Gamble", HD: "The Home Depot", XOM: "Exxon Mobil Corp.",
+      CAT: "Caterpillar Inc.", SPY: "SPDR S&P 500 ETF", QQQ: "Invesco QQQ Trust",
+    };
+
     async function fetchCsv(path) {
       const res = await fetch(path);
       const text = await res.text();
@@ -145,7 +155,7 @@
       portfolio.positions.forEach((p) => {
         const row = document.createElement("tr");
         row.innerHTML = `
-          <td>${p.symbol}</td>
+          <td title="${symbolNames[p.symbol] || p.symbol}">${p.symbol}</td>
           <td>${p.shares}</td>
           <td>${money.format(p.current_price)}</td>
           <td>${money.format(p.market_value)}</td>
@@ -161,7 +171,7 @@
       } else {
         tradesDiv.innerHTML = trades.map(t => `
           <p>
-            <strong>${t.action} ${t.shares} ${t.symbol}</strong>
+            <strong>${t.action} ${t.shares} <span title="${symbolNames[t.symbol] || t.symbol}">${t.symbol}</span></strong>
             at ${money.format(t.price)}<br />
             <span class="muted">${t.reasoning}</span>
           </p>
