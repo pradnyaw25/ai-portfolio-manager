@@ -14,6 +14,7 @@ from src.models.prediction import Outlook, PortfolioDecision
 from src.simulator.portfolio_engine import PortfolioEngine
 from src.simulator.performance import PerformanceTracker
 from src.reporting.markdown_report import MarkdownReportGenerator
+from src.reporting.public_exporter import PublicExporter
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -101,11 +102,14 @@ def run_daily_cycle():
     )
 
     report_gen = MarkdownReportGenerator()
-    report_gen.generate(snapshot, trades, research, portfolio_decision)
+    report_markdown = report_gen.generate(snapshot, trades, research, portfolio_decision)
 
     tweet_agent = TweetGeneratorAgent()
     tweet = tweet_agent.generate(snapshot, trades)
     logger.info("Generated tweet: %s", tweet)
+
+    public_exporter = PublicExporter()
+    public_exporter.export(snapshot, trades, tweet, report_markdown)
 
     logger.info("Daily cycle complete. Portfolio value: $%.2f", snapshot.total_value)
 
