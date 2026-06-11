@@ -1,75 +1,21 @@
 [
   {
     "date": "2026-06-11",
-    "symbol": "AMZN",
-    "action": "BUY",
-    "shares": 20,
-    "price": 241.50999450683594,
-    "total": 4830.199890136719,
-    "reasoning": "Amazon (AMZN) has shown resilience in its business model with solid growth prospects. The stock is currently undervalued based on its potential in e-commerce and cloud computing."
-  },
-  {
-    "date": "2026-06-11",
-    "symbol": "GOOGL",
-    "action": "BUY",
-    "shares": 10,
-    "price": 357.7699890136719,
-    "total": 3577.6998901367188,
-    "reasoning": "Alphabet (GOOGL) is a strong player in digital advertising with growth in cloud services. The recent pullback provides an attractive buying opportunity."
-  },
-  {
-    "date": "2026-06-11",
-    "symbol": "META",
-    "action": "BUY",
-    "shares": 5,
-    "price": 568.4299926757812,
-    "total": 2842.1499633789062,
-    "reasoning": "Meta Platforms (META) has substantial growth potential driven by its developments in the metaverse and strong advertising revenue despite recent volatility."
-  },
-  {
-    "date": "2026-06-11",
-    "symbol": "JPM",
-    "action": "BUY",
-    "shares": 5,
-    "price": 313.489990234375,
-    "total": 1567.449951171875,
-    "reasoning": "JPMorgan Chase (JPM) remains a leader in the banking sector with solid fundamentals and potential for growth amid economic recovery."
-  },
-  {
-    "date": "2026-06-11",
-    "symbol": "V",
-    "action": "BUY",
-    "shares": 2,
-    "price": 319.04998779296875,
-    "total": 638.0999755859375,
-    "reasoning": "Visa (V) benefits from the continued shift toward digital payments, making it a strong long-term investment."
-  },
-  {
-    "date": "2026-06-11",
     "symbol": "AAPL",
     "action": "BUY",
     "shares": 10,
     "price": 295.6300048828125,
     "total": 2956.300048828125,
-    "reasoning": "AAPL has been a strong performer over the years and offers growth potential, despite some recent volatility. It fits into our target allocation."
+    "reasoning": "AAPL is showing strong fundamentals and solid growth potential; investing in high-quality growth stocks can stabilize the portfolio."
   },
   {
     "date": "2026-06-11",
-    "symbol": "JPM",
+    "symbol": "NVDA",
     "action": "BUY",
     "shares": 20,
-    "price": 313.489990234375,
-    "total": 6269.7998046875,
-    "reasoning": "JPM has shown resilience in uncertain markets and offers a strong dividend yield, making it a solid choice for steady returns."
-  },
-  {
-    "date": "2026-06-11",
-    "symbol": "AMZN",
-    "action": "BUY",
-    "shares": 5,
-    "price": 241.50999450683594,
-    "total": 1207.5499725341797,
-    "reasoning": "AMZN is positioned for future growth, especially with trends in cloud computing and e-commerce continuing to grow, which adds to its appeal."
+    "price": 204.8699951171875,
+    "total": 4097.39990234375,
+    "reasoning": "NVIDIA has significant growth prospects in AI and gaming sectors; capturing this momentum will help enhance long-term returns."
   },
   {
     "date": "2026-06-11",
@@ -78,15 +24,24 @@
     "shares": 5,
     "price": 319.04998779296875,
     "total": 1595.2499389648438,
-    "reasoning": "Visa's business model benefits from increased consumer spending, and its growth potential is strong, coupled with a good market position."
+    "reasoning": "Visa is a leader in digital payments with a strong market position, and with global payment trends shifting, it's a solid addition to the portfolio."
   },
   {
     "date": "2026-06-11",
-    "symbol": "META",
+    "symbol": "MA",
     "action": "BUY",
-    "shares": 5,
-    "price": 568.4299926757812,
-    "total": 2842.1499633789062,
-    "reasoning": "Despite recent challenges, META's pivot towards monetization strategies and a dominant position in social media presents an opportunity."
+    "shares": 3,
+    "price": 486.510009765625,
+    "total": 1459.530029296875,
+    "reasoning": "Mastercard benefits from the same trends as Visa; investing in both payment giants enhances portfolio diversification."
+  },
+  {
+    "date": "2026-06-11",
+    "symbol": "MSFT",
+    "action": "BUY",
+    "shares": 3,
+    "price": 390.3399963378906,
+    "total": 1171.0199890136719,
+    "reasoning": "Microsoft shows resilience and growth potential in cloud computing and software; adding to this position can balance the tech exposure."
   }
 ]

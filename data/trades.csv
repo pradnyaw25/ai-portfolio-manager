@@ -8,13 +8,25 @@ date,symbol,action,shares,price,total,reasoning
 2026-06-11,NVDA,BUY,5,204.87,1024.35,"NVIDIA is a leader in AI and gaming, and recent price declines present a chance to enter before potential market rebounds."
 2026-06-11,TSLA,BUY,4,399.15,1596.60,Tesla has seen a pullback and is still poised for growth in the electric vehicle sector.
 2026-06-11,UNH,BUY,3,405.55,1216.65,UnitedHealth is a strong player in the healthcare sector with consistent performance and dividends.
-2026-06-11,AMZN,BUY,20,241.51,4830.20,Amazon (AMZN) has shown resilience in its business model with solid growth prospects. The stock is currently undervalued based on its potential in e-commerce and cloud computing.
-2026-06-11,GOOGL,BUY,10,357.77,3577.70,Alphabet (GOOGL) is a strong player in digital advertising with growth in cloud services. The recent pullback provides an attractive buying opportunity.
-2026-06-11,META,BUY,5,568.43,2842.15,Meta Platforms (META) has substantial growth potential driven by its developments in the metaverse and strong advertising revenue despite recent volatility.
-2026-06-11,JPM,BUY,5,313.49,1567.45,JPMorgan Chase (JPM) remains a leader in the banking sector with solid fundamentals and potential for growth amid economic recovery.
-2026-06-11,V,BUY,2,319.05,638.10,"Visa (V) benefits from the continued shift toward digital payments, making it a strong long-term investment."
-2026-06-11,AAPL,BUY,10,295.63,2956.30,"AAPL has been a strong performer over the years and offers growth potential, despite some recent volatility. It fits into our target allocation."
-2026-06-11,JPM,BUY,20,313.49,6269.80,"JPM has shown resilience in uncertain markets and offers a strong dividend yield, making it a solid choice for steady returns."
-2026-06-11,AMZN,BUY,5,241.51,1207.55,"AMZN is positioned for future growth, especially with trends in cloud computing and e-commerce continuing to grow, which adds to its appeal."
-2026-06-11,V,BUY,5,319.05,1595.25,"Visa's business model benefits from increased consumer spending, and its growth potential is strong, coupled with a good market position."
-2026-06-11,META,BUY,5,568.43,2842.15,"Despite recent challenges, META's pivot towards monetization strategies and a dominant position in social media presents an opportunity."
+2026-06-11,AMZN,BUY,30,241.51,7245.30,Amazon is showing potential for recovery given its recent price drop and is considered a strong long-term play in e-commerce and cloud services.
+2026-06-11,GOOGL,BUY,10,357.77,3577.70,"Google's fundamentals remain strong, and its recent pullback presents a buying opportunity for a solid investment in digital advertising and cloud services."
+2026-06-11,JPM,BUY,10,313.49,3134.90,"JPMorgan Chase is a leading bank with a strong balance sheet that can withstand economic fluctuations, making it a good addition to the portfolio now."
+2026-06-11,V,BUY,10,319.05,3190.50,"Visa is a dominant player in digital payments, and recent market volatility creates an opportunity to buy at favorable prices."
+2026-06-11,GOOGL,BUY,10,357.77,3577.70,"GOOGL has shown resilience in advertising and cloud services, positioning it well for growth in a recovering market."
+2026-06-11,AMZN,BUY,5,241.51,1207.55,"AMZN is leveraging its logistics and e-commerce dominance to capitalize on consumer spending, making it a strong buy for growth."
+2026-06-11,V,BUY,7,319.05,2233.35,"As a leader in the payments industry, V stands to benefit from the ongoing shift towards digital payments, ensuring steady cash flow."
+2026-06-11,MA,BUY,5,486.51,2432.55,MA's position in the growing digital payment landscape and international markets supports its long-term growth potential.
+2026-06-11,META,BUY,10,568.43,5684.30,"Despite recent volatility, META's investment in the metaverse and digital advertising makes it a compelling long-term hold."
+2026-06-11,AAPL,BUY,10,295.63,2956.30,"AAPL has shown resilience and growth potential, especially with recent positive news from analysts despite its current slide."
+2026-06-11,JNJ,BUY,10,238.33,2383.30,"JNJ has been bullish recently and has been mispriced according to market analysis, presenting a strong buying opportunity."
+2026-06-11,PG,BUY,10,148.34,1483.40,"PG is well-positioned in the consumer goods industry and is being well-rated by analysts, making it a stable investment."
+2026-06-11,AAPL,BUY,10,295.63,2956.30,"AAPL has shown resilience and innovation, making it a strong long-term hold as it continues to expand its ecosystem."
+2026-06-11,MSFT,BUY,6,390.34,2342.04,"MSFT's cloud services are growing rapidly, and the company has significant recurring revenue."
+2026-06-11,NVDA,BUY,4,204.87,819.48,"Despite recent pullbacks, NVDA's leadership in AI and gaming positions it well for future growth."
+2026-06-11,AMZN,BUY,5,241.51,1207.55,AMZN is diversifying its revenue streams and has a strong foothold in e-commerce and cloud computing.
+2026-06-11,TSLA,BUY,3,399.15,1197.45,"While recent performance has been volatile, TSLA's position in the EV market and ongoing innovations provide potential for recovery."
+2026-06-11,AAPL,BUY,10,295.63,2956.30,AAPL is showing strong fundamentals and solid growth potential; investing in high-quality growth stocks can stabilize the portfolio.
+2026-06-11,NVDA,BUY,20,204.87,4097.40,NVIDIA has significant growth prospects in AI and gaming sectors; capturing this momentum will help enhance long-term returns.
+2026-06-11,V,BUY,5,319.05,1595.25,"Visa is a leader in digital payments with a strong market position, and with global payment trends shifting, it's a solid addition to the portfolio."
+2026-06-11,MA,BUY,3,486.51,1459.53,Mastercard benefits from the same trends as Visa; investing in both payment giants enhances portfolio diversification.
+2026-06-11,MSFT,BUY,3,390.34,1171.02,Microsoft shows resilience and growth potential in cloud computing and software; adding to this position can balance the tech exposure.
