@@ -1,4 +1,4 @@
-import json
+from datetime import date
 from openai import OpenAI
 from src.config import PROMPTS_DIR
 from src.models.portfolio import PortfolioSnapshot
@@ -25,28 +25,22 @@ class TweetGeneratorAgent:
             ],
         )
 
-        return self._parse_response(response.choices[0].message.content)
+        return response.choices[0].message.content.strip()[:280]
 
     def _build_context(self, portfolio: PortfolioSnapshot, trades: list[Trade]) -> str:
-        trade_lines = []
-        for t in trades:
-            trade_lines.append(f"  {t.action.value} {t.shares} {t.symbol} @ ${t.price:.2f}")
-        trades_str = "\n".join(trade_lines) if trade_lines else "  No trades today"
+        today = date.today().strftime("%b %d")
 
-        return f"""Portfolio Value: ${portfolio.total_value:,.2f}
-Cash: ${portfolio.cash:,.2f}
+        if trades:
+            trade_summary = ", ".join(
+                f"{t.action.value} ${t.symbol}" for t in trades
+            )
+        else:
+            trade_summary = "No trades"
+
+        return f"""Date: {today}
+Portfolio Value: ${portfolio.total_value:,.0f}
+Cash: ${portfolio.cash:,.0f} ({portfolio.cash_pct * 100:.1f}%)
 Positions: {len(portfolio.positions)}
+Trades: {trade_summary}
 
-Today's Trades:
-{trades_str}
-
-Write an engaging tweet about today's portfolio activity."""
-
-    def _parse_response(self, text: str) -> str:
-        try:
-            start = text.index("{")
-            end = text.rindex("}") + 1
-            data = json.loads(text[start:end])
-            return data.get("tweet", text)
-        except (ValueError, json.JSONDecodeError):
-            return text.strip()[:280]
+Write the portfolio update now."""
