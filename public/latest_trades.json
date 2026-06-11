@@ -1,39 +1,48 @@
 [
   {
     "date": "2026-06-11",
-    "symbol": "HD",
+    "symbol": "AMZN",
     "action": "BUY",
-    "shares": 100,
-    "price": 326.010009765625,
-    "total": 32601.0009765625,
-    "reasoning": "Home Depot has shown recent positive momentum with a 2.97% increase. It is a strong player in the home improvement sector, benefiting from ongoing home renovations."
+    "shares": 20,
+    "price": 241.50999450683594,
+    "total": 4830.199890136719,
+    "reasoning": "Amazon (AMZN) has shown resilience in its business model with solid growth prospects. The stock is currently undervalued based on its potential in e-commerce and cloud computing."
   },
   {
     "date": "2026-06-11",
-    "symbol": "JNJ",
+    "symbol": "GOOGL",
     "action": "BUY",
-    "shares": 50,
-    "price": 238.3300018310547,
-    "total": 11916.500091552734,
-    "reasoning": "Johnson & Johnson has displayed resilience, with a recent positive change of 2.73%, making it a strong defensive option amid market volatility."
+    "shares": 10,
+    "price": 357.7699890136719,
+    "total": 3577.6998901367188,
+    "reasoning": "Alphabet (GOOGL) is a strong player in digital advertising with growth in cloud services. The recent pullback provides an attractive buying opportunity."
   },
   {
     "date": "2026-06-11",
-    "symbol": "PG",
+    "symbol": "META",
     "action": "BUY",
-    "shares": 50,
-    "price": 148.33999633789062,
-    "total": 7416.999816894531,
-    "reasoning": "Procter & Gamble has shown positive movement of 2.72%. Its strong brand portfolio and essential consumer products help it maintain stability."
+    "shares": 5,
+    "price": 568.4299926757812,
+    "total": 2842.1499633789062,
+    "reasoning": "Meta Platforms (META) has substantial growth potential driven by its developments in the metaverse and strong advertising revenue despite recent volatility."
   },
   {
     "date": "2026-06-11",
-    "symbol": "WMT",
+    "symbol": "JPM",
     "action": "BUY",
-    "shares": 50,
-    "price": 120.5,
-    "total": 6025.0,
-    "reasoning": "Walmart's role as a leading retailer provides solid fundamentals, and it experienced a recent strong performance in comparison to the market."
+    "shares": 5,
+    "price": 313.489990234375,
+    "total": 1567.449951171875,
+    "reasoning": "JPMorgan Chase (JPM) remains a leader in the banking sector with solid fundamentals and potential for growth amid economic recovery."
+  },
+  {
+    "date": "2026-06-11",
+    "symbol": "V",
+    "action": "BUY",
+    "shares": 2,
+    "price": 319.04998779296875,
+    "total": 638.0999755859375,
+    "reasoning": "Visa (V) benefits from the continued shift toward digital payments, making it a strong long-term investment."
   },
   {
     "date": "2026-06-11",
@@ -42,42 +51,42 @@
     "shares": 10,
     "price": 295.6300048828125,
     "total": 2956.300048828125,
-    "reasoning": "Strong fundamentals and a recent pullback create a buying opportunity for a reliable tech leader."
+    "reasoning": "AAPL has been a strong performer over the years and offers growth potential, despite some recent volatility. It fits into our target allocation."
   },
   {
     "date": "2026-06-11",
-    "symbol": "MSFT",
+    "symbol": "JPM",
     "action": "BUY",
-    "shares": 7,
-    "price": 390.3399963378906,
-    "total": 2732.3799743652344,
-    "reasoning": "Microsoft's diversified services and cloud growth make it a solid long-term investment despite recent volatility."
+    "shares": 20,
+    "price": 313.489990234375,
+    "total": 6269.7998046875,
+    "reasoning": "JPM has shown resilience in uncertain markets and offers a strong dividend yield, making it a solid choice for steady returns."
   },
   {
     "date": "2026-06-11",
-    "symbol": "NVDA",
+    "symbol": "AMZN",
     "action": "BUY",
     "shares": 5,
-    "price": 204.8699951171875,
-    "total": 1024.3499755859375,
-    "reasoning": "NVIDIA is a leader in AI and gaming, and recent price declines present a chance to enter before potential market rebounds."
+    "price": 241.50999450683594,
+    "total": 1207.5499725341797,
+    "reasoning": "AMZN is positioned for future growth, especially with trends in cloud computing and e-commerce continuing to grow, which adds to its appeal."
   },
   {
     "date": "2026-06-11",
-    "symbol": "TSLA",
+    "symbol": "V",
     "action": "BUY",
-    "shares": 4,
-    "price": 399.1499938964844,
-    "total": 1596.5999755859375,
-    "reasoning": "Tesla has seen a pullback and is still poised for growth in the electric vehicle sector."
+    "shares": 5,
+    "price": 319.04998779296875,
+    "total": 1595.2499389648438,
+    "reasoning": "Visa's business model benefits from increased consumer spending, and its growth potential is strong, coupled with a good market position."
   },
   {
     "date": "2026-06-11",
-    "symbol": "UNH",
+    "symbol": "META",
     "action": "BUY",
-    "shares": 3,
-    "price": 405.54998779296875,
-    "total": 1216.6499633789062,
-    "reasoning": "UnitedHealth is a strong player in the healthcare sector with consistent performance and dividends."
+    "shares": 5,
+    "price": 568.4299926757812,
+    "total": 2842.1499633789062,
+    "reasoning": "Despite recent challenges, META's pivot towards monetization strategies and a dominant position in social media presents an opportunity."
   }
 ]

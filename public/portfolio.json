@@ -1,9 +1,9 @@
 {
   "date": "2026-06-11",
   "total_value": 1000000.0,
-  "cash": 932514.2191772461,
-  "cash_pct": 0.9325142191772461,
-  "invested_value": 67485.7808227539,
+  "cash": 904187.5697784424,
+  "cash_pct": 0.9041875697784424,
+  "invested_value": 95812.43022155762,
   "positions": [
     {
       "symbol": "HD",
@@ -39,10 +39,10 @@
     },
     {
       "symbol": "AAPL",
-      "shares": 10,
+      "shares": 20,
       "avg_cost": 295.6300048828125,
       "current_price": 295.6300048828125,
-      "market_value": 2956.300048828125,
+      "market_value": 5912.60009765625,
       "return_pct": 0.0
     },
     {
@@ -75,6 +75,46 @@
       "avg_cost": 405.54998779296875,
       "current_price": 405.54998779296875,
       "market_value": 1216.6499633789062,
+      "return_pct": 0.0
+    },
+    {
+      "symbol": "AMZN",
+      "shares": 25,
+      "avg_cost": 241.50999450683594,
+      "current_price": 241.50999450683594,
+      "market_value": 6037.749862670898,
+      "return_pct": 0.0
+    },
+    {
+      "symbol": "GOOGL",
+      "shares": 10,
+      "avg_cost": 357.7699890136719,
+      "current_price": 357.7699890136719,
+      "market_value": 3577.6998901367188,
+      "return_pct": 0.0
+    },
+    {
+      "symbol": "META",
+      "shares": 10,
+      "avg_cost": 568.4299926757812,
+      "current_price": 568.4299926757812,
+      "market_value": 5684.2999267578125,
+      "return_pct": 0.0
+    },
+    {
+      "symbol": "JPM",
+      "shares": 25,
+      "avg_cost": 313.489990234375,
+      "current_price": 313.489990234375,
+      "market_value": 7837.249755859375,
+      "return_pct": 0.0
+    },
+    {
+      "symbol": "V",
+      "shares": 7,
+      "avg_cost": 319.04998779296875,
+      "current_price": 319.04998779296875,
+      "market_value": 2233.3499145507812,
       "return_pct": 0.0
     }
   ]

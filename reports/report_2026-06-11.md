@@ -2,9 +2,9 @@
 
 ## Summary
 - **Total Value:** $1,000,000.00
-- **Cash:** $932,514.22 (93.3%)
-- **Invested:** $67,485.78
-- **Positions:** 9
+- **Cash:** $904,187.57 (90.4%)
+- **Invested:** $95,812.43
+- **Positions:** 14
 - **Outlook:** BULLISH
 
 ## Holdings
@@ -13,30 +13,36 @@
 |--------|--------|----------|---------|-------|
 | HD | 100 | $326.01 | $326.01 | 0.0% |
 | JNJ | 50 | $238.33 | $238.33 | 0.0% |
+| JPM | 25 | $313.49 | $313.49 | 0.0% |
 | PG | 50 | $148.34 | $148.34 | 0.0% |
+| AMZN | 25 | $241.51 | $241.51 | 0.0% |
 | WMT | 50 | $120.50 | $120.50 | 0.0% |
-| AAPL | 10 | $295.63 | $295.63 | 0.0% |
+| AAPL | 20 | $295.63 | $295.63 | 0.0% |
+| META | 10 | $568.43 | $568.43 | 0.0% |
+| GOOGL | 10 | $357.77 | $357.77 | 0.0% |
 | MSFT | 7 | $390.34 | $390.34 | 0.0% |
+| V | 7 | $319.05 | $319.05 | 0.0% |
 | TSLA | 4 | $399.15 | $399.15 | 0.0% |
 | UNH | 3 | $405.55 | $405.55 | 0.0% |
 | NVDA | 5 | $204.87 | $204.87 | 0.0% |
 
 ## Today's Trades
 
-- **BUY** 100 HD @ $326.01 — Home Depot has shown recent positive momentum with a 2.97% increase. It is a strong player in the home improvement sector, benefiting from ongoing home renovations.
-- **BUY** 50 JNJ @ $238.33 — Johnson & Johnson has displayed resilience, with a recent positive change of 2.73%, making it a strong defensive option amid market volatility.
-- **BUY** 50 PG @ $148.34 — Procter & Gamble has shown positive movement of 2.72%. Its strong brand portfolio and essential consumer products help it maintain stability.
-- **BUY** 50 WMT @ $120.50 — Walmart's role as a leading retailer provides solid fundamentals, and it experienced a recent strong performance in comparison to the market.
-- **BUY** 10 AAPL @ $295.63 — Strong fundamentals and a recent pullback create a buying opportunity for a reliable tech leader.
-- **BUY** 7 MSFT @ $390.34 — Microsoft's diversified services and cloud growth make it a solid long-term investment despite recent volatility.
-- **BUY** 5 NVDA @ $204.87 — NVIDIA is a leader in AI and gaming, and recent price declines present a chance to enter before potential market rebounds.
-- **BUY** 4 TSLA @ $399.15 — Tesla has seen a pullback and is still poised for growth in the electric vehicle sector.
-- **BUY** 3 UNH @ $405.55 — UnitedHealth is a strong player in the healthcare sector with consistent performance and dividends.
+- **BUY** 20 AMZN @ $241.51 — Amazon (AMZN) has shown resilience in its business model with solid growth prospects. The stock is currently undervalued based on its potential in e-commerce and cloud computing.
+- **BUY** 10 GOOGL @ $357.77 — Alphabet (GOOGL) is a strong player in digital advertising with growth in cloud services. The recent pullback provides an attractive buying opportunity.
+- **BUY** 5 META @ $568.43 — Meta Platforms (META) has substantial growth potential driven by its developments in the metaverse and strong advertising revenue despite recent volatility.
+- **BUY** 5 JPM @ $313.49 — JPMorgan Chase (JPM) remains a leader in the banking sector with solid fundamentals and potential for growth amid economic recovery.
+- **BUY** 2 V @ $319.05 — Visa (V) benefits from the continued shift toward digital payments, making it a strong long-term investment.
+- **BUY** 10 AAPL @ $295.63 — AAPL has been a strong performer over the years and offers growth potential, despite some recent volatility. It fits into our target allocation.
+- **BUY** 20 JPM @ $313.49 — JPM has shown resilience in uncertain markets and offers a strong dividend yield, making it a solid choice for steady returns.
+- **BUY** 5 AMZN @ $241.51 — AMZN is positioned for future growth, especially with trends in cloud computing and e-commerce continuing to grow, which adds to its appeal.
+- **BUY** 5 V @ $319.05 — Visa's business model benefits from increased consumer spending, and its growth potential is strong, coupled with a good market position.
+- **BUY** 5 META @ $568.43 — Despite recent challenges, META's pivot towards monetization strategies and a dominant position in social media presents an opportunity.
 
 ## Analysis
 
-Investing in HD, JNJ, PG, and WMT enables us to reduce cash levels while diversifying across sectors. These stocks showed resilience and positive movements, which could indicate continued strength in the current market environment.
+The portfolio is currently over-allocated in cash at 93.3%. Initiating trades to diversify and capitalize on high-conviction opportunities in AMZN, GOOGL, META, JPM, and V helps to realign the portfolio closer to the target maximum cash allocation. These companies have strong fundamentals and growth potential despite recent market fluctuations.
 
 ## Risk Assessment
 
-The selected stocks are largely established companies with solid fundamentals and defensive characteristics, which helps mitigate risks amidst ongoing market fluctuations.
+The market has shown signs of recovery despite recent downturns. The selected positions are well-balanced between growth and stability. However, market volatility could impact short-term performance.

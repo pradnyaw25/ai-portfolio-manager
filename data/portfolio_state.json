@@ -1,6 +1,6 @@
 {
   "date": "2026-06-11",
-  "cash": 932514.2191772461,
+  "cash": 904187.5697784424,
   "positions": [
     {
       "symbol": "HD",
@@ -28,7 +28,7 @@
     },
     {
       "symbol": "AAPL",
-      "shares": 10,
+      "shares": 20,
       "avg_cost": 295.6300048828125,
       "current_price": 295.6300048828125
     },
@@ -55,6 +55,36 @@
       "shares": 3,
       "avg_cost": 405.54998779296875,
       "current_price": 405.54998779296875
+    },
+    {
+      "symbol": "AMZN",
+      "shares": 25,
+      "avg_cost": 241.50999450683594,
+      "current_price": 241.50999450683594
+    },
+    {
+      "symbol": "GOOGL",
+      "shares": 10,
+      "avg_cost": 357.7699890136719,
+      "current_price": 357.7699890136719
+    },
+    {
+      "symbol": "META",
+      "shares": 10,
+      "avg_cost": 568.4299926757812,
+      "current_price": 568.4299926757812
+    },
+    {
+      "symbol": "JPM",
+      "shares": 25,
+      "avg_cost": 313.489990234375,
+      "current_price": 313.489990234375
+    },
+    {
+      "symbol": "V",
+      "shares": 7,
+      "avg_cost": 319.04998779296875,
+      "current_price": 319.04998779296875
     }
   ]
 }
