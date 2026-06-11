@@ -1,83 +1,83 @@
 [
   {
     "date": "2026-06-11",
+    "symbol": "HD",
+    "action": "BUY",
+    "shares": 100,
+    "price": 326.010009765625,
+    "total": 32601.0009765625,
+    "reasoning": "Home Depot has shown recent positive momentum with a 2.97% increase. It is a strong player in the home improvement sector, benefiting from ongoing home renovations."
+  },
+  {
+    "date": "2026-06-11",
+    "symbol": "JNJ",
+    "action": "BUY",
+    "shares": 50,
+    "price": 238.3300018310547,
+    "total": 11916.500091552734,
+    "reasoning": "Johnson & Johnson has displayed resilience, with a recent positive change of 2.73%, making it a strong defensive option amid market volatility."
+  },
+  {
+    "date": "2026-06-11",
+    "symbol": "PG",
+    "action": "BUY",
+    "shares": 50,
+    "price": 148.33999633789062,
+    "total": 7416.999816894531,
+    "reasoning": "Procter & Gamble has shown positive movement of 2.72%. Its strong brand portfolio and essential consumer products help it maintain stability."
+  },
+  {
+    "date": "2026-06-11",
+    "symbol": "WMT",
+    "action": "BUY",
+    "shares": 50,
+    "price": 120.5,
+    "total": 6025.0,
+    "reasoning": "Walmart's role as a leading retailer provides solid fundamentals, and it experienced a recent strong performance in comparison to the market."
+  },
+  {
+    "date": "2026-06-11",
     "symbol": "AAPL",
     "action": "BUY",
     "shares": 10,
     "price": 295.6300048828125,
     "total": 2956.300048828125,
-    "reasoning": "Apple has shown resilience and consistent performance, with strong earnings potential. Current valuation appears stable."
+    "reasoning": "Strong fundamentals and a recent pullback create a buying opportunity for a reliable tech leader."
   },
   {
     "date": "2026-06-11",
     "symbol": "MSFT",
-    "action": "BUY",
-    "shares": 5,
-    "price": 390.3399963378906,
-    "total": 1951.6999816894531,
-    "reasoning": "Microsoft's cloud business continues to grow, and with low downside risk, it's a strategic addition to the portfolio."
-  },
-  {
-    "date": "2026-06-11",
-    "symbol": "V",
-    "action": "BUY",
-    "shares": 5,
-    "price": 319.04998779296875,
-    "total": 1595.2499389648438,
-    "reasoning": "Visa is a leader in digital payments with strong fundamentals and growth prospects, making it a good addition during market volatility."
-  },
-  {
-    "date": "2026-06-11",
-    "symbol": "HD",
-    "action": "BUY",
-    "shares": 5,
-    "price": 326.010009765625,
-    "total": 1630.050048828125,
-    "reasoning": "Home Depot has a strong position in the home improvement market, and recent price action indicates positive momentum."
-  },
-  {
-    "date": "2026-06-11",
-    "symbol": "AAPL",
     "action": "BUY",
     "shares": 7,
-    "price": 295.6300048828125,
-    "total": 2069.4100341796875,
-    "reasoning": "AAPL has strong fundamentals and is a leading company in technology with potential for growth despite recent volatility."
-  },
-  {
-    "date": "2026-06-11",
-    "symbol": "MSFT",
-    "action": "BUY",
-    "shares": 5,
     "price": 390.3399963378906,
-    "total": 1951.6999816894531,
-    "reasoning": "MSFT has a robust business model and continues to show resilience; it's a core holding that benefits from cloud and AI growth."
-  },
-  {
-    "date": "2026-06-11",
-    "symbol": "GOOGL",
-    "action": "BUY",
-    "shares": 3,
-    "price": 357.7699890136719,
-    "total": 1073.3099670410156,
-    "reasoning": "GOOGL has strong revenue growth from advertising and cloud, making it a favorable long-term buy, especially after recent price dips."
+    "total": 2732.3799743652344,
+    "reasoning": "Microsoft's diversified services and cloud growth make it a solid long-term investment despite recent volatility."
   },
   {
     "date": "2026-06-11",
     "symbol": "NVDA",
     "action": "BUY",
-    "shares": 4,
+    "shares": 5,
     "price": 204.8699951171875,
-    "total": 819.47998046875,
-    "reasoning": "Despite recent downturns, NVDA is a leader in the semiconductor industry and has growth potential driven by AI and gaming."
+    "total": 1024.3499755859375,
+    "reasoning": "NVIDIA is a leader in AI and gaming, and recent price declines present a chance to enter before potential market rebounds."
   },
   {
     "date": "2026-06-11",
     "symbol": "TSLA",
     "action": "BUY",
-    "shares": 2,
+    "shares": 4,
     "price": 399.1499938964844,
-    "total": 798.2999877929688,
-    "reasoning": "TSLA is a growth stock with high volatility; it presents an opportunity for upside despite its recent losses."
+    "total": 1596.5999755859375,
+    "reasoning": "Tesla has seen a pullback and is still poised for growth in the electric vehicle sector."
+  },
+  {
+    "date": "2026-06-11",
+    "symbol": "UNH",
+    "action": "BUY",
+    "shares": 3,
+    "price": 405.54998779296875,
+    "total": 1216.6499633789062,
+    "reasoning": "UnitedHealth is a strong player in the healthcare sector with consistent performance and dividends."
   }
 ]

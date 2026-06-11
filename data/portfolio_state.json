@@ -1,0 +1,60 @@
+{
+  "date": "2026-06-11",
+  "cash": 932514.2191772461,
+  "positions": [
+    {
+      "symbol": "HD",
+      "shares": 100,
+      "avg_cost": 326.010009765625,
+      "current_price": 326.010009765625
+    },
+    {
+      "symbol": "JNJ",
+      "shares": 50,
+      "avg_cost": 238.3300018310547,
+      "current_price": 238.3300018310547
+    },
+    {
+      "symbol": "PG",
+      "shares": 50,
+      "avg_cost": 148.33999633789062,
+      "current_price": 148.33999633789062
+    },
+    {
+      "symbol": "WMT",
+      "shares": 50,
+      "avg_cost": 120.5,
+      "current_price": 120.5
+    },
+    {
+      "symbol": "AAPL",
+      "shares": 10,
+      "avg_cost": 295.6300048828125,
+      "current_price": 295.6300048828125
+    },
+    {
+      "symbol": "MSFT",
+      "shares": 7,
+      "avg_cost": 390.3399963378906,
+      "current_price": 390.3399963378906
+    },
+    {
+      "symbol": "NVDA",
+      "shares": 5,
+      "avg_cost": 204.8699951171875,
+      "current_price": 204.8699951171875
+    },
+    {
+      "symbol": "TSLA",
+      "shares": 4,
+      "avg_cost": 399.1499938964844,
+      "current_price": 399.1499938964844
+    },
+    {
+      "symbol": "UNH",
+      "shares": 3,
+      "avg_cost": 405.54998779296875,
+      "current_price": 405.54998779296875
+    }
+  ]
+}
