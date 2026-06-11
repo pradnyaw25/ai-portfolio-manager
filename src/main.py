@@ -9,6 +9,7 @@ from src.agents.researcher import ResearchAgent
 from src.agents.portfolio_manager import PortfolioManagerAgent
 from src.agents.tweet_generator import TweetGeneratorAgent
 from src.agents.risk_manager import RiskManagerAgent
+from src.agents.rebalance_checker import RebalanceChecker
 from src.models.prediction import Outlook, PortfolioDecision
 from src.simulator.portfolio_engine import PortfolioEngine
 from src.simulator.performance import PerformanceTracker
@@ -36,6 +37,7 @@ def run_daily_cycle():
 
     engine.mark_to_market(market_data)
 
+    # 1. Research
     researcher = ResearchAgent()
     research = researcher.analyze(
         holdings=engine.get_holdings(),
@@ -43,6 +45,7 @@ def run_daily_cycle():
         news_client=news_client,
     )
 
+    # 2. Decision
     manager = PortfolioManagerAgent()
     decisions = manager.decide(
         portfolio=engine.get_snapshot(),
@@ -50,6 +53,7 @@ def run_daily_cycle():
         benchmark=benchmark_client.get_sp500_performance(),
     )
 
+    # 3. Risk check
     risk_manager = RiskManagerAgent()
     risk_review = risk_manager.review(
         raw_trades=decisions.get("trades", []),
@@ -57,16 +61,30 @@ def run_daily_cycle():
         prices=research.get("prices", {}),
     )
 
-    trades = engine.execute_trades(risk_review.approved, market_data)
+    # 4. Rebalance check
+    rebalance = RebalanceChecker()
+    rebalance_result = rebalance.check(
+        portfolio=engine.get_snapshot(),
+        approved_trades=risk_review.approved,
+        prices=research.get("prices", {}),
+        research=research,
+    )
+    all_approved = risk_review.approved + rebalance_result.extra_trades
+
+    # 5. Execute
+    trades = engine.execute_trades(all_approved, market_data)
     for trade in trades:
         trade_store.save(trade)
 
+    # 6. Journal
     DecisionStore().save(
         portfolio=engine.get_snapshot(),
         raw_decision=decisions,
         approved=risk_review.approved,
         rejected=risk_review.rejected,
         executed=trades,
+        cash_thesis=rebalance_result.cash_thesis or decisions.get("cash_thesis"),
+        rebalance_trades=rebalance_result.extra_trades,
     )
 
     snapshot = engine.get_snapshot()

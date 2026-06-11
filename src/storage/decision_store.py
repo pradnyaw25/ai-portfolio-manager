@@ -26,6 +26,8 @@ class DecisionStore:
         approved: list[TradePrediction],
         rejected: list[Any],
         executed: list[Trade],
+        cash_thesis: str | None = None,
+        rebalance_trades: list[TradePrediction] | None = None,
     ) -> None:
         row = {
             "date": date.today().isoformat(),
@@ -40,6 +42,8 @@ class DecisionStore:
             "approved_trades": approved,
             "rejected_trades": rejected,
             "executed_trades": executed,
+            "cash_thesis": cash_thesis,
+            "rebalance_trades": rebalance_trades or [],
         }
         with open(DECISIONS_FILE, "a") as f:
             f.write(json.dumps(row, default=self._json_default) + "\n")
