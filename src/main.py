@@ -53,6 +53,16 @@ def run_daily_cycle():
         engine.get_snapshot().total_value,
     )
 
+    for symbol, position in list(engine.positions.items())[:5]:
+        logger.info(
+            "Position %s shares=%s avg=$%.2f price=$%.2f value=$%.2f",
+            symbol,
+            position.shares,
+            position.avg_cost,
+            position.current_price,
+            position.market_value,
+        )
+
     # 1. Research
     context_builder = MarketContextBuilder()
     market_context = context_builder.build(

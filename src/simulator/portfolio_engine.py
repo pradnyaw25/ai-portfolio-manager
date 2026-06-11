@@ -119,12 +119,15 @@ class PortfolioEngine:
     def mark_to_market(self, market_data: MarketDataClient) -> None:
         for symbol, position in self.positions.items():
             try:
+                new_price = market_data.get_price(symbol)
+                if new_price is None or new_price <= 0:
+                    logger.warning("Invalid price for %s: %s — skipping", symbol, new_price)
+                    continue
                 old_price = position.current_price
-                position.current_price = market_data.get_price(symbol)
-                if old_price != position.current_price:
-                    logger.info(
-                        "Price update %s: $%.2f -> $%.2f",
-                        symbol, old_price, position.current_price,
-                    )
+                position.current_price = new_price
+                logger.info(
+                    "Mark-to-market %s: avg=$%.2f old=$%.2f new=$%.2f",
+                    symbol, position.avg_cost, old_price, new_price,
+                )
             except Exception as e:
                 logger.warning("Failed to update price for %s: %s", symbol, e)
