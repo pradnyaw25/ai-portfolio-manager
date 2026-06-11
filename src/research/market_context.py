@@ -5,8 +5,22 @@ from src.models.portfolio import PortfolioSnapshot
 
 
 WATCHLIST = [
-    "AAPL", "MSFT", "GOOGL", "AMZN", "NVDA", "META", "TSLA",
-    "JPM", "V", "UNH", "JNJ", "WMT", "PG", "MA", "HD",
+    "AAPL", "MSFT", "GOOGL", "AMZN", "META",
+    "NVDA", "AMD", "AVGO",
+
+    "TSLA",
+
+    "JPM", "V", "MA",
+
+    "UNH", "JNJ",
+
+    "WMT", "PG", "HD",
+
+    "XOM",
+
+    "CAT",
+
+    "SPY", "QQQ",
 ]
 
 
