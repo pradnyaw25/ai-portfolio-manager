@@ -14,7 +14,7 @@ ALPHA_VANTAGE_API_KEY = os.getenv("ALPHA_VANTAGE_API_KEY", "")
 FINNHUB_API_KEY = os.getenv("FINNHUB_API_KEY", "")
 NEWS_API_KEY = os.getenv("NEWS_API_KEY", "")
 
-INITIAL_CAPITAL = float(os.getenv("INITIAL_CAPITAL", "100000"))
+INITIAL_CAPITAL = float(os.getenv("INITIAL_CAPITAL", "1000000"))
 MAX_POSITION_SIZE = float(os.getenv("MAX_POSITION_SIZE", "0.10"))
 MAX_POSITIONS = int(os.getenv("MAX_POSITIONS", "20"))
 
