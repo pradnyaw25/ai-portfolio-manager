@@ -16,6 +16,7 @@ from src.simulator.performance import PerformanceTracker
 from src.reporting.markdown_report import MarkdownReportGenerator
 from src.reporting.public_exporter import PublicExporter
 from src.utils.logger import get_logger
+from src.simulator.benchmark_tracker import BenchmarkTracker
 
 logger = get_logger(__name__)
 
@@ -93,6 +94,9 @@ def run_daily_cycle():
 
     perf = PerformanceTracker()
     perf.record(snapshot)
+
+    benchmark_tracker = BenchmarkTracker()
+    benchmark_tracker.record(market_data)
 
     portfolio_decision = PortfolioDecision(
         reasoning=decisions.get("summary", ""),

@@ -26,4 +26,10 @@ MAX_DAILY_TURNOVER = float(os.getenv("MAX_DAILY_TURNOVER", "0.20"))
 TARGET_CASH_PCT = float(os.getenv("TARGET_CASH_PCT", "0.25"))
 REBALANCE_MIN_DEPLOY_PCT = float(os.getenv("REBALANCE_MIN_DEPLOY_PCT", "0.05"))
 
+BENCHMARK_SYMBOLS = [
+    s.strip()
+    for s in os.getenv("BENCHMARK_SYMBOLS", "SPY,QQQ").split(",")
+    if s.strip()
+]
+
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
