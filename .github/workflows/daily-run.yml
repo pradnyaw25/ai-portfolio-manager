@@ -1,0 +1,47 @@
+name: Daily Portfolio Run
+
+on:
+  schedule:
+    # 9:00 PM UTC
+    - cron: "0 21 * * *"
+
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Install dependencies
+        run: |
+          pip install -U pip
+          pip install -e .
+
+      - name: Run portfolio manager
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          python -m src.main
+
+      - name: Commit updated public files
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+
+          git add public data reports
+
+          git diff --staged --quiet || \
+          git commit -m "Daily portfolio update"
+
+      - name: Push changes
+        run: |
+          git push
