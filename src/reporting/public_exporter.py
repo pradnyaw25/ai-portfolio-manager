@@ -85,7 +85,7 @@ class PublicExporter:
         (PUBLIC_DIR / "latest_report.md").write_text(report_markdown)
 
     def _copy_history_files(self) -> None:
-        for filename in ["portfolio_history.csv", "trades.csv", "benchmark_history.csv"]:
+        for filename in ["portfolio_history.csv", "trades.csv", "benchmark_history.csv", "decisions.jsonl"]:
             src = DATA_DIR / filename
             if src.exists():
                 shutil.copy(src, PUBLIC_DIR / filename)

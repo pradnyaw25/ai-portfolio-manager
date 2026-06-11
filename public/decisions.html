@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Decision Journal — AI Portfolio Manager</title>
+  <meta charset="UTF-8" />
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+      line-height: 1.5;
+      color: #222;
+    }
+    a { color: #222; }
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+    .date-header {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .meta {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+    h3 {
+      margin: 16px 0 8px;
+      font-size: 16px;
+    }
+    .section {
+      margin-bottom: 12px;
+    }
+    .trade {
+      border-left: 3px solid #2a7;
+      padding: 8px 12px;
+      margin-bottom: 8px;
+      background: #f9fdf9;
+      border-radius: 4px;
+    }
+    .trade.rejected {
+      border-left-color: #c44;
+      background: #fdf9f9;
+    }
+    .confidence {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .conf-high { background: #d4edda; color: #155724; }
+    .conf-med { background: #fff3cd; color: #856404; }
+    .conf-low { background: #f8d7da; color: #721c24; }
+    .sources {
+      font-size: 13px;
+      color: #888;
+    }
+    .cash-thesis {
+      border-left: 3px solid #f0ad4e;
+      padding: 8px 12px;
+      background: #fffdf5;
+      border-radius: 4px;
+      font-style: italic;
+    }
+    .muted { color: #666; }
+    .nav { margin-bottom: 20px; }
+    .nav a { margin-right: 16px; text-decoration: none; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="nav">
+    <a href="index.html">Dashboard</a>
+    <a href="decisions.html">Decision Journal</a>
+  </div>
+
+  <h1>Decision Journal</h1>
+  <p class="muted">Full audit trail of AI portfolio decisions, trade reasoning, and cash justifications.</p>
+
+  <div id="entries">Loading...</div>
+
+  <script>
+    const money = new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 0
+    });
+
+    function confClass(c) {
+      if (c >= 0.7) return "conf-high";
+      if (c >= 0.5) return "conf-med";
+      return "conf-low";
+    }
+
+    function renderTrade(t, rejected) {
+      const symbol = t.symbol || "???";
+      const action = t.action || "???";
+      const shares = t.shares || 0;
+      const confidence = t.confidence || 0;
+      const reason = t.reasoning || t.reason || "";
+      const risks = t.risks || [];
+      const sources = t.sources_used || [];
+      const rejectReason = t.reason_rejected || t.reason || "";
+
+      if (rejected) {
+        return `
+          <div class="trade rejected">
+            <strong>${action} ${shares} ${symbol}</strong>
+            <span class="confidence conf-low">${(confidence * 100).toFixed(0)}%</span>
+            <br /><span class="muted">Rejected: ${rejectReason}</span>
+          </div>
+        `;
+      }
+
+      let html = `
+        <div class="trade">
+          <strong>${action} ${shares} ${symbol}</strong>
+          <span class="confidence ${confClass(confidence)}">${(confidence * 100).toFixed(0)}%</span>
+          <br />${reason}
+      `;
+
+      if (risks.length > 0) {
+        html += `<br /><span class="muted">Risks: ${risks.join(", ")}</span>`;
+      }
+
+      if (sources.length > 0) {
+        html += `<br /><span class="sources">Sources: ${sources.join(", ")}</span>`;
+      }
+
+      html += `</div>`;
+      return html;
+    }
+
+    async function loadDecisions() {
+      const res = await fetch("./decisions.jsonl");
+      const text = await res.text();
+
+      const entries = text.trim().split("\n")
+        .filter(line => line.trim())
+        .map(line => JSON.parse(line))
+        .reverse();
+
+      const container = document.getElementById("entries");
+
+      if (entries.length === 0) {
+        container.textContent = "No decisions yet.";
+        return;
+      }
+
+      container.innerHTML = entries.map(entry => {
+        const decision = entry.raw_decision || {};
+        const portfolio = entry.portfolio || {};
+        const approved = entry.approved_trades || [];
+        const rejected = entry.rejected_trades || [];
+        const rebalance = entry.rebalance_trades || [];
+        const cashThesis = entry.cash_thesis || decision.cash_thesis || null;
+
+        let html = `<div class="card">`;
+        html += `<div class="date-header">${entry.date}</div>`;
+        html += `<div class="meta">
+          Portfolio: ${money.format(portfolio.total_value)} ·
+          Cash: ${money.format(portfolio.cash)} (${(portfolio.cash_pct * 100).toFixed(1)}%) ·
+          Positions: ${portfolio.positions}
+        </div>`;
+
+        if (decision.market_summary || decision.summary) {
+          html += `<div class="section">
+            <h3>Market Summary</h3>
+            <p>${decision.market_summary || decision.summary}</p>
+          </div>`;
+        }
+
+        if (decision.portfolio_assessment) {
+          html += `<div class="section">
+            <h3>Portfolio Assessment</h3>
+            <p>${decision.portfolio_assessment}</p>
+          </div>`;
+        }
+
+        if (decision.risk_assessment) {
+          html += `<div class="section">
+            <h3>Risk Assessment</h3>
+            <p>${decision.risk_assessment}</p>
+          </div>`;
+        }
+
+        if (cashThesis) {
+          html += `<div class="section">
+            <h3>Cash Thesis</h3>
+            <div class="cash-thesis">${cashThesis}</div>
+          </div>`;
+        }
+
+        if (approved.length > 0) {
+          html += `<div class="section"><h3>Approved Trades</h3>`;
+          html += approved.map(t => renderTrade(t, false)).join("");
+          html += `</div>`;
+        }
+
+        if (rebalance.length > 0) {
+          html += `<div class="section"><h3>Rebalance Trades</h3>`;
+          html += rebalance.map(t => renderTrade(t, false)).join("");
+          html += `</div>`;
+        }
+
+        if (rejected.length > 0) {
+          html += `<div class="section"><h3>Rejected Trades</h3>`;
+          html += rejected.map(t => renderTrade(t, true)).join("");
+          html += `</div>`;
+        }
+
+        if (approved.length === 0 && rebalance.length === 0 && rejected.length === 0) {
+          html += `<p class="muted">No trades proposed.</p>`;
+        }
+
+        html += `</div>`;
+        return html;
+      }).join("");
+    }
+
+    loadDecisions();
+  </script>
+</body>
+</html>
