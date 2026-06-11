@@ -54,6 +54,11 @@
   </div>
 
   <div class="card">
+    <h2>Cash Allocation</h2>
+    <canvas id="cash-chart"></canvas>
+  </div>
+
+  <div class="card">
     <h2>Performance</h2>
     <p>
       AI Portfolio: <strong id="portfolio-return">Loading...</strong><br />
@@ -226,6 +231,55 @@
           },
           scales: {
             y: {
+              ticks: {
+                callback: value => `${value}%`
+              }
+            }
+          }
+        }
+      });
+
+      const cashPcts = portfolioHistory.map(r => {
+        const total = Number(r.total_value);
+        const cash = Number(r.cash);
+        return total > 0 ? (cash / total) * 100 : 0;
+      });
+
+      new Chart(document.getElementById("cash-chart"), {
+        type: "line",
+        data: {
+          labels: portfolioHistory.map(r => r.date),
+          datasets: [
+            {
+              label: "Cash %",
+              data: cashPcts,
+              borderColor: "#f0ad4e",
+              backgroundColor: "rgba(240, 173, 78, 0.1)",
+              fill: true,
+            },
+            {
+              label: "Target Max (25%)",
+              data: cashPcts.map(() => 25),
+              borderColor: "#c44",
+              borderDash: [6, 4],
+              pointRadius: 0,
+              fill: false,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)}%`
+              }
+            }
+          },
+          scales: {
+            y: {
+              min: 0,
+              max: 100,
               ticks: {
                 callback: value => `${value}%`
               }
