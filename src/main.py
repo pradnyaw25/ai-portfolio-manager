@@ -1,13 +1,15 @@
 from src.config import INITIAL_CAPITAL
 from src.storage.portfolio_store import PortfolioStore
 from src.storage.trade_store import TradeStore
+from src.storage.decision_store import DecisionStore
 from src.data_sources.market_data import MarketDataClient
 from src.data_sources.news import NewsClient
 from src.data_sources.benchmarks import BenchmarkClient
 from src.agents.researcher import ResearchAgent
 from src.agents.portfolio_manager import PortfolioManagerAgent
 from src.agents.tweet_generator import TweetGeneratorAgent
-from src.models.prediction import Outlook, PortfolioDecision, TradePrediction
+from src.agents.risk_manager import RiskManagerAgent
+from src.models.prediction import Outlook, PortfolioDecision
 from src.simulator.portfolio_engine import PortfolioEngine
 from src.simulator.performance import PerformanceTracker
 from src.reporting.markdown_report import MarkdownReportGenerator
@@ -48,19 +50,24 @@ def run_daily_cycle():
         benchmark=benchmark_client.get_sp500_performance(),
     )
 
-    predictions = [
-        TradePrediction(
-            symbol=t["symbol"],
-            action=t["action"],
-            shares=t.get("shares", 0),
-            confidence=t.get("confidence", 0.5),
-            reasoning=t.get("reason", t.get("reasoning", "")),
-        )
-        for t in decisions["trades"]
-    ]
-    trades = engine.execute_trades(predictions, market_data)
+    risk_manager = RiskManagerAgent()
+    risk_review = risk_manager.review(
+        raw_trades=decisions.get("trades", []),
+        portfolio=engine.get_snapshot(),
+        prices=research.get("prices", {}),
+    )
+
+    trades = engine.execute_trades(risk_review.approved, market_data)
     for trade in trades:
         trade_store.save(trade)
+
+    DecisionStore().save(
+        portfolio=engine.get_snapshot(),
+        raw_decision=decisions,
+        approved=risk_review.approved,
+        rejected=risk_review.rejected,
+        executed=trades,
+    )
 
     snapshot = engine.get_snapshot()
     portfolio_store.save(snapshot)
@@ -70,7 +77,7 @@ def run_daily_cycle():
 
     portfolio_decision = PortfolioDecision(
         reasoning=decisions.get("summary", ""),
-        trades=predictions,
+        trades=risk_review.approved,
         outlook=Outlook(decisions["outlook"]) if "outlook" in decisions else Outlook.NEUTRAL,
         risk_assessment=decisions.get("risk_assessment", ""),
     )

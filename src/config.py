@@ -18,4 +18,7 @@ INITIAL_CAPITAL = float(os.getenv("INITIAL_CAPITAL", "100000"))
 MAX_POSITION_SIZE = float(os.getenv("MAX_POSITION_SIZE", "0.10"))
 MAX_POSITIONS = int(os.getenv("MAX_POSITIONS", "20"))
 
+MIN_TRADE_CONFIDENCE = float(os.getenv("MIN_TRADE_CONFIDENCE", "0.60"))
+MAX_DAILY_TURNOVER = float(os.getenv("MAX_DAILY_TURNOVER", "0.20"))
+
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")

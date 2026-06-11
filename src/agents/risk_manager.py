@@ -1,0 +1,129 @@
+from dataclasses import dataclass
+from typing import Any
+
+from src.config import MAX_DAILY_TURNOVER, MIN_TRADE_CONFIDENCE
+from src.models.portfolio import PortfolioSnapshot
+from src.models.prediction import TradePrediction
+from src.utils.logger import get_logger
+
+logger = get_logger(__name__)
+
+VALID_ACTIONS = {"BUY", "SELL", "HOLD"}
+
+
+@dataclass
+class RejectedTrade:
+    symbol: str
+    action: str
+    shares: int
+    reason: str
+
+
+@dataclass
+class RiskReview:
+    approved: list[TradePrediction]
+    rejected: list[RejectedTrade]
+
+
+class RiskManagerAgent:
+    """Deterministic guardrail layer between the LLM and the simulator.
+
+    The portfolio manager can be creative. This class should be boring:
+    normalize the LLM output, reject malformed/low-confidence trades, and cap
+    total daily turnover before orders reach the execution engine.
+    """
+
+    def review(
+        self,
+        raw_trades: list[dict[str, Any]],
+        portfolio: PortfolioSnapshot,
+        prices: dict[str, float],
+    ) -> RiskReview:
+        approved: list[TradePrediction] = []
+        rejected: list[RejectedTrade] = []
+        remaining_turnover = portfolio.total_value * MAX_DAILY_TURNOVER
+
+        for raw in raw_trades:
+            symbol = str(raw.get("symbol", "")).upper().strip()
+            action = str(raw.get("action", "")).upper().strip()
+            shares = self._parse_int(raw.get("shares", 0))
+            confidence = self._parse_float(raw.get("confidence", 0.5))
+            reasoning = str(raw.get("reason", raw.get("reasoning", ""))).strip()
+
+            base_rejection = self._base_rejection_reason(
+                symbol=symbol,
+                action=action,
+                shares=shares,
+                confidence=confidence,
+                prices=prices,
+            )
+            if base_rejection:
+                rejected.append(RejectedTrade(symbol, action, shares, base_rejection))
+                continue
+
+            if action == "HOLD":
+                continue
+
+            price = prices[symbol]
+            requested_value = shares * price
+            if requested_value > remaining_turnover:
+                capped_shares = int(remaining_turnover / price)
+                if capped_shares <= 0:
+                    rejected.append(
+                        RejectedTrade(symbol, action, shares, "daily turnover limit already reached")
+                    )
+                    continue
+                logger.info(
+                    "Capped %s %s from %s shares to %s shares due to daily turnover limit",
+                    action,
+                    symbol,
+                    shares,
+                    capped_shares,
+                )
+                shares = capped_shares
+                requested_value = shares * price
+
+            remaining_turnover -= requested_value
+            approved.append(
+                TradePrediction(
+                    symbol=symbol,
+                    action=action,
+                    shares=shares,
+                    confidence=confidence,
+                    reasoning=reasoning,
+                )
+            )
+
+        return RiskReview(approved=approved, rejected=rejected)
+
+    def _base_rejection_reason(
+        self,
+        symbol: str,
+        action: str,
+        shares: int,
+        confidence: float,
+        prices: dict[str, float],
+    ) -> str | None:
+        if not symbol:
+            return "missing symbol"
+        if action not in VALID_ACTIONS:
+            return f"invalid action: {action}"
+        if action != "HOLD" and shares <= 0:
+            return "non-HOLD trade must have positive shares"
+        if confidence < MIN_TRADE_CONFIDENCE:
+            return f"confidence {confidence:.2f} below minimum {MIN_TRADE_CONFIDENCE:.2f}"
+        if action != "HOLD" and symbol not in prices:
+            return "missing market price"
+        return None
+
+    def _parse_int(self, value: Any) -> int:
+        try:
+            return int(value)
+        except (TypeError, ValueError):
+            return 0
+
+    def _parse_float(self, value: Any) -> float:
+        try:
+            return float(value)
+        except (TypeError, ValueError):
+            return 0.0
