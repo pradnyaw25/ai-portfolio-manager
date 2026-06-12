@@ -34,6 +34,42 @@
     .muted {
       color: #666;
     }
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+    .hero-stat {
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+    }
+    .hero-value {
+      font-size: 52px;
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -1px;
+    }
+    .hero-label {
+      font-size: 14px;
+      color: #666;
+      margin-top: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .hero-sub {
+      font-size: 13px;
+      color: #888;
+      margin-top: 4px;
+    }
+    .pos { color: #1a8a3a; }
+    .neg { color: #c0392b; }
+    @media (max-width: 600px) {
+      .hero { grid-template-columns: 1fr; }
+      .hero-value { font-size: 42px; }
+    }
   </style>
 </head>
 <body>
@@ -47,6 +83,19 @@
   <p class="muted">
     A simulated $1M AI-managed portfolio. Not investment advice.
   </p>
+
+  <div class="hero">
+    <div class="hero-stat">
+      <div class="hero-value" id="alpha-value">…</div>
+      <div class="hero-label">Alpha vs S&amp;P 500</div>
+      <div class="hero-sub" id="alpha-sub">since inception</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-value" id="winrate-value">…</div>
+      <div class="hero-label">Prediction Win Rate</div>
+      <div class="hero-sub" id="winrate-sub">vs SPY over 30 days</div>
+    </div>
+  </div>
 
   <div class="card">
     <h2>Portfolio</h2>
@@ -201,6 +250,42 @@
       document.getElementById("portfolio-return").textContent = pct(portfolioReturn);
       document.getElementById("spy-return").textContent = pct(spyReturn);
       document.getElementById("qqq-return").textContent = pct(qqqReturn);
+
+      // Hero metric 1: Alpha vs S&P 500
+      const alpha = portfolioReturn - spyReturn;
+      const alphaEl = document.getElementById("alpha-value");
+      const signedPct = (x) => `${x >= 0 ? "+" : ""}${(x * 100).toFixed(2)}%`;
+      alphaEl.textContent = signedPct(alpha);
+      alphaEl.className = `hero-value ${alpha >= 0 ? "pos" : "neg"}`;
+      document.getElementById("alpha-sub").textContent =
+        `Portfolio ${signedPct(portfolioReturn)} vs SPY ${signedPct(spyReturn)}`;
+
+      // Hero metric 2: Prediction win rate
+      try {
+        const predRes = await fetch("./predictions.jsonl");
+        const predText = await predRes.text();
+        const predictions = predText.trim().split("\n")
+          .filter(line => line.trim())
+          .map(line => JSON.parse(line));
+
+        const scored = predictions.filter(p => p.status === "scored" && p.result);
+        const wins = scored.filter(p => p.result.outperformed).length;
+        const winEl = document.getElementById("winrate-value");
+
+        if (scored.length === 0) {
+          winEl.textContent = "—";
+          document.getElementById("winrate-sub").textContent =
+            `${predictions.length} open · none scored yet`;
+        } else {
+          const rate = wins / scored.length;
+          winEl.textContent = `${(rate * 100).toFixed(0)}%`;
+          winEl.className = `hero-value ${rate >= 0.5 ? "pos" : "neg"}`;
+          document.getElementById("winrate-sub").textContent =
+            `${wins} of ${scored.length} calls beat SPY`;
+        }
+      } catch (e) {
+        document.getElementById("winrate-value").textContent = "—";
+      }
 
       new Chart(document.getElementById("performance-chart"), {
         type: "line",

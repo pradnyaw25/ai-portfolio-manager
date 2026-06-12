@@ -11,7 +11,13 @@ HISTORY_FILE = DATA_DIR / "portfolio_history.csv"
 class PerformanceTracker:
     def record(self, snapshot: PortfolioSnapshot) -> None:
         history = self._load_history()
+        today = snapshot.date.isoformat()
 
+        # Upsert: drop any existing row(s) for today so reruns don't pile up.
+        if not history.empty and "date" in history.columns:
+            history = history[history["date"].astype(str) != today]
+
+        # prev_value is the most recent *prior* day; first_value is inception.
         prev_value = history["total_value"].iloc[-1] if not history.empty else snapshot.total_value
         daily_return = (snapshot.total_value / prev_value) - 1 if prev_value > 0 else 0.0
 
@@ -19,7 +25,7 @@ class PerformanceTracker:
         cumulative_return = (snapshot.total_value / first_value) - 1 if first_value > 0 else 0.0
 
         new_row = pd.DataFrame([{
-            "date": snapshot.date.isoformat(),
+            "date": today,
             "total_value": snapshot.total_value,
             "cash": snapshot.cash,
             "invested": snapshot.invested_value,
