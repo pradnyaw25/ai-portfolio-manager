@@ -2,55 +2,37 @@
   {
     "date": "2026-06-12",
     "symbol": "AAPL",
-    "action": "SELL",
-    "shares": 100,
-    "price": 291.0400085449219,
-    "total": 29104.000854492188,
-    "reasoning": "AAPL's recent performance has been weak, with a decline of 5% over 5 days. Liquidity from this sale can be reallocated to more promising opportunities."
+    "action": "BUY",
+    "shares": 82,
+    "price": 291.1300048828125,
+    "total": 23872.660400390625,
+    "reasoning": "Apple's strong product lineup and robust market position support long-term growth."
   },
   {
     "date": "2026-06-12",
-    "symbol": "MSFT",
+    "symbol": "GOOGL",
     "action": "BUY",
-    "shares": 5,
-    "price": 387.1050109863281,
-    "total": 1935.5250549316406,
-    "reasoning": "Although MSFT has seen a downturn, its prospects remain positive with upcoming product launches, providing a chance to enter at a lower price."
-  },
-  {
-    "date": "2026-06-12",
-    "symbol": "AAPL",
-    "action": "BUY",
-    "shares": 255,
-    "price": 291.0400085449219,
-    "total": 74215.20217895508,
-    "reasoning": "AAPL has strong fundamentals and continues to innovate. Expectations are positive, making it a safer long-term investment."
+    "shares": 66,
+    "price": 359.67999267578125,
+    "total": 23738.879516601562,
+    "reasoning": "Google's diversified revenue streams and dominance in digital advertising are poised for continued growth."
   },
   {
     "date": "2026-06-12",
     "symbol": "AMZN",
     "action": "BUY",
-    "shares": 314,
-    "price": 236.73500061035156,
-    "total": 74334.79019165039,
-    "reasoning": "AMZN is recovering post-pandemic disruptions, with strong growth potential in e-commerce and cloud services."
+    "shares": 100,
+    "price": 238.5500030517578,
+    "total": 23855.00030517578,
+    "reasoning": "Amazon's recent ventures into new markets and expansion in the cloud computing space indicate strong future performance."
   },
   {
     "date": "2026-06-12",
     "symbol": "NVDA",
     "action": "BUY",
-    "shares": 361,
-    "price": 204.8800048828125,
-    "total": 73961.68176269531,
-    "reasoning": "NVDA is positioned well in the growing AI and gaming markets, with strong recent performance."
-  },
-  {
-    "date": "2026-06-12",
-    "symbol": "JNJ",
-    "action": "BUY",
-    "shares": 123,
-    "price": 239.86000061035156,
-    "total": 29502.780075073242,
-    "reasoning": "JNJ is a solid holding with stability, and its diversified health care products make it a reliable choice."
+    "shares": 116,
+    "price": 205.19000244140625,
+    "total": 23802.040283203125,
+    "reasoning": "NVIDIA's leadership in GPU technology and AI applications positions it well for future growth in multiple sectors."
   }
 ]

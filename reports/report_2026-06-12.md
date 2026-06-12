@@ -1,9 +1,9 @@
 # Portfolio Report — 2026-06-12
 
 ## Summary
-- **Total Value:** $998,714.70
-- **Cash:** $369,791.02 (37.0%)
-- **Invested:** $628,923.68
+- **Total Value:** $1,000,394.34
+- **Cash:** $274,522.44 (27.4%)
+- **Invested:** $725,871.91
 - **Positions:** 14
 - **Outlook:** BULLISH
 
@@ -11,34 +11,32 @@
 
 | Symbol | Shares | Avg Cost | Current | P&L % |
 |--------|--------|----------|---------|-------|
-| NVDA | 873 | $205.90 | $204.88 | -0.5% |
-| AAPL | 526 | $292.08 | $291.04 | -0.4% |
-| AMZN | 459 | $237.49 | $236.74 | -0.3% |
-| JNJ | 447 | $239.30 | $239.86 | 0.2% |
-| HD | 100 | $326.01 | $328.78 | 0.8% |
-| PG | 60 | $148.34 | $149.43 | 0.7% |
-| MSFT | 21 | $389.57 | $387.11 | -0.6% |
-| GOOGL | 20 | $357.77 | $361.59 | 1.1% |
-| V | 22 | $319.05 | $322.27 | 1.0% |
-| META | 10 | $568.43 | $566.44 | -0.4% |
-| MA | 8 | $486.51 | $489.32 | 0.6% |
-| JPM | 10 | $313.49 | $319.46 | 1.9% |
-| TSLA | 7 | $399.15 | $400.76 | 0.4% |
-| UNH | 3 | $405.55 | $408.03 | 0.6% |
+| NVDA | 989 | $205.82 | $205.19 | -0.3% |
+| AAPL | 608 | $291.95 | $291.13 | -0.3% |
+| AMZN | 559 | $237.68 | $238.55 | 0.4% |
+| JNJ | 447 | $239.30 | $240.87 | 0.7% |
+| HD | 100 | $326.01 | $328.39 | 0.7% |
+| GOOGL | 86 | $359.24 | $359.68 | 0.1% |
+| PG | 60 | $148.34 | $149.61 | 0.9% |
+| MSFT | 21 | $389.57 | $390.74 | 0.3% |
+| V | 22 | $319.05 | $322.39 | 1.0% |
+| META | 10 | $568.43 | $566.98 | -0.3% |
+| MA | 8 | $486.51 | $489.98 | 0.7% |
+| JPM | 10 | $313.49 | $320.72 | 2.3% |
+| TSLA | 7 | $399.15 | $406.43 | 1.8% |
+| UNH | 3 | $405.55 | $408.52 | 0.7% |
 
 ## Today's Trades
 
-- **SELL** 100 AAPL @ $291.04 — AAPL's recent performance has been weak, with a decline of 5% over 5 days. Liquidity from this sale can be reallocated to more promising opportunities.
-- **BUY** 5 MSFT @ $387.11 — Although MSFT has seen a downturn, its prospects remain positive with upcoming product launches, providing a chance to enter at a lower price.
-- **BUY** 255 AAPL @ $291.04 — AAPL has strong fundamentals and continues to innovate. Expectations are positive, making it a safer long-term investment.
-- **BUY** 314 AMZN @ $236.74 — AMZN is recovering post-pandemic disruptions, with strong growth potential in e-commerce and cloud services.
-- **BUY** 361 NVDA @ $204.88 — NVDA is positioned well in the growing AI and gaming markets, with strong recent performance.
-- **BUY** 123 JNJ @ $239.86 — JNJ is a solid holding with stability, and its diversified health care products make it a reliable choice.
+- **BUY** 82 AAPL @ $291.13 — Apple's strong product lineup and robust market position support long-term growth.
+- **BUY** 66 GOOGL @ $359.68 — Google's diversified revenue streams and dominance in digital advertising are poised for continued growth.
+- **BUY** 100 AMZN @ $238.55 — Amazon's recent ventures into new markets and expansion in the cloud computing space indicate strong future performance.
+- **BUY** 116 NVDA @ $205.19 — NVIDIA's leadership in GPU technology and AI applications positions it well for future growth in multiple sectors.
 
 ## Analysis
 
-Overall, maintaining a bullish outlook with a focus on potential tech recovery while addressing underperforming holdings through selling and reinvesting into stronger prospects.
+The portfolio maintains a solid cash position while balancing between holds on current positions in AAPL and NVDA. The market's bullish outlook suggests potential for growth, requiring careful monitoring for optimal action.
 
 ## Risk Assessment
 
-The portfolio is currently exposed to notable underperformers, particularly in high-profile tech stocks like AAPL and NVDA, which may weigh down overall returns. Balancing this with strong positions in defensive stocks like JNJ and PG can offset potential volatility.
+While the overall market appears strong, the heavy cash position indicates a cautious approach. Several holdings are showing minor declines, particularly in tech stocks, which could pose risks if the market shifts unexpectedly.
