@@ -2,8 +2,8 @@ name: Daily Portfolio Run
 
 on:
   schedule:
-    # 9:00 PM UTC
-    - cron: "0 21 * * *"
+    # Every hour at minute 7
+    - cron: "7 * * * *"
 
   workflow_dispatch:
 
