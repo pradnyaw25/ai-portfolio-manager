@@ -30,3 +30,9 @@ date,symbol,action,shares,price,total,reasoning
 2026-06-11,V,BUY,5,319.05,1595.25,"Visa is a leader in digital payments with a strong market position, and with global payment trends shifting, it's a solid addition to the portfolio."
 2026-06-11,MA,BUY,3,486.51,1459.53,Mastercard benefits from the same trends as Visa; investing in both payment giants enhances portfolio diversification.
 2026-06-11,MSFT,BUY,3,390.34,1171.02,Microsoft shows resilience and growth potential in cloud computing and software; adding to this position can balance the tech exposure.
+2026-06-12,AAPL,SELL,10,292.83,2928.30,AAPL has shown a negative return in the last 5 days and engages in price fluctuations; selling may free up capital for better opportunities.
+2026-06-12,WMT,SELL,50,119.74,5987.00,WMT has consistently performed poorly with a recent negative trend; reallocating funds could enhance the portfolio's value.
+2026-06-12,AAPL,BUY,341,292.83,99855.03,"AAPL has strong fundamentals, high brand loyalty, and a consistent revenue stream. Current market sentiment is bullish."
+2026-06-12,NVDA,BUY,483,206.73,99850.59,"NVDA continues to dominate the AI and gaming sectors, with substantial growth potential. Positive market trends are amplifying interest."
+2026-06-12,JNJ,BUY,264,239.26,63164.64,"JNJ is a well-established company in the healthcare sector, making it a stable investment amidst market volatility."
+2026-06-12,AMZN,BUY,105,238.22,25013.10,"AMZN's e-commerce and cloud services continue to grow, and the stock is currently undervalued in light of future prospects."
