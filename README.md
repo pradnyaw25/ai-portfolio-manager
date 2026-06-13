@@ -49,6 +49,35 @@ web/               - Frontend dashboard experiments
 
 All configuration is managed via environment variables. See `.env.example` for required keys.
 
+### Qdrant Memory Store
+
+The memory layer uses Qdrant for vector search over prior reports. By default, local development uses:
+
+```bash
+QDRANT_URL=http://localhost:6333
+```
+
+To run Qdrant locally:
+
+```bash
+docker run -p 6333:6333 qdrant/qdrant
+```
+
+Then ingest existing reports:
+
+```bash
+python -m src.memory.ingest
+```
+
+For Qdrant Cloud, set both values in `.env`:
+
+```bash
+QDRANT_URL=https://your-cluster-url
+QDRANT_API_KEY=your-qdrant-cloud-api-key
+```
+
+Do not commit `.env` or real API keys.
+
 ## License
 
 MIT
