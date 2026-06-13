@@ -86,6 +86,11 @@
       margin-bottom: 4px;
     }
     .muted { color: #666; }
+    .updated-at {
+      color: #666;
+      font-size: 13px;
+      margin-top: -8px;
+    }
     .nav { margin-bottom: 20px; }
     .nav a { margin-right: 16px; text-decoration: none; font-weight: 600; }
   </style>
@@ -99,6 +104,7 @@
 
   <h1>Decision Journal</h1>
   <p class="muted">Full audit trail of AI portfolio decisions, trade reasoning, and cash justifications.</p>
+  <p class="updated-at" id="updated-at">Updated at: Loading...</p>
 
   <div id="entries">Loading...</div>
 
@@ -215,6 +221,28 @@
       `;
     }
 
+    function formatUpdatedAt(value) {
+      if (!value) return "Unknown";
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return value;
+      return date.toLocaleString(undefined, {
+        dateStyle: "medium",
+        timeStyle: "short",
+        timeZoneName: "short",
+      });
+    }
+
+    async function loadUpdatedAt() {
+      try {
+        const res = await fetch("./site_meta.json");
+        const meta = await res.json();
+        document.getElementById("updated-at").textContent =
+          `Updated at: ${formatUpdatedAt(meta.updated_at)}`;
+      } catch (e) {
+        document.getElementById("updated-at").textContent = "Updated at: Unknown";
+      }
+    }
+
     async function loadDecisions() {
       const res = await fetch("./decisions.jsonl");
       const text = await res.text();
@@ -318,6 +346,7 @@
       }).join("");
     }
 
+    loadUpdatedAt();
     loadDecisions();
   </script>
 </body>

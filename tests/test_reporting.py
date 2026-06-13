@@ -1,8 +1,12 @@
+import json
 from datetime import date
+from datetime import datetime
+
 from src.models.portfolio import PortfolioSnapshot, Position
 from src.models.trade import Trade, TradeAction
 from src.models.prediction import PortfolioDecision, Outlook
 from src.reporting.markdown_report import MarkdownReportGenerator
+from src.reporting.public_exporter import PublicExporter
 
 
 def test_markdown_report_generation():
@@ -42,3 +46,14 @@ def test_report_with_no_trades():
     report = gen._build_report(portfolio, [], {}, decision)
 
     assert "No trades executed today" in report
+
+
+def test_public_exporter_writes_site_metadata(tmp_path, monkeypatch):
+    monkeypatch.setattr("src.reporting.public_exporter.PUBLIC_DIR", tmp_path)
+
+    PublicExporter()._write_site_meta()
+
+    payload = json.loads((tmp_path / "site_meta.json").read_text())
+
+    assert payload["updated_at"].endswith("Z")
+    datetime.fromisoformat(payload["updated_at"].replace("Z", "+00:00"))

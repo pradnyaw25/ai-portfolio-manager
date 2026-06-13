@@ -54,6 +54,11 @@
     .muted {
       color: #666;
     }
+    .updated-at {
+      color: #666;
+      font-size: 13px;
+      margin-top: -8px;
+    }
     .hero {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -127,6 +132,7 @@
   <p class="muted">
     A simulated $1M AI-managed portfolio. Not investment advice.
   </p>
+  <p class="updated-at" id="updated-at">Updated at: Loading...</p>
 
   <div class="hero">
     <div class="hero-stat">
@@ -230,6 +236,28 @@
       if (!start) return 0;
 
       return end / start - 1;
+    }
+
+    function formatUpdatedAt(value) {
+      if (!value) return "Unknown";
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return value;
+      return date.toLocaleString(undefined, {
+        dateStyle: "medium",
+        timeStyle: "short",
+        timeZoneName: "short",
+      });
+    }
+
+    async function loadUpdatedAt() {
+      try {
+        const res = await fetch("./site_meta.json");
+        const meta = await res.json();
+        document.getElementById("updated-at").textContent =
+          `Updated at: ${formatUpdatedAt(meta.updated_at)}`;
+      } catch (e) {
+        document.getElementById("updated-at").textContent = "Updated at: Unknown";
+      }
     }
 
     async function loadDashboard() {
@@ -468,6 +496,7 @@
       });
     }
 
+    loadUpdatedAt();
     loadDashboard();
   </script>
 </body>

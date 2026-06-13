@@ -1,6 +1,6 @@
 import json
 import shutil
-from datetime import date
+from datetime import UTC, date, datetime
 from pathlib import Path
 
 from src.config import DATA_DIR, REPORTS_DIR
@@ -25,6 +25,7 @@ class PublicExporter:
         self._write_latest_trades(trades)
         self._write_latest_tweet(tweet, snapshot)
         self._write_latest_report(report_markdown)
+        self._write_site_meta()
         self._copy_history_files()
 
     def _write_portfolio(self, snapshot: PortfolioSnapshot) -> None:
@@ -83,6 +84,13 @@ class PublicExporter:
 
     def _write_latest_report(self, report_markdown: str) -> None:
         (PUBLIC_DIR / "latest_report.md").write_text(report_markdown)
+
+    def _write_site_meta(self) -> None:
+        payload = {
+            "updated_at": datetime.now(UTC).isoformat().replace("+00:00", "Z"),
+        }
+
+        (PUBLIC_DIR / "site_meta.json").write_text(json.dumps(payload, indent=2))
 
     def _copy_history_files(self) -> None:
         for filename in ["portfolio_history.csv", "trades.csv", "benchmark_history.csv", "decisions.jsonl", "predictions.jsonl"]:

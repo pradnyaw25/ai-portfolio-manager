@@ -16,6 +16,11 @@
     .nav { margin-bottom: 20px; }
     .nav a { margin-right: 16px; text-decoration: none; font-weight: 600; }
     .muted { color: #666; }
+    .updated-at {
+      color: #666;
+      font-size: 13px;
+      margin-top: -8px;
+    }
     .stats {
       display: flex;
       gap: 24px;
@@ -71,6 +76,7 @@
 
   <h1>Prediction Tracker</h1>
   <p class="muted">Every BUY generates a testable prediction: will it outperform SPY over 30 days?</p>
+  <p class="updated-at" id="updated-at">Updated at: Loading...</p>
 
   <div class="stats" id="stats"></div>
 
@@ -107,6 +113,28 @@
       if (c >= 0.7) return "conf-high";
       if (c >= 0.5) return "conf-med";
       return "conf-low";
+    }
+
+    function formatUpdatedAt(value) {
+      if (!value) return "Unknown";
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return value;
+      return date.toLocaleString(undefined, {
+        dateStyle: "medium",
+        timeStyle: "short",
+        timeZoneName: "short",
+      });
+    }
+
+    async function loadUpdatedAt() {
+      try {
+        const res = await fetch("./site_meta.json");
+        const meta = await res.json();
+        document.getElementById("updated-at").textContent =
+          `Updated at: ${formatUpdatedAt(meta.updated_at)}`;
+      } catch (e) {
+        document.getElementById("updated-at").textContent = "Updated at: Unknown";
+      }
     }
 
     async function loadPredictions() {
@@ -167,6 +195,7 @@
       }).join("");
     }
 
+    loadUpdatedAt();
     loadPredictions();
   </script>
 </body>
