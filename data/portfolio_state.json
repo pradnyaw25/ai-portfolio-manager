@@ -1,6 +1,6 @@
 {
   "date": "2026-06-13",
-  "cash": 278937.0403289795,
+  "cash": 283900.2404022217,
   "positions": [
     {
       "symbol": "HD",
@@ -22,7 +22,7 @@
     },
     {
       "symbol": "AAPL",
-      "shares": 607,
+      "shares": 597,
       "avg_cost": 291.8724036764023,
       "current_price": 291.1300048828125
     },
@@ -34,7 +34,7 @@
     },
     {
       "symbol": "NVDA",
-      "shares": 759,
+      "shares": 749,
       "avg_cost": 205.81955494509427,
       "current_price": 205.19000244140625
     },

@@ -1,9 +1,9 @@
 {
   "date": "2026-06-13",
   "total_value": 1000394.344543457,
-  "cash": 278937.0403289795,
-  "cash_pct": 0.27882708638889403,
-  "invested_value": 721457.3042144775,
+  "cash": 283900.2404022217,
+  "cash_pct": 0.2837883300227804,
+  "invested_value": 716494.1041412354,
   "positions": [
     {
       "symbol": "HD",
@@ -31,11 +31,11 @@
     },
     {
       "symbol": "AAPL",
-      "shares": 607,
+      "shares": 597,
       "avg_cost": 291.8724036764023,
       "current_price": 291.1300048828125,
-      "market_value": 176715.9129638672,
-      "return_pct": -0.0025435730964579327
+      "market_value": 173804.61291503906,
+      "return_pct": -0.0025435730964580403
     },
     {
       "symbol": "MSFT",
@@ -47,11 +47,11 @@
     },
     {
       "symbol": "NVDA",
-      "shares": 759,
+      "shares": 749,
       "avg_cost": 205.81955494509427,
       "current_price": 205.19000244140625,
-      "market_value": 155739.21185302734,
-      "return_pct": -0.003058759425730672
+      "market_value": 153687.31182861328,
+      "return_pct": -0.0030587594257307452
     },
     {
       "symbol": "TSLA",
