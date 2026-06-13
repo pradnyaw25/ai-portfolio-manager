@@ -78,6 +78,18 @@ QDRANT_API_KEY=your-qdrant-cloud-api-key
 
 Do not commit `.env` or real API keys.
 
+## Roadmap
+
+Near-term work is focused on making the daily cycle easier to observe and safer to evolve:
+
+- Add `run_id` tracking across logs, journals, trades, reports, and public exports.
+- Add a public run status dashboard for latest run health, warnings/errors, memory retrieval, trades, and ending portfolio value.
+- Make Qdrant memory retrieval failure-tolerant so the cycle can continue without memory.
+- Add sector/correlation diversification checks to the risk manager.
+- Add deterministic stop-loss and take-profit SELL proposals.
+
+The eventual migration target is LangGraph. The planned path is to first split `src/main.py` into explicit workflow step functions, introduce a typed `PortfolioRunState`, then recreate the current daily cycle as a linear LangGraph graph before adding conditional routing and an optional human approval checkpoint before execution.
+
 ## License
 
 MIT

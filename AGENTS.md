@@ -43,6 +43,16 @@ The system uses LLM agents to analyze markets, make trade decisions, and manage 
 
 ## Future Tasks
 
+### LangGraph Migration Path
+- [ ] **Run IDs and observability** — Add a `run_id` to each daily cycle and include it in logs, decisions, trades, reports, public exports, and generated artifacts.
+- [ ] **Run status dashboard** — Add a public run status view showing latest run time, success/failure, memory chunks retrieved, trades executed, warnings/errors, and ending portfolio value.
+- [ ] **Memory failure tolerance** — If Qdrant or embeddings are unavailable, continue the daily cycle without memory and journal `memory_status` / `memory_error`.
+- [ ] **Step-function refactor** — Split `src/main.py` into explicit workflow steps: load portfolio, mark to market, build research context, retrieve memory, decide trades, review risk, check rebalance, execute trades, journal, and export.
+- [ ] **Typed run state** — Introduce a `PortfolioRunState` dataclass or Pydantic model carrying snapshot, market context, memory context, raw decision, risk review, rebalance result, executed trades, and errors.
+- [ ] **First LangGraph graph** — Recreate the current daily cycle as a linear LangGraph workflow using the step functions and typed state.
+- [ ] **Conditional LangGraph routing** — Add graph branches for memory unavailable, high cash rebalance, no approved trades, and partial execution failures.
+- [ ] **Human approval checkpoint** — Add an optional human-in-the-loop checkpoint after risk review and before execution.
+
 ### High Priority
 - [ ] **Sector/correlation diversification** — Risk manager should check sector concentration, not just position size. Avoid loading up on 5 tech stocks.
 - [ ] **Stop-loss / take-profit rules** — Auto-generate SELL trades when a position drops >15% or gains >40% from cost basis.
