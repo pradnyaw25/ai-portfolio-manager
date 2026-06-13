@@ -2,8 +2,9 @@ name: Daily Portfolio Run
 
 on:
   schedule:
-    # Every hour at minute 7
-    - cron: "7 * * * *"
+    # Weekday hourly window broad enough to cover US market hours across DST.
+    # scripts/market_hours_guard.py enforces 9:30am-4:00pm America/New_York.
+    - cron: "7 13-21 * * 1-5"
 
   workflow_dispatch:
 
@@ -21,12 +22,21 @@ jobs:
         with:
           python-version: "3.14"
 
+      - name: Check market hours
+        id: market-hours
+        env:
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+        run: |
+          python scripts/market_hours_guard.py
+
       - name: Install dependencies
+        if: steps.market-hours.outputs.should_run == 'true'
         run: |
           pip install -U pip
           pip install -e .
 
       - name: Run portfolio manager
+        if: steps.market-hours.outputs.should_run == 'true'
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           QDRANT_URL: ${{ secrets.QDRANT_URL }}
@@ -35,6 +45,7 @@ jobs:
           python -m src.main
 
       - name: Commit updated public files
+        if: steps.market-hours.outputs.should_run == 'true'
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
@@ -45,5 +56,6 @@ jobs:
           git commit -m "Daily portfolio update"
 
       - name: Push changes
+        if: steps.market-hours.outputs.should_run == 'true'
         run: |
           git push

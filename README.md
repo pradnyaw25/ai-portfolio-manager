@@ -49,6 +49,10 @@ web/               - Frontend dashboard experiments
 
 All configuration is managed via environment variables. See `.env.example` for required keys.
 
+## Automation
+
+GitHub Actions runs the portfolio cycle hourly on weekdays during a broad UTC window. A market-hours guard keeps scheduled runs inside regular US market hours (9:30am-4:00pm America/New_York). Manual workflow dispatches always run.
+
 ### Qdrant Memory Store
 
 The memory layer uses Qdrant for vector search over prior reports. By default, local development uses:
