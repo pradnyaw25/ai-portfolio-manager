@@ -1,6 +1,6 @@
 {
   "date": "2026-06-13",
-  "cash": 280678.13890075684,
+  "cash": 276025.74028015137,
   "positions": [
     {
       "symbol": "HD",
@@ -10,8 +10,8 @@
     },
     {
       "symbol": "JNJ",
-      "shares": 447,
-      "avg_cost": 239.30026562581926,
+      "shares": 519,
+      "avg_cost": 239.51803156681834,
       "current_price": 240.8699951171875
     },
     {
@@ -22,26 +22,26 @@
     },
     {
       "symbol": "AAPL",
-      "shares": 608,
-      "avg_cost": 291.95090103988224,
+      "shares": 617,
+      "avg_cost": 291.8724036764023,
       "current_price": 291.1300048828125
     },
     {
       "symbol": "MSFT",
-      "shares": 21,
-      "avg_cost": 389.5697617303757,
+      "shares": 65,
+      "avg_cost": 390.361916410006,
       "current_price": 390.739990234375
     },
     {
       "symbol": "NVDA",
-      "shares": 959,
+      "shares": 759,
       "avg_cost": 205.81955494509427,
       "current_price": 205.19000244140625
     },
     {
       "symbol": "TSLA",
-      "shares": 7,
-      "avg_cost": 399.1499938964844,
+      "shares": 28,
+      "avg_cost": 404.60999298095703,
       "current_price": 406.42999267578125
     },
     {

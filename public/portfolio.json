@@ -1,9 +1,9 @@
 {
   "date": "2026-06-13",
   "total_value": 1000394.344543457,
-  "cash": 280678.13890075684,
-  "cash_pct": 0.2805674986385973,
-  "invested_value": 719716.2056427002,
+  "cash": 276025.74028015137,
+  "cash_pct": 0.27591693394280364,
+  "invested_value": 724368.6042633057,
   "positions": [
     {
       "symbol": "HD",
@@ -15,11 +15,11 @@
     },
     {
       "symbol": "JNJ",
-      "shares": 447,
-      "avg_cost": 239.30026562581926,
+      "shares": 519,
+      "avg_cost": 239.51803156681834,
       "current_price": 240.8699951171875,
-      "market_value": 107668.88781738281,
-      "return_pct": 0.006559664642507068
+      "market_value": 125011.52746582031,
+      "return_pct": 0.005644516788674499
     },
     {
       "symbol": "PG",
@@ -31,35 +31,35 @@
     },
     {
       "symbol": "AAPL",
-      "shares": 608,
-      "avg_cost": 291.95090103988224,
+      "shares": 617,
+      "avg_cost": 291.8724036764023,
       "current_price": 291.1300048828125,
-      "market_value": 177007.04296875,
-      "return_pct": -0.002811760998667305
+      "market_value": 179627.2130126953,
+      "return_pct": -0.0025435730964579895
     },
     {
       "symbol": "MSFT",
-      "shares": 21,
-      "avg_cost": 389.5697617303757,
+      "shares": 65,
+      "avg_cost": 390.361916410006,
       "current_price": 390.739990234375,
-      "market_value": 8205.539794921875,
-      "return_pct": 0.0030038997349317465
+      "market_value": 25398.099365234375,
+      "return_pct": 0.0009685212836487123
     },
     {
       "symbol": "NVDA",
-      "shares": 959,
+      "shares": 759,
       "avg_cost": 205.81955494509427,
       "current_price": 205.19000244140625,
-      "market_value": 196777.2123413086,
-      "return_pct": -0.0030587594257307014
+      "market_value": 155739.21185302734,
+      "return_pct": -0.003058759425730672
     },
     {
       "symbol": "TSLA",
-      "shares": 7,
-      "avg_cost": 399.1499938964844,
+      "shares": 28,
+      "avg_cost": 404.60999298095703,
       "current_price": 406.42999267578125,
-      "market_value": 2845.0099487304688,
-      "return_pct": 0.01823875458002605
+      "market_value": 11380.039794921875,
+      "return_pct": 0.004498158044529258
     },
     {
       "symbol": "UNH",

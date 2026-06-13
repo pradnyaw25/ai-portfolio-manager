@@ -47,3 +47,9 @@ date,symbol,action,shares,price,total,reasoning
 2026-06-12,AMZN,BUY,100,238.55,23855.00,Amazon's recent ventures into new markets and expansion in the cloud computing space indicate strong future performance.
 2026-06-12,NVDA,BUY,116,205.19,23802.04,NVIDIA's leadership in GPU technology and AI applications positions it well for future growth in multiple sectors.
 2026-06-13,NVDA,SELL,30,205.19,6155.70,"Despite being a strong company, current prices are below average cost, and recent negative trends warrant reducing exposure."
+2026-06-13,AAPL,SELL,50,291.13,14556.50,"AAPL has underperformed recently, with negative returns over the last 5 and 30 days, and there are concerns regarding regulatory risks."
+2026-06-13,NVDA,SELL,200,205.19,41038.00,"Currently underperforming relative to peers and showing negative sentiment in market news, freeing up capital to invest in stronger assets."
+2026-06-13,AAPL,BUY,59,291.13,17176.67,"AAPL has shown strong performance and resilience in market fluctuations, making it a solid investment."
+2026-06-13,MSFT,BUY,44,390.74,17192.56,Microsoft's diversification into cloud services and AI positions it well for future growth.
+2026-06-13,JNJ,BUY,72,240.87,17342.64,Johnson & Johnson's stability and strong dividend yield make it an attractive defensive pick.
+2026-06-13,TSLA,BUY,21,406.43,8535.03,"Tesla, as a leader in electric vehicles, has significant growth potential despite recent volatility."
