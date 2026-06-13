@@ -31,6 +31,26 @@
       padding: 8px;
       text-align: left;
     }
+    th.sortable {
+      cursor: pointer;
+      user-select: none;
+    }
+    th.sortable:hover {
+      background: #f5f5f5;
+    }
+    th.sortable::after {
+      content: " ⇅";
+      color: #ccc;
+      font-size: 12px;
+    }
+    th.sort-asc::after {
+      content: " ▲";
+      color: #333;
+    }
+    th.sort-desc::after {
+      content: " ▼";
+      color: #333;
+    }
     .muted {
       color: #666;
     }
@@ -66,6 +86,30 @@
     }
     .pos { color: #1a8a3a; }
     .neg { color: #c0392b; }
+    .ticker {
+      position: relative;
+      cursor: default;
+      font-weight: 600;
+    }
+    .ticker .tip {
+      display: none;
+      position: absolute;
+      left: 0;
+      bottom: 100%;
+      margin-bottom: 4px;
+      background: #333;
+      color: #fff;
+      font-weight: 400;
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 10;
+    }
+    .ticker:hover .tip {
+      display: block;
+    }
     @media (max-width: 600px) {
       .hero { grid-template-columns: 1fr; }
       .hero-value { font-size: 42px; }
@@ -104,8 +148,8 @@
   </div>
 
   <div class="card">
-    <h2>Cash Allocation</h2>
-    <canvas id="cash-chart"></canvas>
+    <h2>Capital Allocation</h2>
+    <canvas id="allocation-chart"></canvas>
   </div>
 
   <div class="card">
@@ -120,14 +164,15 @@
 
   <div class="card">
     <h2>Holdings</h2>
-    <table>
+    <table id="holdings-table">
       <thead>
         <tr>
-          <th>Symbol</th>
-          <th>Shares</th>
-          <th>Price</th>
-          <th>Market Value</th>
-          <th>Return</th>
+          <th class="sortable" data-key="symbol" data-type="string">Symbol</th>
+          <th class="sortable" data-key="shares" data-type="number">Shares</th>
+          <th class="sortable" data-key="current_price" data-type="number">Price</th>
+          <th class="sortable" data-key="market_value" data-type="number">Market Value</th>
+          <th class="sortable" data-key="total_gain" data-type="number">Total Gain</th>
+          <th class="sortable" data-key="return_pct" data-type="number">Return</th>
         </tr>
       </thead>
       <tbody id="holdings"></tbody>
@@ -167,7 +212,7 @@
       const res = await fetch(path);
       const text = await res.text();
 
-      const [headerLine, ...lines] = text.trim().split("\n");
+      const [headerLine, ...lines] = text.replace(/\r/g, "").trim().split("\n");
       const headers = headerLine.split(",");
 
       return lines.map(line => {
@@ -204,20 +249,66 @@
       document.getElementById("portfolio-summary").textContent =
         `Cash: ${money.format(portfolio.cash)} (${pct(portfolio.cash_pct)}) · Positions: ${portfolio.positions.length}`;
 
+      let holdingsData = [];
+      let currentSort = { key: null, asc: true };
+
+      function renderHoldings() {
+        const holdingsBody = document.getElementById("holdings");
+        holdingsBody.innerHTML = "";
+        holdingsData.forEach((p) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td><span class="ticker">${p.symbol}<span class="tip">${symbolNames[p.symbol] || p.symbol}</span></span></td>
+            <td>${p.shares}</td>
+            <td>${money.format(p.current_price)}</td>
+            <td>${money.format(p.market_value)}</td>
+            <td class="${p.total_gain >= 0 ? 'pos' : 'neg'}">${money.format(p.total_gain)}</td>
+            <td class="${p.return_pct >= 0 ? 'pos' : 'neg'}">${pct(p.return_pct)}</td>
+          `;
+          holdingsBody.appendChild(row);
+        });
+      }
+
+      function sortHoldings(key, type) {
+        const headers = document.querySelectorAll("#holdings-table th.sortable");
+        headers.forEach(th => th.classList.remove("sort-asc", "sort-desc"));
+
+        if (currentSort.key === key) {
+          currentSort.asc = !currentSort.asc;
+        } else {
+          currentSort.key = key;
+          currentSort.asc = true;
+        }
+
+        const clickedTh = document.querySelector(`th[data-key="${key}"]`);
+        clickedTh.classList.add(currentSort.asc ? "sort-asc" : "sort-desc");
+
+        holdingsData.sort((a, b) => {
+          let va = a[key], vb = b[key];
+          if (type === "number") {
+            va = Number(va); vb = Number(vb);
+          }
+          if (va < vb) return currentSort.asc ? -1 : 1;
+          if (va > vb) return currentSort.asc ? 1 : -1;
+          return 0;
+        });
+        renderHoldings();
+      }
+
+      document.querySelectorAll("#holdings-table th.sortable").forEach(th => {
+        th.addEventListener("click", () => {
+          sortHoldings(th.dataset.key, th.dataset.type);
+        });
+      });
+
       const holdingsBody = document.getElementById("holdings");
       holdingsBody.innerHTML = "";
 
-      portfolio.positions.forEach((p) => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td title="${symbolNames[p.symbol] || p.symbol}">${p.symbol}</td>
-          <td>${p.shares}</td>
-          <td>${money.format(p.current_price)}</td>
-          <td>${money.format(p.market_value)}</td>
-          <td>${pct(p.return_pct)}</td>
-        `;
-        holdingsBody.appendChild(row);
-      });
+      holdingsData = portfolio.positions.map(p => ({
+        ...p,
+        total_gain: p.market_value - (p.avg_cost * p.shares),
+      }));
+      renderHoldings();
 
       const tradesDiv = document.getElementById("trades");
 
@@ -226,7 +317,7 @@
       } else {
         tradesDiv.innerHTML = trades.map(t => `
           <p>
-            <strong>${t.action} ${t.shares} <span title="${symbolNames[t.symbol] || t.symbol}">${t.symbol}</span></strong>
+            <strong>${t.action} ${t.shares} <span class="ticker">${t.symbol}<span class="tip">${symbolNames[t.symbol] || t.symbol}</span></span></strong>
             at ${money.format(t.price)}<br />
             <span class="muted">${t.reasoning}</span>
           </p>
@@ -244,8 +335,20 @@
       const spyRows = benchmarkHistory.filter(r => r.symbol === "SPY");
       const qqqRows = benchmarkHistory.filter(r => r.symbol === "QQQ");
 
-      const spyReturn = calculateReturn(spyRows.map(r => Number(r.price)));
-      const qqqReturn = calculateReturn(qqqRows.map(r => Number(r.price)));
+      const spyByDate = Object.fromEntries(spyRows.map(r => [r.date, Number(r.price)]));
+      const qqqByDate = Object.fromEntries(qqqRows.map(r => [r.date, Number(r.price)]));
+
+      const portfolioDates = portfolioHistory.map(r => r.date);
+      const spyBaseline = spyByDate[portfolioDates[0]];
+      const qqqBaseline = qqqByDate[portfolioDates[0]];
+
+      const spyAligned = portfolioDates.map(d => spyByDate[d] ?? null);
+      const qqqAligned = portfolioDates.map(d => qqqByDate[d] ?? null);
+
+      const spyReturn = spyBaseline && spyAligned[spyAligned.length - 1]
+        ? spyAligned[spyAligned.length - 1] / spyBaseline - 1 : 0;
+      const qqqReturn = qqqBaseline && qqqAligned[qqqAligned.length - 1]
+        ? qqqAligned[qqqAligned.length - 1] / qqqBaseline - 1 : 0;
 
       document.getElementById("portfolio-return").textContent = pct(portfolioReturn);
       document.getElementById("spy-return").textContent = pct(spyReturn);
@@ -298,11 +401,13 @@
             },
             {
               label: "SPY",
-              data: spyRows.map(r => (Number(r.price) / Number(spyRows[0].price) - 1) * 100),
+              data: spyAligned.map(v => v && spyBaseline ? (v / spyBaseline - 1) * 100 : null),
+              spanGaps: true,
             },
             {
               label: "QQQ",
-              data: qqqRows.map(r => (Number(r.price) / Number(qqqRows[0].price) - 1) * 100),
+              data: qqqAligned.map(v => v && qqqBaseline ? (v / qqqBaseline - 1) * 100 : null),
+              spanGaps: true,
             },
           ],
         },
@@ -325,50 +430,38 @@
         }
       });
 
-      const cashPcts = portfolioHistory.map(r => {
-        const total = Number(r.total_value);
-        const cash = Number(r.cash);
-        return total > 0 ? (cash / total) * 100 : 0;
-      });
+      const allocLabels = portfolio.positions.map(p => p.symbol).concat("Cash");
+      const allocValues = portfolio.positions.map(p => p.market_value).concat(portfolio.cash);
+      const allocColors = [
+        "#4e79a7", "#f28e2b", "#e15759", "#76b7b2", "#59a14f",
+        "#edc948", "#b07aa1", "#ff9da7", "#9c755f", "#bab0ac",
+        "#86bcb6", "#8cd17d", "#b6992d", "#499894", "#d37295",
+        "#a0cbe8", "#ffbe7d", "#d4a6c8", "#79706e", "#aecbfa",
+      ];
 
-      new Chart(document.getElementById("cash-chart"), {
-        type: "line",
+      new Chart(document.getElementById("allocation-chart"), {
+        type: "pie",
         data: {
-          labels: portfolioHistory.map(r => r.date),
-          datasets: [
-            {
-              label: "Cash %",
-              data: cashPcts,
-              borderColor: "#f0ad4e",
-              backgroundColor: "rgba(240, 173, 78, 0.1)",
-              fill: true,
-            },
-            {
-              label: "Target Max (25%)",
-              data: cashPcts.map(() => 25),
-              borderColor: "#c44",
-              borderDash: [6, 4],
-              pointRadius: 0,
-              fill: false,
-            },
-          ],
+          labels: allocLabels,
+          datasets: [{
+            data: allocValues,
+            backgroundColor: allocColors.slice(0, allocLabels.length),
+          }],
         },
         options: {
           responsive: true,
           plugins: {
             tooltip: {
               callbacks: {
-                label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)}%`
+                label: ctx => {
+                  const val = ctx.parsed;
+                  const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                  return `${ctx.label}: ${money.format(val)} (${(val / total * 100).toFixed(1)}%)`;
+                }
               }
-            }
-          },
-          scales: {
-            y: {
-              min: 0,
-              max: 100,
-              ticks: {
-                callback: value => `${value}%`
-              }
+            },
+            legend: {
+              position: "right",
             }
           }
         }
