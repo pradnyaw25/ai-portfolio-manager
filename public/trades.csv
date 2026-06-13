@@ -53,3 +53,4 @@ date,symbol,action,shares,price,total,reasoning
 2026-06-13,MSFT,BUY,44,390.74,17192.56,Microsoft's diversification into cloud services and AI positions it well for future growth.
 2026-06-13,JNJ,BUY,72,240.87,17342.64,Johnson & Johnson's stability and strong dividend yield make it an attractive defensive pick.
 2026-06-13,TSLA,BUY,21,406.43,8535.03,"Tesla, as a leader in electric vehicles, has significant growth potential despite recent volatility."
+2026-06-13,AAPL,SELL,10,291.13,2911.30,"AAPL has underperformed its recent highs and shows declining trends in both short-term and long-term returns, indicating a need to reduce exposure in a soft market context."

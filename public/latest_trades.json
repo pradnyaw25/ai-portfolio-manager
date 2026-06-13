@@ -3,54 +3,9 @@
     "date": "2026-06-13",
     "symbol": "AAPL",
     "action": "SELL",
-    "shares": 50,
+    "shares": 10,
     "price": 291.1300048828125,
-    "total": 14556.500244140625,
-    "reasoning": "AAPL has underperformed recently, with negative returns over the last 5 and 30 days, and there are concerns regarding regulatory risks."
-  },
-  {
-    "date": "2026-06-13",
-    "symbol": "NVDA",
-    "action": "SELL",
-    "shares": 200,
-    "price": 205.19000244140625,
-    "total": 41038.00048828125,
-    "reasoning": "Currently underperforming relative to peers and showing negative sentiment in market news, freeing up capital to invest in stronger assets."
-  },
-  {
-    "date": "2026-06-13",
-    "symbol": "AAPL",
-    "action": "BUY",
-    "shares": 59,
-    "price": 291.1300048828125,
-    "total": 17176.670288085938,
-    "reasoning": "AAPL has shown strong performance and resilience in market fluctuations, making it a solid investment."
-  },
-  {
-    "date": "2026-06-13",
-    "symbol": "MSFT",
-    "action": "BUY",
-    "shares": 44,
-    "price": 390.739990234375,
-    "total": 17192.5595703125,
-    "reasoning": "Microsoft's diversification into cloud services and AI positions it well for future growth."
-  },
-  {
-    "date": "2026-06-13",
-    "symbol": "JNJ",
-    "action": "BUY",
-    "shares": 72,
-    "price": 240.8699951171875,
-    "total": 17342.6396484375,
-    "reasoning": "Johnson & Johnson's stability and strong dividend yield make it an attractive defensive pick."
-  },
-  {
-    "date": "2026-06-13",
-    "symbol": "TSLA",
-    "action": "BUY",
-    "shares": 21,
-    "price": 406.42999267578125,
-    "total": 8535.029846191406,
-    "reasoning": "Tesla, as a leader in electric vehicles, has significant growth potential despite recent volatility."
+    "total": 2911.300048828125,
+    "reasoning": "AAPL has underperformed its recent highs and shows declining trends in both short-term and long-term returns, indicating a need to reduce exposure in a soft market context."
   }
 ]
