@@ -26,6 +26,7 @@ class PublicExporter:
         self._write_latest_tweet(tweet, snapshot)
         self._write_latest_report(report_markdown)
         self._write_site_meta()
+        self._write_prediction_dashboard()
         self._copy_history_files()
 
     def _write_portfolio(self, snapshot: PortfolioSnapshot) -> None:
@@ -91,6 +92,64 @@ class PublicExporter:
         }
 
         (PUBLIC_DIR / "site_meta.json").write_text(json.dumps(payload, indent=2))
+
+    def _write_prediction_dashboard(self) -> None:
+        predictions = self._load_predictions()
+        resolved = [p for p in predictions if p.get("status") == "scored" and p.get("result")]
+        open_predictions = [p for p in predictions if p.get("status") == "open"]
+        wins = [p for p in resolved if p["result"].get("outperformed")]
+
+        payload = {
+            "metrics": {
+                "total": len(predictions),
+                "resolved": len(resolved),
+                "open": len(open_predictions),
+                "accuracy_pct": round((len(wins) / len(resolved)) * 100, 1) if resolved else None,
+            },
+            "best_predictions": self._rank_resolved_predictions(resolved, reverse=True)[:10],
+            "worst_predictions": self._rank_resolved_predictions(resolved, reverse=False)[:10],
+            "upcoming_predictions": sorted(
+                [self._serialize_prediction(p) for p in open_predictions],
+                key=lambda p: p.get("due_date") or "",
+            )[:10],
+        }
+
+        (PUBLIC_DIR / "predictions.json").write_text(json.dumps(payload, indent=2))
+
+    def _load_predictions(self) -> list[dict]:
+        path = DATA_DIR / "predictions.jsonl"
+        if not path.exists():
+            return []
+        return [json.loads(line) for line in path.read_text().splitlines() if line.strip()]
+
+    def _rank_resolved_predictions(self, predictions: list[dict], *, reverse: bool) -> list[dict]:
+        ranked = [self._serialize_prediction(p) for p in predictions]
+        return sorted(ranked, key=lambda p: p.get("alpha_pct", 0), reverse=reverse)
+
+    def _serialize_prediction(self, prediction: dict) -> dict:
+        result = prediction.get("result") or {}
+        symbol_return = result.get("symbol_return")
+        spy_return = result.get("spy_return")
+        alpha_pct = None
+        if symbol_return is not None and spy_return is not None:
+            alpha_pct = round((symbol_return - spy_return) * 100, 2)
+
+        return {
+            "id": prediction.get("id"),
+            "date": prediction.get("date"),
+            "symbol": prediction.get("symbol"),
+            "prediction": prediction.get("prediction"),
+            "confidence": prediction.get("confidence"),
+            "start_price": prediction.get("start_price"),
+            "spy_start_price": prediction.get("spy_start_price"),
+            "due_date": prediction.get("due_date"),
+            "status": prediction.get("status"),
+            "scored_date": result.get("scored_date"),
+            "symbol_return": symbol_return,
+            "spy_return": spy_return,
+            "outperformed": result.get("outperformed"),
+            "alpha_pct": alpha_pct,
+        }
 
     def _copy_history_files(self) -> None:
         for filename in ["portfolio_history.csv", "trades.csv", "benchmark_history.csv", "decisions.jsonl", "predictions.jsonl"]:

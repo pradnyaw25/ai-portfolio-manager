@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Predictions — AI Portfolio Manager</title>
+  <title>Prediction Accuracy — AI Portfolio Manager</title>
   <meta charset="UTF-8" />
   <style>
     body {
       font-family: system-ui, sans-serif;
-      max-width: 900px;
+      max-width: 980px;
       margin: 40px auto;
       padding: 0 20px;
       line-height: 1.5;
@@ -22,35 +22,54 @@
       margin-top: -8px;
     }
     .stats {
-      display: flex;
-      gap: 24px;
-      margin-bottom: 20px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin: 24px 0;
     }
     .stat-box {
       border: 1px solid #ddd;
       border-radius: 8px;
-      padding: 12px 16px;
-      text-align: center;
+      padding: 14px 16px;
     }
-    .stat-value { font-size: 24px; font-weight: 700; }
-    .stat-label { font-size: 13px; color: #666; }
+    .stat-value {
+      font-size: 28px;
+      font-weight: 750;
+      line-height: 1.1;
+    }
+    .stat-label {
+      font-size: 13px;
+      color: #666;
+      margin-top: 6px;
+    }
+    .section {
+      margin-top: 28px;
+    }
     table {
       width: 100%;
       border-collapse: collapse;
     }
     th, td {
       border-bottom: 1px solid #eee;
-      padding: 8px;
+      padding: 9px 8px;
       text-align: left;
       font-size: 14px;
+      vertical-align: top;
     }
-    th { font-weight: 600; color: #666; font-size: 13px; }
+    th {
+      font-weight: 650;
+      color: #666;
+      font-size: 13px;
+    }
+    .num { text-align: right; white-space: nowrap; }
+    .pos { color: #1a8a3a; }
+    .neg { color: #c0392b; }
     .badge {
       display: inline-block;
       padding: 2px 8px;
       border-radius: 4px;
       font-size: 12px;
-      font-weight: 600;
+      font-weight: 650;
     }
     .badge-open { background: #fff3cd; color: #856404; }
     .badge-win { background: #d4edda; color: #155724; }
@@ -60,11 +79,14 @@
       padding: 2px 6px;
       border-radius: 4px;
       font-size: 12px;
-      font-weight: 600;
+      font-weight: 650;
+      background: #eef3ff;
+      color: #24427a;
     }
-    .conf-high { background: #d4edda; color: #155724; }
-    .conf-med { background: #fff3cd; color: #856404; }
-    .conf-low { background: #f8d7da; color: #721c24; }
+    @media (max-width: 720px) {
+      .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      th, td { font-size: 13px; }
+    }
   </style>
 </head>
 <body>
@@ -74,45 +96,75 @@
     <a href="predictions.html">Predictions</a>
   </div>
 
-  <h1>Prediction Tracker</h1>
-  <p class="muted">Every BUY generates a testable prediction: will it outperform SPY over 30 days?</p>
+  <h1>Prediction Accuracy</h1>
+  <p class="muted">Tracks whether BUY-generated predictions outperformed SPY over their evaluation window.</p>
   <p class="updated-at" id="updated-at">Updated at: Loading...</p>
 
   <div class="stats" id="stats"></div>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Symbol</th>
-        <th>Prediction</th>
-        <th>Confidence</th>
-        <th>Start Price</th>
-        <th>SPY Start</th>
-        <th>Due Date</th>
-        <th>Status</th>
-        <th>Result</th>
-      </tr>
-    </thead>
-    <tbody id="predictions"></tbody>
-  </table>
+  <div class="section">
+    <h2>Best Predictions</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Symbol</th>
+          <th>Prediction</th>
+          <th class="num">Alpha</th>
+          <th class="num">Stock</th>
+          <th class="num">SPY</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="best-predictions"></tbody>
+    </table>
+  </div>
 
-  <div id="empty" style="display:none;" class="muted">No predictions yet. Predictions are created for each BUY trade.</div>
+  <div class="section">
+    <h2>Worst Predictions</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Symbol</th>
+          <th>Prediction</th>
+          <th class="num">Alpha</th>
+          <th class="num">Stock</th>
+          <th class="num">SPY</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="worst-predictions"></tbody>
+    </table>
+  </div>
+
+  <div class="section">
+    <h2>Upcoming Predictions</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Symbol</th>
+          <th>Prediction</th>
+          <th>Created</th>
+          <th>Due Date</th>
+          <th class="num">Confidence</th>
+        </tr>
+      </thead>
+      <tbody id="upcoming-predictions"></tbody>
+    </table>
+  </div>
 
   <script>
-    const symbolNames = {
-      AAPL: "Apple Inc.", MSFT: "Microsoft Corp.", GOOGL: "Alphabet Inc.",
-      AMZN: "Amazon.com Inc.", META: "Meta Platforms Inc.", NVDA: "NVIDIA Corp.",
-      AMD: "Advanced Micro Devices", AVGO: "Broadcom Inc.", TSLA: "Tesla Inc.",
-      JPM: "JPMorgan Chase & Co.", V: "Visa Inc.", MA: "Mastercard Inc.",
-      UNH: "UnitedHealth Group", JNJ: "Johnson & Johnson", WMT: "Walmart Inc.",
-      PG: "Procter & Gamble", HD: "The Home Depot", XOM: "Exxon Mobil Corp.",
-      CAT: "Caterpillar Inc.", SPY: "SPDR S&P 500 ETF", QQQ: "Invesco QQQ Trust",
+    const pct = (value, digits = 1) => {
+      const number = Number(value);
+      return Number.isFinite(number) ? `${number.toFixed(digits)}%` : "—";
     };
 
-    function confClass(c) {
-      if (c >= 0.7) return "conf-high";
-      if (c >= 0.5) return "conf-med";
-      return "conf-low";
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
     }
 
     function formatUpdatedAt(value) {
@@ -140,66 +192,124 @@
       }
     }
 
-    async function loadPredictions() {
-      const res = await fetch("./predictions.jsonl");
-      const text = await res.text();
+    function badge(prediction) {
+      if (prediction.status === "open") {
+        return `<span class="badge badge-open">Open</span>`;
+      }
+      if (prediction.outperformed) {
+        return `<span class="badge badge-win">Win</span>`;
+      }
+      return `<span class="badge badge-loss">Loss</span>`;
+    }
 
-      const predictions = text.trim().split("\n")
-        .filter(line => line.trim())
-        .map(line => JSON.parse(line))
-        .reverse();
-
-      if (predictions.length === 0) {
-        document.getElementById("empty").style.display = "block";
-        return;
+    function renderResolvedRows(rows, emptyText) {
+      if (rows.length === 0) {
+        return `<tr><td colspan="6" class="muted">${emptyText}</td></tr>`;
       }
 
-      const total = predictions.length;
-      const open = predictions.filter(p => p.status === "open").length;
-      const scored = predictions.filter(p => p.status === "scored");
-      const wins = scored.filter(p => p.result && p.result.outperformed).length;
-      const losses = scored.length - wins;
-      const winRate = scored.length > 0 ? ((wins / scored.length) * 100).toFixed(0) : "—";
+      return rows.map(p => `
+        <tr>
+          <td><strong>${escapeHtml(p.symbol)}</strong></td>
+          <td>${escapeHtml(p.prediction)}</td>
+          <td class="num ${Number(p.alpha_pct) >= 0 ? "pos" : "neg"}">${pct(p.alpha_pct, 2)}</td>
+          <td class="num">${pct(Number(p.symbol_return) * 100, 2)}</td>
+          <td class="num">${pct(Number(p.spy_return) * 100, 2)}</td>
+          <td>${badge(p)}</td>
+        </tr>
+      `).join("");
+    }
+
+    function renderUpcomingRows(rows) {
+      if (rows.length === 0) {
+        return `<tr><td colspan="5" class="muted">No open predictions.</td></tr>`;
+      }
+
+      return rows.map(p => `
+        <tr>
+          <td><strong>${escapeHtml(p.symbol)}</strong></td>
+          <td>${escapeHtml(p.prediction)}</td>
+          <td>${escapeHtml(p.date)}</td>
+          <td>${escapeHtml(p.due_date)}</td>
+          <td class="num"><span class="confidence">${pct(Number(p.confidence) * 100, 0)}</span></td>
+        </tr>
+      `).join("");
+    }
+
+    function buildDashboardFromJsonl(predictions) {
+      const resolved = predictions.filter(p => p.status === "scored" && p.result);
+      const open = predictions.filter(p => p.status === "open");
+      const serialize = p => {
+        const result = p.result || {};
+        const symbolReturn = result.symbol_return;
+        const spyReturn = result.spy_return;
+        const alphaPct = symbolReturn !== undefined && spyReturn !== undefined
+          ? Number(((symbolReturn - spyReturn) * 100).toFixed(2)) : null;
+        return {
+          id: p.id,
+          date: p.date,
+          symbol: p.symbol,
+          prediction: p.prediction,
+          confidence: p.confidence,
+          due_date: p.due_date,
+          status: p.status,
+          symbol_return: symbolReturn,
+          spy_return: spyReturn,
+          outperformed: result.outperformed,
+          alpha_pct: alphaPct,
+        };
+      };
+      const ranked = resolved.map(serialize).sort((a, b) => b.alpha_pct - a.alpha_pct);
+      const wins = resolved.filter(p => p.result && p.result.outperformed);
+      return {
+        metrics: {
+          total: predictions.length,
+          resolved: resolved.length,
+          open: open.length,
+          accuracy_pct: resolved.length ? Number(((wins.length / resolved.length) * 100).toFixed(1)) : null,
+        },
+        best_predictions: ranked.slice(0, 10),
+        worst_predictions: [...ranked].reverse().slice(0, 10),
+        upcoming_predictions: open.map(serialize).sort((a, b) => String(a.due_date).localeCompare(String(b.due_date))).slice(0, 10),
+      };
+    }
+
+    async function loadPredictionDashboard() {
+      try {
+        const res = await fetch("./predictions.json");
+        if (res.ok) return await res.json();
+      } catch (e) {
+        // Fall through to JSONL for older deployed exports.
+      }
+
+      const res = await fetch("./predictions.jsonl");
+      const text = await res.text();
+      const predictions = text.trim().split("\n")
+        .filter(line => line.trim())
+        .map(line => JSON.parse(line));
+      return buildDashboardFromJsonl(predictions);
+    }
+
+    async function loadDashboard() {
+      const dashboard = await loadPredictionDashboard();
+      const metrics = dashboard.metrics || {};
 
       document.getElementById("stats").innerHTML = `
-        <div class="stat-box"><div class="stat-value">${total}</div><div class="stat-label">Total</div></div>
-        <div class="stat-box"><div class="stat-value">${open}</div><div class="stat-label">Open</div></div>
-        <div class="stat-box"><div class="stat-value">${wins}</div><div class="stat-label">Wins</div></div>
-        <div class="stat-box"><div class="stat-value">${losses}</div><div class="stat-label">Losses</div></div>
-        <div class="stat-box"><div class="stat-value">${winRate}%</div><div class="stat-label">Win Rate</div></div>
+        <div class="stat-box"><div class="stat-value">${metrics.total ?? 0}</div><div class="stat-label">Total Predictions</div></div>
+        <div class="stat-box"><div class="stat-value">${metrics.resolved ?? 0}</div><div class="stat-label">Resolved</div></div>
+        <div class="stat-box"><div class="stat-value">${metrics.open ?? 0}</div><div class="stat-label">Open</div></div>
+        <div class="stat-box"><div class="stat-value">${pct(metrics.accuracy_pct, 1)}</div><div class="stat-label">Accuracy</div></div>
       `;
 
-      const tbody = document.getElementById("predictions");
-      tbody.innerHTML = predictions.map(p => {
-        const conf = p.confidence || 0;
-        let statusBadge = `<span class="badge badge-open">Open</span>`;
-        let resultText = `Due ${p.due_date}`;
-
-        if (p.status === "scored" && p.result) {
-          const won = p.result.outperformed;
-          statusBadge = won
-            ? `<span class="badge badge-win">WIN</span>`
-            : `<span class="badge badge-loss">LOSS</span>`;
-          resultText = `${p.symbol}: ${(p.result.symbol_return * 100).toFixed(2)}% vs SPY: ${(p.result.spy_return * 100).toFixed(2)}%`;
-        }
-
-        return `
-          <tr>
-            <td title="${symbolNames[p.symbol] || p.symbol}"><strong>${p.symbol}</strong></td>
-            <td>${p.prediction}</td>
-            <td><span class="confidence ${confClass(conf)}">${(conf * 100).toFixed(0)}%</span></td>
-            <td>$${Number(p.start_price).toFixed(2)}</td>
-            <td>$${Number(p.spy_start_price).toFixed(2)}</td>
-            <td>${p.due_date}</td>
-            <td>${statusBadge}</td>
-            <td>${resultText}</td>
-          </tr>
-        `;
-      }).join("");
+      document.getElementById("best-predictions").innerHTML =
+        renderResolvedRows(dashboard.best_predictions || [], "No resolved predictions yet.");
+      document.getElementById("worst-predictions").innerHTML =
+        renderResolvedRows(dashboard.worst_predictions || [], "No resolved predictions yet.");
+      document.getElementById("upcoming-predictions").innerHTML =
+        renderUpcomingRows(dashboard.upcoming_predictions || []);
     }
 
     loadUpdatedAt();
-    loadPredictions();
+    loadDashboard();
   </script>
 </body>
 </html>
