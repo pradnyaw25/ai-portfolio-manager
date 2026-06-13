@@ -10,6 +10,7 @@ An AI-powered portfolio management system that uses LLM agents to analyze market
 - **Simulated Trading**: Paper trading engine with full position tracking
 - **Reporting**: Markdown and HTML performance reports
 - **Benchmarking**: Compare portfolio performance against S&P 500 and other indices
+- **Public Dashboard**: Static HTML dashboard with portfolio, prediction, and decision journal views
 
 ## Setup
 
@@ -40,7 +41,8 @@ src/
   utils/           - Logging and date helpers
 scripts/           - CLI entry points (daily run, backfill, benchmark)
 tests/             - Unit tests
-web/               - Frontend dashboard (future)
+public/            - Static dashboard exports for portfolio, predictions, and decisions
+web/               - Frontend dashboard experiments
 ```
 
 ## Configuration

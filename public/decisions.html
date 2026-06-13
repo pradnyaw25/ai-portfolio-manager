@@ -68,6 +68,23 @@
       border-radius: 4px;
       font-style: italic;
     }
+    .outlook {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #eef3ff;
+      color: #24427a;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+    .memory-list {
+      margin: 8px 0 0;
+      padding-left: 20px;
+    }
+    .memory-list li {
+      margin-bottom: 4px;
+    }
     .muted { color: #666; }
     .nav { margin-bottom: 20px; }
     .nav a { margin-right: 16px; text-decoration: none; font-weight: 600; }
@@ -108,6 +125,15 @@
       return "conf-low";
     }
 
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
     function renderTrade(t, rejected) {
       const symbol = t.symbol || "???";
       const action = t.action || "???";
@@ -121,30 +147,72 @@
       if (rejected) {
         return `
           <div class="trade rejected">
-            <strong>${action} ${shares} <span title="${symbolNames[symbol] || symbol}">${symbol}</span></strong>
+            <strong>${escapeHtml(action)} ${escapeHtml(shares)} <span title="${escapeHtml(symbolNames[symbol] || symbol)}">${escapeHtml(symbol)}</span></strong>
             <span class="confidence conf-low">${(confidence * 100).toFixed(0)}%</span>
-            <br /><span class="muted">Rejected: ${rejectReason}</span>
+            <br /><span class="muted">Rejected: ${escapeHtml(rejectReason)}</span>
           </div>
         `;
       }
 
       let html = `
         <div class="trade">
-          <strong>${action} ${shares} ${symbol}</strong>
+          <strong>${escapeHtml(action)} ${escapeHtml(shares)} ${escapeHtml(symbol)}</strong>
           <span class="confidence ${confClass(confidence)}">${(confidence * 100).toFixed(0)}%</span>
-          <br />${reason}
+          <br />${escapeHtml(reason)}
       `;
 
       if (risks.length > 0) {
-        html += `<br /><span class="muted">Risks: ${risks.join(", ")}</span>`;
+        html += `<br /><span class="muted">Risks: ${escapeHtml(risks.join(", "))}</span>`;
       }
 
       if (sources.length > 0) {
-        html += `<br /><span class="sources">Sources: ${sources.join(", ")}</span>`;
+        html += `<br /><span class="sources">Sources: ${escapeHtml(sources.join(", "))}</span>`;
       }
 
       html += `</div>`;
       return html;
+    }
+
+    function renderExecutedTrade(t) {
+      const total = Number(t.total || (t.shares || 0) * (t.price || 0));
+      const action = t.action || "???";
+      const symbol = t.symbol || "???";
+      const shares = t.shares || 0;
+      const price = Number(t.price || 0);
+      const reasoning = t.reasoning || "";
+
+      return `
+        <div class="trade">
+          <strong>${escapeHtml(action)} ${escapeHtml(shares)} ${escapeHtml(symbol)}</strong>
+          <span class="muted">@ ${money.format(price)} · ${money.format(total)}</span>
+          ${reasoning ? `<br />${escapeHtml(reasoning)}` : ""}
+        </div>
+      `;
+    }
+
+    function renderMemorySources(memoryUsed) {
+      const sources = memoryUsed
+        .map(item => item.metadata || {})
+        .map(meta => ({
+          source: meta.source || "Unknown source",
+          date: meta.date || "",
+          type: meta.type || "",
+        }));
+
+      if (sources.length === 0) {
+        return `<p class="muted">No memory sources used.</p>`;
+      }
+
+      return `
+        <ul class="memory-list">
+          ${sources.map(meta => `
+            <li>
+              ${escapeHtml(meta.source)}
+              <span class="muted">${escapeHtml([meta.date, meta.type].filter(Boolean).join(" · "))}</span>
+            </li>
+          `).join("")}
+        </ul>
+      `;
     }
 
     async function loadDecisions() {
@@ -154,7 +222,8 @@
       const entries = text.trim().split("\n")
         .filter(line => line.trim())
         .map(line => JSON.parse(line))
-        .reverse();
+        .reverse()
+        .slice(0, 10);
 
       const container = document.getElementById("entries");
 
@@ -168,11 +237,14 @@
         const portfolio = entry.portfolio || {};
         const approved = entry.approved_trades || [];
         const rejected = entry.rejected_trades || [];
+        const executed = entry.executed_trades || [];
         const rebalance = entry.rebalance_trades || [];
         const cashThesis = entry.cash_thesis || decision.cash_thesis || null;
+        const outlook = decision.outlook || "UNKNOWN";
+        const memoryUsed = entry.memory_used || [];
 
         let html = `<div class="card">`;
-        html += `<div class="date-header">${entry.date}</div>`;
+        html += `<div class="date-header">${escapeHtml(entry.date)} <span class="outlook">${escapeHtml(outlook)}</span></div>`;
         html += `<div class="meta">
           Portfolio: ${money.format(portfolio.total_value)} ·
           Cash: ${money.format(portfolio.cash)} (${(portfolio.cash_pct * 100).toFixed(1)}%) ·
@@ -182,30 +254,38 @@
         if (decision.market_summary || decision.summary) {
           html += `<div class="section">
             <h3>Market Summary</h3>
-            <p>${decision.market_summary || decision.summary}</p>
+            <p>${escapeHtml(decision.market_summary || decision.summary)}</p>
           </div>`;
         }
 
         if (decision.portfolio_assessment) {
           html += `<div class="section">
             <h3>Portfolio Assessment</h3>
-            <p>${decision.portfolio_assessment}</p>
+            <p>${escapeHtml(decision.portfolio_assessment)}</p>
           </div>`;
         }
 
         if (decision.risk_assessment) {
           html += `<div class="section">
             <h3>Risk Assessment</h3>
-            <p>${decision.risk_assessment}</p>
+            <p>${escapeHtml(decision.risk_assessment)}</p>
           </div>`;
         }
 
         if (cashThesis) {
           html += `<div class="section">
             <h3>Cash Thesis</h3>
-            <div class="cash-thesis">${cashThesis}</div>
+            <div class="cash-thesis">${escapeHtml(cashThesis)}</div>
           </div>`;
         }
+
+        html += `<div class="section"><h3>Executed Trades</h3>`;
+        if (executed.length > 0) {
+          html += executed.map(renderExecutedTrade).join("");
+        } else {
+          html += `<p class="muted">No trades executed.</p>`;
+        }
+        html += `</div>`;
 
         if (approved.length > 0) {
           html += `<div class="section"><h3>Approved Trades</h3>`;
@@ -225,7 +305,11 @@
           html += `</div>`;
         }
 
-        if (approved.length === 0 && rebalance.length === 0 && rejected.length === 0) {
+        html += `<div class="section"><h3>Memory Sources Used</h3>`;
+        html += renderMemorySources(memoryUsed);
+        html += `</div>`;
+
+        if (approved.length === 0 && rebalance.length === 0 && rejected.length === 0 && executed.length === 0) {
           html += `<p class="muted">No trades proposed.</p>`;
         }
 
