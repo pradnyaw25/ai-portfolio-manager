@@ -1,1 +1,11 @@
-[]
+[
+  {
+    "date": "2026-06-13",
+    "symbol": "NVDA",
+    "action": "SELL",
+    "shares": 30,
+    "price": 205.19000244140625,
+    "total": 6155.7000732421875,
+    "reasoning": "Despite being a strong company, current prices are below average cost, and recent negative trends warrant reducing exposure."
+  }
+]
