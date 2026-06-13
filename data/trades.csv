@@ -57,3 +57,11 @@ date,symbol,action,shares,price,total,reasoning
 2026-06-13,AAPL,SELL,10,291.13,2911.30,AAPL has underperformed with a -3.45% return over the last 5 days and shows a slightly negative outlook. Selling a small portion can help mitigate potential further losses.
 2026-06-13,NVDA,SELL,10,205.19,2051.90,NVDA shows a downward trend with a -1.65% return in the last 5 days. Offloading 10 shares can free capital while reducing exposure to underperforming assets.
 2026-06-13,NVDA,SELL,50,205.19,10259.50,"With NVDA showing a slight decrease in current price compared to its average cost and the recent negativity surrounding its performance, it may be wise to realize some cash and reallocate towards stronger positions or new opportunities."
+2026-06-13,AAPL,SELL,50,291.13,14556.50,AAPL has shown negative performance over the past weeks and has negative returns for both the previous 5-day and 30-day periods. Reducing exposure mitigates the impact of further declines.
+2026-06-13,AAPL,BUY,40,291.13,11645.20,AAPL continues to show strong growth potential with its innovation and expanding market share. The price seems reasonable given its strong fundamentals.
+2026-06-13,NVDA,BUY,28,205.19,5745.32,"NVDA is a leader in the AI and gaming sectors, which are expected to grow significantly. The current price presents a good buying opportunity for future upside."
+2026-06-13,GOOGL,BUY,16,359.68,5754.88,"Despite recent regulatory hurdles, GOOGL's strength in advertising and cloud computing positions it well for growth. Its valuation appears attractive."
+2026-06-13,JNJ,BUY,24,240.87,5780.88,"JNJ has a solid dividend and is a defensive stock in healthcare, making it a great choice during times of uncertainty. Its valuation offers good entry points."
+2026-06-13,AAPL,SELL,20,291.13,5822.60,"AAPL is showing negative returns over the past 5 and 30 days, indicating a potential downward trend. Selling a portion can reduce risk exposure."
+2026-06-13,GOOGL,BUY,5,359.68,1798.40,"GOOGL's current price is stable with a slight positive return over a month, making it a reasonable entry target based on recent performance news."
+2026-06-13,AAPL,SELL,10,291.13,2911.30,"AAPL has shown a negative trend over the past 5 days and 30 days, coupled with market news indicating underperformance and lack of new product excitement which could continue to weigh on the stock price."

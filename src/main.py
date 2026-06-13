@@ -19,6 +19,7 @@ from src.storage.prediction_store import PredictionStore
 from src.scoring.prediction_scorer import PredictionScorer
 from src.utils.logger import get_logger
 from src.simulator.benchmark_tracker import BenchmarkTracker
+from src.memory.retriever import FundMemoryRetriever
 
 logger = get_logger(__name__)
 
@@ -88,12 +89,27 @@ def run_daily_cycle():
         if price is not None and price > 0:
             prices[symbol] = price
 
-    # 2. Decision
+    # 2. Memory
+    memory = FundMemoryRetriever()
+    memory_context = memory.retrieve(
+        query=(
+            "Relevant prior investment theses, trades, cash decisions, "
+            "risk concerns, and portfolio lessons for today's decision."
+        ),
+        k=6,
+    )
+
+    logger.info("Retrieved %d memory chunks", len(memory_context))
+    for item in memory_context:
+        logger.info("Memory source: %s", item["metadata"])
+
+    # 3. Decision
     manager = PortfolioManagerAgent()
     decisions = manager.decide(
         portfolio=engine.get_snapshot(),
         research=research,
         benchmark=benchmark_client.get_sp500_performance(),
+        memory=memory_context
     )
 
     # 3. Risk check
@@ -144,6 +160,7 @@ def run_daily_cycle():
         executed=trades,
         cash_thesis=rebalance_result.cash_thesis or decisions.get("cash_thesis"),
         rebalance_trades=rebalance_result.extra_trades,
+        memory_used=memory_context,
     )
 
     snapshot = engine.get_snapshot()

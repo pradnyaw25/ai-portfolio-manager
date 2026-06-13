@@ -5,7 +5,11 @@ client = OpenAI()
 
 
 class PortfolioManagerAgent:
-    def decide(self, portfolio, research, benchmark):
+    def decide(self, portfolio, research, benchmark, memory=None):
+        memory_block = ""
+        if memory:
+            memory_block = f"\n\nPast decisions and lessons (from memory):\n{memory}\n"
+
         context = f"""
 You are an AI portfolio manager managing a simulated public $1M portfolio.
 
@@ -24,6 +28,7 @@ Market context:
 
 Benchmark:
 {benchmark}
+{memory_block}
 
 Rules:
 - Only trade symbols present in market_context.symbols.
