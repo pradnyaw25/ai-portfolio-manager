@@ -14,7 +14,7 @@ Recommended next work, in order:
    * Include latest run time, success/failure, memory status, trades executed, warnings/errors, ending portfolio value, and cash percentage.
    * Add a dashboard panel for this status.
 
-3. Refactor `src/main.py` into explicit step functions.
+3. [Done] Refactor `src/main.py` into explicit step functions.
    * Suggested steps: load portfolio, mark to market, build research context, retrieve memory, decide trades, review risk, check rebalance, execute trades, journal run, export public artifacts.
    * Keep behavior unchanged at first.
 

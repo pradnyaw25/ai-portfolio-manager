@@ -106,7 +106,7 @@ Near-term work is focused on making the daily cycle easier to observe and safer 
 - Add sector/correlation diversification checks to the risk manager.
 - Add deterministic stop-loss and take-profit SELL proposals.
 
-The eventual migration target is LangGraph. The planned path is to first split `src/main.py` into explicit workflow step functions, introduce a typed `PortfolioRunState`, then recreate the current daily cycle as a linear LangGraph graph before adding conditional routing and an optional human approval checkpoint before execution.
+The eventual migration target is LangGraph. The daily cycle in `src/main.py` is now split into explicit workflow step functions. The planned path is to introduce a typed `PortfolioRunState`, then recreate the current daily cycle as a linear LangGraph graph before adding conditional routing and an optional human approval checkpoint before execution.
 
 ## License
 
