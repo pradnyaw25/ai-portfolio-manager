@@ -19,7 +19,7 @@ from src.storage.prediction_store import PredictionStore
 from src.scoring.prediction_scorer import PredictionScorer
 from src.utils.logger import get_logger
 from src.simulator.benchmark_tracker import BenchmarkTracker
-from src.memory.retriever import FundMemoryRetriever
+from src.memory.retriever import retrieve_fund_memory
 
 logger = get_logger(__name__)
 
@@ -90,16 +90,18 @@ def run_daily_cycle():
             prices[symbol] = price
 
     # 2. Memory
-    memory = FundMemoryRetriever()
-    memory_context = memory.retrieve(
+    memory_result = retrieve_fund_memory(
         query=(
             "Relevant prior investment theses, trades, cash decisions, "
             "risk concerns, and portfolio lessons for today's decision."
         ),
         k=6,
     )
+    memory_context = memory_result.chunks
 
-    logger.info("Retrieved %d memory chunks", len(memory_context))
+    logger.info("Memory status=%s chunks=%d", memory_result.status, len(memory_context))
+    if memory_result.error:
+        logger.warning("Memory error: %s", memory_result.error)
     for item in memory_context:
         logger.info("Memory source: %s", item["metadata"])
 
@@ -161,6 +163,8 @@ def run_daily_cycle():
         cash_thesis=rebalance_result.cash_thesis or decisions.get("cash_thesis"),
         rebalance_trades=rebalance_result.extra_trades,
         memory_used=memory_context,
+        memory_status=memory_result.status,
+        memory_error=memory_result.error,
     )
 
     snapshot = engine.get_snapshot()

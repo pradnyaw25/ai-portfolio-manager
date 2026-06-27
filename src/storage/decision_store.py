@@ -1,6 +1,6 @@
 import json
 from dataclasses import asdict, is_dataclass
-from datetime import date, datetime
+from datetime import UTC, date, datetime
 from enum import Enum
 from typing import Any
 
@@ -29,10 +29,12 @@ class DecisionStore:
         cash_thesis: str | None = None,
         rebalance_trades: list[TradePrediction] | None = None,
         memory_used: list[dict] | None = None,
+        memory_status: str = "not_recorded",
+        memory_error: str | None = None,
     ) -> None:
         row = {
             "date": date.today().isoformat(),
-            "created_at": datetime.utcnow().isoformat() + "Z",
+            "created_at": datetime.now(UTC).isoformat().replace("+00:00", "Z"),
             "portfolio": {
                 "total_value": portfolio.total_value,
                 "cash": portfolio.cash,
@@ -46,6 +48,8 @@ class DecisionStore:
             "cash_thesis": cash_thesis,
             "rebalance_trades": rebalance_trades or [],
             "memory_used": memory_used or [],
+            "memory_status": memory_status,
+            "memory_error": memory_error,
         }
         with open(DECISIONS_FILE, "a") as f:
             f.write(json.dumps(row, default=self._json_default) + "\n")

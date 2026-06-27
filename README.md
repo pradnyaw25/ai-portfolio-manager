@@ -80,6 +80,10 @@ QDRANT_URL=https://your-cluster-url
 QDRANT_API_KEY=your-qdrant-cloud-api-key
 ```
 
+If Qdrant or embeddings are unavailable, the daily cycle logs the failure, records
+`memory_status="unavailable"` and `memory_error` in the decision journal, and
+continues without memory context.
+
 Do not commit `.env` or real API keys.
 
 ## Roadmap
@@ -88,7 +92,6 @@ Near-term work is focused on making the daily cycle easier to observe and safer 
 
 - Add `run_id` tracking across logs, journals, trades, reports, and public exports.
 - Add a public run status dashboard for latest run health, warnings/errors, memory retrieval, trades, and ending portfolio value.
-- Make Qdrant memory retrieval failure-tolerant so the cycle can continue without memory.
 - Add sector/correlation diversification checks to the risk manager.
 - Add deterministic stop-loss and take-profit SELL proposals.
 
