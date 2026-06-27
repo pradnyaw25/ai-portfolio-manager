@@ -18,9 +18,14 @@ Recommended next work, in order:
    * Suggested steps: load portfolio, mark to market, build research context, retrieve memory, decide trades, review risk, check rebalance, execute trades, journal run, export public artifacts.
    * Keep behavior unchanged at first.
 
-4. Introduce a typed `PortfolioRunState`.
+4. [Done] Introduce a typed `PortfolioRunState`.
    * Add a dataclass that carries snapshot, market context, memory result, raw decision, risk review, rebalance result, executed trades, warnings, errors, and run metadata.
    * This prepares the codebase for LangGraph without migrating all at once.
+
+4a. Prove and harden the opt-in LangGraph runner.
+   * Compare `make run` and `make run-graph` outputs over several daily cycles.
+   * Keep `make run` as the default until the graph path has equivalent behavior.
+   * Add failure capture and conditional routing once the graph path is stable.
 
 5. Add sector diversification guardrails.
    * Add symbol-to-sector metadata.

@@ -35,6 +35,7 @@ Common local workflows are available through `make`:
 ```bash
 make test
 make run
+make run-graph
 make dashboard PORT=8001
 make ingest-memory
 make status
@@ -118,7 +119,7 @@ Near-term work is focused on making the daily cycle easier to observe and safer 
 - Add sector/correlation diversification checks to the risk manager.
 - Add deterministic stop-loss and take-profit SELL proposals.
 
-The eventual migration target is LangGraph. The daily cycle in `src/main.py` is now split into explicit workflow step functions. The planned path is to introduce a typed `PortfolioRunState`, then recreate the current daily cycle as a linear LangGraph graph before adding conditional routing and an optional human approval checkpoint before execution.
+The eventual migration target is LangGraph. The daily cycle in `src/main.py` is now split into explicit workflow step functions, and an opt-in linear LangGraph runner is available through `make run-graph`. The planned path is to prove the graph path against the existing runner, then add conditional routing and an optional human approval checkpoint before execution.
 
 ## License
 
