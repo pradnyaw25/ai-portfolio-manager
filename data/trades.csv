@@ -65,3 +65,11 @@ date,symbol,action,shares,price,total,reasoning
 2026-06-13,AAPL,SELL,20,291.13,5822.60,"AAPL is showing negative returns over the past 5 and 30 days, indicating a potential downward trend. Selling a portion can reduce risk exposure."
 2026-06-13,GOOGL,BUY,5,359.68,1798.40,"GOOGL's current price is stable with a slight positive return over a month, making it a reasonable entry target based on recent performance news."
 2026-06-13,AAPL,SELL,10,291.13,2911.30,"AAPL has shown a negative trend over the past 5 days and 30 days, coupled with market news indicating underperformance and lack of new product excitement which could continue to weigh on the stock price."
+2026-06-26,AAPL,SELL,10,283.78,2837.80,"AAPL is showing a negative 5d return of -7.36% and a 30d return of -10.90%, indicating a declining trend. Selling a portion can help reduce losses while maintaining a position for potential recovery."
+2026-06-26,NVDA,SELL,20,192.53,3850.60,"Similar to AAPL, NVDA has faced a decline of -6.14% in the last 5d and is down -8.99% over 30d. The stock’s underperformance suggests it may be prudent to realize losses to reallocate funds to stronger positions."
+2026-06-26,AAPL,SELL,10,283.78,2837.80,"Apple's stock has decreased significantly, showing a downward trend in both the 5-day and 30-day returns. Considering the current bearish market conditions, it might be prudent to realize some losses now and reduce exposure."
+2026-06-26,NVDA,SELL,20,192.53,3850.60,"NVIDIA is also experiencing a downward trend, with recent news indicating significant concerns in the tech sector. Selling now could prevent additional losses as the market continues to show bearish signals."
+2026-06-26,AAPL,BUY,37,283.78,10499.86,AAPL has strong fundamentals and is seen as a leader in technology innovation; a solid long-term hold.
+2026-06-26,MSFT,BUY,28,372.97,10443.16,"MSFT continues to show robust growth in cloud computing and AI, making it a strategic buy."
+2026-06-26,NVDA,BUY,54,192.53,10396.62,"NVDA is leading in AI and gaming technology, and it's expected to benefit from the ongoing tech boom."
+2026-06-26,GOOGL,BUY,15,337.39,5060.85,Google's strong ad revenue and diversification into AI make it a sound investment.
