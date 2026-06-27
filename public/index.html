@@ -1,251 +1,789 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <title>AI Portfolio Manager</title>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7f9;
+      --surface: #ffffff;
+      --surface-subtle: #f0f3f7;
+      --border: #d9dee7;
+      --border-strong: #c6ceda;
+      --text: #17202a;
+      --muted: #637083;
+      --muted-strong: #465365;
+      --positive: #16784b;
+      --positive-bg: #e8f5ee;
+      --negative: #b8323b;
+      --negative-bg: #fdeced;
+      --warning: #946200;
+      --warning-bg: #fff6dd;
+      --accent: #2454a6;
+      --accent-bg: #e9f0ff;
+      --ink: #101820;
+      --shadow: 0 12px 36px rgba(16, 24, 32, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: system-ui, sans-serif;
-      max-width: 900px;
-      margin: 40px auto;
-      padding: 0 20px;
+      margin: 0;
+      min-width: 320px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       line-height: 1.5;
     }
-    .card {
-      border: 1px solid #ddd;
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 20px;
+
+    a {
+      color: inherit;
     }
-    .metric {
-      font-size: 28px;
+
+    .app-shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 22px 0 48px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      font-weight: 800;
+      color: var(--ink);
+      letter-spacing: 0;
+    }
+
+    .brand-mark {
+      display: grid;
+      width: 34px;
+      height: 34px;
+      place-items: center;
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--accent);
+      font-size: 18px;
+      font-weight: 850;
+      box-shadow: 0 4px 14px rgba(16, 24, 32, 0.06);
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface);
+      padding: 4px;
+    }
+
+    .nav a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 0 12px;
+      border-radius: 6px;
+      color: var(--muted-strong);
+      font-size: 14px;
       font-weight: 700;
+      text-decoration: none;
+      white-space: nowrap;
     }
+
+    .nav a.active {
+      background: var(--ink);
+      color: #ffffff;
+    }
+
+    .page-header {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: end;
+      gap: 20px;
+      margin-bottom: 18px;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin-bottom: 6px;
+      color: var(--ink);
+      font-size: clamp(30px, 5vw, 54px);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      margin-bottom: 16px;
+      color: var(--ink);
+      font-size: 18px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin-bottom: 4px;
+      color: var(--ink);
+      font-size: 15px;
+      line-height: 1.2;
+    }
+
+    .subtitle {
+      margin-bottom: 0;
+      max-width: 680px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .updated-at {
+      justify-self: end;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      max-width: 100%;
+      padding: 0 10px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--surface);
+      color: var(--muted-strong);
+      font-size: 13px;
+      font-weight: 800;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .status-pill.success {
+      border-color: #b8dfca;
+      background: var(--positive-bg);
+      color: var(--positive);
+    }
+
+    .status-pill.warning {
+      border-color: #efd68a;
+      background: var(--warning-bg);
+      color: var(--warning);
+    }
+
+    .status-pill.error {
+      border-color: #f3b7bd;
+      background: var(--negative-bg);
+      color: var(--negative);
+    }
+
+    .hero-panel {
+      display: grid;
+      grid-template-columns: minmax(280px, 1.25fr) minmax(280px, 1fr);
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .portfolio-card,
+    .card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .portfolio-card {
+      padding: 26px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 272px;
+    }
+
+    .eyebrow {
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .portfolio-value {
+      margin-bottom: 12px;
+      color: var(--ink);
+      font-size: clamp(42px, 7vw, 72px);
+      font-weight: 850;
+      line-height: 0.95;
+      letter-spacing: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .portfolio-summary {
+      margin-bottom: 0;
+      color: var(--muted-strong);
+      font-size: 15px;
+    }
+
+    .hero-metrics {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .hero-stat,
+    .kpi,
+    .run-status-item {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface);
+    }
+
+    .hero-stat {
+      padding: 18px;
+      min-height: 130px;
+    }
+
+    .hero-value {
+      margin-bottom: 8px;
+      color: var(--ink);
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 850;
+      line-height: 1;
+      letter-spacing: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .hero-label,
+    .kpi-label,
+    .run-status-label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .hero-sub,
+    .kpi-sub {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .kpi-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .kpi {
+      padding: 16px;
+      min-height: 104px;
+    }
+
+    .kpi-value {
+      margin: 7px 0 4px;
+      color: var(--ink);
+      font-size: 25px;
+      font-weight: 850;
+      line-height: 1.1;
+      overflow-wrap: anywhere;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.75fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .content-grid > *,
+    aside {
+      min-width: 0;
+    }
+
+    .card {
+      padding: 20px;
+      margin-bottom: 16px;
+      min-width: 0;
+    }
+
+    .chart-card {
+      min-height: 420px;
+    }
+
+    .chart-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      height: 330px;
+    }
+
+    canvas {
+      display: block;
+      max-width: 100%;
+    }
+
+    .mini-chart {
+      height: 300px;
+    }
+
+    .return-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .return-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 30px;
+      padding: 0 10px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--surface-subtle);
+      color: var(--muted-strong);
+      font-size: 13px;
+      font-weight: 750;
+      white-space: nowrap;
+    }
+
+    .return-chip strong {
+      color: var(--ink);
+    }
+
+    .run-status-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .run-status-item {
+      padding: 12px;
+      min-width: 0;
+      background: #fbfcfe;
+    }
+
+    .run-status-value {
+      margin-top: 4px;
+      color: var(--ink);
+      font-size: 15px;
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+    }
+
     table {
       width: 100%;
+      min-width: 720px;
       border-collapse: collapse;
     }
-    th, td {
-      border-bottom: 1px solid #eee;
-      padding: 8px;
+
+    th,
+    td {
+      border-bottom: 1px solid #edf0f4;
+      padding: 11px 10px;
       text-align: left;
+      vertical-align: middle;
+      font-size: 14px;
     }
+
+    th {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
     th.sortable {
       cursor: pointer;
       user-select: none;
     }
+
     th.sortable:hover {
-      background: #f5f5f5;
+      color: var(--ink);
     }
+
     th.sortable::after {
-      content: " ⇅";
-      color: #ccc;
-      font-size: 12px;
+      content: "  ^";
+      color: #a7b0bd;
+      font-size: 11px;
     }
+
     th.sort-asc::after {
-      content: " ▲";
-      color: #333;
+      content: "  up";
+      color: var(--ink);
     }
+
     th.sort-desc::after {
-      content: " ▼";
-      color: #333;
+      content: "  down";
+      color: var(--ink);
     }
-    .muted {
-      color: #666;
+
+    .num {
+      text-align: right;
+      white-space: nowrap;
     }
-    .run-status-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 12px;
-    }
-    .run-status-item {
-      border: 1px solid #eee;
-      border-radius: 8px;
-      padding: 12px;
-    }
-    .run-status-label {
-      color: #666;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    .run-status-value {
-      font-size: 16px;
-      font-weight: 700;
-      margin-top: 4px;
-      overflow-wrap: anywhere;
-    }
-    .updated-at {
-      color: #666;
-      font-size: 13px;
-      margin-top: -8px;
-    }
-    .hero {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-      margin-bottom: 24px;
-    }
-    .hero-stat {
-      border: 1px solid #ddd;
-      border-radius: 12px;
-      padding: 24px;
-      text-align: center;
-    }
-    .hero-value {
-      font-size: 52px;
-      font-weight: 800;
-      line-height: 1.1;
-      letter-spacing: -1px;
-    }
-    .hero-label {
-      font-size: 14px;
-      color: #666;
-      margin-top: 8px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    .hero-sub {
-      font-size: 13px;
-      color: #888;
-      margin-top: 4px;
-    }
-    .pos { color: #1a8a3a; }
-    .neg { color: #c0392b; }
+
     .ticker {
       position: relative;
       cursor: default;
-      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 0 8px;
+      border-radius: 6px;
+      background: var(--accent-bg);
+      color: var(--accent);
+      font-weight: 850;
     }
+
     .ticker .tip {
       display: none;
       position: absolute;
       left: 0;
       bottom: 100%;
-      margin-bottom: 4px;
-      background: #333;
-      color: #fff;
-      font-weight: 400;
+      margin-bottom: 6px;
+      max-width: 220px;
+      background: var(--ink);
+      color: #ffffff;
+      font-weight: 650;
       font-size: 12px;
-      padding: 4px 8px;
-      border-radius: 4px;
+      padding: 5px 8px;
+      border-radius: 6px;
       white-space: nowrap;
       pointer-events: none;
       z-index: 10;
     }
+
     .ticker:hover .tip {
       display: block;
     }
-    @media (max-width: 600px) {
-      .hero { grid-template-columns: 1fr; }
-      .hero-value { font-size: 42px; }
+
+    .allocation-bar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .bar-track {
+      flex: 0 0 76px;
+      height: 7px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #e7ebf1;
+    }
+
+    .bar-fill {
+      display: block;
+      height: 100%;
+      width: var(--w);
+      border-radius: inherit;
+      background: var(--accent);
+    }
+
+    .trade-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .trade-item,
+    .empty-state,
+    .tweet-box {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fbfcfe;
+      padding: 14px;
+    }
+
+    .trade-item strong {
+      color: var(--ink);
+    }
+
+    .trade-meta {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .empty-state {
+      color: var(--muted-strong);
+      font-size: 14px;
+    }
+
+    .tweet-box {
+      margin-bottom: 0;
+      color: var(--muted-strong);
+      font-size: 15px;
+    }
+
+    .pos {
+      color: var(--positive);
+    }
+
+    .neg {
+      color: var(--negative);
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    @media (max-width: 920px) {
+      .page-header,
+      .hero-panel,
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .nav {
+        width: 100%;
+        overflow-x: auto;
+      }
+
+      .page-header {
+        align-items: start;
+      }
+
+      .updated-at {
+        justify-self: start;
+        text-align: left;
+        white-space: normal;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .app-shell {
+        width: min(100% - 24px, 1180px);
+        padding-top: 14px;
+      }
+
+      .hero-metrics,
+      .kpi-strip,
+      .run-status-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .portfolio-card,
+      .card {
+        padding: 16px;
+      }
+
+      .portfolio-card {
+        min-height: 220px;
+      }
+
+      .chart-wrap,
+      .mini-chart {
+        height: 260px;
+      }
     }
   </style>
 </head>
 <body>
-  <div style="margin-bottom: 20px;">
-    <a href="index.html" style="margin-right: 16px; text-decoration: none; font-weight: 600;">Dashboard</a>
-    <a href="decisions.html" style="margin-right: 16px; text-decoration: none; font-weight: 600;">Decision Journal</a>
-    <a href="predictions.html" style="text-decoration: none; font-weight: 600;">Prediction Accuracy</a>
-  </div>
-
-  <h1>AI Portfolio Manager</h1>
-  <p class="muted">
-    A simulated $1M AI-managed portfolio. Not investment advice.
-  </p>
-  <p class="updated-at" id="updated-at">Updated at: Loading...</p>
-
-  <div class="hero">
-    <div class="hero-stat">
-      <div class="hero-value" id="alpha-value">…</div>
-      <div class="hero-label">Alpha vs S&amp;P 500</div>
-      <div class="hero-sub" id="alpha-sub">since inception</div>
+  <main class="app-shell">
+    <div class="topbar">
+      <div class="brand">
+        <span class="brand-mark">A</span>
+        <span>AI Portfolio Manager</span>
+      </div>
+      <nav class="nav" aria-label="Dashboard navigation">
+        <a class="active" href="index.html">Dashboard</a>
+        <a href="decisions.html">Decision Journal</a>
+        <a href="predictions.html">Prediction Accuracy</a>
+      </nav>
     </div>
-    <div class="hero-stat">
-      <div class="hero-value" id="winrate-value">…</div>
-      <div class="hero-label">Prediction Win Rate</div>
-      <div class="hero-sub" id="winrate-sub">vs SPY over 30 days</div>
-    </div>
-  </div>
 
-  <div class="card">
-    <h2>Portfolio</h2>
-    <div class="metric" id="portfolio-value">Loading...</div>
-    <p id="portfolio-summary"></p>
-  </div>
-
-  <div class="card">
-    <h2>Run Status</h2>
-    <div class="run-status-grid">
-      <div class="run-status-item">
-        <div class="run-status-label">Status</div>
-        <div class="run-status-value" id="run-status">Loading...</div>
+    <header class="page-header">
+      <div>
+        <h1>Portfolio Console</h1>
+        <p class="subtitle">A simulated $1M AI-managed portfolio with live run health, benchmark context, holdings, and generated reporting. Not investment advice.</p>
       </div>
-      <div class="run-status-item">
-        <div class="run-status-label">Run ID</div>
-        <div class="run-status-value" id="run-id">Loading...</div>
+      <div>
+        <div class="updated-at" id="updated-at">Updated at: Loading...</div>
+        <div class="status-pill" id="run-status-pill">Run status: Loading...</div>
       </div>
-      <div class="run-status-item">
-        <div class="run-status-label">Completed</div>
-        <div class="run-status-value" id="run-completed">Loading...</div>
+    </header>
+
+    <section class="hero-panel" aria-label="Portfolio overview">
+      <div class="portfolio-card">
+        <div>
+          <div class="eyebrow">Total portfolio value</div>
+          <div class="portfolio-value" id="portfolio-value">Loading...</div>
+          <p class="portfolio-summary" id="portfolio-summary">Loading portfolio summary...</p>
+        </div>
+        <div class="return-row">
+          <span class="return-chip">AI <strong id="portfolio-return">Loading...</strong></span>
+          <span class="return-chip">SPY <strong id="spy-return">Loading...</strong></span>
+          <span class="return-chip">QQQ <strong id="qqq-return">Loading...</strong></span>
+        </div>
       </div>
-      <div class="run-status-item">
-        <div class="run-status-label">Memory</div>
-        <div class="run-status-value" id="run-memory">Loading...</div>
+
+      <div class="hero-metrics">
+        <div class="hero-stat">
+          <div class="hero-value" id="alpha-value">...</div>
+          <div class="hero-label">Alpha vs S&amp;P 500</div>
+          <div class="hero-sub" id="alpha-sub">Since inception</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-value" id="winrate-value">...</div>
+          <div class="hero-label">Prediction Win Rate</div>
+          <div class="hero-sub" id="winrate-sub">vs SPY over 30 days</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-value" id="cash-value">...</div>
+          <div class="hero-label">Cash Allocation</div>
+          <div class="hero-sub" id="cash-sub">Available dry powder</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-value" id="positions-value">...</div>
+          <div class="hero-label">Positions</div>
+          <div class="hero-sub" id="positions-sub">Current holdings</div>
+        </div>
       </div>
-      <div class="run-status-item">
-        <div class="run-status-label">Trades</div>
-        <div class="run-status-value" id="run-trades">Loading...</div>
+    </section>
+
+    <section class="kpi-strip" aria-label="Portfolio key metrics">
+      <div class="kpi">
+        <div class="kpi-label">Invested</div>
+        <div class="kpi-value" id="invested-value">Loading...</div>
+        <div class="kpi-sub">Market value in positions</div>
       </div>
-      <div class="run-status-item">
-        <div class="run-status-label">Warnings</div>
-        <div class="run-status-value" id="run-warnings">Loading...</div>
+      <div class="kpi">
+        <div class="kpi-label">Largest Holding</div>
+        <div class="kpi-value" id="largest-holding">Loading...</div>
+        <div class="kpi-sub" id="largest-holding-sub">By allocation</div>
       </div>
-    </div>
-  </div>
+      <div class="kpi">
+        <div class="kpi-label">Best Position</div>
+        <div class="kpi-value" id="best-position">Loading...</div>
+        <div class="kpi-sub" id="best-position-sub">Unrealized return</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Latest Trades</div>
+        <div class="kpi-value" id="latest-trade-count">Loading...</div>
+        <div class="kpi-sub">Executed in latest run</div>
+      </div>
+    </section>
 
-  <div class="card">
-    <h2>Capital Allocation</h2>
-    <canvas id="allocation-chart"></canvas>
-  </div>
+    <section class="content-grid">
+      <div>
+        <section class="card chart-card">
+          <h2>Performance</h2>
+          <div class="chart-wrap">
+            <canvas id="performance-chart"></canvas>
+          </div>
+        </section>
 
-  <div class="card">
-    <h2>Performance</h2>
-    <p>
-      AI Portfolio: <strong id="portfolio-return">Loading...</strong><br />
-      SPY: <strong id="spy-return">Loading...</strong><br />
-      QQQ: <strong id="qqq-return">Loading...</strong>
-    </p>
-    <canvas id="performance-chart"></canvas>
-  </div>
+        <section class="card">
+          <h2>Holdings</h2>
+          <div class="table-wrap">
+            <table id="holdings-table">
+              <thead>
+                <tr>
+                  <th class="sortable" data-key="symbol" data-type="string">Symbol</th>
+                  <th class="sortable num" data-key="allocation_pct" data-type="number">Allocation</th>
+                  <th class="sortable num" data-key="shares" data-type="number">Shares</th>
+                  <th class="sortable num" data-key="current_price" data-type="number">Price</th>
+                  <th class="sortable num" data-key="market_value" data-type="number">Market Value</th>
+                  <th class="sortable num" data-key="total_gain" data-type="number">Total Gain</th>
+                  <th class="sortable num" data-key="return_pct" data-type="number">Return</th>
+                </tr>
+              </thead>
+              <tbody id="holdings"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
 
-  <div class="card">
-    <h2>Holdings</h2>
-    <table id="holdings-table">
-      <thead>
-        <tr>
-          <th class="sortable" data-key="symbol" data-type="string">Symbol</th>
-          <th class="sortable" data-key="shares" data-type="number">Shares</th>
-          <th class="sortable" data-key="current_price" data-type="number">Price</th>
-          <th class="sortable" data-key="market_value" data-type="number">Market Value</th>
-          <th class="sortable" data-key="total_gain" data-type="number">Total Gain</th>
-          <th class="sortable" data-key="return_pct" data-type="number">Return</th>
-        </tr>
-      </thead>
-      <tbody id="holdings"></tbody>
-    </table>
-  </div>
+      <aside>
+        <section class="card">
+          <h2>Run Status</h2>
+          <div class="run-status-grid">
+            <div class="run-status-item">
+              <div class="run-status-label">Status</div>
+              <div class="run-status-value" id="run-status">Loading...</div>
+            </div>
+            <div class="run-status-item">
+              <div class="run-status-label">Completed</div>
+              <div class="run-status-value" id="run-completed">Loading...</div>
+            </div>
+            <div class="run-status-item">
+              <div class="run-status-label">Memory</div>
+              <div class="run-status-value" id="run-memory">Loading...</div>
+            </div>
+            <div class="run-status-item">
+              <div class="run-status-label">Warnings</div>
+              <div class="run-status-value" id="run-warnings">Loading...</div>
+            </div>
+            <div class="run-status-item">
+              <div class="run-status-label">Trades</div>
+              <div class="run-status-value" id="run-trades">Loading...</div>
+            </div>
+            <div class="run-status-item">
+              <div class="run-status-label">Run ID</div>
+              <div class="run-status-value" id="run-id">Loading...</div>
+            </div>
+          </div>
+        </section>
 
-  <div class="card">
-    <h2>Latest Trades</h2>
-    <div id="trades">Loading...</div>
-  </div>
+        <section class="card">
+          <h2>Capital Allocation</h2>
+          <div class="chart-wrap mini-chart">
+            <canvas id="allocation-chart"></canvas>
+          </div>
+        </section>
 
-  <div class="card">
-    <h2>Latest Tweet Draft</h2>
-    <p id="tweet">Loading...</p>
-  </div>
+        <section class="card">
+          <h2>Latest Trades</h2>
+          <div class="trade-list" id="trades">Loading...</div>
+        </section>
+
+        <section class="card">
+          <h2>Latest Tweet Draft</h2>
+          <p class="tweet-box" id="tweet">Loading...</p>
+        </section>
+      </aside>
+    </section>
+  </main>
 
   <script>
     const money = new Intl.NumberFormat("en-US", {
@@ -254,7 +792,15 @@
       maximumFractionDigits: 0
     });
 
-    const pct = (x) => `${(x * 100).toFixed(2)}%`;
+    const compactMoney = new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      notation: "compact",
+      maximumFractionDigits: 1
+    });
+
+    const pct = (x, digits = 2) => `${(x * 100).toFixed(digits)}%`;
+    const signedPct = (x, digits = 2) => `${x >= 0 ? "+" : ""}${(x * 100).toFixed(digits)}%`;
 
     const symbolNames = {
       AAPL: "Apple Inc.", MSFT: "Microsoft Corp.", GOOGL: "Alphabet Inc.",
@@ -266,11 +812,22 @@
       CAT: "Caterpillar Inc.", SPY: "SPDR S&P 500 ETF", QQQ: "Invesco QQQ Trust",
     };
 
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
     async function fetchCsv(path) {
       const res = await fetch(path);
       const text = await res.text();
+      const trimmed = text.replace(/\r/g, "").trim();
+      if (!trimmed) return [];
 
-      const [headerLine, ...lines] = text.replace(/\r/g, "").trim().split("\n");
+      const [headerLine, ...lines] = trimmed.split("\n");
       const headers = headerLine.split(",");
 
       return lines.map(line => {
@@ -281,13 +838,9 @@
 
     function calculateReturn(values) {
       if (values.length < 2) return 0;
-
       const start = Number(values[0]);
       const end = Number(values[values.length - 1]);
-
-      if (!start) return 0;
-
-      return end / start - 1;
+      return start ? end / start - 1 : 0;
     }
 
     function formatUpdatedAt(value) {
@@ -316,27 +869,63 @@
     }
 
     async function loadRunStatus() {
+      const pill = document.getElementById("run-status-pill");
       try {
         const res = await fetch("./run_status.json");
         if (!res.ok) throw new Error("run_status unavailable");
         const status = await res.json();
+        const warnings = status.warnings || [];
+        const statusText = status.status || "unknown";
+        const statusClass = statusText === "success"
+          ? (warnings.length > 0 ? "warning" : "success")
+          : "error";
 
-        document.getElementById("run-status").textContent = status.status || "Unknown";
+        pill.textContent = `Run status: ${statusText}`;
+        pill.className = `status-pill ${statusClass}`;
+
+        document.getElementById("run-status").textContent = statusText;
         document.getElementById("run-status").className =
-          `run-status-value ${status.status === "success" ? "pos" : "neg"}`;
+          `run-status-value ${statusText === "success" ? "pos" : "neg"}`;
         document.getElementById("run-id").textContent = status.run_id || "Unknown";
         document.getElementById("run-completed").textContent =
           formatUpdatedAt(status.completed_at);
         document.getElementById("run-memory").textContent =
-          `${status.memory_status || "unknown"} · ${status.memory_chunks ?? 0} chunks`;
+          `${status.memory_status || "unknown"} / ${status.memory_chunks ?? 0} chunks`;
         document.getElementById("run-trades").textContent =
           `${status.trades_executed ?? 0} executed`;
         document.getElementById("run-warnings").textContent =
-          `${(status.warnings || []).length} warnings`;
+          `${warnings.length} warnings`;
       } catch (e) {
+        pill.textContent = "Run status: Unavailable";
+        pill.className = "status-pill error";
         ["run-status", "run-id", "run-completed", "run-memory", "run-trades", "run-warnings"]
           .forEach(id => document.getElementById(id).textContent = "Unavailable");
       }
+    }
+
+    function renderTrades(trades) {
+      const tradesDiv = document.getElementById("trades");
+
+      if (trades.length === 0) {
+        tradesDiv.innerHTML = `
+          <div class="empty-state">
+            No trades were executed in the latest run. The portfolio held its current allocation.
+          </div>
+        `;
+        return;
+      }
+
+      tradesDiv.innerHTML = trades.map(t => `
+        <div class="trade-item">
+          <strong>${escapeHtml(t.action)} ${escapeHtml(t.shares)} <span class="ticker">${escapeHtml(t.symbol)}<span class="tip">${escapeHtml(symbolNames[t.symbol] || t.symbol)}</span></span></strong>
+          <div class="trade-meta">at ${money.format(t.price)} / ${money.format(t.total)}</div>
+          <div class="trade-meta">${escapeHtml(t.reasoning)}</div>
+        </div>
+      `).join("");
+    }
+
+    function setText(id, text) {
+      document.getElementById(id).textContent = text;
     }
 
     async function loadDashboard() {
@@ -350,27 +939,65 @@
       const trades = await tradesRes.json();
       const tweet = await tweetRes.json();
 
-      document.getElementById("portfolio-value").textContent =
-        money.format(portfolio.total_value);
+      const positions = portfolio.positions || [];
+      const invested = Number(portfolio.invested_value || 0);
+      const cash = Number(portfolio.cash || 0);
+      const totalValue = Number(portfolio.total_value || 0);
 
-      document.getElementById("portfolio-summary").textContent =
-        `Cash: ${money.format(portfolio.cash)} (${pct(portfolio.cash_pct)}) · Positions: ${portfolio.positions.length}`;
+      setText("portfolio-value", money.format(totalValue));
+      setText(
+        "portfolio-summary",
+        `${money.format(cash)} cash (${pct(portfolio.cash_pct)}) / ${positions.length} holdings`
+      );
+      setText("cash-value", pct(portfolio.cash_pct, 1));
+      setText("cash-sub", `${money.format(cash)} available`);
+      setText("positions-value", positions.length);
+      setText("positions-sub", `${money.format(invested)} invested`);
+      setText("invested-value", compactMoney.format(invested));
+      setText("latest-trade-count", trades.length);
+      document.getElementById("tweet").textContent = tweet.text || "No tweet draft exported.";
 
-      let holdingsData = [];
+      let holdingsData = positions.map(p => ({
+        ...p,
+        allocation_pct: totalValue ? p.market_value / totalValue : 0,
+        total_gain: p.market_value - (p.avg_cost * p.shares),
+      }));
       let currentSort = { key: null, asc: true };
+
+      const largest = [...holdingsData].sort((a, b) => b.allocation_pct - a.allocation_pct)[0];
+      const best = [...holdingsData].sort((a, b) => b.return_pct - a.return_pct)[0];
+
+      if (largest) {
+        setText("largest-holding", largest.symbol);
+        setText("largest-holding-sub", `${pct(largest.allocation_pct, 1)} / ${money.format(largest.market_value)}`);
+      }
+
+      if (best) {
+        setText("best-position", best.symbol);
+        setText("best-position-sub", `${signedPct(best.return_pct, 1)} unrealized`);
+        document.getElementById("best-position").className =
+          `kpi-value ${best.return_pct >= 0 ? "pos" : "neg"}`;
+      }
 
       function renderHoldings() {
         const holdingsBody = document.getElementById("holdings");
         holdingsBody.innerHTML = "";
+
         holdingsData.forEach((p) => {
           const row = document.createElement("tr");
           row.innerHTML = `
-            <td><span class="ticker">${p.symbol}<span class="tip">${symbolNames[p.symbol] || p.symbol}</span></span></td>
-            <td>${p.shares}</td>
-            <td>${money.format(p.current_price)}</td>
-            <td>${money.format(p.market_value)}</td>
-            <td class="${p.total_gain >= 0 ? 'pos' : 'neg'}">${money.format(p.total_gain)}</td>
-            <td class="${p.return_pct >= 0 ? 'pos' : 'neg'}">${pct(p.return_pct)}</td>
+            <td><span class="ticker">${escapeHtml(p.symbol)}<span class="tip">${escapeHtml(symbolNames[p.symbol] || p.symbol)}</span></span></td>
+            <td class="num">
+              <span class="allocation-bar">
+                <span>${pct(p.allocation_pct, 1)}</span>
+                <span class="bar-track"><span class="bar-fill" style="--w: ${Math.max(2, p.allocation_pct * 100)}%"></span></span>
+              </span>
+            </td>
+            <td class="num">${p.shares}</td>
+            <td class="num">${money.format(p.current_price)}</td>
+            <td class="num">${money.format(p.market_value)}</td>
+            <td class="num ${p.total_gain >= 0 ? "pos" : "neg"}">${money.format(p.total_gain)}</td>
+            <td class="num ${p.return_pct >= 0 ? "pos" : "neg"}">${signedPct(p.return_pct)}</td>
           `;
           holdingsBody.appendChild(row);
         });
@@ -384,7 +1011,7 @@
           currentSort.asc = !currentSort.asc;
         } else {
           currentSort.key = key;
-          currentSort.asc = true;
+          currentSort.asc = type === "string";
         }
 
         const clickedTh = document.querySelector(`th[data-key="${key}"]`);
@@ -393,7 +1020,8 @@
         holdingsData.sort((a, b) => {
           let va = a[key], vb = b[key];
           if (type === "number") {
-            va = Number(va); vb = Number(vb);
+            va = Number(va);
+            vb = Number(vb);
           }
           if (va < vb) return currentSort.asc ? -1 : 1;
           if (va > vb) return currentSort.asc ? 1 : -1;
@@ -408,34 +1036,11 @@
         });
       });
 
-      const holdingsBody = document.getElementById("holdings");
-      holdingsBody.innerHTML = "";
-
-      holdingsData = portfolio.positions.map(p => ({
-        ...p,
-        total_gain: p.market_value - (p.avg_cost * p.shares),
-      }));
-      renderHoldings();
-
-      const tradesDiv = document.getElementById("trades");
-
-      if (trades.length === 0) {
-        tradesDiv.textContent = "No trades today.";
-      } else {
-        tradesDiv.innerHTML = trades.map(t => `
-          <p>
-            <strong>${t.action} ${t.shares} <span class="ticker">${t.symbol}<span class="tip">${symbolNames[t.symbol] || t.symbol}</span></span></strong>
-            at ${money.format(t.price)}<br />
-            <span class="muted">${t.reasoning}</span>
-          </p>
-        `).join("");
-      }
-
-      document.getElementById("tweet").textContent = tweet.text;
+      sortHoldings("market_value", "number");
+      renderTrades(trades);
 
       const portfolioHistory = await fetchCsv("./portfolio_history.csv");
       const benchmarkHistory = await fetchCsv("./benchmark_history.csv");
-
       const portfolioValues = portfolioHistory.map(r => Number(r.total_value));
       const portfolioReturn = calculateReturn(portfolioValues);
 
@@ -448,7 +1053,6 @@
       const portfolioDates = portfolioHistory.map(r => r.date);
       const spyBaseline = spyByDate[portfolioDates[0]];
       const qqqBaseline = qqqByDate[portfolioDates[0]];
-
       const spyAligned = portfolioDates.map(d => spyByDate[d] ?? null);
       const qqqAligned = portfolioDates.map(d => qqqByDate[d] ?? null);
 
@@ -457,20 +1061,16 @@
       const qqqReturn = qqqBaseline && qqqAligned[qqqAligned.length - 1]
         ? qqqAligned[qqqAligned.length - 1] / qqqBaseline - 1 : 0;
 
-      document.getElementById("portfolio-return").textContent = pct(portfolioReturn);
-      document.getElementById("spy-return").textContent = pct(spyReturn);
-      document.getElementById("qqq-return").textContent = pct(qqqReturn);
+      setText("portfolio-return", signedPct(portfolioReturn));
+      setText("spy-return", signedPct(spyReturn));
+      setText("qqq-return", signedPct(qqqReturn));
 
-      // Hero metric 1: Alpha vs S&P 500
       const alpha = portfolioReturn - spyReturn;
       const alphaEl = document.getElementById("alpha-value");
-      const signedPct = (x) => `${x >= 0 ? "+" : ""}${(x * 100).toFixed(2)}%`;
       alphaEl.textContent = signedPct(alpha);
       alphaEl.className = `hero-value ${alpha >= 0 ? "pos" : "neg"}`;
-      document.getElementById("alpha-sub").textContent =
-        `Portfolio ${signedPct(portfolioReturn)} vs SPY ${signedPct(spyReturn)}`;
+      setText("alpha-sub", `Portfolio ${signedPct(portfolioReturn)} vs SPY ${signedPct(spyReturn)}`);
 
-      // Hero metric 2: Prediction win rate
       try {
         const predRes = await fetch("./predictions.jsonl");
         const predText = await predRes.text();
@@ -483,44 +1083,69 @@
         const winEl = document.getElementById("winrate-value");
 
         if (scored.length === 0) {
-          winEl.textContent = "—";
-          document.getElementById("winrate-sub").textContent =
-            `${predictions.length} open · none scored yet`;
+          winEl.textContent = "-";
+          setText("winrate-sub", `${predictions.length} open / none scored yet`);
         } else {
           const rate = wins / scored.length;
           winEl.textContent = `${(rate * 100).toFixed(0)}%`;
           winEl.className = `hero-value ${rate >= 0.5 ? "pos" : "neg"}`;
-          document.getElementById("winrate-sub").textContent =
-            `${wins} of ${scored.length} calls beat SPY`;
+          setText("winrate-sub", `${wins} of ${scored.length} calls beat SPY`);
         }
       } catch (e) {
-        document.getElementById("winrate-value").textContent = "—";
+        setText("winrate-value", "-");
       }
 
       new Chart(document.getElementById("performance-chart"), {
         type: "line",
         data: {
-          labels: portfolioHistory.map(r => r.date),
+          labels: portfolioDates,
           datasets: [
             {
               label: "AI Portfolio",
               data: portfolioValues.map(v => (v / portfolioValues[0] - 1) * 100),
+              borderColor: "#2454a6",
+              backgroundColor: "rgba(36, 84, 166, 0.12)",
+              borderWidth: 3,
+              pointRadius: 2,
+              tension: 0.25,
             },
             {
               label: "SPY",
               data: spyAligned.map(v => v && spyBaseline ? (v / spyBaseline - 1) * 100 : null),
+              borderColor: "#16784b",
+              backgroundColor: "rgba(22, 120, 75, 0.08)",
+              borderWidth: 2,
+              pointRadius: 1,
+              tension: 0.25,
               spanGaps: true,
             },
             {
               label: "QQQ",
               data: qqqAligned.map(v => v && qqqBaseline ? (v / qqqBaseline - 1) * 100 : null),
+              borderColor: "#946200",
+              backgroundColor: "rgba(148, 98, 0, 0.08)",
+              borderWidth: 2,
+              pointRadius: 1,
+              tension: 0.25,
               spanGaps: true,
             },
           ],
         },
         options: {
+          maintainAspectRatio: false,
           responsive: true,
+          interaction: {
+            mode: "index",
+            intersect: false,
+          },
           plugins: {
+            legend: {
+              labels: {
+                boxWidth: 10,
+                boxHeight: 10,
+                usePointStyle: true,
+              }
+            },
             tooltip: {
               callbacks: {
                 label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(2)}%`
@@ -528,6 +1153,10 @@
             }
           },
           scales: {
+            x: {
+              grid: { display: false },
+              ticks: { maxRotation: 0 },
+            },
             y: {
               ticks: {
                 callback: value => `${value}%`
@@ -537,26 +1166,30 @@
         }
       });
 
-      const allocLabels = portfolio.positions.map(p => p.symbol).concat("Cash");
-      const allocValues = portfolio.positions.map(p => p.market_value).concat(portfolio.cash);
+      const allocLabels = positions.map(p => p.symbol).concat("Cash");
+      const allocValues = positions.map(p => p.market_value).concat(cash);
       const allocColors = [
-        "#4e79a7", "#f28e2b", "#e15759", "#76b7b2", "#59a14f",
-        "#edc948", "#b07aa1", "#ff9da7", "#9c755f", "#bab0ac",
-        "#86bcb6", "#8cd17d", "#b6992d", "#499894", "#d37295",
-        "#a0cbe8", "#ffbe7d", "#d4a6c8", "#79706e", "#aecbfa",
+        "#2454a6", "#16784b", "#946200", "#b8323b", "#5b6c7f",
+        "#4d7c8a", "#7358a6", "#b75d2a", "#2f7d73", "#a74f73",
+        "#617a2f", "#805f36", "#4b6fb3", "#8b6f12", "#57606f",
+        "#8fa4c8", "#9cc9b5", "#e1c16e", "#d69aa0", "#aab4c0",
       ];
 
       new Chart(document.getElementById("allocation-chart"), {
-        type: "pie",
+        type: "doughnut",
         data: {
           labels: allocLabels,
           datasets: [{
             data: allocValues,
             backgroundColor: allocColors.slice(0, allocLabels.length),
+            borderColor: "#ffffff",
+            borderWidth: 2,
           }],
         },
         options: {
+          maintainAspectRatio: false,
           responsive: true,
+          cutout: "62%",
           plugins: {
             tooltip: {
               callbacks: {
@@ -568,7 +1201,12 @@
               }
             },
             legend: {
-              position: "right",
+              position: "bottom",
+              labels: {
+                boxWidth: 10,
+                boxHeight: 10,
+                usePointStyle: true,
+              }
             }
           }
         }
