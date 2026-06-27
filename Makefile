@@ -1,0 +1,50 @@
+PYTHON ?= .venv/bin/python
+PORT ?= 8000
+
+.PHONY: help install test run dashboard ingest-memory market-hours benchmark backfill status
+
+help:
+	@echo "AI Portfolio Manager commands"
+	@echo ""
+	@echo "  make install         Install project dependencies into the active Python env"
+	@echo "  make test            Run the test suite"
+	@echo "  make run             Run the daily portfolio cycle"
+	@echo "  make dashboard       Serve public/ locally on PORT (default: 8000)"
+	@echo "  make ingest-memory   Ingest existing reports into Qdrant memory"
+	@echo "  make market-hours    Check whether a scheduled run should execute now"
+	@echo "  make benchmark       Run benchmark script"
+	@echo "  make backfill        Run backfill script"
+	@echo "  make status          Show git status and latest run status"
+
+install:
+	$(PYTHON) -m pip install -r requirements.txt
+
+test:
+	$(PYTHON) -m pytest -q
+
+run:
+	$(PYTHON) scripts/daily_run.py
+
+dashboard:
+	$(PYTHON) -m http.server $(PORT) --directory public
+
+ingest-memory:
+	$(PYTHON) -m src.memory.ingest
+
+market-hours:
+	$(PYTHON) scripts/market_hours_guard.py
+
+benchmark:
+	$(PYTHON) scripts/benchmark.py
+
+backfill:
+	$(PYTHON) scripts/backfill.py
+
+status:
+	git status --short --branch
+	@echo ""
+	@if [ -f public/run_status.json ]; then \
+		$(PYTHON) -m json.tool public/run_status.json; \
+	else \
+		echo "No public/run_status.json found."; \
+	fi

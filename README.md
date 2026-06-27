@@ -28,6 +28,18 @@ An AI-powered portfolio management system that uses LLM agents to analyze market
    python scripts/daily_run.py
    ```
 
+## Local Commands
+
+Common local workflows are available through `make`:
+
+```bash
+make test
+make run
+make dashboard PORT=8001
+make ingest-memory
+make status
+```
+
 ## Project Structure
 
 ```

@@ -34,7 +34,7 @@ Recommended next work, in order:
    * Move hardcoded `WATCHLIST` out of `src/research/market_context.py`.
    * Use config, YAML, or another simple repo-owned data file.
 
-8. Improve local run UX.
+8. [Done] Improve local run UX.
    * Add a `Makefile` or similar commands for test, run, dashboard, and memory ingest.
 
 ## Phase 1 — Credibility & Observability
