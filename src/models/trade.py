@@ -16,6 +16,7 @@ class Trade:
     shares: float
     price: float
     reasoning: str = ""
+    run_id: str | None = None
 
     @property
     def total(self) -> float:

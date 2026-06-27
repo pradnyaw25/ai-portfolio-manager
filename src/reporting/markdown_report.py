@@ -15,8 +15,9 @@ class MarkdownReportGenerator:
         trades: list[Trade],
         research: dict,
         decision: PortfolioDecision,
+        run_id: str | None = None,
     ) -> str:
-        report = self._build_report(portfolio, trades, research, decision)
+        report = self._build_report(portfolio, trades, research, decision, run_id=run_id)
         filename = f"report_{date.today().isoformat()}.md"
         filepath = REPORTS_DIR / filename
         filepath.write_text(report)
@@ -29,11 +30,16 @@ class MarkdownReportGenerator:
         trades: list[Trade],
         research: dict,
         decision: PortfolioDecision,
+        run_id: str | None = None,
     ) -> str:
         lines = [
             f"# Portfolio Report — {portfolio.date}",
             "",
             "## Summary",
+        ]
+        if run_id:
+            lines.append(f"- **Run ID:** `{run_id}`")
+        lines.extend([
             f"- **Total Value:** ${portfolio.total_value:,.2f}",
             f"- **Cash:** ${portfolio.cash:,.2f} ({portfolio.cash_pct:.1%})",
             f"- **Invested:** ${portfolio.invested_value:,.2f}",
@@ -44,7 +50,7 @@ class MarkdownReportGenerator:
             "",
             "| Symbol | Shares | Avg Cost | Current | P&L % |",
             "|--------|--------|----------|---------|-------|",
-        ]
+        ])
 
         for p in sorted(portfolio.positions, key=lambda x: x.market_value, reverse=True):
             lines.append(

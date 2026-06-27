@@ -18,19 +18,24 @@ class PublicExporter:
         trades: list[Trade],
         tweet: str,
         report_markdown: str,
+        run_id: str | None = None,
+        run_status: dict | None = None,
     ) -> None:
         PUBLIC_DIR.mkdir(exist_ok=True)
 
-        self._write_portfolio(snapshot)
+        self._write_portfolio(snapshot, run_id=run_id)
         self._write_latest_trades(trades)
-        self._write_latest_tweet(tweet, snapshot)
+        self._write_latest_tweet(tweet, snapshot, run_id=run_id)
         self._write_latest_report(report_markdown)
         self._write_site_meta()
+        if run_status is not None:
+            self._write_run_status(run_status)
         self._write_prediction_dashboard()
         self._copy_history_files()
 
-    def _write_portfolio(self, snapshot: PortfolioSnapshot) -> None:
+    def _write_portfolio(self, snapshot: PortfolioSnapshot, run_id: str | None = None) -> None:
         payload = {
+            "run_id": run_id,
             "date": snapshot.date.isoformat(),
             "total_value": snapshot.total_value,
             "cash": snapshot.cash,
@@ -56,6 +61,7 @@ class PublicExporter:
     def _write_latest_trades(self, trades: list[Trade]) -> None:
         payload = [
             {
+                "run_id": t.run_id,
                 "date": t.date.isoformat(),
                 "symbol": t.symbol,
                 "action": t.action.value,
@@ -71,8 +77,14 @@ class PublicExporter:
             json.dumps(payload, indent=2)
         )
 
-    def _write_latest_tweet(self, tweet: str, snapshot: PortfolioSnapshot) -> None:
+    def _write_latest_tweet(
+        self,
+        tweet: str,
+        snapshot: PortfolioSnapshot,
+        run_id: str | None = None,
+    ) -> None:
         payload = {
+            "run_id": run_id,
             "date": date.today().isoformat(),
             "text": tweet,
             "portfolio_value": snapshot.total_value,
@@ -92,6 +104,9 @@ class PublicExporter:
         }
 
         (PUBLIC_DIR / "site_meta.json").write_text(json.dumps(payload, indent=2))
+
+    def _write_run_status(self, run_status: dict) -> None:
+        (PUBLIC_DIR / "run_status.json").write_text(json.dumps(run_status, indent=2))
 
     def _write_prediction_dashboard(self) -> None:
         predictions = self._load_predictions()

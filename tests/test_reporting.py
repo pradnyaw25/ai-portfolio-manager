@@ -28,9 +28,10 @@ def test_markdown_report_generation():
     )
 
     gen = MarkdownReportGenerator()
-    report = gen._build_report(portfolio, trades, {}, decision)
+    report = gen._build_report(portfolio, trades, {}, decision, run_id="run_123")
 
     assert "Portfolio Report" in report
+    assert "run_123" in report
     assert "AAPL" in report
     assert "GOOGL" in report
     assert "$50,000.00" in report
@@ -57,6 +58,22 @@ def test_public_exporter_writes_site_metadata(tmp_path, monkeypatch):
 
     assert payload["updated_at"].endswith("Z")
     datetime.fromisoformat(payload["updated_at"].replace("Z", "+00:00"))
+
+
+def test_public_exporter_writes_run_status(tmp_path, monkeypatch):
+    monkeypatch.setattr("src.reporting.public_exporter.PUBLIC_DIR", tmp_path)
+    status = {
+        "run_id": "run_123",
+        "status": "success",
+        "memory_status": "ok",
+        "trades_executed": 2,
+    }
+
+    PublicExporter()._write_run_status(status)
+
+    payload = json.loads((tmp_path / "run_status.json").read_text())
+
+    assert payload == status
 
 
 def test_public_exporter_writes_prediction_dashboard(tmp_path, monkeypatch):

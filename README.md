@@ -10,7 +10,7 @@ An AI-powered portfolio management system that uses LLM agents to analyze market
 - **Simulated Trading**: Paper trading engine with full position tracking
 - **Reporting**: Markdown and HTML performance reports
 - **Benchmarking**: Compare portfolio performance against S&P 500 and other indices
-- **Public Dashboard**: Static HTML dashboard with portfolio, prediction accuracy, and decision journal views, including last-updated metadata
+- **Public Dashboard**: Static HTML dashboard with portfolio, run status, prediction accuracy, and decision journal views, including last-updated metadata
 
 ## Setup
 
@@ -84,14 +84,25 @@ If Qdrant or embeddings are unavailable, the daily cycle logs the failure, recor
 `memory_status="unavailable"` and `memory_error` in the decision journal, and
 continues without memory context.
 
+### Run Observability
+
+Each daily cycle generates a `run_id` and records it in the decision journal,
+executed trades, prediction records created from trades, generated reports, and
+public exports. The latest run status is exported to:
+
+```bash
+public/run_status.json
+```
+
+The public dashboard displays the latest run status, completion time, memory
+retrieval status, number of trades executed, and warning count.
+
 Do not commit `.env` or real API keys.
 
 ## Roadmap
 
 Near-term work is focused on making the daily cycle easier to observe and safer to evolve:
 
-- Add `run_id` tracking across logs, journals, trades, reports, and public exports.
-- Add a public run status dashboard for latest run health, warnings/errors, memory retrieval, trades, and ending portfolio value.
 - Add sector/correlation diversification checks to the risk manager.
 - Add deterministic stop-loss and take-profit SELL proposals.
 

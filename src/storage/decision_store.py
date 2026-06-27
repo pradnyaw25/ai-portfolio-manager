@@ -31,8 +31,10 @@ class DecisionStore:
         memory_used: list[dict] | None = None,
         memory_status: str = "not_recorded",
         memory_error: str | None = None,
+        run_id: str | None = None,
     ) -> None:
         row = {
+            "run_id": run_id,
             "date": date.today().isoformat(),
             "created_at": datetime.now(UTC).isoformat().replace("+00:00", "Z"),
             "portfolio": {

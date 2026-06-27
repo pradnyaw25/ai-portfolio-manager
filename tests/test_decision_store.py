@@ -19,10 +19,12 @@ def test_decision_store_records_memory_status_and_error(tmp_path, monkeypatch):
         memory_used=[],
         memory_status="unavailable",
         memory_error="qdrant offline",
+        run_id="run_123",
     )
 
     row = json.loads(decisions_file.read_text().strip())
 
+    assert row["run_id"] == "run_123"
     assert row["memory_status"] == "unavailable"
     assert row["memory_error"] == "qdrant offline"
     assert row["memory_used"] == []

@@ -54,6 +54,28 @@
     .muted {
       color: #666;
     }
+    .run-status-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+    }
+    .run-status-item {
+      border: 1px solid #eee;
+      border-radius: 8px;
+      padding: 12px;
+    }
+    .run-status-label {
+      color: #666;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .run-status-value {
+      font-size: 16px;
+      font-weight: 700;
+      margin-top: 4px;
+      overflow-wrap: anywhere;
+    }
     .updated-at {
       color: #666;
       font-size: 13px;
@@ -151,6 +173,36 @@
     <h2>Portfolio</h2>
     <div class="metric" id="portfolio-value">Loading...</div>
     <p id="portfolio-summary"></p>
+  </div>
+
+  <div class="card">
+    <h2>Run Status</h2>
+    <div class="run-status-grid">
+      <div class="run-status-item">
+        <div class="run-status-label">Status</div>
+        <div class="run-status-value" id="run-status">Loading...</div>
+      </div>
+      <div class="run-status-item">
+        <div class="run-status-label">Run ID</div>
+        <div class="run-status-value" id="run-id">Loading...</div>
+      </div>
+      <div class="run-status-item">
+        <div class="run-status-label">Completed</div>
+        <div class="run-status-value" id="run-completed">Loading...</div>
+      </div>
+      <div class="run-status-item">
+        <div class="run-status-label">Memory</div>
+        <div class="run-status-value" id="run-memory">Loading...</div>
+      </div>
+      <div class="run-status-item">
+        <div class="run-status-label">Trades</div>
+        <div class="run-status-value" id="run-trades">Loading...</div>
+      </div>
+      <div class="run-status-item">
+        <div class="run-status-label">Warnings</div>
+        <div class="run-status-value" id="run-warnings">Loading...</div>
+      </div>
+    </div>
   </div>
 
   <div class="card">
@@ -260,6 +312,30 @@
           `Updated at: ${formatUpdatedAt(meta.updated_at)}`;
       } catch (e) {
         document.getElementById("updated-at").textContent = "Updated at: Unknown";
+      }
+    }
+
+    async function loadRunStatus() {
+      try {
+        const res = await fetch("./run_status.json");
+        if (!res.ok) throw new Error("run_status unavailable");
+        const status = await res.json();
+
+        document.getElementById("run-status").textContent = status.status || "Unknown";
+        document.getElementById("run-status").className =
+          `run-status-value ${status.status === "success" ? "pos" : "neg"}`;
+        document.getElementById("run-id").textContent = status.run_id || "Unknown";
+        document.getElementById("run-completed").textContent =
+          formatUpdatedAt(status.completed_at);
+        document.getElementById("run-memory").textContent =
+          `${status.memory_status || "unknown"} · ${status.memory_chunks ?? 0} chunks`;
+        document.getElementById("run-trades").textContent =
+          `${status.trades_executed ?? 0} executed`;
+        document.getElementById("run-warnings").textContent =
+          `${(status.warnings || []).length} warnings`;
+      } catch (e) {
+        ["run-status", "run-id", "run-completed", "run-memory", "run-trades", "run-warnings"]
+          .forEach(id => document.getElementById(id).textContent = "Unavailable");
       }
     }
 
@@ -500,6 +576,7 @@
     }
 
     loadUpdatedAt();
+    loadRunStatus();
     loadDashboard();
   </script>
 </body>

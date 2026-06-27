@@ -41,6 +41,7 @@ class PredictionStore:
     def create_from_trade(self, trade, confidence: float, spy_price: float) -> dict:
         prediction = {
             "id": str(uuid.uuid4())[:8],
+            "run_id": getattr(trade, "run_id", None),
             "date": date.today().isoformat(),
             "symbol": trade.symbol,
             "prediction": f"{trade.symbol} will outperform SPY over 30 days",

@@ -18,6 +18,7 @@ from src.reporting.public_exporter import PublicExporter
 from src.storage.prediction_store import PredictionStore
 from src.scoring.prediction_scorer import PredictionScorer
 from src.utils.logger import get_logger
+from src.utils.run_id import create_run_id, utc_now_iso
 from src.simulator.benchmark_tracker import BenchmarkTracker
 from src.memory.retriever import retrieve_fund_memory
 
@@ -25,7 +26,9 @@ logger = get_logger(__name__)
 
 
 def run_daily_cycle():
-    logger.info("Starting daily portfolio cycle")
+    run_id = create_run_id()
+    started_at = utc_now_iso()
+    logger.info("Starting daily portfolio cycle run_id=%s", run_id)
 
     portfolio_store = PortfolioStore()
     trade_store = TradeStore()
@@ -135,6 +138,7 @@ def run_daily_cycle():
     # 5. Execute
     trades = engine.execute_trades(all_approved, market_data)
     for trade in trades:
+        trade.run_id = run_id
         trade_store.save(trade)
 
     # 6. Track predictions for BUY trades
@@ -165,6 +169,7 @@ def run_daily_cycle():
         memory_used=memory_context,
         memory_status=memory_result.status,
         memory_error=memory_result.error,
+        run_id=run_id,
     )
 
     snapshot = engine.get_snapshot()
@@ -184,16 +189,42 @@ def run_daily_cycle():
     )
 
     report_gen = MarkdownReportGenerator()
-    report_markdown = report_gen.generate(snapshot, trades, research, portfolio_decision)
+    report_markdown = report_gen.generate(snapshot, trades, research, portfolio_decision, run_id=run_id)
 
     tweet_agent = TweetGeneratorAgent()
     tweet = tweet_agent.generate(snapshot, trades)
     logger.info("Generated tweet: %s", tweet)
 
-    public_exporter = PublicExporter()
-    public_exporter.export(snapshot, trades, tweet, report_markdown)
+    warnings = []
+    if memory_result.error:
+        warnings.append(f"Memory unavailable: {memory_result.error}")
 
-    logger.info("Daily cycle complete. Portfolio value: $%.2f", snapshot.total_value)
+    run_status = {
+        "run_id": run_id,
+        "status": "success",
+        "started_at": started_at,
+        "completed_at": utc_now_iso(),
+        "memory_status": memory_result.status,
+        "memory_error": memory_result.error,
+        "memory_chunks": len(memory_context),
+        "trades_executed": len(trades),
+        "warnings": warnings,
+        "errors": [],
+        "portfolio_value": snapshot.total_value,
+        "cash_pct": snapshot.cash_pct,
+    }
+
+    public_exporter = PublicExporter()
+    public_exporter.export(
+        snapshot,
+        trades,
+        tweet,
+        report_markdown,
+        run_id=run_id,
+        run_status=run_status,
+    )
+
+    logger.info("Daily cycle complete run_id=%s Portfolio value: $%.2f", run_id, snapshot.total_value)
 
 
 if __name__ == "__main__":

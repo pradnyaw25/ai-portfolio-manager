@@ -1,5 +1,42 @@
 # AI Portfolio Manager Roadmap
 
+## Next Codex Tasks
+
+Recommended next work, in order:
+
+1. [Done] Add run IDs across the daily cycle.
+   * Generate one `run_id` per run.
+   * Carry it through logs, decisions, trades, reports, predictions, and public exports.
+   * Use this as the foundation for debugging and dashboard status.
+
+2. [Done] Add a run status export.
+   * Create `public/run_status.json`.
+   * Include latest run time, success/failure, memory status, trades executed, warnings/errors, ending portfolio value, and cash percentage.
+   * Add a dashboard panel for this status.
+
+3. Refactor `src/main.py` into explicit step functions.
+   * Suggested steps: load portfolio, mark to market, build research context, retrieve memory, decide trades, review risk, check rebalance, execute trades, journal run, export public artifacts.
+   * Keep behavior unchanged at first.
+
+4. Introduce a typed `PortfolioRunState`.
+   * Add a dataclass that carries snapshot, market context, memory result, raw decision, risk review, rebalance result, executed trades, warnings, errors, and run metadata.
+   * This prepares the codebase for LangGraph without migrating all at once.
+
+5. Add sector diversification guardrails.
+   * Add symbol-to-sector metadata.
+   * Reject or cap trades that overconcentrate the portfolio in one sector.
+
+6. Add stop-loss and take-profit rules.
+   * Generate deterministic SELL proposals for positions down more than 15% from average cost or up more than 40%.
+   * Prefer partial exits unless a stronger rule says otherwise.
+
+7. Make the watchlist configurable.
+   * Move hardcoded `WATCHLIST` out of `src/research/market_context.py`.
+   * Use config, YAML, or another simple repo-owned data file.
+
+8. Improve local run UX.
+   * Add a `Makefile` or similar commands for test, run, dashboard, and memory ingest.
+
 ## Phase 1 — Credibility & Observability
 
 ### P0: Fix Portfolio Accounting
