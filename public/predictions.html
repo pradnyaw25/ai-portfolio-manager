@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <title>Prediction Accuracy — AI Portfolio Manager</title>
   <meta charset="UTF-8" />
@@ -48,30 +48,6 @@
       --accent-bg: #172747;
       --ink: #f5f7fb;
       --shadow: 0 16px 42px rgba(0, 0, 0, 0.34);
-    }
-
-    @media (prefers-color-scheme: dark) {
-      :root:not([data-theme="light"]) {
-        --bg: #0f141b;
-        --surface: #171e28;
-        --surface-subtle: #202938;
-        --border: #2f3a49;
-        --border-strong: #465365;
-        --row-border: #263241;
-        --text: #dbe3ee;
-        --muted: #97a4b5;
-        --muted-strong: #bdc7d5;
-        --positive: #5ed39a;
-        --positive-bg: #10291f;
-        --negative: #ff7a86;
-        --negative-bg: #35171c;
-        --warning: #f2c766;
-        --warning-bg: #2d230f;
-        --accent: #83aaff;
-        --accent-bg: #172747;
-        --ink: #f5f7fb;
-        --shadow: 0 16px 42px rgba(0, 0, 0, 0.34);
-      }
     }
 
     * {
@@ -390,7 +366,6 @@
         <div class="theme-toggle" aria-label="Theme preference">
           <button type="button" data-theme-option="light" title="Use light theme" aria-label="Use light theme">L</button>
           <button type="button" data-theme-option="dark" title="Use dark theme" aria-label="Use dark theme">D</button>
-          <button type="button" data-theme-option="system" title="Use system theme" aria-label="Use system theme">S</button>
         </div>
       </div>
     </div>
@@ -464,19 +439,14 @@
 
   <script>
     const THEME_KEY = "ai-portfolio-theme";
-    const systemDarkQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
     function getThemePreference() {
       const stored = localStorage.getItem(THEME_KEY);
-      return ["light", "dark", "system"].includes(stored) ? stored : "system";
+      return ["light", "dark"].includes(stored) ? stored : "dark";
     }
 
     function applyTheme(preference = getThemePreference()) {
-      if (preference === "system") {
-        document.documentElement.removeAttribute("data-theme");
-      } else {
-        document.documentElement.setAttribute("data-theme", preference);
-      }
+      document.documentElement.setAttribute("data-theme", preference);
 
       document.querySelectorAll("[data-theme-option]").forEach(button => {
         const active = button.dataset.themeOption === preference;
@@ -492,11 +462,6 @@
           localStorage.setItem(THEME_KEY, button.dataset.themeOption);
           applyTheme(button.dataset.themeOption);
         });
-      });
-      systemDarkQuery.addEventListener("change", () => {
-        if (getThemePreference() === "system") {
-          applyTheme("system");
-        }
       });
     }
 
