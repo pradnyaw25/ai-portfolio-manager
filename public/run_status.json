@@ -1,0 +1,14 @@
+{
+  "run_id": "run_20260627T154822Z_f6643377",
+  "status": "success",
+  "started_at": "2026-06-27T15:48:22.256919Z",
+  "completed_at": "2026-06-27T15:48:41.551292Z",
+  "memory_status": "ok",
+  "memory_error": null,
+  "memory_chunks": 6,
+  "trades_executed": 0,
+  "warnings": [],
+  "errors": [],
+  "portfolio_value": 989383.0729827881,
+  "cash_pct": 0.2665315163631916
+}
