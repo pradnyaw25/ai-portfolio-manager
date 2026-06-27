@@ -7,7 +7,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
-      color-scheme: light;
+      color-scheme: light dark;
       --bg: #f6f7f9;
       --surface: #ffffff;
       --surface-subtle: #f0f3f7;
@@ -26,6 +26,92 @@
       --accent-bg: #e9f0ff;
       --ink: #101820;
       --shadow: 0 12px 36px rgba(16, 24, 32, 0.08);
+      --row-border: #edf0f4;
+      --panel-subtle: #fbfcfe;
+      --bar-track: #e7ebf1;
+      --tooltip-bg: #101820;
+      --tooltip-text: #ffffff;
+      --chart-grid: #dce2eb;
+      --chart-axis: #637083;
+      --chart-ai: #2454a6;
+      --chart-ai-fill: rgba(36, 84, 166, 0.12);
+      --chart-spy: #16784b;
+      --chart-spy-fill: rgba(22, 120, 75, 0.08);
+      --chart-qqq: #946200;
+      --chart-qqq-fill: rgba(148, 98, 0, 0.08);
+      --chart-border: #ffffff;
+    }
+
+    :root[data-theme="dark"] {
+      --bg: #0f141b;
+      --surface: #171e28;
+      --surface-subtle: #202938;
+      --border: #2f3a49;
+      --border-strong: #465365;
+      --text: #dbe3ee;
+      --muted: #97a4b5;
+      --muted-strong: #bdc7d5;
+      --positive: #5ed39a;
+      --positive-bg: #10291f;
+      --negative: #ff7a86;
+      --negative-bg: #35171c;
+      --warning: #f2c766;
+      --warning-bg: #2d230f;
+      --accent: #83aaff;
+      --accent-bg: #172747;
+      --ink: #f5f7fb;
+      --shadow: 0 16px 42px rgba(0, 0, 0, 0.34);
+      --row-border: #263241;
+      --panel-subtle: #131a24;
+      --bar-track: #2a3545;
+      --tooltip-bg: #f5f7fb;
+      --tooltip-text: #111720;
+      --chart-grid: #2a3545;
+      --chart-axis: #a8b4c4;
+      --chart-ai: #83aaff;
+      --chart-ai-fill: rgba(131, 170, 255, 0.14);
+      --chart-spy: #5ed39a;
+      --chart-spy-fill: rgba(94, 211, 154, 0.12);
+      --chart-qqq: #f2c766;
+      --chart-qqq-fill: rgba(242, 199, 102, 0.12);
+      --chart-border: #171e28;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #0f141b;
+        --surface: #171e28;
+        --surface-subtle: #202938;
+        --border: #2f3a49;
+        --border-strong: #465365;
+        --text: #dbe3ee;
+        --muted: #97a4b5;
+        --muted-strong: #bdc7d5;
+        --positive: #5ed39a;
+        --positive-bg: #10291f;
+        --negative: #ff7a86;
+        --negative-bg: #35171c;
+        --warning: #f2c766;
+        --warning-bg: #2d230f;
+        --accent: #83aaff;
+        --accent-bg: #172747;
+        --ink: #f5f7fb;
+        --shadow: 0 16px 42px rgba(0, 0, 0, 0.34);
+        --row-border: #263241;
+        --panel-subtle: #131a24;
+        --bar-track: #2a3545;
+        --tooltip-bg: #f5f7fb;
+        --tooltip-text: #111720;
+        --chart-grid: #2a3545;
+        --chart-axis: #a8b4c4;
+        --chart-ai: #83aaff;
+        --chart-ai-fill: rgba(131, 170, 255, 0.14);
+        --chart-spy: #5ed39a;
+        --chart-spy-fill: rgba(94, 211, 154, 0.12);
+        --chart-qqq: #f2c766;
+        --chart-qqq-fill: rgba(242, 199, 102, 0.12);
+        --chart-border: #171e28;
+      }
     }
 
     * {
@@ -57,6 +143,13 @@
       justify-content: space-between;
       gap: 18px;
       margin-bottom: 24px;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
     }
 
     .brand {
@@ -108,7 +201,42 @@
 
     .nav a.active {
       background: var(--ink);
-      color: #ffffff;
+      color: var(--bg);
+    }
+
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface);
+      padding: 4px;
+    }
+
+    .theme-toggle button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--muted-strong);
+      cursor: pointer;
+      font: inherit;
+      font-size: 15px;
+      font-weight: 850;
+    }
+
+    .theme-toggle button:hover {
+      color: var(--ink);
+    }
+
+    .theme-toggle button.active {
+      background: var(--ink);
+      color: var(--bg);
     }
 
     .page-header {
@@ -387,7 +515,7 @@
     .run-status-item {
       padding: 12px;
       min-width: 0;
-      background: #fbfcfe;
+      background: var(--panel-subtle);
     }
 
     .run-status-value {
@@ -411,7 +539,7 @@
 
     th,
     td {
-      border-bottom: 1px solid #edf0f4;
+      border-bottom: 1px solid var(--row-border);
       padding: 11px 10px;
       text-align: left;
       vertical-align: middle;
@@ -477,8 +605,8 @@
       bottom: 100%;
       margin-bottom: 6px;
       max-width: 220px;
-      background: var(--ink);
-      color: #ffffff;
+      background: var(--tooltip-bg);
+      color: var(--tooltip-text);
       font-weight: 650;
       font-size: 12px;
       padding: 5px 8px;
@@ -504,7 +632,7 @@
       height: 7px;
       overflow: hidden;
       border-radius: 999px;
-      background: #e7ebf1;
+      background: var(--bar-track);
     }
 
     .bar-fill {
@@ -525,7 +653,7 @@
     .tweet-box {
       border: 1px solid var(--border);
       border-radius: 8px;
-      background: #fbfcfe;
+      background: var(--panel-subtle);
       padding: 14px;
     }
 
@@ -574,9 +702,18 @@
         align-items: stretch;
       }
 
+      .topbar-actions {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
       .nav {
         width: 100%;
         overflow-x: auto;
+      }
+
+      .theme-toggle {
+        flex: 0 0 auto;
       }
 
       .page-header {
@@ -615,6 +752,10 @@
       .mini-chart {
         height: 260px;
       }
+
+      .theme-toggle button {
+        width: 100%;
+      }
     }
   </style>
 </head>
@@ -625,11 +766,18 @@
         <span class="brand-mark">A</span>
         <span>AI Portfolio Manager</span>
       </div>
-      <nav class="nav" aria-label="Dashboard navigation">
-        <a class="active" href="index.html">Dashboard</a>
-        <a href="decisions.html">Decision Journal</a>
-        <a href="predictions.html">Prediction Accuracy</a>
-      </nav>
+      <div class="topbar-actions">
+        <nav class="nav" aria-label="Dashboard navigation">
+          <a class="active" href="index.html">Dashboard</a>
+          <a href="decisions.html">Decision Journal</a>
+          <a href="predictions.html">Prediction Accuracy</a>
+        </nav>
+        <div class="theme-toggle" aria-label="Theme preference">
+          <button type="button" data-theme-option="light" title="Use light theme" aria-label="Use light theme">L</button>
+          <button type="button" data-theme-option="dark" title="Use dark theme" aria-label="Use dark theme">D</button>
+          <button type="button" data-theme-option="system" title="Use system theme" aria-label="Use system theme">S</button>
+        </div>
+      </div>
     </div>
 
     <header class="page-header">
@@ -786,6 +934,11 @@
   </main>
 
   <script>
+    const THEME_KEY = "ai-portfolio-theme";
+    const systemDarkQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    let performanceChart;
+    let allocationChart;
+
     const money = new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
@@ -811,6 +964,100 @@
       PG: "Procter & Gamble", HD: "The Home Depot", XOM: "Exxon Mobil Corp.",
       CAT: "Caterpillar Inc.", SPY: "SPDR S&P 500 ETF", QQQ: "Invesco QQQ Trust",
     };
+
+    function getThemePreference() {
+      const stored = localStorage.getItem(THEME_KEY);
+      return ["light", "dark", "system"].includes(stored) ? stored : "system";
+    }
+
+    function getResolvedTheme(preference = getThemePreference()) {
+      return preference === "system"
+        ? (systemDarkQuery.matches ? "dark" : "light")
+        : preference;
+    }
+
+    function applyTheme(preference = getThemePreference()) {
+      if (preference === "system") {
+        document.documentElement.removeAttribute("data-theme");
+      } else {
+        document.documentElement.setAttribute("data-theme", preference);
+      }
+
+      document.querySelectorAll("[data-theme-option]").forEach(button => {
+        const active = button.dataset.themeOption === preference;
+        button.classList.toggle("active", active);
+        button.setAttribute("aria-pressed", String(active));
+      });
+
+      updateChartThemes();
+    }
+
+    function setupThemeToggle() {
+      applyTheme();
+
+      document.querySelectorAll("[data-theme-option]").forEach(button => {
+        button.addEventListener("click", () => {
+          localStorage.setItem(THEME_KEY, button.dataset.themeOption);
+          applyTheme(button.dataset.themeOption);
+        });
+      });
+
+      systemDarkQuery.addEventListener("change", () => {
+        if (getThemePreference() === "system") {
+          applyTheme("system");
+        }
+      });
+    }
+
+    function cssVar(name) {
+      return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    }
+
+    function getChartTheme() {
+      return {
+        axis: cssVar("--chart-axis"),
+        grid: cssVar("--chart-grid"),
+        ai: cssVar("--chart-ai"),
+        aiFill: cssVar("--chart-ai-fill"),
+        spy: cssVar("--chart-spy"),
+        spyFill: cssVar("--chart-spy-fill"),
+        qqq: cssVar("--chart-qqq"),
+        qqqFill: cssVar("--chart-qqq-fill"),
+        border: cssVar("--chart-border"),
+      };
+    }
+
+    function applyLineChartTheme(chart) {
+      if (!chart) return;
+      const theme = getChartTheme();
+      const datasets = chart.data.datasets;
+
+      datasets[0].borderColor = theme.ai;
+      datasets[0].backgroundColor = theme.aiFill;
+      datasets[1].borderColor = theme.spy;
+      datasets[1].backgroundColor = theme.spyFill;
+      datasets[2].borderColor = theme.qqq;
+      datasets[2].backgroundColor = theme.qqqFill;
+
+      chart.options.plugins.legend.labels.color = theme.axis;
+      chart.options.scales.x.ticks.color = theme.axis;
+      chart.options.scales.y.ticks.color = theme.axis;
+      chart.options.scales.y.grid.color = theme.grid;
+      chart.update();
+    }
+
+    function applyDoughnutChartTheme(chart) {
+      if (!chart) return;
+      const theme = getChartTheme();
+      chart.data.datasets[0].borderColor = theme.border;
+      chart.options.plugins.legend.labels.color = theme.axis;
+      chart.update();
+    }
+
+    function updateChartThemes() {
+      applyLineChartTheme(performanceChart);
+      applyDoughnutChartTheme(allocationChart);
+    }
 
     function escapeHtml(value) {
       return String(value ?? "")
@@ -1095,7 +1342,9 @@
         setText("winrate-value", "-");
       }
 
-      new Chart(document.getElementById("performance-chart"), {
+      const chartTheme = getChartTheme();
+
+      performanceChart = new Chart(document.getElementById("performance-chart"), {
         type: "line",
         data: {
           labels: portfolioDates,
@@ -1103,8 +1352,8 @@
             {
               label: "AI Portfolio",
               data: portfolioValues.map(v => (v / portfolioValues[0] - 1) * 100),
-              borderColor: "#2454a6",
-              backgroundColor: "rgba(36, 84, 166, 0.12)",
+              borderColor: chartTheme.ai,
+              backgroundColor: chartTheme.aiFill,
               borderWidth: 3,
               pointRadius: 2,
               tension: 0.25,
@@ -1112,8 +1361,8 @@
             {
               label: "SPY",
               data: spyAligned.map(v => v && spyBaseline ? (v / spyBaseline - 1) * 100 : null),
-              borderColor: "#16784b",
-              backgroundColor: "rgba(22, 120, 75, 0.08)",
+              borderColor: chartTheme.spy,
+              backgroundColor: chartTheme.spyFill,
               borderWidth: 2,
               pointRadius: 1,
               tension: 0.25,
@@ -1122,8 +1371,8 @@
             {
               label: "QQQ",
               data: qqqAligned.map(v => v && qqqBaseline ? (v / qqqBaseline - 1) * 100 : null),
-              borderColor: "#946200",
-              backgroundColor: "rgba(148, 98, 0, 0.08)",
+              borderColor: chartTheme.qqq,
+              backgroundColor: chartTheme.qqqFill,
               borderWidth: 2,
               pointRadius: 1,
               tension: 0.25,
@@ -1144,6 +1393,7 @@
                 boxWidth: 10,
                 boxHeight: 10,
                 usePointStyle: true,
+                color: chartTheme.axis,
               }
             },
             tooltip: {
@@ -1155,10 +1405,17 @@
           scales: {
             x: {
               grid: { display: false },
-              ticks: { maxRotation: 0 },
+              ticks: {
+                color: chartTheme.axis,
+                maxRotation: 0,
+              },
             },
             y: {
+              grid: {
+                color: chartTheme.grid,
+              },
               ticks: {
+                color: chartTheme.axis,
                 callback: value => `${value}%`
               }
             }
@@ -1175,14 +1432,14 @@
         "#8fa4c8", "#9cc9b5", "#e1c16e", "#d69aa0", "#aab4c0",
       ];
 
-      new Chart(document.getElementById("allocation-chart"), {
+      allocationChart = new Chart(document.getElementById("allocation-chart"), {
         type: "doughnut",
         data: {
           labels: allocLabels,
           datasets: [{
             data: allocValues,
             backgroundColor: allocColors.slice(0, allocLabels.length),
-            borderColor: "#ffffff",
+            borderColor: chartTheme.border,
             borderWidth: 2,
           }],
         },
@@ -1206,6 +1463,7 @@
                 boxWidth: 10,
                 boxHeight: 10,
                 usePointStyle: true,
+                color: chartTheme.axis,
               }
             }
           }
@@ -1213,6 +1471,7 @@
       });
     }
 
+    setupThemeToggle();
     loadUpdatedAt();
     loadRunStatus();
     loadDashboard();

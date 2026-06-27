@@ -1,114 +1,455 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <title>Decision Journal — AI Portfolio Manager</title>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    body {
-      font-family: system-ui, sans-serif;
-      max-width: 900px;
-      margin: 40px auto;
-      padding: 0 20px;
-      line-height: 1.5;
-      color: #222;
+    :root {
+      color-scheme: light dark;
+      --bg: #f6f7f9;
+      --surface: #ffffff;
+      --surface-subtle: #f0f3f7;
+      --border: #d9dee7;
+      --border-strong: #c6ceda;
+      --text: #17202a;
+      --muted: #637083;
+      --muted-strong: #465365;
+      --positive: #16784b;
+      --positive-bg: #e8f5ee;
+      --negative: #b8323b;
+      --negative-bg: #fdeced;
+      --warning: #946200;
+      --warning-bg: #fff6dd;
+      --accent: #2454a6;
+      --accent-bg: #e9f0ff;
+      --ink: #101820;
+      --shadow: 0 12px 36px rgba(16, 24, 32, 0.08);
+      --panel-subtle: #fbfcfe;
+      --tooltip-bg: #101820;
+      --tooltip-text: #ffffff;
     }
-    a { color: #222; }
-    .card {
-      border: 1px solid #ddd;
-      border-radius: 12px;
-      padding: 20px;
+
+    :root[data-theme="dark"] {
+      --bg: #0f141b;
+      --surface: #171e28;
+      --surface-subtle: #202938;
+      --border: #2f3a49;
+      --border-strong: #465365;
+      --text: #dbe3ee;
+      --muted: #97a4b5;
+      --muted-strong: #bdc7d5;
+      --positive: #5ed39a;
+      --positive-bg: #10291f;
+      --negative: #ff7a86;
+      --negative-bg: #35171c;
+      --warning: #f2c766;
+      --warning-bg: #2d230f;
+      --accent: #83aaff;
+      --accent-bg: #172747;
+      --ink: #f5f7fb;
+      --shadow: 0 16px 42px rgba(0, 0, 0, 0.34);
+      --panel-subtle: #131a24;
+      --tooltip-bg: #f5f7fb;
+      --tooltip-text: #111720;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #0f141b;
+        --surface: #171e28;
+        --surface-subtle: #202938;
+        --border: #2f3a49;
+        --border-strong: #465365;
+        --text: #dbe3ee;
+        --muted: #97a4b5;
+        --muted-strong: #bdc7d5;
+        --positive: #5ed39a;
+        --positive-bg: #10291f;
+        --negative: #ff7a86;
+        --negative-bg: #35171c;
+        --warning: #f2c766;
+        --warning-bg: #2d230f;
+        --accent: #83aaff;
+        --accent-bg: #172747;
+        --ink: #f5f7fb;
+        --shadow: 0 16px 42px rgba(0, 0, 0, 0.34);
+        --panel-subtle: #131a24;
+        --tooltip-bg: #f5f7fb;
+        --tooltip-text: #111720;
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .app-shell {
+      width: min(1080px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 22px 0 48px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
       margin-bottom: 24px;
     }
-    .date-header {
-      font-size: 20px;
-      font-weight: 700;
-      margin-bottom: 4px;
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      color: var(--ink);
+      font-weight: 800;
+      letter-spacing: 0;
     }
+
+    .brand-mark {
+      display: grid;
+      width: 34px;
+      height: 34px;
+      place-items: center;
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--accent);
+      font-size: 18px;
+      font-weight: 850;
+      box-shadow: 0 4px 14px rgba(16, 24, 32, 0.06);
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .nav,
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface);
+      padding: 4px;
+    }
+
+    .nav {
+      gap: 4px;
+    }
+
+    .nav a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 0 12px;
+      border-radius: 6px;
+      color: var(--muted-strong);
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .nav a.active,
+    .theme-toggle button.active {
+      background: var(--ink);
+      color: var(--bg);
+    }
+
+    .theme-toggle {
+      gap: 3px;
+    }
+
+    .theme-toggle button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--muted-strong);
+      cursor: pointer;
+      font: inherit;
+      font-size: 15px;
+      font-weight: 850;
+    }
+
+    .theme-toggle button:hover,
+    .nav a:hover {
+      color: var(--ink);
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin-bottom: 6px;
+      color: var(--ink);
+      font-size: clamp(30px, 5vw, 54px);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .page-header {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 20px;
+      align-items: end;
+      margin-bottom: 22px;
+    }
+
+    .subtitle {
+      max-width: 720px;
+      margin-bottom: 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .date-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      color: var(--ink);
+      font-size: 20px;
+      font-weight: 850;
+    }
+
     .meta {
-      color: #666;
+      color: var(--muted);
       font-size: 14px;
       margin-bottom: 16px;
     }
+
     h3 {
       margin: 16px 0 8px;
+      color: var(--ink);
       font-size: 16px;
+      line-height: 1.25;
     }
+
     .section {
       margin-bottom: 12px;
     }
+
     .trade {
-      border-left: 3px solid #2a7;
-      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--positive);
+      padding: 10px 12px;
       margin-bottom: 8px;
-      background: #f9fdf9;
-      border-radius: 4px;
+      background: var(--positive-bg);
+      border-radius: 8px;
     }
+
     .trade.rejected {
-      border-left-color: #c44;
-      background: #fdf9f9;
+      border-left-color: var(--negative);
+      background: var(--negative-bg);
     }
+
     .confidence {
-      display: inline-block;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 13px;
-      font-weight: 600;
-    }
-    .conf-high { background: #d4edda; color: #155724; }
-    .conf-med { background: #fff3cd; color: #856404; }
-    .conf-low { background: #f8d7da; color: #721c24; }
-    .sources {
-      font-size: 13px;
-      color: #888;
-    }
-    .cash-thesis {
-      border-left: 3px solid #f0ad4e;
-      padding: 8px 12px;
-      background: #fffdf5;
-      border-radius: 4px;
-      font-style: italic;
-    }
-    .outlook {
       display: inline-block;
       padding: 2px 8px;
       border-radius: 999px;
-      background: #eef3ff;
-      color: #24427a;
       font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.02em;
+      font-weight: 800;
     }
+
+    .conf-high { background: var(--positive-bg); color: var(--positive); }
+    .conf-med { background: var(--warning-bg); color: var(--warning); }
+    .conf-low { background: var(--negative-bg); color: var(--negative); }
+
+    .sources {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .cash-thesis {
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--warning);
+      padding: 10px 12px;
+      background: var(--warning-bg);
+      border-radius: 8px;
+      font-style: italic;
+    }
+
+    .outlook {
+      display: inline-block;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: var(--accent-bg);
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 850;
+      letter-spacing: 0.04em;
+    }
+
     .memory-list {
       margin: 8px 0 0;
       padding-left: 20px;
     }
+
     .memory-list li {
       margin-bottom: 4px;
     }
-    .muted { color: #666; }
-    .updated-at {
-      color: #666;
-      font-size: 13px;
-      margin-top: -8px;
+
+    .muted {
+      color: var(--muted);
     }
-    .nav { margin-bottom: 20px; }
-    .nav a { margin-right: 16px; text-decoration: none; font-weight: 600; }
+
+    .updated-at {
+      justify-self: end;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 920px) {
+      .topbar,
+      .topbar-actions,
+      .page-header {
+        align-items: stretch;
+        grid-template-columns: 1fr;
+      }
+
+      .topbar,
+      .topbar-actions {
+        flex-direction: column;
+      }
+
+      .nav {
+        width: 100%;
+        overflow-x: auto;
+      }
+
+      .updated-at {
+        justify-self: start;
+        text-align: left;
+        white-space: normal;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .app-shell {
+        width: min(100% - 24px, 1080px);
+        padding-top: 14px;
+      }
+
+      .card {
+        padding: 16px;
+      }
+
+      .theme-toggle button {
+        width: 100%;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="nav">
-    <a href="index.html">Dashboard</a>
-    <a href="decisions.html">Decision Journal</a>
-    <a href="predictions.html">Prediction Accuracy</a>
-  </div>
+  <main class="app-shell">
+    <div class="topbar">
+      <div class="brand">
+        <span class="brand-mark">A</span>
+        <span>AI Portfolio Manager</span>
+      </div>
+      <div class="topbar-actions">
+        <nav class="nav" aria-label="Dashboard navigation">
+          <a href="index.html">Dashboard</a>
+          <a class="active" href="decisions.html">Decision Journal</a>
+          <a href="predictions.html">Prediction Accuracy</a>
+        </nav>
+        <div class="theme-toggle" aria-label="Theme preference">
+          <button type="button" data-theme-option="light" title="Use light theme" aria-label="Use light theme">L</button>
+          <button type="button" data-theme-option="dark" title="Use dark theme" aria-label="Use dark theme">D</button>
+          <button type="button" data-theme-option="system" title="Use system theme" aria-label="Use system theme">S</button>
+        </div>
+      </div>
+    </div>
 
-  <h1>Decision Journal</h1>
-  <p class="muted">Full audit trail of AI portfolio decisions, trade reasoning, and cash justifications.</p>
-  <p class="updated-at" id="updated-at">Updated at: Loading...</p>
+    <header class="page-header">
+      <div>
+        <h1>Decision Journal</h1>
+        <p class="subtitle">Full audit trail of AI portfolio decisions, trade reasoning, risk checks, memory sources, and cash justifications.</p>
+      </div>
+      <p class="updated-at" id="updated-at">Updated at: Loading...</p>
+    </header>
 
-  <div id="entries">Loading...</div>
+    <div id="entries">Loading...</div>
+  </main>
 
   <script>
+    const THEME_KEY = "ai-portfolio-theme";
+    const systemDarkQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+    function getThemePreference() {
+      const stored = localStorage.getItem(THEME_KEY);
+      return ["light", "dark", "system"].includes(stored) ? stored : "system";
+    }
+
+    function applyTheme(preference = getThemePreference()) {
+      if (preference === "system") {
+        document.documentElement.removeAttribute("data-theme");
+      } else {
+        document.documentElement.setAttribute("data-theme", preference);
+      }
+
+      document.querySelectorAll("[data-theme-option]").forEach(button => {
+        const active = button.dataset.themeOption === preference;
+        button.classList.toggle("active", active);
+        button.setAttribute("aria-pressed", String(active));
+      });
+    }
+
+    function setupThemeToggle() {
+      applyTheme();
+      document.querySelectorAll("[data-theme-option]").forEach(button => {
+        button.addEventListener("click", () => {
+          localStorage.setItem(THEME_KEY, button.dataset.themeOption);
+          applyTheme(button.dataset.themeOption);
+        });
+      });
+      systemDarkQuery.addEventListener("change", () => {
+        if (getThemePreference() === "system") {
+          applyTheme("system");
+        }
+      });
+    }
+
     const money = new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
@@ -349,6 +690,7 @@
       }).join("");
     }
 
+    setupThemeToggle();
     loadUpdatedAt();
     loadDecisions();
   </script>

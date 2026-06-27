@@ -1,158 +1,505 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <title>Prediction Accuracy — AI Portfolio Manager</title>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f6f7f9;
+      --surface: #ffffff;
+      --surface-subtle: #f0f3f7;
+      --border: #d9dee7;
+      --border-strong: #c6ceda;
+      --row-border: #edf0f4;
+      --text: #17202a;
+      --muted: #637083;
+      --muted-strong: #465365;
+      --positive: #16784b;
+      --positive-bg: #e8f5ee;
+      --negative: #b8323b;
+      --negative-bg: #fdeced;
+      --warning: #946200;
+      --warning-bg: #fff6dd;
+      --accent: #2454a6;
+      --accent-bg: #e9f0ff;
+      --ink: #101820;
+      --shadow: 0 12px 36px rgba(16, 24, 32, 0.08);
+    }
+
+    :root[data-theme="dark"] {
+      --bg: #0f141b;
+      --surface: #171e28;
+      --surface-subtle: #202938;
+      --border: #2f3a49;
+      --border-strong: #465365;
+      --row-border: #263241;
+      --text: #dbe3ee;
+      --muted: #97a4b5;
+      --muted-strong: #bdc7d5;
+      --positive: #5ed39a;
+      --positive-bg: #10291f;
+      --negative: #ff7a86;
+      --negative-bg: #35171c;
+      --warning: #f2c766;
+      --warning-bg: #2d230f;
+      --accent: #83aaff;
+      --accent-bg: #172747;
+      --ink: #f5f7fb;
+      --shadow: 0 16px 42px rgba(0, 0, 0, 0.34);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #0f141b;
+        --surface: #171e28;
+        --surface-subtle: #202938;
+        --border: #2f3a49;
+        --border-strong: #465365;
+        --row-border: #263241;
+        --text: #dbe3ee;
+        --muted: #97a4b5;
+        --muted-strong: #bdc7d5;
+        --positive: #5ed39a;
+        --positive-bg: #10291f;
+        --negative: #ff7a86;
+        --negative-bg: #35171c;
+        --warning: #f2c766;
+        --warning-bg: #2d230f;
+        --accent: #83aaff;
+        --accent-bg: #172747;
+        --ink: #f5f7fb;
+        --shadow: 0 16px 42px rgba(0, 0, 0, 0.34);
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: system-ui, sans-serif;
-      max-width: 980px;
-      margin: 40px auto;
-      padding: 0 20px;
+      margin: 0;
+      min-width: 320px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       line-height: 1.5;
-      color: #222;
     }
-    a { color: #222; }
-    .nav { margin-bottom: 20px; }
-    .nav a { margin-right: 16px; text-decoration: none; font-weight: 600; }
-    .muted { color: #666; }
+
+    a {
+      color: inherit;
+    }
+
+    .app-shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 22px 0 48px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      color: var(--ink);
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .brand-mark {
+      display: grid;
+      width: 34px;
+      height: 34px;
+      place-items: center;
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--accent);
+      font-size: 18px;
+      font-weight: 850;
+      box-shadow: 0 4px 14px rgba(16, 24, 32, 0.06);
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .nav,
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface);
+      padding: 4px;
+    }
+
+    .nav {
+      gap: 4px;
+    }
+
+    .nav a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 0 12px;
+      border-radius: 6px;
+      color: var(--muted-strong);
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .nav a.active,
+    .theme-toggle button.active {
+      background: var(--ink);
+      color: var(--bg);
+    }
+
+    .nav a:hover,
+    .theme-toggle button:hover {
+      color: var(--ink);
+    }
+
+    .theme-toggle {
+      gap: 3px;
+    }
+
+    .theme-toggle button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--muted-strong);
+      cursor: pointer;
+      font: inherit;
+      font-size: 15px;
+      font-weight: 850;
+    }
+
+    h1,
+    h2,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin-bottom: 6px;
+      color: var(--ink);
+      font-size: clamp(30px, 5vw, 54px);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      margin-bottom: 16px;
+      color: var(--ink);
+      font-size: 18px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .page-header {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 20px;
+      align-items: end;
+      margin-bottom: 22px;
+    }
+
+    .subtitle {
+      max-width: 720px;
+      margin-bottom: 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
     .updated-at {
-      color: #666;
+      justify-self: end;
+      color: var(--muted);
       font-size: 13px;
-      margin-top: -8px;
+      text-align: right;
+      white-space: nowrap;
     }
+
     .stats {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 12px;
-      margin: 24px 0;
+      margin: 0 0 16px;
     }
+
     .stat-box {
-      border: 1px solid #ddd;
+      border: 1px solid var(--border);
       border-radius: 8px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
       padding: 14px 16px;
     }
+
     .stat-value {
+      color: var(--ink);
       font-size: 28px;
-      font-weight: 750;
+      font-weight: 850;
       line-height: 1.1;
     }
+
     .stat-label {
       font-size: 13px;
-      color: #666;
+      color: var(--muted);
       margin-top: 6px;
     }
+
     .section {
-      margin-top: 28px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      margin-bottom: 16px;
+      min-width: 0;
     }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+    }
+
     table {
       width: 100%;
+      min-width: 760px;
       border-collapse: collapse;
     }
+
     th, td {
-      border-bottom: 1px solid #eee;
+      border-bottom: 1px solid var(--row-border);
       padding: 9px 8px;
       text-align: left;
       font-size: 14px;
       vertical-align: top;
     }
+
     th {
-      font-weight: 650;
-      color: #666;
-      font-size: 13px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      white-space: nowrap;
     }
+
     .num { text-align: right; white-space: nowrap; }
-    .pos { color: #1a8a3a; }
-    .neg { color: #c0392b; }
+
+    .pos { color: var(--positive); }
+    .neg { color: var(--negative); }
+
     .badge {
       display: inline-block;
-      padding: 2px 8px;
-      border-radius: 4px;
+      padding: 3px 9px;
+      border-radius: 999px;
       font-size: 12px;
-      font-weight: 650;
+      font-weight: 850;
     }
-    .badge-open { background: #fff3cd; color: #856404; }
-    .badge-win { background: #d4edda; color: #155724; }
-    .badge-loss { background: #f8d7da; color: #721c24; }
+
+    .badge-open { background: var(--warning-bg); color: var(--warning); }
+    .badge-win { background: var(--positive-bg); color: var(--positive); }
+    .badge-loss { background: var(--negative-bg); color: var(--negative); }
+
     .confidence {
       display: inline-block;
-      padding: 2px 6px;
-      border-radius: 4px;
+      padding: 3px 8px;
+      border-radius: 999px;
       font-size: 12px;
-      font-weight: 650;
-      background: #eef3ff;
-      color: #24427a;
+      font-weight: 850;
+      background: var(--accent-bg);
+      color: var(--accent);
     }
+
+    @media (max-width: 920px) {
+      .topbar,
+      .topbar-actions,
+      .page-header {
+        align-items: stretch;
+        grid-template-columns: 1fr;
+      }
+
+      .topbar,
+      .topbar-actions {
+        flex-direction: column;
+      }
+
+      .nav {
+        width: 100%;
+        overflow-x: auto;
+      }
+
+      .updated-at {
+        justify-self: start;
+        text-align: left;
+        white-space: normal;
+      }
+    }
+
     @media (max-width: 720px) {
-      .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .app-shell {
+        width: min(100% - 24px, 1180px);
+        padding-top: 14px;
+      }
+
+      .stats { grid-template-columns: 1fr; }
+      .section { padding: 16px; }
       th, td { font-size: 13px; }
+      .theme-toggle button { width: 100%; }
     }
   </style>
 </head>
 <body>
-  <div class="nav">
-    <a href="index.html">Dashboard</a>
-    <a href="decisions.html">Decision Journal</a>
-    <a href="predictions.html">Predictions</a>
-  </div>
+  <main class="app-shell">
+    <div class="topbar">
+      <div class="brand">
+        <span class="brand-mark">A</span>
+        <span>AI Portfolio Manager</span>
+      </div>
+      <div class="topbar-actions">
+        <nav class="nav" aria-label="Dashboard navigation">
+          <a href="index.html">Dashboard</a>
+          <a href="decisions.html">Decision Journal</a>
+          <a class="active" href="predictions.html">Prediction Accuracy</a>
+        </nav>
+        <div class="theme-toggle" aria-label="Theme preference">
+          <button type="button" data-theme-option="light" title="Use light theme" aria-label="Use light theme">L</button>
+          <button type="button" data-theme-option="dark" title="Use dark theme" aria-label="Use dark theme">D</button>
+          <button type="button" data-theme-option="system" title="Use system theme" aria-label="Use system theme">S</button>
+        </div>
+      </div>
+    </div>
 
-  <h1>Prediction Accuracy</h1>
-  <p class="muted">Tracks whether BUY-generated predictions outperformed SPY over their evaluation window.</p>
-  <p class="updated-at" id="updated-at">Updated at: Loading...</p>
+    <header class="page-header">
+      <div>
+        <h1>Prediction Accuracy</h1>
+        <p class="subtitle">Tracks whether BUY-generated predictions outperformed SPY over their evaluation window.</p>
+      </div>
+      <p class="updated-at" id="updated-at">Updated at: Loading...</p>
+    </header>
 
-  <div class="stats" id="stats"></div>
+    <div class="stats" id="stats"></div>
 
-  <div class="section">
-    <h2>Best Predictions</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Symbol</th>
-          <th>Prediction</th>
-          <th class="num">Alpha</th>
-          <th class="num">Stock</th>
-          <th class="num">SPY</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody id="best-predictions"></tbody>
-    </table>
-  </div>
+    <section class="section">
+      <h2>Best Predictions</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Symbol</th>
+              <th>Prediction</th>
+              <th class="num">Alpha</th>
+              <th class="num">Stock</th>
+              <th class="num">SPY</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="best-predictions"></tbody>
+        </table>
+      </div>
+    </section>
 
-  <div class="section">
-    <h2>Worst Predictions</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Symbol</th>
-          <th>Prediction</th>
-          <th class="num">Alpha</th>
-          <th class="num">Stock</th>
-          <th class="num">SPY</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody id="worst-predictions"></tbody>
-    </table>
-  </div>
+    <section class="section">
+      <h2>Worst Predictions</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Symbol</th>
+              <th>Prediction</th>
+              <th class="num">Alpha</th>
+              <th class="num">Stock</th>
+              <th class="num">SPY</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="worst-predictions"></tbody>
+        </table>
+      </div>
+    </section>
 
-  <div class="section">
-    <h2>Upcoming Predictions</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Symbol</th>
-          <th>Prediction</th>
-          <th>Created</th>
-          <th>Due Date</th>
-          <th class="num">Confidence</th>
-        </tr>
-      </thead>
-      <tbody id="upcoming-predictions"></tbody>
-    </table>
-  </div>
+    <section class="section">
+      <h2>Upcoming Predictions</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Symbol</th>
+              <th>Prediction</th>
+              <th>Created</th>
+              <th>Due Date</th>
+              <th class="num">Confidence</th>
+            </tr>
+          </thead>
+          <tbody id="upcoming-predictions"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
 
   <script>
+    const THEME_KEY = "ai-portfolio-theme";
+    const systemDarkQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+    function getThemePreference() {
+      const stored = localStorage.getItem(THEME_KEY);
+      return ["light", "dark", "system"].includes(stored) ? stored : "system";
+    }
+
+    function applyTheme(preference = getThemePreference()) {
+      if (preference === "system") {
+        document.documentElement.removeAttribute("data-theme");
+      } else {
+        document.documentElement.setAttribute("data-theme", preference);
+      }
+
+      document.querySelectorAll("[data-theme-option]").forEach(button => {
+        const active = button.dataset.themeOption === preference;
+        button.classList.toggle("active", active);
+        button.setAttribute("aria-pressed", String(active));
+      });
+    }
+
+    function setupThemeToggle() {
+      applyTheme();
+      document.querySelectorAll("[data-theme-option]").forEach(button => {
+        button.addEventListener("click", () => {
+          localStorage.setItem(THEME_KEY, button.dataset.themeOption);
+          applyTheme(button.dataset.themeOption);
+        });
+      });
+      systemDarkQuery.addEventListener("change", () => {
+        if (getThemePreference() === "system") {
+          applyTheme("system");
+        }
+      });
+    }
+
     const pct = (value, digits = 1) => {
       const number = Number(value);
       return Number.isFinite(number) ? `${number.toFixed(digits)}%` : "—";
@@ -308,6 +655,7 @@
         renderUpcomingRows(dashboard.upcoming_predictions || []);
     }
 
+    setupThemeToggle();
     loadUpdatedAt();
     loadDashboard();
   </script>
