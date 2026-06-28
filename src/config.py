@@ -18,6 +18,10 @@ FINNHUB_API_KEY = os.getenv("FINNHUB_API_KEY", "")
 NEWS_API_KEY = os.getenv("NEWS_API_KEY", "")
 QDRANT_URL = os.getenv("QDRANT_URL", "http://localhost:6333")
 QDRANT_API_KEY = os.getenv("QDRANT_API_KEY", "")
+SEC_USER_AGENT = os.getenv(
+    "SEC_USER_AGENT",
+    "ai-portfolio-manager contact@example.com",
+)
 
 INITIAL_CAPITAL = float(os.getenv("INITIAL_CAPITAL", "1000000"))
 MAX_POSITION_SIZE = float(os.getenv("MAX_POSITION_SIZE", "0.10"))

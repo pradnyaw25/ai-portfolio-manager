@@ -1,7 +1,7 @@
 PYTHON ?= .venv/bin/python
 PORT ?= 8000
 
-.PHONY: help install test run run-graph run-legacy dashboard ingest-memory memory-eval market-hours benchmark backfill status
+.PHONY: help install test run run-graph run-legacy dashboard ingest-memory ingest-sec-filings memory-eval market-hours benchmark backfill status
 
 help:
 	@echo "AI Portfolio Manager commands"
@@ -13,6 +13,7 @@ help:
 	@echo "  make run-legacy      Run the legacy sequential daily portfolio cycle"
 	@echo "  make dashboard       Serve public/ locally on PORT (default: 8000)"
 	@echo "  make ingest-memory   Ingest existing reports into Qdrant memory"
+	@echo "  make ingest-sec-filings Ingest latest SEC 10-Ks for watchlist companies"
 	@echo "  make memory-eval     Run offline memory retrieval evaluation fixtures"
 	@echo "  make market-hours    Check whether a scheduled run should execute now"
 	@echo "  make benchmark       Run benchmark script"
@@ -39,6 +40,9 @@ dashboard:
 
 ingest-memory:
 	$(PYTHON) -m src.memory.ingest
+
+ingest-sec-filings:
+	$(PYTHON) scripts/ingest_sec_filings.py
 
 memory-eval:
 	$(PYTHON) scripts/memory_eval.py
