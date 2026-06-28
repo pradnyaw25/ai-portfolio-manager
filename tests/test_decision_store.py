@@ -19,6 +19,13 @@ def test_decision_store_records_memory_status_and_error(tmp_path, monkeypatch):
         memory_used=[],
         memory_status="unavailable",
         memory_error="qdrant offline",
+        memory_citations=[
+            {
+                "memory_id": "thesis:run_1",
+                "citation_type": "trade",
+            }
+        ],
+        memory_citation_warnings=["Trade NVDA cited unknown memory id: risk_lesson:missing"],
         run_id="run_123",
     )
 
@@ -28,3 +35,12 @@ def test_decision_store_records_memory_status_and_error(tmp_path, monkeypatch):
     assert row["memory_status"] == "unavailable"
     assert row["memory_error"] == "qdrant offline"
     assert row["memory_used"] == []
+    assert row["memory_citations"] == [
+        {
+            "memory_id": "thesis:run_1",
+            "citation_type": "trade",
+        }
+    ]
+    assert row["memory_citation_warnings"] == [
+        "Trade NVDA cited unknown memory id: risk_lesson:missing"
+    ]

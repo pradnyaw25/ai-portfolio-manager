@@ -22,6 +22,7 @@ from src.utils.run_id import create_run_id, utc_now_iso
 from src.simulator.benchmark_tracker import BenchmarkTracker
 from src.memory.retriever import format_grouped_memory_for_prompt, retrieve_grouped_fund_memory
 from src.memory.ingestion_service import ingest_run_memory as ingest_run_memory_service
+from src.memory.citations import review_memory_citations
 
 logger = get_logger(__name__)
 
@@ -248,6 +249,10 @@ def journal_run(
     memory_result,
     run_id,
 ):
+    citation_review = review_memory_citations(
+        raw_decision=decisions,
+        memory_used=memory_context,
+    )
     DecisionStore().save(
         portfolio=engine.get_snapshot(),
         raw_decision=decisions,
@@ -259,6 +264,8 @@ def journal_run(
         memory_used=memory_context,
         memory_status=memory_result.status,
         memory_error=memory_result.error,
+        memory_citations=citation_review.to_dict()["citations"],
+        memory_citation_warnings=citation_review.warnings,
         run_id=run_id,
     )
 
