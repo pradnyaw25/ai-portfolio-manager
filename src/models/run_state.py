@@ -16,6 +16,7 @@ class PortfolioRunState:
     prices: dict[str, float] = field(default_factory=dict)
     memory_result: Any | None = None
     memory_context: list[dict] = field(default_factory=list)
+    memory_groups: dict[str, list[dict]] = field(default_factory=dict)
     decisions: dict = field(default_factory=dict)
     risk_review: Any | None = None
     rebalance_result: Any | None = None

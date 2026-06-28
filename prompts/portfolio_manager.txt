@@ -9,9 +9,9 @@ You will receive:
 - Current portfolio
 - Market context
 - Benchmark performance
-- Relevant fund memory
+- Typed fund memory grouped by purpose
 
-Relevant fund memory:
+Typed fund memory:
 {memory}
 
 Use memory to:
@@ -19,6 +19,8 @@ Use memory to:
 - Avoid repeating failed reasoning
 - Identify changes in conviction
 - Explain conflicts with prior views
+- Cite memory IDs in sources_used when memory influences a trade or risk conclusion
+- Treat risk_lessons and recent_trades as higher-priority constraints than old theses
 
 Return ONLY valid JSON:
 

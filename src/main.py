@@ -20,7 +20,7 @@ from src.scoring.prediction_scorer import PredictionScorer
 from src.utils.logger import get_logger
 from src.utils.run_id import create_run_id, utc_now_iso
 from src.simulator.benchmark_tracker import BenchmarkTracker
-from src.memory.retriever import retrieve_fund_memory
+from src.memory.retriever import format_grouped_memory_for_prompt, retrieve_grouped_fund_memory
 from src.memory.ingestion_service import ingest_run_memory as ingest_run_memory_service
 
 logger = get_logger(__name__)
@@ -41,8 +41,8 @@ def run_daily_cycle():
 
     mark_to_market_and_score_predictions(engine, market_data)
     research, prices = build_research_context(engine, market_data, news_client)
-    memory_result, memory_context = retrieve_memory_context()
-    decisions = decide_trades(engine, research, benchmark_client, memory_context)
+    memory_result, memory_context, memory_groups = retrieve_memory_context(research)
+    decisions = decide_trades(engine, research, benchmark_client, memory_groups)
     risk_review = review_risk(decisions, engine, prices)
     rebalance_result, all_approved = check_rebalance(engine, risk_review, prices, research)
     trades = execute_trades(engine, all_approved, market_data, trade_store, run_id)
@@ -151,9 +151,14 @@ def extract_prices(research: dict) -> dict[str, float]:
     return prices
 
 
-def retrieve_memory_context():
-    memory_result = retrieve_fund_memory(query=MEMORY_QUERY, k=6)
+def retrieve_memory_context(research: dict | None = None):
+    memory_result = retrieve_grouped_fund_memory(
+        query=MEMORY_QUERY,
+        symbols=extract_memory_symbols(research or {}),
+        k_per_group=4,
+    )
     memory_context = memory_result.chunks
+    memory_groups = format_grouped_memory_for_prompt(memory_result.grouped)
 
     logger.info("Memory status=%s chunks=%d", memory_result.status, len(memory_context))
     if memory_result.error:
@@ -161,7 +166,20 @@ def retrieve_memory_context():
     for item in memory_context:
         logger.info("Memory source: %s", item["metadata"])
 
-    return memory_result, memory_context
+    return memory_result, memory_context, memory_groups
+
+
+def extract_memory_symbols(research: dict) -> list[str]:
+    symbols = []
+    for holding in research.get("holdings", []):
+        symbol = holding.get("symbol")
+        if symbol:
+            symbols.append(str(symbol).upper())
+    for symbol_context in research.get("symbols", [])[:12]:
+        symbol = symbol_context.get("symbol")
+        if symbol:
+            symbols.append(str(symbol).upper())
+    return sorted(set(symbols))
 
 
 def decide_trades(engine, research, benchmark_client, memory_context):

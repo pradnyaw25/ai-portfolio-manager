@@ -183,7 +183,7 @@ def build_research_context_node(state: DailyGraphState) -> DailyGraphState:
 
 def retrieve_memory_node(state: DailyGraphState) -> DailyGraphState:
     run = state["run"]
-    run.memory_result, run.memory_context = steps.retrieve_memory_context()
+    run.memory_result, run.memory_context, run.memory_groups = steps.retrieve_memory_context(run.research)
     return {"run": run}
 
 
@@ -193,7 +193,7 @@ def decide_trades_node(state: DailyGraphState) -> DailyGraphState:
         run.engine,
         run.research,
         run.benchmark_client,
-        run.memory_context,
+        run.memory_groups,
     )
     return {"run": run}
 

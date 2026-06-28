@@ -8,7 +8,10 @@ class PortfolioManagerAgent:
     def decide(self, portfolio, research, benchmark, memory=None):
         memory_block = ""
         if memory:
-            memory_block = f"\n\nPast decisions and lessons (from memory):\n{memory}\n"
+            memory_block = (
+                "\n\nTyped fund memory grouped by purpose:\n"
+                f"{json.dumps(memory, indent=2)}\n"
+            )
 
         context = f"""
 You are an AI portfolio manager managing a simulated public $1M portfolio.
@@ -19,6 +22,7 @@ Your job:
 3. Avoid overtrading.
 4. Explain cash if cash is high.
 5. Return structured JSON only.
+6. Use typed fund memory to maintain thesis continuity and avoid repeated mistakes.
 
 Portfolio snapshot:
 {portfolio}
@@ -35,6 +39,8 @@ Rules:
 - Prefer no trade over weak trades.
 - Every trade must include confidence from 0.0 to 1.0.
 - If cash_pct is above 0.25, include a cash_thesis.
+- If memory influenced a conclusion, cite memory IDs in sources_used.
+- Treat risk_lessons and recent_trades as higher-priority constraints than old theses.
 - Do not output markdown.
 - Do not invent prices or facts not present in the context.
 

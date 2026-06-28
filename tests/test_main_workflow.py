@@ -1,7 +1,12 @@
 from dataclasses import dataclass
 from datetime import date
 
-from src.main import build_failure_run_status, build_run_status, extract_prices
+from src.main import (
+    build_failure_run_status,
+    build_run_status,
+    extract_memory_symbols,
+    extract_prices,
+)
 from src.models.portfolio import PortfolioSnapshot
 
 
@@ -21,6 +26,19 @@ def test_extract_prices_filters_missing_and_invalid_prices():
     }
 
     assert extract_prices(research) == {"AAPL": 200.0}
+
+
+def test_extract_memory_symbols_combines_holdings_and_context_symbols():
+    research = {
+        "holdings": [{"symbol": "aapl"}, {"symbol": "msft"}],
+        "symbols": [
+            {"symbol": "AAPL"},
+            {"symbol": "NVDA"},
+            {"symbol": "^VIX"},
+        ],
+    }
+
+    assert extract_memory_symbols(research) == ["AAPL", "MSFT", "NVDA", "^VIX"]
 
 
 def test_build_run_status_records_memory_warning():
