@@ -43,6 +43,7 @@ def build_daily_cycle_graph():
         ("generate_outputs", generate_outputs_node),
         ("build_run_status", build_run_status_node),
         ("export_public_artifacts", export_public_artifacts_node),
+        ("ingest_run_memory", ingest_run_memory_node),
     ]
 
     for node_name, node_func in workflow_nodes:
@@ -60,7 +61,7 @@ def build_daily_cycle_graph():
             },
         )
     graph.add_conditional_edges(
-        "export_public_artifacts",
+        workflow_nodes[-1][0],
         route_after_node,
         {
             "ok": END,
@@ -277,6 +278,7 @@ def build_run_status_node(state: DailyGraphState) -> DailyGraphState:
         trades=run.trades,
         snapshot=run.snapshot,
     )
+    run.warnings = list(run.run_status.get("warnings", []))
     return {"run": run}
 
 
@@ -290,4 +292,38 @@ def export_public_artifacts_node(state: DailyGraphState) -> DailyGraphState:
         run.run_id,
         run.run_status,
     )
+    return {"run": run}
+
+
+def ingest_run_memory_node(state: DailyGraphState) -> DailyGraphState:
+    run = state["run"]
+    try:
+        run.memory_ingestion_result = steps.ingest_run_memory(
+            run.run_id,
+            run.report_markdown,
+        )
+    except Exception as exc:
+        logger.warning("Memory ingestion failed unexpectedly run_id=%s error=%s", run.run_id, exc)
+        run.warnings.append(f"Memory ingestion failed: {exc}")
+        run.run_status["memory_ingestion"] = {
+            "status": "unavailable",
+            "created": 0,
+            "updated": 0,
+            "skipped": 0,
+            "errors": [str(exc)],
+            "total_processed": 0,
+        }
+        steps.export_run_status(run.run_status)
+        return {"run": run}
+
+    ingestion_status = run.memory_ingestion_result.to_dict()
+    run.run_status["memory_ingestion"] = ingestion_status
+    if run.memory_ingestion_result.status not in {"ok", "skipped"}:
+        warning = "Memory ingestion unavailable"
+        if run.memory_ingestion_result.errors:
+            warning = f"{warning}: {run.memory_ingestion_result.errors[0]}"
+        run.warnings.append(warning)
+        run.run_status["warnings"] = run.warnings
+
+    steps.export_run_status(run.run_status)
     return {"run": run}

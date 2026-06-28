@@ -1,58 +1,53 @@
-# src/memory/ingest.py
+import re
 
-from pathlib import Path
-from langchain_core.documents import Document
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_openai import OpenAIEmbeddings
-from langchain_qdrant import QdrantVectorStore
+from src.config import REPORTS_DIR
+from src.memory.extractors import (
+    extract_decision_memories,
+    extract_report_memories,
+    extract_trade_memory,
+)
+from src.memory.ingestion_service import MemoryIngestionService
+from src.storage.decision_store import DecisionStore
+from src.storage.trade_store import TradeStore
 
-from src.config import QDRANT_API_KEY, QDRANT_URL
-
-REPORTS_DIR = Path("reports")
-COLLECTION_NAME = "fund_memory"
+RUN_ID_PATTERN = re.compile(r"\*\*Run ID:\*\* `([^`]+)`")
 
 
-def load_documents():
-    docs = []
+def load_backfill_records():
+    records = []
 
-    for path in REPORTS_DIR.glob("*.md"):
-        docs.append(
-            Document(
-                page_content=path.read_text(),
-                metadata={
-                    "source": str(path),
-                    "type": "daily_report",
-                    "date": path.stem.replace("report_", ""),
-                },
+    for path in sorted(REPORTS_DIR.glob("report_*.md")):
+        report_markdown = path.read_text()
+        report_date = path.stem.replace("report_", "")
+        run_id = _extract_run_id(report_markdown) or f"report_{report_date}"
+        records.extend(
+            extract_report_memories(
+                report_markdown=report_markdown,
+                run_id=run_id,
+                report_date=report_date,
+                source_id=str(path),
             )
         )
 
-    return docs
+    for decision in DecisionStore().load_all():
+        records.extend(extract_decision_memories(decision))
+
+    for trade in TradeStore().load_all():
+        memory = extract_trade_memory(trade)
+        if memory is not None:
+            records.append(memory)
+
+    return records
 
 
 def main():
-    docs = load_documents()
+    result = MemoryIngestionService().ingest_records(load_backfill_records())
+    print(result.to_dict())
 
-    splitter = RecursiveCharacterTextSplitter(
-        chunk_size=1000,
-        chunk_overlap=150,
-    )
 
-    chunks = splitter.split_documents(docs)
-
-    embeddings = OpenAIEmbeddings()
-    qdrant_options = {"url": QDRANT_URL}
-    if QDRANT_API_KEY:
-        qdrant_options["api_key"] = QDRANT_API_KEY
-
-    QdrantVectorStore.from_documents(
-        documents=chunks,
-        embedding=embeddings,
-        collection_name=COLLECTION_NAME,
-        **qdrant_options,
-    )
-
-    print(f"Ingested {len(chunks)} chunks into {COLLECTION_NAME}")
+def _extract_run_id(report_markdown: str) -> str | None:
+    match = RUN_ID_PATTERN.search(report_markdown)
+    return match.group(1) if match else None
 
 
 if __name__ == "__main__":

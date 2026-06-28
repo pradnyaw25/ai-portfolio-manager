@@ -65,6 +65,13 @@ run IDs, run status export, step-function refactoring, typed run state, and loca
    * Store typed memories: thesis, trade, mistake, macro regime, earnings event, and risk lesson.
    * Add metadata for symbol, sector, date, run ID, source type, and outcome.
    * Deduplicate and score memory quality before indexing.
+   * First implementation slice:
+     * Add `MemoryRecord` and `MemoryIngestionResult` schemas.
+     * Add deterministic memory extraction from reports, decision journal entries, and trades.
+     * Add stable memory IDs so ingestion can be idempotent.
+     * Add a Qdrant upsert wrapper that stores rich metadata payloads.
+     * Add an `ingest_run_memory` LangGraph node after public export.
+     * Record ingestion status in `public/run_status.json`.
 
 2. Automate memory ingestion.
    * Ingest each completed report, decision, trade set, and prediction outcome after the daily run.

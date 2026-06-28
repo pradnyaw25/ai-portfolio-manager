@@ -21,6 +21,7 @@ from src.utils.logger import get_logger
 from src.utils.run_id import create_run_id, utc_now_iso
 from src.simulator.benchmark_tracker import BenchmarkTracker
 from src.memory.retriever import retrieve_fund_memory
+from src.memory.ingestion_service import ingest_run_memory as ingest_run_memory_service
 
 logger = get_logger(__name__)
 
@@ -286,6 +287,7 @@ def build_run_status(run_id, started_at, memory_result, memory_context, trades, 
         "trades_executed": len(trades),
         "warnings": warnings,
         "errors": [],
+        "memory_ingestion": None,
         "portfolio_value": snapshot.total_value,
         "cash_pct": snapshot.cash_pct,
     }
@@ -312,9 +314,17 @@ def build_failure_run_status(
         "trades_executed": 0,
         "warnings": warnings or [],
         "errors": errors,
+        "memory_ingestion": None,
         "portfolio_value": snapshot.total_value if snapshot is not None else None,
         "cash_pct": snapshot.cash_pct if snapshot is not None else None,
     }
+
+
+def ingest_run_memory(run_id, report_markdown):
+    return ingest_run_memory_service(
+        run_id=run_id,
+        report_markdown=report_markdown,
+    )
 
 
 def export_run_status(run_status):
