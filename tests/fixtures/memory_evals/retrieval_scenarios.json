@@ -1,0 +1,113 @@
+[
+  {
+    "id": "nvda_concentration_risk",
+    "description": "When NVDA is under review, retrieval should surface prior AI thesis, concentration risk, and recent NVDA trade.",
+    "query": "Relevant prior investment theses, trades, cash decisions, risk concerns, and portfolio lessons for today's decision.",
+    "symbols": ["NVDA"],
+    "k_per_group": 3,
+    "documents": [
+      {
+        "id": "thesis:run_ai_1:decision_summary",
+        "type": "thesis",
+        "content": "NVDA thesis: AI infrastructure demand remains strong, but valuation sensitivity is elevated.",
+        "date": "2026-06-21",
+        "symbols": ["NVDA"],
+        "source_type": "decision",
+        "source_id": "decision:run_ai_1"
+      },
+      {
+        "id": "risk_lesson:run_ai_2:rejected:0:NVDA",
+        "type": "risk_lesson",
+        "content": "Rejected BUY NVDA: semiconductor sector exposure was already above the risk budget.",
+        "date": "2026-06-22",
+        "symbols": ["NVDA"],
+        "source_type": "decision",
+        "source_id": "decision:run_ai_2"
+      },
+      {
+        "id": "trade:run_ai_3:NVDA:BUY",
+        "type": "trade",
+        "content": "BUY 2 NVDA at 145.00. Thesis: added partial exposure after pullback.",
+        "date": "2026-06-23",
+        "symbols": ["NVDA"],
+        "source_type": "trade",
+        "source_id": "trade:run_ai_3:NVDA:BUY"
+      },
+      {
+        "id": "macro:run_ai_4:liquidity",
+        "type": "macro_regime",
+        "content": "Macro regime: risk-on liquidity supported growth equities and AI infrastructure winners.",
+        "date": "2026-06-24",
+        "symbols": [],
+        "source_type": "daily_report",
+        "source_id": "report_2026-06-24.md"
+      },
+      {
+        "id": "thesis:run_bank_1:decision_summary",
+        "type": "thesis",
+        "content": "JPM thesis: net interest income remains resilient.",
+        "date": "2026-06-20",
+        "symbols": ["JPM"],
+        "source_type": "decision",
+        "source_id": "decision:run_bank_1"
+      }
+    ],
+    "expected": {
+      "symbol_theses": ["thesis:run_ai_1:decision_summary"],
+      "risk_lessons": ["risk_lesson:run_ai_2:rejected:0:NVDA"],
+      "recent_trades": ["trade:run_ai_3:NVDA:BUY"],
+      "macro_context": ["macro:run_ai_4:liquidity"]
+    }
+  },
+  {
+    "id": "cash_discipline",
+    "description": "When cash is central to the query, retrieval should surface cash thesis and broad market context.",
+    "query": "Prior cash decisions, deployment discipline, market regime, and risk lessons.",
+    "symbols": ["SPY", "QQQ"],
+    "k_per_group": 3,
+    "documents": [
+      {
+        "id": "risk_lesson:run_cash_1:cash_thesis",
+        "type": "risk_lesson",
+        "content": "Keep cash elevated because market breadth is narrow and downside volatility is rising.",
+        "date": "2026-06-18",
+        "symbols": [],
+        "source_type": "decision",
+        "source_id": "decision:run_cash_1"
+      },
+      {
+        "id": "report_summary:run_cash_2",
+        "type": "report_summary",
+        "content": "Portfolio report: high cash protected capital while SPY and QQQ chopped sideways.",
+        "date": "2026-06-19",
+        "symbols": ["SPY", "QQQ"],
+        "source_type": "daily_report",
+        "source_id": "report_2026-06-19.md"
+      },
+      {
+        "id": "trade:run_cash_3:QQQ:BUY",
+        "type": "trade",
+        "content": "BUY 4 QQQ at 480.00. Thesis: cautiously deploy cash after breadth improved.",
+        "date": "2026-06-20",
+        "symbols": ["QQQ"],
+        "source_type": "trade",
+        "source_id": "trade:run_cash_3:QQQ:BUY"
+      },
+      {
+        "id": "thesis:run_cash_4:decision_summary",
+        "type": "thesis",
+        "content": "SPY thesis: index exposure is acceptable if volatility cools and participation broadens.",
+        "date": "2026-06-21",
+        "symbols": ["SPY"],
+        "source_type": "decision",
+        "source_id": "decision:run_cash_4"
+      }
+    ],
+    "expected": {
+      "symbol_theses": ["report_summary:run_cash_2", "thesis:run_cash_4:decision_summary"],
+      "risk_lessons": ["risk_lesson:run_cash_1:cash_thesis"],
+      "recent_trades": ["trade:run_cash_3:QQQ:BUY"],
+      "macro_context": ["report_summary:run_cash_2"]
+    }
+  }
+]
