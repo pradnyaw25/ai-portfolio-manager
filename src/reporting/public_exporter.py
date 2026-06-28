@@ -33,6 +33,10 @@ class PublicExporter:
         self._write_prediction_dashboard()
         self._copy_history_files()
 
+    def write_run_status(self, run_status: dict) -> None:
+        PUBLIC_DIR.mkdir(exist_ok=True)
+        self._write_run_status(run_status)
+
     def _write_portfolio(self, snapshot: PortfolioSnapshot, run_id: str | None = None) -> None:
         payload = {
             "run_id": run_id,

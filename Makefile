@@ -1,15 +1,16 @@
 PYTHON ?= .venv/bin/python
 PORT ?= 8000
 
-.PHONY: help install test run run-graph dashboard ingest-memory market-hours benchmark backfill status
+.PHONY: help install test run run-graph run-legacy dashboard ingest-memory market-hours benchmark backfill status
 
 help:
 	@echo "AI Portfolio Manager commands"
 	@echo ""
 	@echo "  make install         Install project dependencies into the active Python env"
 	@echo "  make test            Run the test suite"
-	@echo "  make run             Run the daily portfolio cycle"
+	@echo "  make run             Run the daily portfolio cycle through LangGraph"
 	@echo "  make run-graph       Run the daily portfolio cycle through LangGraph"
+	@echo "  make run-legacy      Run the legacy sequential daily portfolio cycle"
 	@echo "  make dashboard       Serve public/ locally on PORT (default: 8000)"
 	@echo "  make ingest-memory   Ingest existing reports into Qdrant memory"
 	@echo "  make market-hours    Check whether a scheduled run should execute now"
@@ -28,6 +29,9 @@ run:
 
 run-graph:
 	$(PYTHON) scripts/daily_run_graph.py
+
+run-legacy:
+	$(PYTHON) scripts/daily_run_legacy.py
 
 dashboard:
 	$(PYTHON) -m http.server $(PORT) --directory public

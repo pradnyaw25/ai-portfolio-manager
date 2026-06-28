@@ -291,6 +291,36 @@ def build_run_status(run_id, started_at, memory_result, memory_context, trades, 
     }
 
 
+def build_failure_run_status(
+    run_id,
+    started_at,
+    *,
+    failed_step: str | None,
+    errors: list[str],
+    warnings: list[str] | None = None,
+    snapshot=None,
+):
+    return {
+        "run_id": run_id,
+        "status": "failed",
+        "started_at": started_at,
+        "completed_at": utc_now_iso(),
+        "failed_step": failed_step,
+        "memory_status": None,
+        "memory_error": None,
+        "memory_chunks": 0,
+        "trades_executed": 0,
+        "warnings": warnings or [],
+        "errors": errors,
+        "portfolio_value": snapshot.total_value if snapshot is not None else None,
+        "cash_pct": snapshot.cash_pct if snapshot is not None else None,
+    }
+
+
+def export_run_status(run_status):
+    PublicExporter().write_run_status(run_status)
+
+
 def export_public_artifacts(snapshot, trades, tweet, report_markdown, run_id, run_status):
     PublicExporter().export(
         snapshot,

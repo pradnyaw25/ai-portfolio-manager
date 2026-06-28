@@ -1,3 +1,4 @@
+from collections.abc import Callable
 from typing import TypedDict
 
 from langgraph.graph import END, START, StateGraph
@@ -26,38 +27,47 @@ def create_initial_state() -> DailyGraphState:
 def build_daily_cycle_graph():
     graph = StateGraph(DailyGraphState)
 
-    graph.add_node("load_portfolio", load_portfolio_node)
-    graph.add_node("create_clients", create_clients_node)
-    graph.add_node("mark_to_market", mark_to_market_node)
-    graph.add_node("build_research_context", build_research_context_node)
-    graph.add_node("retrieve_memory", retrieve_memory_node)
-    graph.add_node("decide_trades", decide_trades_node)
-    graph.add_node("review_risk", review_risk_node)
-    graph.add_node("check_rebalance", check_rebalance_node)
-    graph.add_node("execute_trades", execute_trades_node)
-    graph.add_node("track_predictions", track_predictions_node)
-    graph.add_node("journal_run", journal_run_node)
-    graph.add_node("save_portfolio", save_portfolio_node)
-    graph.add_node("generate_outputs", generate_outputs_node)
-    graph.add_node("build_run_status", build_run_status_node)
-    graph.add_node("export_public_artifacts", export_public_artifacts_node)
+    workflow_nodes = [
+        ("load_portfolio", load_portfolio_node),
+        ("create_clients", create_clients_node),
+        ("mark_to_market", mark_to_market_node),
+        ("build_research_context", build_research_context_node),
+        ("retrieve_memory", retrieve_memory_node),
+        ("decide_trades", decide_trades_node),
+        ("review_risk", review_risk_node),
+        ("check_rebalance", check_rebalance_node),
+        ("execute_trades", execute_trades_node),
+        ("track_predictions", track_predictions_node),
+        ("journal_run", journal_run_node),
+        ("save_portfolio", save_portfolio_node),
+        ("generate_outputs", generate_outputs_node),
+        ("build_run_status", build_run_status_node),
+        ("export_public_artifacts", export_public_artifacts_node),
+    ]
+
+    for node_name, node_func in workflow_nodes:
+        graph.add_node(node_name, guarded_node(node_name, node_func))
+    graph.add_node("finalize_failure", finalize_failure_node)
 
     graph.add_edge(START, "load_portfolio")
-    graph.add_edge("load_portfolio", "create_clients")
-    graph.add_edge("create_clients", "mark_to_market")
-    graph.add_edge("mark_to_market", "build_research_context")
-    graph.add_edge("build_research_context", "retrieve_memory")
-    graph.add_edge("retrieve_memory", "decide_trades")
-    graph.add_edge("decide_trades", "review_risk")
-    graph.add_edge("review_risk", "check_rebalance")
-    graph.add_edge("check_rebalance", "execute_trades")
-    graph.add_edge("execute_trades", "track_predictions")
-    graph.add_edge("track_predictions", "journal_run")
-    graph.add_edge("journal_run", "save_portfolio")
-    graph.add_edge("save_portfolio", "generate_outputs")
-    graph.add_edge("generate_outputs", "build_run_status")
-    graph.add_edge("build_run_status", "export_public_artifacts")
-    graph.add_edge("export_public_artifacts", END)
+    for (node_name, _), (next_node_name, _) in zip(workflow_nodes, workflow_nodes[1:]):
+        graph.add_conditional_edges(
+            node_name,
+            route_after_node,
+            {
+                "ok": next_node_name,
+                "failed": "finalize_failure",
+            },
+        )
+    graph.add_conditional_edges(
+        "export_public_artifacts",
+        route_after_node,
+        {
+            "ok": END,
+            "failed": "finalize_failure",
+        },
+    )
+    graph.add_edge("finalize_failure", END)
 
     return graph.compile()
 
@@ -70,12 +80,76 @@ def run_daily_cycle_graph() -> PortfolioRunState:
     result = build_daily_cycle_graph().invoke(state)
     final_run = result["run"]
 
+    if final_run.errors:
+        logger.error(
+            "LangGraph daily cycle failed run_id=%s failed_step=%s errors=%s",
+            final_run.run_id,
+            final_run.failed_step,
+            final_run.errors,
+        )
+        return final_run
+
     logger.info(
         "LangGraph daily cycle complete run_id=%s Portfolio value: $%.2f",
         final_run.run_id,
         final_run.snapshot.total_value,
     )
     return final_run
+
+
+def guarded_node(
+    node_name: str,
+    node_func: Callable[[DailyGraphState], DailyGraphState],
+) -> Callable[[DailyGraphState], DailyGraphState]:
+    def wrapped(state: DailyGraphState) -> DailyGraphState:
+        run = state["run"]
+        if run.errors:
+            return {"run": run}
+
+        try:
+            return node_func(state)
+        except Exception as exc:
+            logger.exception(
+                "LangGraph node failed node=%s run_id=%s",
+                node_name,
+                run.run_id,
+            )
+            run.failed_step = node_name
+            run.errors.append(f"{node_name}: {exc}")
+            run.snapshot = _snapshot_if_available(run)
+            return {"run": run}
+
+    return wrapped
+
+
+def route_after_node(state: DailyGraphState) -> str:
+    return "failed" if state["run"].errors else "ok"
+
+
+def finalize_failure_node(state: DailyGraphState) -> DailyGraphState:
+    run = state["run"]
+    run.snapshot = run.snapshot or _snapshot_if_available(run)
+    run.run_status = steps.build_failure_run_status(
+        run_id=run.run_id,
+        started_at=run.started_at,
+        failed_step=run.failed_step,
+        errors=run.errors,
+        warnings=run.warnings,
+        snapshot=run.snapshot,
+    )
+    steps.export_run_status(run.run_status)
+    return {"run": run}
+
+
+def _snapshot_if_available(run: PortfolioRunState):
+    if run.snapshot is not None:
+        return run.snapshot
+    if run.engine is None:
+        return None
+    try:
+        return run.engine.get_snapshot()
+    except Exception:
+        return None
 
 
 def load_portfolio_node(state: DailyGraphState) -> DailyGraphState:

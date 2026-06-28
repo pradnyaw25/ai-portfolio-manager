@@ -27,3 +27,4 @@ class PortfolioRunState:
     run_status: dict = field(default_factory=dict)
     warnings: list[str] = field(default_factory=list)
     errors: list[str] = field(default_factory=list)
+    failed_step: str | None = None

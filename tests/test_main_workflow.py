@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import date
 
-from src.main import build_run_status, extract_prices
+from src.main import build_failure_run_status, build_run_status, extract_prices
 from src.models.portfolio import PortfolioSnapshot
 
 
@@ -41,4 +41,23 @@ def test_build_run_status_records_memory_warning():
     assert status["memory_chunks"] == 0
     assert status["trades_executed"] == 0
     assert status["warnings"] == ["Memory unavailable: qdrant offline"]
+    assert status["portfolio_value"] == 25000
+
+
+def test_build_failure_run_status_records_failed_step_and_errors():
+    snapshot = PortfolioSnapshot(date=date.today(), cash=25000, positions=[])
+    status = build_failure_run_status(
+        run_id="run_123",
+        started_at="2024-06-01T12:00:00Z",
+        failed_step="decide_trades",
+        errors=["decide_trades: model unavailable"],
+        warnings=["memory degraded"],
+        snapshot=snapshot,
+    )
+
+    assert status["run_id"] == "run_123"
+    assert status["status"] == "failed"
+    assert status["failed_step"] == "decide_trades"
+    assert status["errors"] == ["decide_trades: model unavailable"]
+    assert status["warnings"] == ["memory degraded"]
     assert status["portfolio_value"] == 25000
