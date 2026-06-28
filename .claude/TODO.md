@@ -1,303 +1,143 @@
 # AI Portfolio Manager Roadmap
 
-## Next Codex Tasks
-
-Recommended next work, in order:
-
-1. [Done] Add run IDs across the daily cycle.
-   * Generate one `run_id` per run.
-   * Carry it through logs, decisions, trades, reports, predictions, and public exports.
-   * Use this as the foundation for debugging and dashboard status.
-
-2. [Done] Add a run status export.
-   * Create `public/run_status.json`.
-   * Include latest run time, success/failure, memory status, trades executed, warnings/errors, ending portfolio value, and cash percentage.
-   * Add a dashboard panel for this status.
-
-3. [Done] Refactor `src/main.py` into explicit step functions.
-   * Suggested steps: load portfolio, mark to market, build research context, retrieve memory, decide trades, review risk, check rebalance, execute trades, journal run, export public artifacts.
-   * Keep behavior unchanged at first.
-
-4. [Done] Introduce a typed `PortfolioRunState`.
-   * Add a dataclass that carries snapshot, market context, memory result, raw decision, risk review, rebalance result, executed trades, warnings, errors, and run metadata.
-   * This prepares the codebase for LangGraph without migrating all at once.
-
-4a. Prove and harden the opt-in LangGraph runner.
-   * Compare `make run` and `make run-graph` outputs over several daily cycles.
-   * Keep `make run` as the default until the graph path has equivalent behavior.
-   * Add failure capture and conditional routing once the graph path is stable.
-
-5. Add sector diversification guardrails.
-   * Add symbol-to-sector metadata.
-   * Reject or cap trades that overconcentrate the portfolio in one sector.
-
-6. Add stop-loss and take-profit rules.
-   * Generate deterministic SELL proposals for positions down more than 15% from average cost or up more than 40%.
-   * Prefer partial exits unless a stronger rule says otherwise.
-
-7. Make the watchlist configurable.
-   * Move hardcoded `WATCHLIST` out of `src/research/market_context.py`.
-   * Use config, YAML, or another simple repo-owned data file.
-
-8. [Done] Improve local run UX.
-   * Add a `Makefile` or similar commands for test, run, dashboard, and memory ingest.
-
-## Phase 1 — Credibility & Observability
-
-### P0: Fix Portfolio Accounting
-
-* Verify mark-to-market updates current prices correctly
-* Verify total portfolio value changes daily
-* Verify benchmark calculations
-* Add unit tests for portfolio valuation
-* Add unit tests for benchmark performance
-
-### P1: Dashboard Improvements
-
-* Portfolio vs SPY chart
-* Portfolio vs QQQ chart
-* Cash allocation over time chart
-* Sector allocation chart
-* Top holdings table
-* Recent trades table
-
-### P2: Public Decision Journal
-
-Create `/decisions.html`
-
-Display:
-
-* Market summary
-* Portfolio assessment
-* Cash thesis
-* Trade recommendations
-* Executed trades
-* Confidence scores
-* Sources used
-* Rejected trades
-
-### P3: Better Tweets
-
-Replace generic tweets with factual updates.
-
-Include:
-
-* Portfolio value
-* Daily return
-* Benchmark comparison
-* Trades executed
-* Cash percentage
-* Key thesis
-
-Avoid:
-
-* Emojis
-* "Excited"
-* Generic hype language
-
----
-
-## Phase 2 — Research Quality
-
-### P4: News Pipeline
-
-For each holding:
-
-* Latest headlines
-* Earnings headlines
-* Analyst upgrades/downgrades
-
-Market headlines:
-
-* S&P 500
-* Nasdaq
-* Macro news
-* Fed news
-
-### P5: Market Context Builder V2
-
-Add:
-
-* 5D return
-* 30D return
-* 90D return
-* Market cap
-* Sector
-* Volatility
-* Benchmark performance
-
-### P6: Candidate Generation
-
-Current:
-
-* Fixed watchlist
-
-Future:
-
-* Current holdings
-* Watchlist
-* Top momentum names
-* Biggest losers
-* Earnings candidates
-
----
-
-## Phase 3 — Forecasting Engine
-
-### P7: Prediction Tracking
-
-Store:
-
-Prediction:
-
-* Symbol
-* Thesis
-* Confidence
-* Horizon (30/60/90 days)
-
-Track:
-
-* Start price
-* End price
-* Benchmark return
-* Success/failure
-
-### P8: Calibration Dashboard
-
-Metrics:
-
-* Accuracy
-* Precision
-* Confidence calibration
-* Brier score
-
-Display:
-
-* 50% confidence predictions
-* 70% confidence predictions
-* 90% confidence predictions
-
----
-
-## Phase 4 — Multi-Agent Architecture
-
-### P9: Bull Analyst
-
-Produces:
-
-* Bull thesis
-* Upside case
-
-### P10: Bear Analyst
-
-Produces:
-
-* Risk thesis
-* Downside case
-
-### P11: Portfolio Manager
-
-Reads:
-
-* Bull case
-* Bear case
-* Risk analysis
-
-Makes final decision.
-
-### P12: Risk Manager V2
-
-Checks:
-
-* Max position size
-* Sector exposure
-* Portfolio concentration
-* Turnover limits
-
----
-
-## Phase 5 — Memory & RAG
-
-### P13: Research Archive
-
-Store:
-
-* Daily reports
-* Decisions
-* Predictions
-* Trades
-* Investor letters
-
-### P14: Qdrant Memory
-
-Questions like:
-
-* What did we believe about NVDA 6 months ago?
-* Which theses worked best?
-* Which sectors have performed best?
-
----
-
-## Phase 6 — Public Product
-
-### P15: Weekly Investor Letter
-
-Every Friday:
-
-Include:
-
-* Weekly performance
-* Winners
-* Losers
-* Portfolio changes
-* Market outlook
-
-### P16: X/Twitter Automation
-
-Automatically publish:
-
-* Daily update
-* Weekly letter
-* Major portfolio changes
-
-### P17: Public API
-
-Expose:
-
-* Holdings
-* Performance
-* Predictions
-* Benchmark comparison
-
----
-
-## Phase 7 — Advanced Experiments
-
-### P18: Strategy Backtesting
-
-Compare:
-
-* Buy & Hold
-* SPY
-* AI Portfolio
-
-### P19: Model Comparisons
-
-Run:
-
-* GPT strategy
-* Claude strategy
-* Multi-agent strategy
-
-Track performance separately.
-
-### P20: Paper Hedge Fund Dashboard
-
-Show:
-
-* Sharpe ratio
-* Volatility
-* Drawdown
-* Alpha vs benchmark
-* Prediction accuracy
-* Sector attribution
+This list tracks open engineering work only. Completed foundation work such as
+run IDs, run status export, step-function refactoring, typed run state, and local
+`make` commands has been removed from the active roadmap.
+
+## Near-Term Priorities
+
+1. Complete the LangGraph migration.
+   * Make the graph runner the primary daily workflow once behavior matches the existing runner.
+   * Add conditional routing for memory failures, empty decisions, rejected trades, and execution failures.
+   * Add per-node failure capture so failed runs still export status and diagnostics.
+   * Add an optional human approval checkpoint before trade execution.
+   * Add parity tests or fixtures comparing standard-run and graph-run outputs.
+
+2. Add Twitter/X publishing integration.
+   * Keep generated tweets as drafts by default.
+   * Add dry-run versus live-post mode controlled by environment config.
+   * Publish via Twitter/X API only when explicitly enabled.
+   * Store publish status, tweet ID, timestamp, and API errors in a durable social-post log.
+   * Add an AI safety/evaluator step to reject hype, unsupported claims, and compliance-risk language.
+   * Add tests for disabled publishing, successful publishing, and API failure handling.
+
+3. Build Risk Engine V2.
+   * Add sector exposure limits using repo-owned symbol metadata.
+   * Add max single-position allocation checks.
+   * Add portfolio concentration and cash-deployment guardrails.
+   * Add correlation-aware diversification checks.
+   * Add max daily and weekly turnover controls.
+   * Add deterministic stop-loss and take-profit SELL proposals.
+   * Journal capped, rejected, and system-generated trades as first-class risk events.
+
+4. Move portfolio inputs into typed config.
+   * Move the hardcoded watchlist out of `src/research/market_context.py`.
+   * Add typed config files for watchlists, sector metadata, risk limits, and model settings.
+   * Validate config at startup with clear error messages.
+
+## AI Architecture
+
+1. Add a model/provider abstraction.
+   * Support OpenAI, Anthropic, and local or cheaper fallback models behind one interface.
+   * Add model routing: cheaper models for summaries, stronger models for final decisions.
+   * Track model name, provider, prompt version, latency, token usage, and estimated cost.
+   * Add graceful fallback behavior when a provider fails.
+
+2. Introduce multi-agent research and decision flow.
+   * Add bull analyst, bear analyst, risk analyst, and portfolio manager roles.
+   * Add a critic/evaluator agent before final journaling.
+   * Add agent debate or compare-and-rank step for high-impact trades.
+   * Require structured outputs from every agent.
+
+3. Add structured tool calling.
+   * Expose market data, news, memory retrieval, benchmark lookup, and portfolio actions as typed tools.
+   * Validate tool inputs and outputs before they enter the decision state.
+   * Record tool calls in the decision trace for observability.
+
+4. Add prompt and decision versioning.
+   * Version prompts and schemas used by each agent.
+   * Store prompt version with decisions, reports, predictions, and tweets.
+   * Add regression tests for prompt output shape and risk compliance.
+
+## Memory And RAG
+
+1. Upgrade the Qdrant memory schema.
+   * Store typed memories: thesis, trade, mistake, macro regime, earnings event, and risk lesson.
+   * Add metadata for symbol, sector, date, run ID, source type, and outcome.
+   * Deduplicate and score memory quality before indexing.
+
+2. Automate memory ingestion.
+   * Ingest each completed report, decision, trade set, and prediction outcome after the daily run.
+   * Add backfill tooling for historical reports and decision journals.
+   * Export memory ingestion status in run diagnostics.
+
+3. Add retrieval evaluation.
+   * Build fixtures with known prior decisions and expected retrieved memories.
+   * Score retrieval relevance, freshness, and source diversity.
+   * Add citations from retrieved memories into AI decisions.
+
+4. Add lessons-learned synthesis.
+   * Summarize successful and failed theses over time.
+   * Extract recurring risk mistakes and missed opportunities.
+   * Feed lessons back into future portfolio decisions.
+
+## Evaluation And Observability
+
+1. Build an AI decision eval harness.
+   * Create golden scenarios for bull market, crash, high cash, overconcentration, missing data, and stale memory.
+   * Score schema validity, factual grounding, risk compliance, and actionability.
+   * Track eval results across models, prompt versions, and code changes.
+
+2. Add hallucination and grounding checks.
+   * Verify claims against available market context, news, memory, and portfolio state.
+   * Flag unsupported claims before journaling, reporting, or tweeting.
+   * Store evaluator findings with each decision.
+
+3. Improve run diagnostics.
+   * Add durable run history instead of only latest run status.
+   * Emit structured JSON logs with run ID, graph node, model, latency, token usage, and error details.
+   * Add failure-status export when the daily run crashes.
+   * Add cost and latency summaries per run.
+
+4. Add dashboard observability views.
+   * Decision trace: inputs, memories, tool calls, agent outputs, risk review, and final trades.
+   * Model cost and latency dashboard.
+   * Rejected trades and risk adjustments table.
+   * Prediction calibration dashboard.
+   * Run comparison page for legacy runner versus LangGraph runner.
+
+## Research Intelligence
+
+1. Build Market Context V2.
+   * Add 5D, 30D, and 90D returns.
+   * Add volatility, market cap, sector, benchmark-relative performance, and drawdown.
+   * Add sector rotation and macro regime indicators.
+
+2. Improve news and catalyst intelligence.
+   * Prioritize news for current holdings and high-conviction candidates.
+   * Add earnings-date awareness.
+   * Summarize earnings calls, analyst upgrades/downgrades, and major headlines.
+   * Add sentiment scoring with source citations.
+
+3. Expand candidate generation.
+   * Combine current holdings, configurable watchlist, momentum names, biggest losers, earnings candidates, and news catalysts.
+   * Rank candidates with deterministic features before asking an LLM for analysis.
+   * Store candidate-generation inputs and scores for auditability.
+
+## Forecasting And Product Surface
+
+1. Deepen prediction tracking.
+   * Track forecast horizon, thesis, confidence, start price, end price, benchmark return, and outcome.
+   * Add confidence calibration metrics including Brier score.
+   * Compare AI recommendations against actual executed trades.
+
+2. Improve public dashboard.
+   * Add portfolio versus SPY and QQQ charts.
+   * Add cash allocation, sector allocation, and concentration warnings.
+   * Add top holdings table with gain/loss and portfolio weight.
+   * Add recent trades, rejected trades, and generated risk events.
+
+3. Add investor-facing publishing workflows.
+   * Generate weekly investor letter with performance, winners, losers, portfolio changes, and market outlook.
+   * Add optional Twitter/X thread mode for weekly summaries.
+   * Keep all publishing workflows auditable and disabled by default in local development.
