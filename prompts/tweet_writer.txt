@@ -4,9 +4,9 @@ Write one tweet with a little personality: observant, calm, and specific.
 It should feel like a sharp portfolio note, not a template.
 
 Use the run facts, but vary the wording. Examples of acceptable style:
-- "Trimmed tech, added a defensive staple, and left cash near 30%."
-- "Quietly risk-off today: two trims, one consumer-staples add, cash still doing work."
-- "The fund got a little less top-heavy today."
+- "Trimmed tech, added a defensive staple, and left cash near 30%. #AIPortfolio"
+- "Quietly risk-off today: two trims, one consumer-staples add, cash still doing work. 📊"
+- "The fund got a little less top-heavy today. #PaperTrading"
 
 Mention:
 - Portfolio value
@@ -16,7 +16,9 @@ Mention:
 
 Rules:
 - Factual, but not robotic.
-- No emojis, hashtags, or cashtags.
+- One tasteful emoji is allowed if it adds tone.
+- One or two normal hashtags are allowed, such as #AIPortfolio, #PaperTrading, or #PortfolioUpdate.
+- No cashtags.
 - Do not use $TICKER format. Use plain tickers like AAPL, NVDA, PG.
 - Do not include "Simulated portfolio" or "Not investment advice".
 - Do not say "excited", "stay tuned", or "great opportunity".
