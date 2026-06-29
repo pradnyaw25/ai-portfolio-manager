@@ -2,9 +2,11 @@ name: Daily Portfolio Run
 
 on:
   schedule:
-    # Weekday hourly window broad enough to cover US market hours across DST.
-    # scripts/market_hours_guard.py enforces 9:30am-4:00pm America/New_York.
-    - cron: "7 13-21 * * 1-5"
+    # Twice on weekdays during regular US market hours.
+    # 14:37 UTC is 9:37am ET in standard time and 10:37am ET in daylight time.
+    # 19:37 UTC is 2:37pm ET in standard time and 3:37pm ET in daylight time.
+    # scripts/market_hours_guard.py still enforces 9:30am-4:00pm America/New_York.
+    - cron: "37 14,19 * * 1-5"
 
   workflow_dispatch:
 
@@ -41,6 +43,12 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           QDRANT_URL: ${{ secrets.QDRANT_URL }}
           QDRANT_API_KEY: ${{ secrets.QDRANT_API_KEY }}
+          POST_TWEET: "true"
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_SECRET: ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
+          SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
         run: |
           python -m src.main
 
