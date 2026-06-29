@@ -1,1 +1,22 @@
-[]
+[
+  {
+    "run_id": "run_20260629T171822Z_062ca9d3",
+    "date": "2026-06-29",
+    "symbol": "AAPL",
+    "action": "SELL",
+    "shares": 50,
+    "price": 280.94500732421875,
+    "total": 14047.250366210938,
+    "reasoning": "AAPL's recent underperformance over 30 days (-7.96%) suggests it may be wise to divest a portion before further declines."
+  },
+  {
+    "run_id": "run_20260629T171822Z_062ca9d3",
+    "date": "2026-06-29",
+    "symbol": "NVDA",
+    "action": "SELL",
+    "shares": 100,
+    "price": 194.7100067138672,
+    "total": 19471.00067138672,
+    "reasoning": "The stock has experienced a significant decline and remains below cost basis, and cash can be better utilized in more stable holdings."
+  }
+]
