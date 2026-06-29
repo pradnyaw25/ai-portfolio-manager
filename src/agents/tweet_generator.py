@@ -25,14 +25,14 @@ class TweetGeneratorAgent:
             ],
         )
 
-        return response.choices[0].message.content.strip()[:280]
+        return self._clean_tweet(response.choices[0].message.content)
 
     def _build_context(self, portfolio: PortfolioSnapshot, trades: list[Trade]) -> str:
         today = date.today().strftime("%b %d")
 
         if trades:
             trade_summary = ", ".join(
-                f"{t.action.value} ${t.symbol}" for t in trades
+                f"{t.action.value} {t.symbol}" for t in trades
             )
         else:
             trade_summary = "No trades"
@@ -42,5 +42,17 @@ Portfolio Value: ${portfolio.total_value:,.0f}
 Cash: ${portfolio.cash:,.0f} ({portfolio.cash_pct * 100:.1f}%)
 Positions: {len(portfolio.positions)}
 Trades: {trade_summary}
+Tone: concise, factual, a little human. No disclaimer line. No cashtags.
 
 Write the portfolio update now."""
+
+    def _clean_tweet(self, text: str) -> str:
+        lines = []
+        for line in text.strip().splitlines():
+            lower = line.lower()
+            if "not investment advice" in lower:
+                continue
+            if "simulated portfolio" in lower:
+                continue
+            lines.append(line.rstrip())
+        return "\n".join(lines).strip()[:280]

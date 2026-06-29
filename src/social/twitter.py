@@ -186,22 +186,8 @@ def publish_tweet(text: str, *, run_id: str | None = None) -> TweetPublishResult
 
 
 def sanitize_tweet_for_x(text: str) -> str:
-    """Keep X within current cashtag posting limits.
-
-    X currently rejects posts with more than one cashtag. Preserve the first
-    cashtag and convert later cashtags to plain tickers.
-    """
-    cashtag_count = 0
-
-    def replace(match):
-        nonlocal cashtag_count
-        cashtag_count += 1
-        symbol = match.group(1)
-        if cashtag_count == 1:
-            return f"${symbol}"
-        return symbol
-
-    return re.sub(r"\$([A-Za-z]{1,6}(?:\.[A-Za-z]{1,2})?)\b", replace, text)
+    """Remove cashtag markers so all symbols are treated consistently."""
+    return re.sub(r"\$([A-Za-z]{1,6}(?:\.[A-Za-z]{1,2})?)\b", r"\1", text)
 
 
 def append_social_post(result: TweetPublishResult, path: Path = SOCIAL_POSTS_FILE) -> None:

@@ -80,7 +80,7 @@ def test_twitter_publisher_posts_with_oauth_header():
     assert session.requests[0]["headers"]["Authorization"].startswith("OAuth ")
 
 
-def test_twitter_publisher_sanitizes_extra_cashtags_before_posting():
+def test_twitter_publisher_removes_all_cashtags_before_posting():
     session = FakeSession(FakeResponse({"data": {"id": "tweet_123"}}))
     publisher = TwitterPublisher(
         api_key="api_key",
@@ -93,14 +93,14 @@ def test_twitter_publisher_sanitizes_extra_cashtags_before_posting():
 
     result = publisher.publish("Trades: SELL $AAPL, SELL $NVDA, BUY $PG")
 
-    assert result.text == "Trades: SELL $AAPL, SELL NVDA, BUY PG"
-    assert session.requests[0]["json"] == {"text": "Trades: SELL $AAPL, SELL NVDA, BUY PG"}
+    assert result.text == "Trades: SELL AAPL, SELL NVDA, BUY PG"
+    assert session.requests[0]["json"] == {"text": "Trades: SELL AAPL, SELL NVDA, BUY PG"}
 
 
-def test_sanitize_tweet_for_x_keeps_only_first_cashtag():
+def test_sanitize_tweet_for_x_removes_all_cashtags():
     assert (
         sanitize_tweet_for_x("SELL $AAPL, SELL $NVDA, BUY $PG")
-        == "SELL $AAPL, SELL NVDA, BUY PG"
+        == "SELL AAPL, SELL NVDA, BUY PG"
     )
 
 
