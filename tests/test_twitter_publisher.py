@@ -2,7 +2,7 @@ import json
 
 from src.reporting import public_exporter
 from src.reporting.public_exporter import PublicExporter
-from src.social.twitter import TwitterPublisher, append_social_post
+from src.social.twitter import TwitterPublisher, append_social_post, sanitize_tweet_for_x
 
 
 class FakeResponse:
@@ -46,7 +46,13 @@ def test_twitter_publisher_dry_run_when_disabled():
 
 
 def test_twitter_publisher_reports_missing_credentials_when_enabled():
-    result = TwitterPublisher(post_enabled=True).publish("hello world")
+    result = TwitterPublisher(
+        api_key="",
+        api_secret="",
+        access_token="",
+        access_token_secret="",
+        post_enabled=True,
+    ).publish("hello world")
 
     assert result.status == "missing_credentials"
     assert not result.posted
@@ -72,6 +78,30 @@ def test_twitter_publisher_posts_with_oauth_header():
     assert result.tweet_id == "tweet_123"
     assert session.requests[0]["json"] == {"text": "portfolio update"}
     assert session.requests[0]["headers"]["Authorization"].startswith("OAuth ")
+
+
+def test_twitter_publisher_sanitizes_extra_cashtags_before_posting():
+    session = FakeSession(FakeResponse({"data": {"id": "tweet_123"}}))
+    publisher = TwitterPublisher(
+        api_key="api_key",
+        api_secret="api_secret",
+        access_token="access_token",
+        access_token_secret="access_secret",
+        post_enabled=True,
+        session=session,
+    )
+
+    result = publisher.publish("Trades: SELL $AAPL, SELL $NVDA, BUY $PG")
+
+    assert result.text == "Trades: SELL $AAPL, SELL NVDA, BUY PG"
+    assert session.requests[0]["json"] == {"text": "Trades: SELL $AAPL, SELL NVDA, BUY PG"}
+
+
+def test_sanitize_tweet_for_x_keeps_only_first_cashtag():
+    assert (
+        sanitize_tweet_for_x("SELL $AAPL, SELL $NVDA, BUY $PG")
+        == "SELL $AAPL, SELL NVDA, BUY PG"
+    )
 
 
 def test_append_social_post_writes_jsonl(tmp_path):

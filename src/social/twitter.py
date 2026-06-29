@@ -2,6 +2,7 @@ import base64
 import hashlib
 import hmac
 import json
+import re
 import time
 import uuid
 from dataclasses import dataclass
@@ -67,7 +68,7 @@ class TwitterPublisher:
         self.session = session or requests.Session()
 
     def publish(self, text: str, *, run_id: str | None = None) -> TweetPublishResult:
-        text = text.strip()[:280]
+        text = sanitize_tweet_for_x(text.strip())[:280]
         created_at = _utc_now()
 
         if not text:
@@ -182,6 +183,25 @@ def publish_tweet(text: str, *, run_id: str | None = None) -> TweetPublishResult
     result = TwitterPublisher().publish(text, run_id=run_id)
     append_social_post(result)
     return result
+
+
+def sanitize_tweet_for_x(text: str) -> str:
+    """Keep X within current cashtag posting limits.
+
+    X currently rejects posts with more than one cashtag. Preserve the first
+    cashtag and convert later cashtags to plain tickers.
+    """
+    cashtag_count = 0
+
+    def replace(match):
+        nonlocal cashtag_count
+        cashtag_count += 1
+        symbol = match.group(1)
+        if cashtag_count == 1:
+            return f"${symbol}"
+        return symbol
+
+    return re.sub(r"\$([A-Za-z]{1,6}(?:\.[A-Za-z]{1,2})?)\b", replace, text)
 
 
 def append_social_post(result: TweetPublishResult, path: Path = SOCIAL_POSTS_FILE) -> None:
