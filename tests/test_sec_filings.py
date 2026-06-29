@@ -30,6 +30,12 @@ def test_sec_client_loads_cached_ticker_mapping(tmp_path):
     assert client.load_company_tickers() == {"AAPL": "0000320193"}
 
 
+def test_sec_client_does_not_pin_host_header(tmp_path):
+    client = SECEdgarClient(cache_dir=tmp_path, request_pause_seconds=0)
+
+    assert "Host" not in client.session.headers
+
+
 def test_sec_client_finds_latest_10k_from_submissions(tmp_path):
     client = FakeSECClient(
         payloads={
