@@ -43,6 +43,7 @@ def build_daily_cycle_graph():
         ("generate_outputs", generate_outputs_node),
         ("build_run_status", build_run_status_node),
         ("export_public_artifacts", export_public_artifacts_node),
+        ("publish_tweet", publish_tweet_node),
         ("ingest_run_memory", ingest_run_memory_node),
     ]
 
@@ -292,6 +293,34 @@ def export_public_artifacts_node(state: DailyGraphState) -> DailyGraphState:
         run.run_id,
         run.run_status,
     )
+    return {"run": run}
+
+
+def publish_tweet_node(state: DailyGraphState) -> DailyGraphState:
+    run = state["run"]
+    try:
+        run.tweet_publish_result = steps.publish_tweet(
+            run.tweet,
+            run.run_id,
+            run.run_status,
+        )
+        steps.update_tweet_publish_status(run.tweet_publish_result, run.run_status)
+        run.warnings = list(run.run_status.get("warnings", []))
+    except Exception as exc:
+        logger.warning("Tweet publishing failed unexpectedly run_id=%s error=%s", run.run_id, exc)
+        run.warnings.append(f"Tweet publishing failed: {exc}")
+        run.run_status["warnings"] = run.warnings
+        run.run_status["tweet_publish"] = {
+            "status": "error",
+            "posted": False,
+            "dry_run": False,
+            "tweet_id": None,
+            "text": run.tweet,
+            "error": str(exc),
+            "created_at": None,
+            "run_id": run.run_id,
+        }
+        steps.export_run_status(run.run_status)
     return {"run": run}
 
 

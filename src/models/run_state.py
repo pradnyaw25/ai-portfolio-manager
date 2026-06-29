@@ -26,6 +26,7 @@ class PortfolioRunState:
     report_markdown: str = ""
     tweet: str = ""
     run_status: dict = field(default_factory=dict)
+    tweet_publish_result: Any | None = None
     memory_ingestion_result: Any | None = None
     warnings: list[str] = field(default_factory=list)
     errors: list[str] = field(default_factory=list)

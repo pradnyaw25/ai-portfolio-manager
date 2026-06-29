@@ -23,6 +23,7 @@ from src.simulator.benchmark_tracker import BenchmarkTracker
 from src.memory.retriever import format_grouped_memory_for_prompt, retrieve_grouped_fund_memory
 from src.memory.ingestion_service import ingest_run_memory as ingest_run_memory_service
 from src.memory.citations import review_memory_citations
+from src.social.twitter import publish_tweet as publish_tweet_service
 
 logger = get_logger(__name__)
 
@@ -78,6 +79,8 @@ def run_daily_cycle():
         snapshot=snapshot,
     )
     export_public_artifacts(snapshot, trades, tweet, report_markdown, run_id, run_status)
+    tweet_publish_result = publish_tweet(tweet, run_id, run_status)
+    update_tweet_publish_status(tweet_publish_result, run_status)
 
     logger.info("Daily cycle complete run_id=%s Portfolio value: $%.2f", run_id, snapshot.total_value)
 
@@ -313,6 +316,7 @@ def build_run_status(run_id, started_at, memory_result, memory_context, trades, 
         "warnings": warnings,
         "errors": [],
         "memory_ingestion": None,
+        "tweet_publish": None,
         "portfolio_value": snapshot.total_value,
         "cash_pct": snapshot.cash_pct,
     }
@@ -340,9 +344,26 @@ def build_failure_run_status(
         "warnings": warnings or [],
         "errors": errors,
         "memory_ingestion": None,
+        "tweet_publish": None,
         "portfolio_value": snapshot.total_value if snapshot is not None else None,
         "cash_pct": snapshot.cash_pct if snapshot is not None else None,
     }
+
+
+def publish_tweet(tweet, run_id, run_status):
+    result = publish_tweet_service(tweet, run_id=run_id)
+    run_status["tweet_publish"] = result.to_dict()
+    if result.status not in {"posted", "dry_run", "skipped"}:
+        run_status.setdefault("warnings", []).append(
+            f"Tweet publish status={result.status}: {result.error}"
+        )
+    return result
+
+
+def update_tweet_publish_status(tweet_publish_result, run_status):
+    exporter = PublicExporter()
+    exporter.update_latest_tweet_status(tweet_publish_result.to_dict())
+    exporter.write_run_status(run_status)
 
 
 def ingest_run_memory(run_id, report_markdown):

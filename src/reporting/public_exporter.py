@@ -37,6 +37,25 @@ class PublicExporter:
         PUBLIC_DIR.mkdir(exist_ok=True)
         self._write_run_status(run_status)
 
+    def update_latest_tweet_status(self, publish_result: dict) -> None:
+        PUBLIC_DIR.mkdir(exist_ok=True)
+        path = PUBLIC_DIR / "latest_tweet.json"
+        payload = {}
+        if path.exists():
+            payload = json.loads(path.read_text())
+        payload.update(
+            {
+                "posted": publish_result.get("posted", False),
+                "publish_status": publish_result.get("status"),
+                "tweet_id": publish_result.get("tweet_id"),
+                "publish_error": publish_result.get("error"),
+                "published_at": publish_result.get("created_at")
+                if publish_result.get("posted")
+                else None,
+            }
+        )
+        path.write_text(json.dumps(payload, indent=2))
+
     def _write_portfolio(self, snapshot: PortfolioSnapshot, run_id: str | None = None) -> None:
         payload = {
             "run_id": run_id,

@@ -22,6 +22,11 @@ SEC_USER_AGENT = os.getenv(
     "SEC_USER_AGENT",
     "ai-portfolio-manager contact@example.com",
 )
+POST_TWEET = os.getenv("POST_TWEET", "false").lower() in {"1", "true", "yes"}
+X_API_KEY = os.getenv("X_API_KEY", "")
+X_API_SECRET = os.getenv("X_API_SECRET", "")
+X_ACCESS_TOKEN = os.getenv("X_ACCESS_TOKEN", "")
+X_ACCESS_TOKEN_SECRET = os.getenv("X_ACCESS_TOKEN_SECRET", "")
 
 INITIAL_CAPITAL = float(os.getenv("INITIAL_CAPITAL", "1000000"))
 MAX_POSITION_SIZE = float(os.getenv("MAX_POSITION_SIZE", "0.10"))
