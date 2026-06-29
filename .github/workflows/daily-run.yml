@@ -12,9 +12,18 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
 
 jobs:
   run:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
 
     steps:
@@ -67,3 +76,18 @@ jobs:
         if: steps.market-hours.outputs.should_run == 'true'
         run: |
           git push
+
+      - name: Setup Pages
+        if: steps.market-hours.outputs.should_run == 'true'
+        uses: actions/configure-pages@v5
+
+      - name: Upload static site
+        if: steps.market-hours.outputs.should_run == 'true'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+      - name: Deploy to GitHub Pages
+        if: steps.market-hours.outputs.should_run == 'true'
+        id: deployment
+        uses: actions/deploy-pages@v5
