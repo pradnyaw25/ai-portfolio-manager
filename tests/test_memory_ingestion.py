@@ -4,6 +4,7 @@ from src.memory.extractors import (
     extract_trade_memory,
 )
 from src.memory.ingestion_service import MemoryIngestionService
+from src.memory import memory_store
 from src.memory.schemas import MemoryIngestionResult, MemoryRecord
 from src.models.run_state import PortfolioRunState
 from src.workflows import daily_graph
@@ -49,6 +50,35 @@ def test_memory_record_metadata_excludes_content_and_keeps_type_alias():
     assert metadata["id"] == "thesis:run_1"
     assert metadata["memory_type"] == "thesis"
     assert metadata["type"] == "thesis"
+
+
+def test_fund_memory_store_uses_uuid_point_ids_and_keeps_semantic_metadata():
+    class FakeVectorStore:
+        def __init__(self):
+            self.documents = []
+            self.ids = []
+
+        def add_documents(self, *, documents, ids):
+            self.documents = documents
+            self.ids = ids
+
+    fake_store = FakeVectorStore()
+    store = memory_store.FundMemoryStore.__new__(memory_store.FundMemoryStore)
+    store.store = fake_store
+    record = MemoryRecord(
+        id="10k:AAPL:000032019325000079:item_1a",
+        memory_type="risk_lesson",
+        content="Risk factors mention supply concentration.",
+        date="2026-06-30",
+        symbols=["AAPL"],
+    )
+
+    created = store.upsert_records([record])
+
+    assert created == 1
+    assert fake_store.ids == [memory_store.memory_point_id(record.id)]
+    assert fake_store.ids[0] != record.id
+    assert fake_store.documents[0].metadata["id"] == record.id
 
 
 def test_extract_report_memories_creates_typed_report_thesis_and_risk_records():

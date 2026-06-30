@@ -1,3 +1,5 @@
+import uuid
+
 from langchain_core.documents import Document
 from langchain_openai import OpenAIEmbeddings
 from langchain_qdrant import QdrantVectorStore
@@ -6,6 +8,7 @@ from src.config import QDRANT_API_KEY, QDRANT_URL
 from src.memory.schemas import MemoryRecord
 
 COLLECTION_NAME = "fund_memory"
+POINT_ID_NAMESPACE = uuid.UUID("9c2ef9d1-4b7d-4b7c-a344-ecf6ab01c7df")
 
 
 class FundMemoryStore:
@@ -34,6 +37,10 @@ class FundMemoryStore:
         ]
         self.store.add_documents(
             documents=documents,
-            ids=[record.id for record in records],
+            ids=[memory_point_id(record.id) for record in records],
         )
         return len(records)
+
+
+def memory_point_id(memory_id: str) -> str:
+    return str(uuid.uuid5(POINT_ID_NAMESPACE, memory_id))
