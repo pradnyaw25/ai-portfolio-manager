@@ -1,0 +1,96 @@
+name: SEC Filing Memory Ingestion
+
+on:
+  schedule:
+    # 10-Ks change slowly; refresh production memory once per week.
+    - cron: "17 13 * * 6"
+
+  workflow_dispatch:
+    inputs:
+      symbols:
+        description: "Optional space-separated ticker symbols. Defaults to the watchlist."
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: sec-filing-memory-ingestion
+  cancel-in-progress: false
+
+jobs:
+  ingest:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Install dependencies
+        run: |
+          pip install -U pip
+          pip install -e .
+
+      - name: Ingest latest SEC 10-Ks into memory
+        id: ingest-sec
+        env:
+          QDRANT_URL: ${{ secrets.QDRANT_URL }}
+          QDRANT_API_KEY: ${{ secrets.QDRANT_API_KEY }}
+          SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
+          SEC_SYMBOLS: ${{ inputs.symbols }}
+        run: |
+          set +e
+          if [ -n "$SEC_SYMBOLS" ]; then
+            python scripts/ingest_sec_filings.py $SEC_SYMBOLS
+          else
+            python scripts/ingest_sec_filings.py
+          fi
+          echo "exit_code=$?" >> "$GITHUB_OUTPUT"
+
+      - name: Refresh public memory health
+        run: |
+          python scripts/export_memory_health.py
+
+      - name: Commit SEC memory artifacts
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+
+          git add -f data/sec_filings/company_tickers.json public/memory_health.json
+          if [ -f data/memory_sec_filings.json ]; then
+            git add -f data/memory_sec_filings.json
+          fi
+
+          git diff --staged --quiet || \
+          git commit -m "Update SEC filing memory health"
+
+      - name: Push changes
+        run: |
+          git push
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload static site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
+
+      - name: Fail if SEC ingestion failed
+        if: steps.ingest-sec.outputs.exit_code != '0'
+        run: |
+          echo "SEC filing ingestion exited with ${{ steps.ingest-sec.outputs.exit_code }}"
+          exit "${{ steps.ingest-sec.outputs.exit_code }}"

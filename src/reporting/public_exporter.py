@@ -41,6 +41,10 @@ class PublicExporter:
         self._write_run_status(run_status)
         self._write_memory_health(run_status)
 
+    def write_memory_health(self, run_status: dict | None = None) -> None:
+        PUBLIC_DIR.mkdir(exist_ok=True)
+        self._write_memory_health(run_status)
+
     def update_latest_tweet_status(self, publish_result: dict) -> None:
         PUBLIC_DIR.mkdir(exist_ok=True)
         path = PUBLIC_DIR / "latest_tweet.json"
