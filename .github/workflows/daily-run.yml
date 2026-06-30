@@ -3,10 +3,11 @@ name: Daily Portfolio Run
 on:
   schedule:
     # Twice on weekdays during regular US market hours.
-    # 14:37 UTC is 9:37am ET in standard time and 10:37am ET in daylight time.
-    # 19:37 UTC is 2:37pm ET in standard time and 3:37pm ET in daylight time.
+    # 15:17 UTC is 10:17am ET in standard time and 11:17am ET in daylight time.
+    # 18:17 UTC is 1:17pm ET in standard time and 2:17pm ET in daylight time.
+    # These avoid the crowded top of the hour and leave buffer for scheduler delays.
     # scripts/market_hours_guard.py still enforces 9:30am-4:00pm America/New_York.
-    - cron: "37 14,19 * * 1-5"
+    - cron: "17 15,18 * * 1-5"
 
   workflow_dispatch:
 
