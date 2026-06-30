@@ -1,14 +1,12 @@
 {
-  "ingested_at": "2026-06-30T17:17:42.784177Z",
+  "ingested_at": "2026-06-30T17:23:07.649388Z",
   "ingestion": {
-    "status": "unavailable",
-    "created": 0,
+    "status": "ok",
+    "created": 68,
     "updated": 0,
     "skipped": 0,
-    "errors": [
-      "Unexpected Response: 400 (Bad Request)\nRaw response content:\nb'{\"status\":{\"error\":\"Format error in JSON body: value 10k:AAPL:000032019325000079:item_1a is not a valid point ID, valid values are either an unsigned integer or a UUID\"},\"time\":0.0}'"
-    ],
-    "total_processed": 0
+    "errors": [],
+    "total_processed": 68
   },
   "processed": [
     {
