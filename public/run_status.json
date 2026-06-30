@@ -1,12 +1,12 @@
 {
-  "run_id": "run_20260629T171822Z_062ca9d3",
+  "run_id": "run_20260630T164154Z_797a4851",
   "status": "success",
-  "started_at": "2026-06-29T17:18:22.182692Z",
-  "completed_at": "2026-06-29T17:18:47.842235Z",
+  "started_at": "2026-06-30T16:41:54.828168Z",
+  "completed_at": "2026-06-30T16:42:25.877990Z",
   "memory_status": "ok",
   "memory_error": null,
   "memory_chunks": 0,
-  "trades_executed": 2,
+  "trades_executed": 6,
   "warnings": [],
   "errors": [],
   "memory_ingestion": null,
@@ -14,12 +14,12 @@
     "status": "posted",
     "posted": true,
     "dry_run": false,
-    "tweet_id": "2071644563987374114",
-    "text": "Realigned the portfolio today with a couple of trims\u2014sold AAPL and NVDA. Current value is $997,455, with cash holding steady at 29.8%. Holding 14 positions, we've opted for a more balanced approach as we navigate the markets. \ud83c\udf10 #AIPortfolio",
+    "tweet_id": "2071997799932027141",
+    "text": "Portfolio ticked up to $1,004,426 today. Executed four trades: sold AAPL and PG, while adding to positions in AAPL, NVDA, AMZN, and TSLA. Cash remains robust at 27%. A shift towards growth is noted, keeping a balanced approach. \ud83d\udcc8 #AIPortfolio #PortfolioUpdate",
     "error": null,
-    "created_at": "2026-06-29T17:18:47.844407Z",
-    "run_id": "run_20260629T171822Z_062ca9d3"
+    "created_at": "2026-06-30T16:42:25.881061Z",
+    "run_id": "run_20260630T164154Z_797a4851"
   },
-  "portfolio_value": 997454.9403533936,
-  "cash_pct": 0.29797839453125646
+  "portfolio_value": 1004425.7610015869,
+  "cash_pct": 0.269727661683846
 }

@@ -1,22 +1,62 @@
 [
   {
-    "run_id": "run_20260629T171822Z_062ca9d3",
-    "date": "2026-06-29",
+    "run_id": "run_20260630T164154Z_797a4851",
+    "date": "2026-06-30",
     "symbol": "AAPL",
     "action": "SELL",
     "shares": 50,
-    "price": 280.94500732421875,
-    "total": 14047.250366210938,
-    "reasoning": "AAPL's recent underperformance over 30 days (-7.96%) suggests it may be wise to divest a portion before further declines."
+    "price": 288.5249938964844,
+    "total": 14426.249694824219,
+    "reasoning": "AAPL is showing negative short-term indicators, including recent declines and negative news sentiment surrounding data leaks. Selling a portion mitigates exposure."
   },
   {
-    "run_id": "run_20260629T171822Z_062ca9d3",
-    "date": "2026-06-29",
-    "symbol": "NVDA",
+    "run_id": "run_20260630T164154Z_797a4851",
+    "date": "2026-06-30",
+    "symbol": "PG",
     "action": "SELL",
-    "shares": 100,
-    "price": 194.7100067138672,
-    "total": 19471.00067138672,
-    "reasoning": "The stock has experienced a significant decline and remains below cost basis, and cash can be better utilized in more stable holdings."
+    "shares": 30,
+    "price": 146.1699981689453,
+    "total": 4385.099945068359,
+    "reasoning": "PG has not recovered from recent price declines, and market narratives suggest it may be overvalued at current levels."
+  },
+  {
+    "run_id": "run_20260630T164154Z_797a4851",
+    "date": "2026-06-30",
+    "symbol": "AAPL",
+    "action": "BUY",
+    "shares": 45,
+    "price": 288.5249938964844,
+    "total": 12983.624725341797,
+    "reasoning": "AAPL has shown strong growth prospects with consistent earnings and innovation. Recent market momentum supports further investment."
+  },
+  {
+    "run_id": "run_20260630T164154Z_797a4851",
+    "date": "2026-06-30",
+    "symbol": "NVDA",
+    "action": "BUY",
+    "shares": 65,
+    "price": 197.80999755859375,
+    "total": 12857.649841308594,
+    "reasoning": "With the rise in AI and gaming sectors, NVDA is well-positioned for growth. Its recent performance indicates strong demand."
+  },
+  {
+    "run_id": "run_20260630T164154Z_797a4851",
+    "date": "2026-06-30",
+    "symbol": "AMZN",
+    "action": "BUY",
+    "shares": 54,
+    "price": 240.88999938964844,
+    "total": 13008.059967041016,
+    "reasoning": "AMZN continues to dominate in e-commerce and cloud computing, making it a solid choice for long-term growth."
+  },
+  {
+    "run_id": "run_20260630T164154Z_797a4851",
+    "date": "2026-06-30",
+    "symbol": "TSLA",
+    "action": "BUY",
+    "shares": 15,
+    "price": 417.375,
+    "total": 6260.625,
+    "reasoning": "TSLA's recent advancements in EV technology solidify its market leadership, although its high valuation adds some risk."
   }
 ]
