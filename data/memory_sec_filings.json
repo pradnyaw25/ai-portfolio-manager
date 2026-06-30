@@ -1,12 +1,12 @@
 {
-  "ingested_at": "2026-06-30T17:14:57.727920Z",
+  "ingested_at": "2026-06-30T17:17:42.784177Z",
   "ingestion": {
     "status": "unavailable",
     "created": 0,
     "updated": 0,
     "skipped": 0,
     "errors": [
-      "Missing credentials. Please pass an `api_key`, `workload_identity`, `admin_api_key`, or set the `OPENAI_API_KEY` or `OPENAI_ADMIN_KEY` environment variable."
+      "Unexpected Response: 400 (Bad Request)\nRaw response content:\nb'{\"status\":{\"error\":\"Format error in JSON body: value 10k:AAPL:000032019325000079:item_1a is not a valid point ID, valid values are either an unsigned integer or a UUID\"},\"time\":0.0}'"
     ],
     "total_processed": 0
   },
