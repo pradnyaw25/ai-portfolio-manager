@@ -31,8 +31,11 @@ class TweetPublishResult:
     posted: bool
     dry_run: bool
     tweet_id: str | None = None
+    tweet_url: str | None = None
     text: str = ""
     error: str | None = None
+    error_code: str | None = None
+    http_status: int | None = None
     created_at: str | None = None
     run_id: str | None = None
 
@@ -42,8 +45,11 @@ class TweetPublishResult:
             "posted": self.posted,
             "dry_run": self.dry_run,
             "tweet_id": self.tweet_id,
+            "tweet_url": self.tweet_url,
             "text": self.text,
             "error": self.error,
+            "error_code": self.error_code,
+            "http_status": self.http_status,
             "created_at": self.created_at,
             "run_id": self.run_id,
         }
@@ -78,6 +84,7 @@ class TwitterPublisher:
                 dry_run=not self.post_enabled,
                 text=text,
                 error="empty tweet text",
+                error_code="empty_text",
                 created_at=created_at,
                 run_id=run_id,
             )
@@ -100,6 +107,7 @@ class TwitterPublisher:
                 dry_run=False,
                 text=text,
                 error=f"Missing X credentials: {', '.join(missing)}",
+                error_code="missing_credentials",
                 created_at=created_at,
                 run_id=run_id,
             )
@@ -122,6 +130,20 @@ class TwitterPublisher:
             )
             response.raise_for_status()
             body = response.json()
+        except requests.HTTPError as exc:
+            response = exc.response
+            http_status = response.status_code if response is not None else None
+            return TweetPublishResult(
+                status="error",
+                posted=False,
+                dry_run=False,
+                text=text,
+                error=str(exc),
+                error_code=f"http_{http_status}" if http_status else "http_error",
+                http_status=http_status,
+                created_at=created_at,
+                run_id=run_id,
+            )
         except Exception as exc:
             return TweetPublishResult(
                 status="error",
@@ -129,6 +151,7 @@ class TwitterPublisher:
                 dry_run=False,
                 text=text,
                 error=str(exc),
+                error_code=f"exception_{type(exc).__name__}",
                 created_at=created_at,
                 run_id=run_id,
             )
@@ -139,6 +162,7 @@ class TwitterPublisher:
             posted=True,
             dry_run=False,
             tweet_id=tweet_id,
+            tweet_url=tweet_url(tweet_id),
             text=text,
             created_at=created_at,
             run_id=run_id,
@@ -194,6 +218,12 @@ def append_social_post(result: TweetPublishResult, path: Path = SOCIAL_POSTS_FIL
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "a") as f:
         f.write(json.dumps(result.to_dict()) + "\n")
+
+
+def tweet_url(tweet_id: str | None) -> str | None:
+    if not tweet_id:
+        return None
+    return f"https://x.com/i/web/status/{tweet_id}"
 
 
 def _oauth_signature(

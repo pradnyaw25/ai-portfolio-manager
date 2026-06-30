@@ -641,6 +641,33 @@
       font-size: 15px;
     }
 
+    .audit-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .audit-row {
+      display: grid;
+      grid-template-columns: minmax(82px, 0.45fr) minmax(0, 1fr);
+      gap: 10px;
+      align-items: start;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--panel-subtle);
+      padding: 10px 12px;
+      font-size: 13px;
+    }
+
+    .audit-label {
+      color: var(--muted);
+      font-weight: 750;
+    }
+
+    .audit-value {
+      color: var(--muted-strong);
+      overflow-wrap: anywhere;
+    }
+
     .pos {
       color: var(--positive);
     }
@@ -891,6 +918,16 @@
           <h2>Latest Tweet Draft</h2>
           <p class="tweet-box" id="tweet">Loading...</p>
         </section>
+
+        <section class="card">
+          <h2>Social Publishing</h2>
+          <div class="audit-list" id="social-audit">Loading...</div>
+        </section>
+
+        <section class="card">
+          <h2>Memory Health</h2>
+          <div class="audit-list" id="memory-health">Loading...</div>
+        </section>
       </aside>
     </section>
   </main>
@@ -1092,6 +1129,71 @@
         pill.className = "status-pill error";
         ["run-status", "run-id", "run-completed", "run-memory", "run-trades", "run-warnings"]
           .forEach(id => document.getElementById(id).textContent = "Unavailable");
+      }
+    }
+
+    function renderAuditRows(elementId, rows) {
+      document.getElementById(elementId).innerHTML = rows.map(([label, value, className = ""]) => `
+        <div class="audit-row">
+          <div class="audit-label">${escapeHtml(label)}</div>
+          <div class="audit-value ${className}">${value}</div>
+        </div>
+      `).join("");
+    }
+
+    async function loadSocialAudit() {
+      try {
+        const res = await fetch("./social_posts.json");
+        if (!res.ok) throw new Error("social audit unavailable");
+        const audit = await res.json();
+        const latest = (audit.posts || [])[0] || {};
+        const metrics = audit.metrics || {};
+        const statusClass = latest.status === "posted"
+          ? "pos"
+          : (latest.status === "error" ? "neg" : "");
+        const tweetLink = latest.tweet_url
+          ? `<a href="${escapeHtml(latest.tweet_url)}" target="_blank" rel="noreferrer">Open tweet</a>`
+          : "No live tweet link";
+
+        renderAuditRows("social-audit", [
+          ["Latest", escapeHtml(latest.status || "unknown"), statusClass],
+          ["Run", escapeHtml(latest.run_id || "Unknown")],
+          ["Published", tweetLink],
+          ["History", `${metrics.posted || 0} posted / ${metrics.errors || 0} errors / ${metrics.dry_runs || 0} dry runs`],
+        ]);
+      } catch (e) {
+        renderAuditRows("social-audit", [["Status", "Unavailable", "neg"]]);
+      }
+    }
+
+    async function loadMemoryHealth() {
+      try {
+        const res = await fetch("./memory_health.json");
+        if (!res.ok) throw new Error("memory health unavailable");
+        const health = await res.json();
+        const retrieval = health.retrieval || {};
+        const ingestion = health.ingestion || {};
+        const sources = health.sources || {};
+        const reports = sources.reports || {};
+        const sec = sources.sec_filings || {};
+        const evalResult = sources.eval || {};
+        const retrievalClass = retrieval.status === "ok"
+          ? "pos"
+          : (retrieval.status ? "neg" : "");
+        const ingestionClass = ["ok", "skipped"].includes(ingestion.status) ? "pos" : "neg";
+        const evalText = evalResult.evaluated_at
+          ? `${evalResult.passed ? "passed" : "failed"} / recall ${(Number(evalResult.recall || 0) * 100).toFixed(0)}%`
+          : "Not recorded";
+
+        renderAuditRows("memory-health", [
+          ["Retrieval", `${escapeHtml(retrieval.status || "unknown")} / ${retrieval.chunks || 0} chunks`, retrievalClass],
+          ["Ingestion", `${escapeHtml(ingestion.status || "unknown")} / ${ingestion.total_processed || 0} records`, ingestionClass],
+          ["Reports", `${reports.count || 0} tracked${reports.latest ? ` / ${escapeHtml(reports.latest)}` : ""}`],
+          ["SEC 10-Ks", `${(sec.processed || []).length || 0} processed / ${(sec.skipped || []).length || 0} skipped`],
+          ["Eval", evalText],
+        ]);
+      } catch (e) {
+        renderAuditRows("memory-health", [["Status", "Unavailable", "neg"]]);
       }
     }
 
@@ -1419,6 +1521,8 @@
     setupThemeToggle();
     loadUpdatedAt();
     loadRunStatus();
+    loadSocialAudit();
+    loadMemoryHealth();
     loadDashboard();
   </script>
 </body>

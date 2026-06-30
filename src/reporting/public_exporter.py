@@ -1,5 +1,6 @@
 import json
 import shutil
+import csv
 from datetime import UTC, date, datetime
 from pathlib import Path
 
@@ -30,12 +31,15 @@ class PublicExporter:
         self._write_site_meta()
         if run_status is not None:
             self._write_run_status(run_status)
+            self._write_memory_health(run_status)
+        self._write_social_audit()
         self._write_prediction_dashboard()
         self._copy_history_files()
 
     def write_run_status(self, run_status: dict) -> None:
         PUBLIC_DIR.mkdir(exist_ok=True)
         self._write_run_status(run_status)
+        self._write_memory_health(run_status)
 
     def update_latest_tweet_status(self, publish_result: dict) -> None:
         PUBLIC_DIR.mkdir(exist_ok=True)
@@ -48,13 +52,18 @@ class PublicExporter:
                 "posted": publish_result.get("posted", False),
                 "publish_status": publish_result.get("status"),
                 "tweet_id": publish_result.get("tweet_id"),
+                "tweet_url": publish_result.get("tweet_url")
+                or _tweet_url(publish_result.get("tweet_id")),
                 "publish_error": publish_result.get("error"),
+                "publish_error_code": publish_result.get("error_code"),
+                "publish_http_status": publish_result.get("http_status"),
                 "published_at": publish_result.get("created_at")
                 if publish_result.get("posted")
                 else None,
             }
         )
         path.write_text(json.dumps(payload, indent=2))
+        self._write_social_audit()
 
     def _write_portfolio(self, snapshot: PortfolioSnapshot, run_id: str | None = None) -> None:
         payload = {
@@ -131,6 +140,75 @@ class PublicExporter:
     def _write_run_status(self, run_status: dict) -> None:
         (PUBLIC_DIR / "run_status.json").write_text(json.dumps(run_status, indent=2))
 
+    def _write_social_audit(self) -> None:
+        posts = self._load_jsonl(DATA_DIR / "social_posts.jsonl")
+        enriched_posts = [self._serialize_social_post(post) for post in posts]
+        latest = enriched_posts[-1] if enriched_posts else None
+        payload = {
+            "updated_at": _utc_now(),
+            "metrics": {
+                "total": len(enriched_posts),
+                "posted": sum(1 for post in enriched_posts if post.get("posted")),
+                "errors": sum(1 for post in enriched_posts if post.get("status") == "error"),
+                "dry_runs": sum(1 for post in enriched_posts if post.get("dry_run")),
+                "latest_status": latest.get("status") if latest else None,
+                "latest_run_id": latest.get("run_id") if latest else None,
+            },
+            "posts": list(reversed(enriched_posts[-25:])),
+        }
+        (PUBLIC_DIR / "social_posts.json").write_text(json.dumps(payload, indent=2))
+
+        source = DATA_DIR / "social_posts.jsonl"
+        if source.exists():
+            shutil.copy(source, PUBLIC_DIR / "social_posts.jsonl")
+
+    def _serialize_social_post(self, post: dict) -> dict:
+        tweet_id = post.get("tweet_id")
+        return {
+            "run_id": post.get("run_id"),
+            "created_at": post.get("created_at"),
+            "status": post.get("status"),
+            "posted": post.get("posted", False),
+            "dry_run": post.get("dry_run", False),
+            "tweet_id": tweet_id,
+            "tweet_url": post.get("tweet_url")
+            or (f"https://x.com/i/web/status/{tweet_id}" if tweet_id else None),
+            "error": post.get("error"),
+            "error_code": post.get("error_code"),
+            "http_status": post.get("http_status"),
+            "text": post.get("text", ""),
+        }
+
+    def _write_memory_health(self, run_status: dict | None = None) -> None:
+        status = run_status or self._load_json(PUBLIC_DIR / "run_status.json") or {}
+        payload = {
+            "updated_at": _utc_now(),
+            "run_id": status.get("run_id"),
+            "retrieval": {
+                "status": status.get("memory_status"),
+                "error": status.get("memory_error"),
+                "chunks": status.get("memory_chunks", 0),
+            },
+            "ingestion": status.get("memory_ingestion")
+            or {
+                "status": "not_recorded",
+                "created": 0,
+                "updated": 0,
+                "skipped": 0,
+                "errors": [],
+                "total_processed": 0,
+            },
+            "sources": {
+                "reports": self._summarize_reports(),
+                "decisions": self._summarize_jsonl(DATA_DIR / "decisions.jsonl"),
+                "trades": self._summarize_csv(DATA_DIR / "trades.csv"),
+                "sec_filings": self._load_json(DATA_DIR / "memory_sec_filings.json"),
+                "eval": self._load_json(DATA_DIR / "memory_eval_latest.json"),
+            },
+            "warnings": status.get("warnings", []),
+        }
+        (PUBLIC_DIR / "memory_health.json").write_text(json.dumps(payload, indent=2))
+
     def _write_prediction_dashboard(self) -> None:
         predictions = self._load_predictions()
         resolved = [p for p in predictions if p.get("status") == "scored" and p.get("result")]
@@ -194,3 +272,68 @@ class PublicExporter:
             src = DATA_DIR / filename
             if src.exists():
                 shutil.copy(src, PUBLIC_DIR / filename)
+
+    def _load_jsonl(self, path: Path) -> list[dict]:
+        if not path.exists():
+            return []
+        rows = []
+        for line in path.read_text().splitlines():
+            if not line.strip():
+                continue
+            try:
+                rows.append(json.loads(line))
+            except json.JSONDecodeError:
+                continue
+        return rows
+
+    def _load_json(self, path: Path) -> dict | None:
+        if not path.exists():
+            return None
+        try:
+            return json.loads(path.read_text())
+        except json.JSONDecodeError:
+            return None
+
+    def _summarize_reports(self) -> dict:
+        reports = sorted(REPORTS_DIR.glob("report_*.md"))
+        latest = reports[-1] if reports else None
+        return {
+            "count": len(reports),
+            "latest": latest.name if latest else None,
+            "latest_updated_at": _file_mtime(latest) if latest else None,
+        }
+
+    def _summarize_jsonl(self, path: Path) -> dict:
+        rows = self._load_jsonl(path)
+        latest = rows[-1] if rows else {}
+        return {
+            "count": len(rows),
+            "latest_run_id": latest.get("run_id"),
+            "latest_date": latest.get("date") or latest.get("created_at"),
+        }
+
+    def _summarize_csv(self, path: Path) -> dict:
+        if not path.exists():
+            return {"count": 0, "latest_date": None, "latest_run_id": None}
+        with open(path, newline="") as f:
+            rows = list(csv.DictReader(f))
+        latest = rows[-1] if rows else {}
+        return {
+            "count": len(rows),
+            "latest_date": latest.get("date"),
+            "latest_run_id": latest.get("run_id"),
+        }
+
+
+def _utc_now() -> str:
+    return datetime.now(UTC).isoformat().replace("+00:00", "Z")
+
+
+def _file_mtime(path: Path) -> str:
+    return datetime.fromtimestamp(path.stat().st_mtime, UTC).isoformat().replace("+00:00", "Z")
+
+
+def _tweet_url(tweet_id: str | None) -> str | None:
+    if not tweet_id:
+        return None
+    return f"https://x.com/i/web/status/{tweet_id}"

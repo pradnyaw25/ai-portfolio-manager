@@ -4,16 +4,19 @@
 import argparse
 import json
 import sys
+from datetime import UTC, datetime
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from src.config import DATA_DIR
 from src.data_sources.sec_edgar import SECEdgarClient, extract_10k_sections
 from src.memory.ingestion_service import MemoryIngestionService
 from src.memory.sec_filings import filing_sections_to_memory_records
 from src.research.market_context import WATCHLIST
 
 SKIP_SYMBOLS = {"SPY", "QQQ", "^VIX"}
+DEFAULT_SUMMARY_PATH = DATA_DIR / "memory_sec_filings.json"
 
 
 def main() -> int:
@@ -55,16 +58,16 @@ def main() -> int:
         )
 
     result = MemoryIngestionService().ingest_records(records)
-    print(
-        json.dumps(
-            {
-                "ingestion": result.to_dict(),
-                "processed": processed,
-                "skipped": skipped,
-            },
-            indent=2,
-        )
-    )
+    payload = {
+        "ingested_at": datetime.now(UTC).isoformat().replace("+00:00", "Z"),
+        "ingestion": result.to_dict(),
+        "processed": processed,
+        "skipped": skipped,
+    }
+    print(json.dumps(payload, indent=2))
+    if args.summary_path:
+        args.summary_path.parent.mkdir(parents=True, exist_ok=True)
+        args.summary_path.write_text(json.dumps(payload, indent=2))
     return 0 if result.status in {"ok", "skipped"} else 1
 
 
@@ -90,6 +93,19 @@ def parse_args():
         type=float,
         default=0.15,
         help="Pause between SEC requests in seconds.",
+    )
+    parser.add_argument(
+        "--summary-path",
+        type=Path,
+        default=DEFAULT_SUMMARY_PATH,
+        help="Write the latest SEC filing ingestion summary for memory health exports.",
+    )
+    parser.add_argument(
+        "--no-summary",
+        action="store_const",
+        const=None,
+        dest="summary_path",
+        help="Only print the SEC filing ingestion summary.",
     )
     return parser.parse_args()
 

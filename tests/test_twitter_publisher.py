@@ -76,6 +76,7 @@ def test_twitter_publisher_posts_with_oauth_header():
     assert result.status == "posted"
     assert result.posted
     assert result.tweet_id == "tweet_123"
+    assert result.tweet_url == "https://x.com/i/web/status/tweet_123"
     assert session.requests[0]["json"] == {"text": "portfolio update"}
     assert session.requests[0]["headers"]["Authorization"].startswith("OAuth ")
 
@@ -113,6 +114,7 @@ def test_append_social_post_writes_jsonl(tmp_path):
     payload = json.loads(path.read_text().strip())
     assert payload["status"] == "dry_run"
     assert payload["run_id"] == "run_1"
+    assert "tweet_url" in payload
 
 
 def test_public_exporter_updates_latest_tweet_publish_status(tmp_path, monkeypatch):
@@ -141,4 +143,5 @@ def test_public_exporter_updates_latest_tweet_publish_status(tmp_path, monkeypat
     assert payload["posted"]
     assert payload["publish_status"] == "posted"
     assert payload["tweet_id"] == "tweet_123"
+    assert payload["tweet_url"] == "https://x.com/i/web/status/tweet_123"
     assert payload["published_at"] == "2026-06-28T12:00:00Z"

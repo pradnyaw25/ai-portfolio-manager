@@ -1,16 +1,20 @@
 #!/usr/bin/env python3
 """Run offline memory retrieval evaluation fixtures."""
 
+import argparse
 import json
 import sys
+from datetime import UTC, datetime
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from src.config import DATA_DIR
 from src.memory.evals import evaluate_memory_retrieval, load_memory_eval_scenarios
 from src.memory.retriever import _filter_memories
 
 DEFAULT_FIXTURE = Path("tests/fixtures/memory_evals/retrieval_scenarios.json")
+DEFAULT_OUTPUT = DATA_DIR / "memory_eval_latest.json"
 
 
 class FixtureMemoryRetriever:
@@ -52,14 +56,47 @@ class FixtureMemoryRetriever:
 
 
 def main() -> int:
-    fixture_path = Path(sys.argv[1]) if len(sys.argv) > 1 else DEFAULT_FIXTURE
-    scenarios = load_memory_eval_scenarios(fixture_path)
+    args = parse_args()
+    scenarios = load_memory_eval_scenarios(args.fixture)
     result = evaluate_memory_retrieval(
         scenarios,
         retriever_factory=lambda scenario: FixtureMemoryRetriever(scenario.documents),
     )
-    print(json.dumps(result.to_dict(), indent=2))
+    payload = {
+        "evaluated_at": datetime.now(UTC).isoformat().replace("+00:00", "Z"),
+        "fixture": str(args.fixture),
+        **result.to_dict(),
+    }
+    print(json.dumps(payload, indent=2))
+    if args.output:
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(json.dumps(payload, indent=2))
     return 0 if result.passed else 1
+
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "fixture",
+        nargs="?",
+        type=Path,
+        default=DEFAULT_FIXTURE,
+        help="Memory eval fixture path.",
+    )
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=DEFAULT_OUTPUT,
+        help="Write the latest eval summary for public memory health exports.",
+    )
+    parser.add_argument(
+        "--no-output",
+        action="store_const",
+        const=None,
+        dest="output",
+        help="Only print the eval result.",
+    )
+    return parser.parse_args()
 
 
 def _normalize_memory(document: dict) -> dict:
