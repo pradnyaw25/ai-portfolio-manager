@@ -43,6 +43,7 @@ jobs:
       - name: Ingest latest SEC 10-Ks into memory
         id: ingest-sec
         env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           QDRANT_URL: ${{ secrets.QDRANT_URL }}
           QDRANT_API_KEY: ${{ secrets.QDRANT_API_KEY }}
           SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
