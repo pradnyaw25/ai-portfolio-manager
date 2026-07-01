@@ -1,62 +1,22 @@
 [
   {
-    "run_id": "run_20260630T164154Z_797a4851",
-    "date": "2026-06-30",
-    "symbol": "AAPL",
+    "run_id": "run_20260701T172450Z_15341e0f",
+    "date": "2026-07-01",
+    "symbol": "NVDA",
     "action": "SELL",
     "shares": 50,
-    "price": 288.5249938964844,
-    "total": 14426.249694824219,
-    "reasoning": "AAPL is showing negative short-term indicators, including recent declines and negative news sentiment surrounding data leaks. Selling a portion mitigates exposure."
+    "price": 198.36000061035156,
+    "total": 9918.000030517578,
+    "reasoning": "Despite its long-term potential, NVDA has not performed well recently, and it's wise to reduce exposure in light of current market sentiment and news indicating short-term pressures."
   },
   {
-    "run_id": "run_20260630T164154Z_797a4851",
-    "date": "2026-06-30",
+    "run_id": "run_20260701T172450Z_15341e0f",
+    "date": "2026-07-01",
     "symbol": "PG",
     "action": "SELL",
     "shares": 30,
-    "price": 146.1699981689453,
-    "total": 4385.099945068359,
-    "reasoning": "PG has not recovered from recent price declines, and market narratives suggest it may be overvalued at current levels."
-  },
-  {
-    "run_id": "run_20260630T164154Z_797a4851",
-    "date": "2026-06-30",
-    "symbol": "AAPL",
-    "action": "BUY",
-    "shares": 45,
-    "price": 288.5249938964844,
-    "total": 12983.624725341797,
-    "reasoning": "AAPL has shown strong growth prospects with consistent earnings and innovation. Recent market momentum supports further investment."
-  },
-  {
-    "run_id": "run_20260630T164154Z_797a4851",
-    "date": "2026-06-30",
-    "symbol": "NVDA",
-    "action": "BUY",
-    "shares": 65,
-    "price": 197.80999755859375,
-    "total": 12857.649841308594,
-    "reasoning": "With the rise in AI and gaming sectors, NVDA is well-positioned for growth. Its recent performance indicates strong demand."
-  },
-  {
-    "run_id": "run_20260630T164154Z_797a4851",
-    "date": "2026-06-30",
-    "symbol": "AMZN",
-    "action": "BUY",
-    "shares": 54,
-    "price": 240.88999938964844,
-    "total": 13008.059967041016,
-    "reasoning": "AMZN continues to dominate in e-commerce and cloud computing, making it a solid choice for long-term growth."
-  },
-  {
-    "run_id": "run_20260630T164154Z_797a4851",
-    "date": "2026-06-30",
-    "symbol": "TSLA",
-    "action": "BUY",
-    "shares": 15,
-    "price": 417.375,
-    "total": 6260.625,
-    "reasoning": "TSLA's recent advancements in EV technology solidify its market leadership, although its high valuation adds some risk."
+    "price": 146.4949951171875,
+    "total": 4394.849853515625,
+    "reasoning": "PG is underperforming with a negative 30d return and might be better utilized as cash for other opportunities."
   }
 ]

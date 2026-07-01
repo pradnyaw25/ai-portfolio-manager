@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-06-30T17:23:08.342988Z",
-  "run_id": "run_20260630T164154Z_797a4851",
+  "updated_at": "2026-07-01T17:25:14.844986Z",
+  "run_id": "run_20260701T172450Z_15341e0f",
   "retrieval": {
     "status": "ok",
     "error": null,
@@ -16,19 +16,19 @@
   },
   "sources": {
     "reports": {
-      "count": 7,
-      "latest": "report_2026-06-30.md",
-      "latest_updated_at": "2026-06-30T17:22:09.861022Z"
+      "count": 8,
+      "latest": "report_2026-07-01.md",
+      "latest_updated_at": "2026-07-01T17:25:13.375000Z"
     },
     "decisions": {
-      "count": 31,
-      "latest_run_id": "run_20260630T164154Z_797a4851",
-      "latest_date": "2026-06-30"
+      "count": 32,
+      "latest_run_id": "run_20260701T172450Z_15341e0f",
+      "latest_date": "2026-07-01"
     },
     "trades": {
-      "count": 82,
-      "latest_date": "2026-06-30",
-      "latest_run_id": "run_20260630T164154Z_797a4851"
+      "count": 84,
+      "latest_date": "2026-07-01",
+      "latest_run_id": "run_20260701T172450Z_15341e0f"
     },
     "sec_filings": {
       "ingested_at": "2026-06-30T17:23:07.649388Z",
