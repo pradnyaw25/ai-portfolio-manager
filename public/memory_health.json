@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-07-01T17:25:14.844986Z",
-  "run_id": "run_20260701T172450Z_15341e0f",
+  "updated_at": "2026-07-02T17:04:04.485553Z",
+  "run_id": "run_20260702T170327Z_dd933848",
   "retrieval": {
     "status": "ok",
     "error": null,
@@ -16,14 +16,14 @@
   },
   "sources": {
     "reports": {
-      "count": 8,
-      "latest": "report_2026-07-01.md",
-      "latest_updated_at": "2026-07-01T17:25:13.375000Z"
+      "count": 9,
+      "latest": "report_2026-07-02.md",
+      "latest_updated_at": "2026-07-02T17:03:58.733625Z"
     },
     "decisions": {
-      "count": 32,
-      "latest_run_id": "run_20260701T172450Z_15341e0f",
-      "latest_date": "2026-07-01"
+      "count": 33,
+      "latest_run_id": "run_20260702T170327Z_dd933848",
+      "latest_date": "2026-07-02"
     },
     "trades": {
       "count": 84,
