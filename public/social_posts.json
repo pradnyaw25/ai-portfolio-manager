@@ -1,14 +1,27 @@
 {
-  "updated_at": "2026-07-02T17:04:04.485002Z",
+  "updated_at": "2026-07-02T19:56:33.265484Z",
   "metrics": {
-    "total": 4,
-    "posted": 4,
+    "total": 5,
+    "posted": 5,
     "errors": 0,
     "dry_runs": 0,
     "latest_status": "posted",
-    "latest_run_id": "run_20260702T170327Z_dd933848"
+    "latest_run_id": "run_20260702T195602Z_446deac4"
   },
   "posts": [
+    {
+      "run_id": "run_20260702T195602Z_446deac4",
+      "created_at": "2026-07-02T19:56:32.977399Z",
+      "status": "posted",
+      "posted": true,
+      "dry_run": false,
+      "tweet_id": "2072771427242238234",
+      "tweet_url": "https://x.com/i/web/status/2072771427242238234",
+      "error": null,
+      "error_code": null,
+      "http_status": null,
+      "text": "No trades today. Portfolio value holding steady at $1,020,520 with cash at 27.9%. Position count remains at 13, suggesting a balanced mix as we navigate market currents. \u2601\ufe0f #AIPortfolio #PortfolioUpdate"
+    },
     {
       "run_id": "run_20260702T170327Z_dd933848",
       "created_at": "2026-07-02T17:04:04.150108Z",
