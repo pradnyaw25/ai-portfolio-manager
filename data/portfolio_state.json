@@ -1,6 +1,6 @@
 {
   "date": "2026-07-03",
-  "cash": 298910.26194763184,
+  "cash": 272875.3515625,
   "positions": [
     {
       "symbol": "HD",
@@ -16,8 +16,8 @@
     },
     {
       "symbol": "AAPL",
-      "shares": 519,
-      "avg_cost": 291.0625337674404,
+      "shares": 556,
+      "avg_cost": 292.2315920970605,
       "current_price": 308.6300048828125
     },
     {
@@ -28,14 +28,14 @@
     },
     {
       "symbol": "NVDA",
-      "shares": 606,
-      "avg_cost": 204.18241627369508,
+      "shares": 614,
+      "avg_cost": 203.29896344360853,
       "current_price": 194.8300018310547
     },
     {
       "symbol": "TSLA",
-      "shares": 33,
-      "avg_cost": 409.06290240620456,
+      "shares": 52,
+      "avg_cost": 400.355713641281,
       "current_price": 393.45001220703125
     },
     {
@@ -46,8 +46,8 @@
     },
     {
       "symbol": "AMZN",
-      "shares": 613,
-      "avg_cost": 237.963051178327,
+      "shares": 636,
+      "avg_cost": 238.13327095943427,
       "current_price": 242.6699981689453
     },
     {

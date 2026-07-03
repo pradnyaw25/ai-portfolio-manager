@@ -1,34 +1,34 @@
 {
-  "updated_at": "2026-07-03T16:48:03.591218Z",
-  "run_id": "run_20260703T164732Z_152c681b",
+  "updated_at": "2026-07-03T19:54:01.972139Z",
+  "run_id": "run_20260703T195307Z_3d22e07c",
   "retrieval": {
     "status": "ok",
     "error": null,
-    "chunks": 0
+    "chunks": 1
   },
   "ingestion": {
     "status": "ok",
-    "created": 7,
+    "created": 11,
     "updated": 0,
     "skipped": 0,
     "errors": [],
-    "total_processed": 7
+    "total_processed": 11
   },
   "sources": {
     "reports": {
       "count": 10,
       "latest": "report_2026-07-03.md",
-      "latest_updated_at": "2026-07-03T16:48:00.090067Z"
+      "latest_updated_at": "2026-07-03T19:53:59.561483Z"
     },
     "decisions": {
-      "count": 35,
-      "latest_run_id": "run_20260703T164732Z_152c681b",
+      "count": 36,
+      "latest_run_id": "run_20260703T195307Z_3d22e07c",
       "latest_date": "2026-07-03"
     },
     "trades": {
-      "count": 86,
+      "count": 92,
       "latest_date": "2026-07-03",
-      "latest_run_id": "run_20260703T164732Z_152c681b"
+      "latest_run_id": "run_20260703T195307Z_3d22e07c"
     },
     "sec_filings": {
       "ingested_at": "2026-06-30T17:23:07.649388Z",

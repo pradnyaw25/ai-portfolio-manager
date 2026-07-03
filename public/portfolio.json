@@ -1,10 +1,10 @@
 {
-  "run_id": "run_20260703T164732Z_152c681b",
+  "run_id": "run_20260703T195307Z_3d22e07c",
   "date": "2026-07-03",
   "total_value": 1020473.8488769531,
-  "cash": 298910.26194763184,
-  "cash_pct": 0.2929132013295462,
-  "invested_value": 721563.5869293213,
+  "cash": 272875.3515625,
+  "cash_pct": 0.2674006314446994,
+  "invested_value": 747598.4973144531,
   "positions": [
     {
       "symbol": "HD",
@@ -24,11 +24,11 @@
     },
     {
       "symbol": "AAPL",
-      "shares": 519,
-      "avg_cost": 291.0625337674404,
+      "shares": 556,
+      "avg_cost": 292.2315920970605,
       "current_price": 308.6300048828125,
-      "market_value": 160178.9725341797,
-      "return_pct": 0.060356346411141085
+      "market_value": 171598.28271484375,
+      "return_pct": 0.05611444220686962
     },
     {
       "symbol": "MSFT",
@@ -40,19 +40,19 @@
     },
     {
       "symbol": "NVDA",
-      "shares": 606,
-      "avg_cost": 204.18241627369508,
+      "shares": 614,
+      "avg_cost": 203.29896344360853,
       "current_price": 194.8300018310547,
-      "market_value": 118066.98110961914,
-      "return_pct": -0.04580421082932043
+      "market_value": 119625.62112426758,
+      "return_pct": -0.0416576723712759
     },
     {
       "symbol": "TSLA",
-      "shares": 33,
-      "avg_cost": 409.06290240620456,
+      "shares": 52,
+      "avg_cost": 400.355713641281,
       "current_price": 393.45001220703125,
-      "market_value": 12983.850402832031,
-      "return_pct": -0.038167455683061395
+      "market_value": 20459.400634765625,
+      "return_pct": -0.01724891440025073
     },
     {
       "symbol": "UNH",
@@ -64,11 +64,11 @@
     },
     {
       "symbol": "AMZN",
-      "shares": 613,
-      "avg_cost": 237.963051178327,
+      "shares": 636,
+      "avg_cost": 238.13327095943427,
       "current_price": 242.6699981689453,
-      "market_value": 148756.70887756348,
-      "return_pct": 0.019780159009185727
+      "market_value": 154338.11883544922,
+      "return_pct": 0.019051211077026987
     },
     {
       "symbol": "GOOGL",
