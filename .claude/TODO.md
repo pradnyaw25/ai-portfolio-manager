@@ -172,11 +172,20 @@ Goal: real agent architecture with the debate transcript as a product feature.
 * Acceptance: decision journal shows the tool-call sequence; invalid tool arguments
   are rejected and retried.
 
-### P3-3 ∥. Model routing
-* Output: gateway routing — cheap tier for analysts/summaries/tweets, strong tier for
-  the final decision; graceful fallback to a second provider on failure.
-* Acceptance: a simulated provider outage falls back and the run completes; per-run
-  cost drops vs. all-strong baseline (documented).
+### P3-3 ∥. Model routing — DONE
+* Output: provider abstraction (`src/llm/providers/` — `LLMProvider`,
+  `ProviderResponse`, `OpenAIProvider`) behind the gateway; per-tier routing
+  (`src/llm/routing.py`) resolving `(provider, model)` for cheap/strong from config;
+  optional fallback route tried after the primary exhausts retries. Cost log records
+  the serving `provider` and `fell_back`. Design: `docs/design-phase3.md`.
+* Note: OpenAI-only for now (Q2a) — fallback is a second OpenAI model; the interface
+  is provider-agnostic so Anthropic/Ollama are a ~1-file add later. Defaults keep both
+  tiers on `gpt-4o-mini` (no silent cost change); the cost-drop is opt-in by setting
+  `LLM_STRONG_MODEL` to a pricier model (documented in README + `.env.example`).
+* Acceptance: verified — a simulated primary-provider outage falls back to the
+  secondary and the call completes (`fell_back=true` logged); config validates
+  per-tier providers + partial fallback. Covered by `tests/test_routing_fallback.py`
+  and `tests/test_config.py`. Existing gateway tests pass unchanged.
 
 ## Phase 4 — Knowledge Layer (~2 weeks)
 

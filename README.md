@@ -148,6 +148,19 @@ final decision and must fill a `bear_case_response` addressing each major bear p
 The debate transcript is embedded in the decision, stored in the journal, and
 rendered on the decisions dashboard. See `src/agents/debate.py`.
 
+### Model Routing & Fallback
+
+Every LLM call is routed by **tier** through a provider abstraction
+(`src/llm/providers/`, `src/llm/routing.py`): the **strong** tier serves final
+decisions, PM synthesis, and judges; the **cheap** tier serves analysts, summaries,
+and tweets. Each tier resolves to a `(provider, model)` route. Setting
+`LLM_STRONG_MODEL` to a pricier model (e.g. `gpt-4o`) while `LLM_CHEAP_MODEL` stays
+`gpt-4o-mini` makes the split reduce per-run cost vs. running everything on the
+strong model. If `LLM_FALLBACK_PROVIDER` / `LLM_FALLBACK_MODEL` are set, a call that
+exhausts retries on its primary route falls back to that route before failing; the
+cost log records the serving `provider` and whether it `fell_back`. Only OpenAI
+ships today — the interface is provider-agnostic so others slot in.
+
 ### Grounding Check
 
 Before a decision is journaled and tweeted, an LLM-as-judge grounding check
