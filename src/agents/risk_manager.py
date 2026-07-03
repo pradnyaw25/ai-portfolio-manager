@@ -1,7 +1,12 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any
 
-from src.config import MAX_DAILY_TURNOVER, MIN_TRADE_CONFIDENCE
+from src.config import (
+    MAX_DAILY_TURNOVER,
+    MAX_SECTOR_CONCENTRATION,
+    MIN_TRADE_CONFIDENCE,
+    sector_for,
+)
 from src.models.portfolio import PortfolioSnapshot
 from src.models.prediction import TradePrediction
 from src.utils.logger import get_logger
@@ -23,6 +28,7 @@ class RejectedTrade:
 class RiskReview:
     approved: list[TradePrediction]
     rejected: list[RejectedTrade]
+    risk_events: list[dict] = field(default_factory=list)
 
 
 class RiskManagerAgent:
@@ -44,6 +50,8 @@ class RiskManagerAgent:
         rejected: list[RejectedTrade] = []
         turnover_pct = turnover_override if turnover_override is not None else MAX_DAILY_TURNOVER
         remaining_turnover = portfolio.total_value * turnover_pct
+        sector_exposure = self._sector_exposure(portfolio)
+        sector_limit = portfolio.total_value * MAX_SECTOR_CONCENTRATION
 
         for raw in raw_trades:
             symbol = str(raw.get("symbol", "")).upper().strip()
@@ -51,6 +59,7 @@ class RiskManagerAgent:
             shares = self._parse_int(raw.get("shares", 0))
             confidence = self._parse_float(raw.get("confidence", 0.5))
             reasoning = str(raw.get("reason", raw.get("reasoning", ""))).strip()
+            origin = str(raw.get("origin", "llm")).strip() or "llm"
 
             base_rejection = self._base_rejection_reason(
                 symbol=symbol,
@@ -67,6 +76,7 @@ class RiskManagerAgent:
                 continue
 
             price = prices[symbol]
+            sector = sector_for(symbol)
             requested_value = shares * price
             if requested_value > remaining_turnover:
                 capped_shares = int(remaining_turnover / price)
@@ -85,7 +95,42 @@ class RiskManagerAgent:
                 shares = capped_shares
                 requested_value = shares * price
 
+            # Sector-concentration cap applies only to BUYs (SELLs reduce exposure).
+            if action == "BUY":
+                available = sector_limit - sector_exposure.get(sector, 0.0)
+                if available <= 0:
+                    rejected.append(
+                        RejectedTrade(
+                            symbol, action, shares,
+                            f"{sector} sector concentration limit "
+                            f"({MAX_SECTOR_CONCENTRATION:.0%}) reached",
+                        )
+                    )
+                    continue
+                if requested_value > available:
+                    capped_shares = int(available / price)
+                    if capped_shares <= 0:
+                        rejected.append(
+                            RejectedTrade(
+                                symbol, action, shares,
+                                f"{sector} sector concentration limit "
+                                f"({MAX_SECTOR_CONCENTRATION:.0%}) reached",
+                            )
+                        )
+                        continue
+                    logger.info(
+                        "Capped BUY %s from %s to %s shares due to %s sector limit",
+                        symbol, shares, capped_shares, sector,
+                    )
+                    shares = capped_shares
+                    requested_value = shares * price
+
             remaining_turnover -= requested_value
+            if action == "BUY":
+                sector_exposure[sector] = sector_exposure.get(sector, 0.0) + requested_value
+            elif action == "SELL":
+                sector_exposure[sector] = max(0.0, sector_exposure.get(sector, 0.0) - requested_value)
+
             approved.append(
                 TradePrediction(
                     symbol=symbol,
@@ -93,10 +138,18 @@ class RiskManagerAgent:
                     shares=shares,
                     confidence=confidence,
                     reasoning=reasoning,
+                    origin=origin,
                 )
             )
 
         return RiskReview(approved=approved, rejected=rejected)
+
+    def _sector_exposure(self, portfolio: PortfolioSnapshot) -> dict[str, float]:
+        exposure: dict[str, float] = {}
+        for position in portfolio.positions:
+            sector = sector_for(position.symbol)
+            exposure[sector] = exposure.get(sector, 0.0) + position.market_value
+        return exposure
 
     def _base_rejection_reason(
         self,

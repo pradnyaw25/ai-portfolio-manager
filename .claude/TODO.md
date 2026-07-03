@@ -12,18 +12,18 @@ their phase. Tasks assume the `.venv` environment and `make test` green before/a
 
 Goal: kill the fragility before building on it. Everything later flows through P0-1.
 
-### P0-1. Create the LLM gateway
+### P0-1. Create the LLM gateway — DONE
 * Input: the three existing LLM call sites (`src/agents/portfolio_manager.py`,
   `src/agents/rebalance_checker.py`, `src/agents/tweet_generator.py`).
-* Output: `src/llm/gateway.py` exposing `complete(prompt, schema: type[BaseModel], model_tier)`:
-  * Pydantic validation of every LLM response; one repair-retry on invalid output
-    (re-prompt with the validation error).
-  * Exponential backoff retry on transient API errors.
-  * Model, provider, and temperature resolved from config (per tier: `cheap` / `strong`).
-  * Per-call log of model, prompt version, tokens, latency, and estimated cost.
-* Migrate all three agents onto the gateway with per-agent Pydantic response schemas.
-* Acceptance: no raw `json.loads` on LLM output anywhere in `src/`; a test with a
-  mocked malformed response proves the repair path; a mocked API error proves backoff.
+* Output: `src/llm/gateway.py` (surfaced via `src/llm/__init__.py` as
+  `complete_structured` / `complete_text` / `complete_with_tools`): Pydantic
+  validation of every response with a repair-retry, exponential backoff on transient
+  errors, per-tier model/provider/temperature from config, and a per-call cost/latency
+  log. Every agent flows through it; the later provider seam (P3-3) and tool loop
+  (P3-2) were built on this foundation.
+* Acceptance: verified — no raw `json.loads` on LLM output in `src/` (remaining
+  `json.loads` are file/JSONL reads and tool-arg parsing inside the gateway layer);
+  repair path and backoff covered by `tests/test_llm_gateway.py`.
 
 ### P0-2 ∥. Config consolidation and dead-code removal — DONE
 * Output:
@@ -294,12 +294,26 @@ Goal: make the system legible to outsiders.
 * Acceptance: Claude Desktop/Code can answer "why did the fund sell NVDA in June?"
   against real data.
 
-### P5-2 ∥. Risk Engine V2
-* Output: repo-owned sector metadata file; sector-concentration limits; deterministic
-  stop-loss (>15% drop) and take-profit (>40% gain) SELL proposals journaled as
-  first-class risk events and routed through the normal risk/execution pipeline.
-* Acceptance: unit tests per rule; system-generated SELLs appear in the journal with
-  a `system` origin marker.
+### P5-2 ∥. Risk Engine V2 — DONE
+* Output:
+  * **Sector-concentration limits** — `RiskManagerAgent.review` caps BUYs so no GICS
+    sector (`config/sectors.yaml`, from P4-1) exceeds `MAX_SECTOR_CONCENTRATION`
+    (default 40%); a breaching BUY is trimmed to the remaining budget or rejected.
+    Running exposure accumulates across BUYs and is reduced by SELLs. Applies wherever
+    `review` runs (main risk review + rebalance).
+  * **Stop-loss / take-profit** — `src/agents/risk_events.py:generate_risk_events`
+    scans marked-to-market positions and emits full-exit **system** SELLs for any
+    position past `STOP_LOSS_PCT` (15% drop) or `TAKE_PROFIT_PCT` (40% gain) from cost
+    basis. `main.review_risk` generates them from the snapshot, drops any LLM trade for
+    the same symbol (system exit wins), and routes them through the same
+    guardrails/execution. `TradePrediction.origin` (`"llm"`/`"system"`) tags them; the
+    generated events are stored on `RiskReview.risk_events` and journaled under a new
+    `risk_events` field on the decision.
+  * Config knobs validated at startup; documented in README + `.env.example`.
+* Acceptance: verified — unit tests per rule (stop-loss, take-profit, boundary,
+  sector cap/accumulate/reject, SELL exempt) and pipeline integration (system exit
+  supersedes the LLM trade; journal records the event with `origin="system"`).
+  Covered by `tests/test_risk_engine_v2.py` (11 tests).
 
 ### P5-3 ∥. Weekly investor letter
 * Output: AI-written weekly letter (performance, winners/losers, portfolio changes,

@@ -22,6 +22,7 @@ from src.agents.debate import run_debate
 from src.agents.research_agent import ResearchAnalyst, build_research_registry
 from src.agents.tweet_generator import TweetGeneratorAgent
 from src.agents.risk_manager import RiskManagerAgent
+from src.agents.risk_events import generate_risk_events
 from src.agents.rebalance_checker import RebalanceChecker
 from src.models.prediction import Outlook, PortfolioDecision
 from src.simulator.portfolio_engine import PortfolioEngine
@@ -168,12 +169,26 @@ def decide_trades(engine, research, benchmark_client, memory_context):
 
 
 def review_risk(decisions, engine, prices):
-    risk_manager = RiskManagerAgent()
-    return risk_manager.review(
-        raw_trades=decisions.get("trades", []),
-        portfolio=engine.get_snapshot(),
+    snapshot = engine.get_snapshot()
+
+    # Deterministic risk-engine exits (stop-loss / take-profit) are generated from
+    # the marked-to-market book and take precedence over any LLM trade for the same
+    # symbol, then flow through the same guardrails as everything else.
+    risk_events = generate_risk_events(snapshot)
+    exited_symbols = {event["symbol"] for event in risk_events}
+    llm_trades = [
+        trade
+        for trade in decisions.get("trades", [])
+        if str(trade.get("symbol", "")).upper() not in exited_symbols
+    ]
+
+    review = RiskManagerAgent().review(
+        raw_trades=risk_events + llm_trades,
+        portfolio=snapshot,
         prices=prices,
     )
+    review.risk_events = risk_events
+    return review
 
 
 def check_rebalance(engine, risk_review, prices, research):
@@ -248,6 +263,7 @@ def journal_run(
         executed=trades,
         cash_thesis=rebalance_result.cash_thesis or decisions.get("cash_thesis"),
         rebalance_trades=rebalance_result.extra_trades,
+        risk_events=getattr(risk_review, "risk_events", []),
         memory_used=memory_context,
         memory_status=memory_result.status,
         memory_error=memory_result.error,

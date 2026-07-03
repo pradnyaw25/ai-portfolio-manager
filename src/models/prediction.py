@@ -15,6 +15,9 @@ class TradePrediction:
     shares: int
     confidence: float
     reasoning: str
+    # "llm" for model-proposed trades; "system" for deterministic risk-engine
+    # exits (stop-loss / take-profit).
+    origin: str = "llm"
 
 
 @dataclass
