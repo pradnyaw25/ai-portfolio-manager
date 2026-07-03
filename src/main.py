@@ -191,7 +191,8 @@ def execute_trades(engine, approved_trades, market_data, trade_store, run_id):
     trades = engine.execute_trades(approved_trades, market_data)
     for trade in trades:
         trade.run_id = run_id
-        trade_store.save(trade)
+    # Batch upsert keyed by run_id so re-running the same run is idempotent.
+    trade_store.save_run(run_id, trades)
     return trades
 
 
