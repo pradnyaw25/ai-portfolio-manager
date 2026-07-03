@@ -35,11 +35,12 @@ Common local workflows are available through `make`:
 ```bash
 make test
 make run
-make run-graph
 make dashboard PORT=8001
 make ingest-memory
 make status
 ```
+
+The daily cycle runs as a LangGraph workflow (`src/workflows/daily_graph.py`); `make run` and the scheduled GitHub Action both invoke it via `scripts/daily_run.py`.
 
 ## Project Structure
 

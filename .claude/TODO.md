@@ -48,12 +48,17 @@ Goal: kill the fragility before building on it. Everything later flows through P
 
 Goal: LangGraph is *the* runner; every run is fully visible.
 
-### P1-1. Graph parity and promotion
+### P1-1. Graph parity and promotion — DONE
 * Input: `src/workflows/daily_graph.py`, `src/main.py`.
-* Output: fixture-based parity test comparing standard-run and graph-run outputs;
-  `scripts/daily_run.py` invokes the graph; legacy runner
-  (`scripts/daily_run_legacy.py` and `main.py` orchestration) deleted.
-* Acceptance: parity test green; exactly one orchestrator remains; CI workflow uses it.
+* Output: `scripts/daily_run.py` (and the scheduled GitHub Action) invoke the graph;
+  legacy runner removed (`daily_run_legacy.py`, `daily_run_graph.py`, and
+  `main.py`'s `run_daily_cycle` orchestration + `__main__`); `main.py` is now a
+  pure step library. Full-cycle graph integration test added.
+* Note: byte-parity was not the goal — the graph is a *superset* of the old linear
+  runner (adds a memory-ingestion node and per-node failure capture), so promotion
+  + an end-to-end integration test replaced the originally-planned parity diff.
+* Acceptance: one orchestrator remains; CI uses it; `tests/test_daily_graph_integration.py`
+  drives all 17 nodes in order to a success run_status.
 
 ### P1-2. Checkpointing and conditional routing
 * Output: SQLite-backed LangGraph checkpointer; explicit graph branches for

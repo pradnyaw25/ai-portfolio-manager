@@ -1,4 +1,14 @@
-from src.config import INITIAL_CAPITAL, validate_config
+"""Daily-cycle step functions.
+
+Each function here is one step of the daily portfolio cycle (load, mark-to-market,
+research, decide, risk-review, execute, journal, report, export, ...). The
+LangGraph runner in :mod:`src.workflows.daily_graph` imports this module as
+``steps`` and wires the functions into graph nodes — that graph is the single
+entrypoint for a run (``scripts/daily_run.py``). This module intentionally has no
+orchestration or ``__main__`` of its own.
+"""
+
+from src.config import INITIAL_CAPITAL
 from src.storage.portfolio_store import PortfolioStore
 from src.storage.trade_store import TradeStore
 from src.storage.decision_store import DecisionStore
@@ -18,7 +28,7 @@ from src.reporting.public_exporter import PublicExporter
 from src.storage.prediction_store import PredictionStore
 from src.scoring.prediction_scorer import PredictionScorer
 from src.utils.logger import get_logger
-from src.utils.run_id import create_run_id, utc_now_iso
+from src.utils.run_id import utc_now_iso
 from src.simulator.benchmark_tracker import BenchmarkTracker
 from src.memory.retriever import format_grouped_memory_for_prompt, retrieve_grouped_fund_memory
 from src.memory.ingestion_service import ingest_run_memory as ingest_run_memory_service
@@ -31,59 +41,6 @@ MEMORY_QUERY = (
     "Relevant prior investment theses, trades, cash decisions, "
     "risk concerns, and portfolio lessons for today's decision."
 )
-
-
-def run_daily_cycle():
-    validate_config()
-    run_id = create_run_id()
-    started_at = utc_now_iso()
-    logger.info("Starting daily portfolio cycle run_id=%s", run_id)
-
-    portfolio_store, trade_store, engine = load_portfolio()
-    market_data, news_client, benchmark_client = create_clients()
-
-    mark_to_market_and_score_predictions(engine, market_data)
-    research, prices = build_research_context(engine, market_data, news_client)
-    memory_result, memory_context, memory_groups = retrieve_memory_context(research)
-    decisions = decide_trades(engine, research, benchmark_client, memory_groups)
-    risk_review = review_risk(decisions, engine, prices)
-    rebalance_result, all_approved = check_rebalance(engine, risk_review, prices, research)
-    trades = execute_trades(engine, all_approved, market_data, trade_store, run_id)
-    track_buy_predictions(trades, all_approved, market_data)
-    journal_run(
-        engine=engine,
-        decisions=decisions,
-        risk_review=risk_review,
-        rebalance_result=rebalance_result,
-        trades=trades,
-        memory_context=memory_context,
-        memory_result=memory_result,
-        run_id=run_id,
-    )
-
-    snapshot = engine.get_snapshot()
-    save_portfolio_and_performance(portfolio_store, snapshot, market_data)
-    report_markdown, tweet = generate_report_and_tweet(
-        snapshot=snapshot,
-        trades=trades,
-        research=research,
-        decisions=decisions,
-        approved_trades=risk_review.approved,
-        run_id=run_id,
-    )
-    run_status = build_run_status(
-        run_id=run_id,
-        started_at=started_at,
-        memory_result=memory_result,
-        memory_context=memory_context,
-        trades=trades,
-        snapshot=snapshot,
-    )
-    export_public_artifacts(snapshot, trades, tweet, report_markdown, run_id, run_status)
-    tweet_publish_result = publish_tweet(tweet, run_id, run_status)
-    update_tweet_publish_status(tweet_publish_result, run_status)
-
-    logger.info("Daily cycle complete run_id=%s Portfolio value: $%.2f", run_id, snapshot.total_value)
 
 
 def load_portfolio():
@@ -387,7 +344,3 @@ def export_public_artifacts(snapshot, trades, tweet, report_markdown, run_id, ru
         run_id=run_id,
         run_status=run_status,
     )
-
-
-if __name__ == "__main__":
-    run_daily_cycle()
