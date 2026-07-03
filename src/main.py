@@ -1,4 +1,4 @@
-from src.config import INITIAL_CAPITAL
+from src.config import INITIAL_CAPITAL, validate_config
 from src.storage.portfolio_store import PortfolioStore
 from src.storage.trade_store import TradeStore
 from src.storage.decision_store import DecisionStore
@@ -34,6 +34,7 @@ MEMORY_QUERY = (
 
 
 def run_daily_cycle():
+    validate_config()
     run_id = create_run_id()
     started_at = utc_now_iso()
     logger.info("Starting daily portfolio cycle run_id=%s", run_id)
