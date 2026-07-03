@@ -72,3 +72,26 @@ class RebalanceResponse(BaseModel):
     action: Literal["deploy", "hold_cash"] = "hold_cash"
     trades: list[TradeProposal] = Field(default_factory=list)
     cash_thesis: str | None = None
+
+
+class ReflectionLesson(BaseModel):
+    """A single lesson synthesized from resolved predictions and trades.
+
+    ``cited_ids`` are the prediction/trade ids the lesson is grounded in — its
+    provenance, recorded on the resulting memory.
+    """
+
+    model_config = ConfigDict(extra="allow")
+
+    lesson_type: Literal["risk_lesson", "mistake"] = "risk_lesson"
+    content: str = ""
+    symbols: list[str] = Field(default_factory=list)
+    cited_ids: list[str] = Field(default_factory=list)
+
+
+class ReflectionResponse(BaseModel):
+    """The reflection agent's weekly set of lessons."""
+
+    model_config = ConfigDict(extra="allow")
+
+    lessons: list[ReflectionLesson] = Field(default_factory=list)

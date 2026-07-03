@@ -6,6 +6,7 @@ An AI-powered portfolio management system that uses LLM agents to analyze market
 
 - **Analyst Debate**: Bull, bear, and risk analyst agents each argue a structured thesis; the portfolio manager synthesizes them and must explicitly respond to the bear case. The full debate transcript is journaled and shown on the dashboard.
 - **Tool-Calling Research**: A research agent uses typed tools (price, history, news, memory, portfolio) to investigate targeted questions before the decision; the tool-call trace is journaled and shown on the dashboard.
+- **Weekly Reflection**: A weekly graph reads the week's resolved predictions (win/loss vs SPY) and trades and synthesizes `risk_lesson` / `mistake` memories — each grounded in the prediction/trade ids it came from — so lessons resurface in the next daily run's retrieved memory.
 - **Portfolio Management Agent**: Makes buy/sell/hold decisions based on market data and news
 - **Research Agent**: Gathers and synthesizes market data, news, and sentiment
 - **Tweet Generator**: Creates social media content about portfolio performance
@@ -219,6 +220,17 @@ execution: the run prints the pending trades and prompts you in the terminal to
 approve all, reject all, or edit down to a chosen subset. The decision is recorded
 in `run_status.human_review`. (This gate is in-process; the run must stay open for
 approval. Durable cross-process approval is a planned follow-up.)
+
+### Weekly Reflection
+
+A separate weekly graph (`src/workflows/weekly_reflection_graph.py`, run via
+`make reflect` or the `Weekly Reflection` GitHub Action) gathers the past week's
+*resolved* predictions and executed trades, asks the model to distill concrete
+`risk_lesson` / `mistake` memories — each carrying the source prediction/trade ids
+it was grounded in — and ingests them. Memory ids are deterministic per
+`(week, index)`, so re-running a week upserts the same points instead of
+duplicating. Because the lessons are `risk_lesson` / `mistake` memories, they
+surface in the next daily run's `risk_lessons` retrieval group.
 
 Do not commit `.env` or real API keys.
 

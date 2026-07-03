@@ -269,11 +269,20 @@ Goal: RAG worth writing about, with measured retrieval quality.
   `score_citation_validity` accepts (and flags when the id is fabricated). Covered by
   `tests/test_knowledge_sources.py` (11 tests) + expanded `test_memory_evals.py`.
 
-### P4-3 ∥. Lessons-learned reflection agent
-* Output: a weekly graph that reads closed predictions and trades, synthesizes
-  `risk_lesson`/`mistake` memories with citations, and ingests them.
-* Acceptance: lessons appear in the next daily run's retrieved memory context;
-  re-running the same week is idempotent.
+### P4-3 ∥. Lessons-learned reflection agent — DONE
+* Output: a weekly LangGraph (`src/workflows/weekly_reflection_graph.py`:
+  gather → reflect → ingest, with a conditional skip when the week is empty) over a
+  `ReflectionAgent` (`src/agents/reflection.py`, strong tier, `ReflectionResponse`
+  schema). `gather_week` selects the 7-day window's *scored* predictions (win/loss vs
+  SPY) and executed trades; the agent distills `risk_lesson`/`mistake` lessons, each
+  carrying the source prediction/trade ids (`cited_ids`) as provenance in metadata.
+  Lesson memory ids are deterministic per `(week, index)` so re-ingestion upserts the
+  same points. `scripts/weekly_reflection.py` + a `Weekly Reflection` GitHub Action
+  (weekly cron) + `make reflect`. All deps (agent, stores, memory store) injectable.
+* Acceptance: verified — (1) an ingested `risk_lesson`/`mistake` lesson surfaces in the
+  daily `risk_lessons` retrieval group (end-to-end test against an in-memory Qdrant);
+  (2) re-running the same week yields identical point ids (idempotent, no duplicates).
+  Covered by `tests/test_reflection.py` (6 tests).
 
 ## Phase 5 — Surface & Reach (2–3 weeks)
 
