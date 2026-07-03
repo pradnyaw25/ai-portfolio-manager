@@ -56,6 +56,13 @@ LLM_CALL_LOG = DATA_DIR / "llm_calls.jsonl"
 
 SUPPORTED_LLM_PROVIDERS = {"openai"}
 
+# Human-in-the-loop approval. When AUTO_APPROVE is true (the default), the daily
+# cycle runs unattended and the approval node is a pass-through — scheduled/CI
+# runs are unaffected. Set AUTO_APPROVE=false to pause the run after risk review
+# and prompt the operator in-process to approve/reject/edit trades before
+# execution.
+AUTO_APPROVE = os.getenv("AUTO_APPROVE", "true").lower() in {"1", "true", "yes"}
+
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
 
 WATCHLIST_PATH = CONFIG_DIR / "watchlist.yaml"

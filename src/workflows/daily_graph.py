@@ -3,6 +3,7 @@ from typing import TypedDict
 
 from langgraph.graph import END, START, StateGraph
 
+from src import config
 from src.config import validate_config
 from src.models.run_state import PortfolioRunState
 from src.utils.logger import get_logger
@@ -37,6 +38,7 @@ def build_daily_cycle_graph():
         ("decide_trades", decide_trades_node),
         ("review_risk", review_risk_node),
         ("check_rebalance", check_rebalance_node),
+        ("human_approval", human_approval_node),
         ("execute_trades", execute_trades_node),
         ("track_predictions", track_predictions_node),
         ("journal_run", journal_run_node),
@@ -218,6 +220,86 @@ def check_rebalance_node(state: DailyGraphState) -> DailyGraphState:
     return {"run": run}
 
 
+def _serialize_pending_trade(trade) -> dict:
+    action = getattr(trade, "action", None)
+    return {
+        "symbol": getattr(trade, "symbol", None),
+        "action": getattr(action, "value", action),
+        "shares": getattr(trade, "shares", None),
+        "confidence": getattr(trade, "confidence", None),
+        "reason": getattr(trade, "reasoning", getattr(trade, "reason", "")),
+    }
+
+
+def prompt_for_approval(pending: list[dict]) -> dict:
+    """Show pending trades and read the operator's decision from the terminal.
+
+    Returns approve (execute all), reject (veto all), or edit (execute only the
+    kept indices). Falls back to a safe reject when there is no interactive
+    terminal, so a run is never executed without an explicit human OK.
+    """
+    print(f"\n{len(pending)} trade(s) pending approval:\n")
+    for i, trade in enumerate(pending):
+        print(
+            f"  [{i}] {trade.get('action')} {trade.get('shares')} {trade.get('symbol')} "
+            f"(confidence {trade.get('confidence')}) — {trade.get('reason')}"
+        )
+    print()
+
+    try:
+        choice = input("Action — [a]pprove all / [r]eject all / [e]dit subset? ").strip().lower()
+        if choice.startswith("r"):
+            reason = input("Reason for veto (optional): ").strip() or None
+            return {"action": "reject", "reason": reason}
+        if choice.startswith("e"):
+            raw = input("Indices to KEEP (comma-separated, e.g. 0,2): ").strip()
+            keep = [int(i) for i in raw.split(",") if i.strip() != ""]
+            return {"action": "edit", "approved_indices": keep}
+        return {"action": "approve"}
+    except EOFError:
+        logger.warning("No interactive terminal for approval — vetoing trades for safety.")
+        return {"action": "reject", "reason": "no interactive approver"}
+
+
+def human_approval_node(state: DailyGraphState) -> DailyGraphState:
+    """Optional human-in-the-loop gate between risk review and execution.
+
+    With AUTO_APPROVE on (default), this is a pass-through so scheduled/CI runs
+    are unattended. With it off, the node blocks and prompts the operator in the
+    terminal (``prompt_for_approval``) for a decision: approve (execute all),
+    reject (veto all), or edit (execute a chosen subset). Blocking inline keeps
+    the run state in memory — no checkpoint serialization of live handles.
+    """
+    run = state["run"]
+
+    if config.AUTO_APPROVE or not run.approved_trades:
+        run.human_review = {
+            "decision": "auto_approved",
+            "pending": len(run.approved_trades),
+        }
+        return {"run": run}
+
+    decision = prompt_for_approval([_serialize_pending_trade(t) for t in run.approved_trades])
+
+    action = decision.get("action", "approve")
+    if action == "reject":
+        run.human_review = {"decision": "reject", "reason": decision.get("reason")}
+        run.approved_trades = []
+    elif action == "edit":
+        keep = set(decision.get("approved_indices", []))
+        kept = [t for i, t in enumerate(run.approved_trades) if i in keep]
+        run.human_review = {
+            "decision": "edit",
+            "kept": len(kept),
+            "original": len(run.approved_trades),
+        }
+        run.approved_trades = kept
+    else:
+        run.human_review = {"decision": "approve", "approved": len(run.approved_trades)}
+
+    return {"run": run}
+
+
 def execute_trades_node(state: DailyGraphState) -> DailyGraphState:
     run = state["run"]
     run.trades = steps.execute_trades(
@@ -281,6 +363,7 @@ def build_run_status_node(state: DailyGraphState) -> DailyGraphState:
         trades=run.trades,
         snapshot=run.snapshot,
     )
+    run.run_status["human_review"] = run.human_review
     run.warnings = list(run.run_status.get("warnings", []))
     return {"run": run}
 

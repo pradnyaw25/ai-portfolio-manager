@@ -21,6 +21,7 @@ class PortfolioRunState:
     risk_review: Any | None = None
     rebalance_result: Any | None = None
     approved_trades: list = field(default_factory=list)
+    human_review: dict | None = None
     trades: list = field(default_factory=list)
     snapshot: Any | None = None
     report_markdown: str = ""

@@ -67,11 +67,22 @@ Goal: LangGraph is *the* runner; every run is fully visible.
 * Acceptance: killing the process mid-run and resuming completes the run without
   duplicate trades or journal entries.
 
-### P1-3. Human-in-the-loop approval gate
-* Output: LangGraph interrupt after risk review, before execution. CLI to
-  approve/reject/edit pending trades; `AUTO_APPROVE=true` env flag for scheduled CI runs.
-* Acceptance: with auto-approve off, the run pauses and persists across process
-  restarts; approval resumes and executes; rejection journals a vetoed-run record.
+### P1-3. Human-in-the-loop approval gate — DONE (in-process)
+* Output: a `human_approval` graph node between rebalance and execution. With
+  `AUTO_APPROVE=true` (default) it is a pass-through, so scheduled/CI runs are
+  unattended. With it off, the node blocks and prompts the operator in-terminal to
+  approve (execute all) / reject (veto all) / edit (execute a chosen subset); the
+  decision is recorded in `run_status.human_review`.
+* Note — deviation from the original spec: LangGraph's `interrupt()` requires a
+  checkpointer, and every checkpointer serializes the whole graph state. Our
+  `PortfolioRunState` carries live handles (engine, market/news clients, stores)
+  that are not serializable, so durable cross-process pause/resume is not possible
+  without a state refactor. Chose an in-process blocking gate instead (see follow-up).
+* Follow-up (deferred): durable cross-process approval via a two-phase
+  decide→persist→execute split, so a run can be approved after a restart.
+* Acceptance (adjusted): auto-approve path is unattended; manual path prompts and
+  gates execution; reject vetoes all trades; edit executes only the chosen subset;
+  decision recorded in the run record. Covered by `tests/test_human_approval.py`.
 
 ### P1-4 ∥. Langfuse tracing and cost tracking
 * Output: Langfuse tracing wired into the LLM gateway plus graph-node spans; run-level
