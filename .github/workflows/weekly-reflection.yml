@@ -1,0 +1,46 @@
+name: Weekly Reflection
+
+on:
+  schedule:
+    # After the trading week: synthesize lessons from resolved predictions/trades.
+    - cron: "23 13 * * 0"
+
+  workflow_dispatch:
+    inputs:
+      week_end:
+        description: "ISO date ending the 7-day window (default: today)."
+        required: false
+        type: string
+
+concurrency:
+  group: weekly-reflection
+  cancel-in-progress: false
+
+jobs:
+  reflect:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Install dependencies
+        run: |
+          pip install -U pip
+          pip install -e .
+
+      - name: Run weekly reflection
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          QDRANT_URL: ${{ secrets.QDRANT_URL }}
+          QDRANT_API_KEY: ${{ secrets.QDRANT_API_KEY }}
+          WEEK_END: ${{ inputs.week_end }}
+        run: |
+          if [ -n "$WEEK_END" ]; then
+            python scripts/weekly_reflection.py --week-end "$WEEK_END"
+          else
+            python scripts/weekly_reflection.py
+          fi
