@@ -1,0 +1,34 @@
+# Symbols the fund researches and may trade. Held positions are always included
+# at runtime; SPY/QQQ/^VIX are also appended for benchmark and volatility
+# context. Grouped by sector for readability only — order does not matter.
+symbols:
+  # Mega-cap tech
+  - AAPL
+  - MSFT
+  - GOOGL
+  - AMZN
+  - META
+  # Semiconductors
+  - NVDA
+  - AMD
+  - AVGO
+  # Autos / EV
+  - TSLA
+  # Financials
+  - JPM
+  - V
+  - MA
+  # Healthcare
+  - UNH
+  - JNJ
+  # Consumer staples / retail
+  - WMT
+  - PG
+  - HD
+  # Energy
+  - XOM
+  # Industrials
+  - CAT
+  # Broad-market ETFs
+  - SPY
+  - QQQ

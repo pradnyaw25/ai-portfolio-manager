@@ -3,6 +3,7 @@ from typing import TypedDict
 
 from langgraph.graph import END, START, StateGraph
 
+from src.config import validate_config
 from src.models.run_state import PortfolioRunState
 from src.utils.logger import get_logger
 from src.utils.run_id import create_run_id, utc_now_iso
@@ -75,6 +76,7 @@ def build_daily_cycle_graph():
 
 
 def run_daily_cycle_graph() -> PortfolioRunState:
+    validate_config()
     state = create_initial_state()
     run = state["run"]
     logger.info("Starting LangGraph daily portfolio cycle run_id=%s", run.run_id)

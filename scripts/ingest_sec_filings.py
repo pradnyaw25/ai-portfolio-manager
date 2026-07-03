@@ -9,11 +9,10 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.config import DATA_DIR
+from src.config import DATA_DIR, WATCHLIST
 from src.data_sources.sec_edgar import SECEdgarClient, extract_10k_sections
 from src.memory.ingestion_service import MemoryIngestionService
 from src.memory.sec_filings import filing_sections_to_memory_records
-from src.research.market_context import WATCHLIST
 
 SKIP_SYMBOLS = {"SPY", "QQQ", "^VIX"}
 DEFAULT_SUMMARY_PATH = DATA_DIR / "memory_sec_filings.json"
