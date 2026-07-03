@@ -10,6 +10,7 @@ An AI-powered portfolio management system that uses LLM agents to analyze market
 - **Simulated Trading**: Paper trading engine with full position tracking
 - **Reporting**: Markdown and HTML performance reports
 - **Benchmarking**: Compare portfolio performance against S&P 500 and other indices
+- **Prediction Calibration**: Every BUY spawns a 30-day "beat SPY" prediction; the dashboard scores them and reports a Brier score and confidence-calibration curve (predicted confidence vs. observed win rate)
 - **Public Dashboard**: Static HTML dashboard with portfolio, run status, prediction accuracy, and decision journal views, including last-updated metadata
 
 ## Setup

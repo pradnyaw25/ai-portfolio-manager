@@ -111,13 +111,19 @@ Goal: measure the AI, don't just run it.
 * Acceptance: an intentionally broken prompt fails CI; eval results are persisted
   per run with model + prompt version.
 
-### P2-2 ∥. Prediction calibration metrics
-* Input: `data/predictions.jsonl` history.
-* Output: Brier score, calibration curve data, and per-confidence-bucket hit rate,
-  recomputed from history and rendered on the public dashboard. Expand prediction
-  records with horizon, thesis, and benchmark-relative return.
-* Acceptance: metrics recompute deterministically from historical data; dashboard
-  page renders with real data.
+### P2-2 ∥. Prediction calibration metrics — DONE
+* Output: `src/scoring/calibration.py` computes Brier score, a bucketed calibration
+  curve (predicted confidence vs. observed win rate), and per-bucket hit rate over
+  resolved predictions — pure/deterministic. Wired into `predictions.json` via the
+  exporter and rendered on `predictions.html` (Brier summary + calibration chart +
+  bucket table; JSONL fallback mirrors the math in JS). Prediction records expanded
+  with `horizon_days` + `thesis` (at creation) and benchmark-relative `alpha`
+  (at scoring).
+* Acceptance: metrics recompute deterministically (unit-tested against hand
+  calculations); dashboard verified rendering both the empty state and a populated
+  8-prediction calibration curve in a browser with no console errors. Covered by
+  `tests/test_calibration.py`, `tests/test_prediction_records.py`, and the exporter
+  test in `tests/test_reporting.py`.
 
 ### P2-3 ∥. Grounding check before journaling
 * Output: an evaluator step that verifies decision claims against available market
