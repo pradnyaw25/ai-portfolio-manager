@@ -249,11 +249,25 @@ Goal: RAG worth writing about, with measured retrieval quality.
   `tests/test_chunking.py`, `tests/test_embeddings.py`, `tests/test_retrieval_filters.py`,
   `tests/test_retrieval_eval.py`, and expanded `test_sec_filings.py`/`test_config.py`.
 
-### P4-2 ∥. Additional knowledge sources
-* Output: earnings-call transcript and 10-Q ingestion into the same memory schema,
-  with source metadata and citations.
-* Acceptance: retrieved earnings context appears (cited) in at least one golden-
-  scenario eval.
+### P4-2 ∥. Additional knowledge sources — DONE
+* Output: two new EDGAR sources ingested through the same chunking/sector pipeline
+  as 10-K (P4-1):
+  * **10-Q** — generalized EDGAR client (`get_latest_10q`, `extract_10q_sections`)
+    and form-aware `filing_sections_to_memory_records` (Part I MD&A → thesis, market
+    risk → risk_lesson; `10q:…` ids, `source_type=sec_10q`).
+  * **8-K earnings** — `get_latest_earnings_8k` (filters to Item 2.02),
+    `find_earnings_exhibit` / `fetch_earnings_release_html` (locates the EX-99
+    exhibit via the accession index), and `earnings_release_to_memory_records`
+    (`earnings_event` type, `earnings_event:…` ids, `source_type=earnings_8k`).
+  * Citations: `10k:`/`10q:` added to `MEMORY_ID_PREFIXES` (earnings already citable),
+    so filing/earnings memories can be attributed in the decision journal.
+    `earnings_event` surfaced in the grouped retriever's `symbol_theses` group.
+  * Chose real EDGAR 8-K press-release exhibits over a paid transcript feed.
+* Acceptance: verified — an `earnings_and_10q_context` memory-retrieval scenario
+  surfaces the 8-K earnings release and 10-Q MD&A (grouped, recall 1.0), and an
+  `earnings_context` golden decision scenario carries a citable earnings memory that
+  `score_citation_validity` accepts (and flags when the id is fabricated). Covered by
+  `tests/test_knowledge_sources.py` (11 tests) + expanded `test_memory_evals.py`.
 
 ### P4-3 ∥. Lessons-learned reflection agent
 * Output: a weekly graph that reads closed predictions and trades, synthesizes

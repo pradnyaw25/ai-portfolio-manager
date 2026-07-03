@@ -109,5 +109,48 @@
       "recent_trades": ["trade:run_cash_3:QQQ:BUY"],
       "macro_context": ["report_summary:run_cash_2"]
     }
+  },
+  {
+    "id": "earnings_and_10q_context",
+    "description": "When AAPL is under review, retrieval should surface its recent 8-K earnings release and 10-Q MD&A alongside theses, and the 10-Q market-risk item as a risk lesson.",
+    "query": "Relevant prior investment theses, earnings results, and filings for today's decision.",
+    "symbols": ["AAPL"],
+    "k_per_group": 3,
+    "documents": [
+      {
+        "id": "earnings_event:AAPL:000032019325000123:0000",
+        "type": "earnings_event",
+        "content": "Apple reported record June-quarter services revenue and issued upbeat guidance for the September quarter.",
+        "date": "2026-05-01",
+        "symbols": ["AAPL"],
+        "source_type": "earnings_8k",
+        "source_id": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000123/aapl-ex991.htm"
+      },
+      {
+        "id": "10q:AAPL:000032019325000124:item_2:0000",
+        "type": "thesis",
+        "content": "Management attributes gross margin expansion to a favorable services mix shift and disciplined component costs.",
+        "date": "2026-05-02",
+        "symbols": ["AAPL"],
+        "source_type": "sec_10q",
+        "source_id": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000124/aapl-10q.htm"
+      },
+      {
+        "id": "10q:AAPL:000032019325000124:item_3:0000",
+        "type": "risk_lesson",
+        "content": "Market risk disclosure: the company remains exposed to foreign currency fluctuations across its international segments.",
+        "date": "2026-05-02",
+        "symbols": ["AAPL"],
+        "source_type": "sec_10q",
+        "source_id": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000124/aapl-10q.htm"
+      }
+    ],
+    "expected": {
+      "symbol_theses": [
+        "earnings_event:AAPL:000032019325000123:0000",
+        "10q:AAPL:000032019325000124:item_2:0000"
+      ],
+      "risk_lessons": ["10q:AAPL:000032019325000124:item_3:0000"]
+    }
   }
 ]

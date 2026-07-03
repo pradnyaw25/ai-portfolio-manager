@@ -16,11 +16,26 @@ COMPANY_TICKERS_URL = "https://www.sec.gov/files/company_tickers.json"
 SEC_CACHE_DIR = DATA_DIR / "sec_filings"
 
 SUPPORTED_FORM_TYPES = {"10-K", "10-K/A"}
+SUPPORTED_10Q_FORMS = {"10-Q", "10-Q/A"}
+EARNINGS_8K_FORMS = {"8-K", "8-K/A"}
+# 8-K Item 2.02 — Results of Operations and Financial Condition (the earnings release).
+EARNINGS_ITEM = "2.02"
+
 SECTION_ITEMS = {
     "item_1": "Business",
     "item_1a": "Risk Factors",
     "item_7": "Management Discussion and Analysis",
     "item_7a": "Market Risk",
+    # 10-Q Part I items (MD&A and market risk).
+    "item_2": "Management Discussion and Analysis",
+    "item_3": "Market Risk",
+}
+
+# Item tokens extracted per form (order matters only for the regex alternation;
+# section slicing takes the first occurrence, so Part I precedes Part II).
+FORM_ITEM_TOKENS = {
+    "10-K": ("1a", "1", "7a", "7"),
+    "10-Q": ("2", "3"),
 }
 
 
@@ -33,6 +48,7 @@ class CompanyFiling:
     filing_date: str
     report_date: str
     primary_document: str
+    items: str = ""
 
     @property
     def accession_no_dashes(self) -> str:
@@ -86,17 +102,33 @@ class SECEdgarClient:
                 mapping[ticker] = cik
         return mapping
 
-    def get_latest_10k(self, ticker: str, cik: str) -> CompanyFiling | None:
+    def get_latest_filing(
+        self,
+        ticker: str,
+        cik: str,
+        forms: set[str],
+        *,
+        require_item: str | None = None,
+    ) -> CompanyFiling | None:
+        """Return the most recent filing whose form is in ``forms``.
+
+        ``require_item`` filters 8-K-style filings to those reporting a specific
+        item number (e.g. ``2.02`` for an earnings release).
+        """
         submissions = self._get_json(f"{SEC_DATA_BASE}/submissions/CIK{cik}.json")
         filings = submissions.get("filings", {}).get("recent", {})
-        forms = filings.get("form", [])
+        form_list = filings.get("form", [])
         accession_numbers = filings.get("accessionNumber", [])
         filing_dates = filings.get("filingDate", [])
         report_dates = filings.get("reportDate", [])
         primary_documents = filings.get("primaryDocument", [])
+        items_list = filings.get("items", [])
 
-        for index, form in enumerate(forms):
-            if form not in SUPPORTED_FORM_TYPES:
+        for index, form in enumerate(form_list):
+            if form not in forms:
+                continue
+            items = items_list[index] if index < len(items_list) else ""
+            if require_item and require_item not in items:
                 continue
             return CompanyFiling(
                 ticker=ticker.upper(),
@@ -106,8 +138,20 @@ class SECEdgarClient:
                 filing_date=filing_dates[index],
                 report_date=report_dates[index],
                 primary_document=primary_documents[index],
+                items=items,
             )
         return None
+
+    def get_latest_10k(self, ticker: str, cik: str) -> CompanyFiling | None:
+        return self.get_latest_filing(ticker, cik, SUPPORTED_FORM_TYPES)
+
+    def get_latest_10q(self, ticker: str, cik: str) -> CompanyFiling | None:
+        return self.get_latest_filing(ticker, cik, SUPPORTED_10Q_FORMS)
+
+    def get_latest_earnings_8k(self, ticker: str, cik: str) -> CompanyFiling | None:
+        return self.get_latest_filing(
+            ticker, cik, EARNINGS_8K_FORMS, require_item=EARNINGS_ITEM
+        )
 
     def fetch_filing_html(self, filing: CompanyFiling, *, refresh: bool = False) -> str:
         path = filing.cache_dir / filing.primary_document
@@ -134,6 +178,41 @@ class SECEdgarClient:
         )
         return html
 
+    def find_earnings_exhibit(self, filing: CompanyFiling) -> str | None:
+        """Return the EX-99.x exhibit document name for an 8-K, if present.
+
+        The 8-K's primary document is the cover; the earnings release is a
+        separate EX-99 exhibit listed in the accession index.
+        """
+        index = self._get_json(filing_index_url(filing))
+        items = index.get("directory", {}).get("item", [])
+        for entry in items:
+            name = str(entry.get("name", ""))
+            if re.search(r"(?i)ex-?99", name) and name.lower().endswith((".htm", ".html")):
+                return name
+        return None
+
+    def fetch_earnings_release_html(
+        self, filing: CompanyFiling, *, refresh: bool = False
+    ) -> str | None:
+        """Fetch the EX-99 earnings-release HTML for an 8-K (None if no exhibit)."""
+        exhibit = self.find_earnings_exhibit(filing)
+        if exhibit is None:
+            return None
+
+        path = filing.cache_dir / exhibit
+        if path.exists() and not refresh:
+            return path.read_text(errors="ignore")
+
+        path.parent.mkdir(parents=True, exist_ok=True)
+        url = (
+            f"{SEC_ARCHIVES_BASE}/{int(filing.cik)}/"
+            f"{filing.accession_no_dashes}/{exhibit}"
+        )
+        html = self._get_text(url)
+        path.write_text(html)
+        return html
+
     def _get_json(self, url: str) -> dict:
         time.sleep(self.request_pause_seconds)
         response = self.session.get(url, timeout=30)
@@ -147,16 +226,22 @@ class SECEdgarClient:
         return response.text
 
 
-def extract_10k_sections(html: str) -> dict[str, str]:
+def extract_filing_sections(html: str, *, item_tokens: tuple[str, ...]) -> dict[str, str]:
+    """Extract item sections from a filing's HTML.
+
+    ``item_tokens`` are the raw item numbers to slice on (e.g. ``("1a","1","7a","7")``
+    for a 10-K). Sections are the text between consecutive item headers; the first
+    occurrence of each item wins, so Part I precedes Part II in a 10-Q.
+    """
     text = html_to_text(html)
+    alternation = "|".join(sorted(item_tokens, key=len, reverse=True))
     markers = []
-    for match in re.finditer(r"\bitem\s+(1a|1|7a|7)\s*[\.\-:]", text, flags=re.IGNORECASE):
-        item = match.group(1).lower()
-        key = f"item_{item}"
+    for match in re.finditer(rf"\bitem\s+({alternation})\s*[\.\-:]", text, flags=re.IGNORECASE):
+        key = f"item_{match.group(1).lower()}"
         if key in SECTION_ITEMS:
             markers.append((match.start(), key))
 
-    sections = {}
+    sections: dict[str, str] = {}
     for index, (start, key) in enumerate(markers):
         if key in sections:
             continue
@@ -165,6 +250,18 @@ def extract_10k_sections(html: str) -> dict[str, str]:
         if len(section_text) >= 200:
             sections[key] = section_text
     return sections
+
+
+def extract_10k_sections(html: str) -> dict[str, str]:
+    return extract_filing_sections(html, item_tokens=FORM_ITEM_TOKENS["10-K"])
+
+
+def extract_10q_sections(html: str) -> dict[str, str]:
+    return extract_filing_sections(html, item_tokens=FORM_ITEM_TOKENS["10-Q"])
+
+
+def extract_earnings_release_text(html: str) -> str:
+    return clean_section_text(html_to_text(html))
 
 
 def html_to_text(html: str) -> str:

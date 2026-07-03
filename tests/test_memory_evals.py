@@ -24,6 +24,7 @@ def test_memory_eval_fixtures_pass_with_fixture_retriever():
     assert [scenario.scenario_id for scenario in result.scenarios] == [
         "nvda_concentration_risk",
         "cash_discipline",
+        "earnings_and_10q_context",
     ]
 
 

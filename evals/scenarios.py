@@ -140,6 +140,43 @@ DEBATE = Scenario(
     expects_debate=True,
 )
 
+EARNINGS_CONTEXT = Scenario(
+    name="earnings_context",
+    description="A fresh 8-K earnings release and 10-Q MD&A are in memory — the PM "
+    "can ground a view in cited earnings/filing context.",
+    portfolio={"total_value": 1_000_000, "cash": 120_000, "cash_pct": 0.12, "positions": [
+        {"symbol": "AAPL", "shares": 300, "avg_cost": 180, "current_price": 205},
+    ]},
+    research={"symbols": _symbols(
+        ("AAPL", 205.0, 0.03, 0.08), ("MSFT", 430.0, 0.01, 0.05),
+        ("SPY", 560.0, 0.01, 0.04),
+    ), "market_news": [{"title": "Apple guides higher on services strength"}]},
+    benchmark={"return_pct": 0.04, "current": 560.0},
+    memory=[
+        {
+            "id": "earnings_event:AAPL:000032019325000123:0000",
+            "type": "earnings_event",
+            "date": "2026-05-01",
+            "symbols": ["AAPL"],
+            "source_type": "earnings_8k",
+            "source_id": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000123/aapl-ex991.htm",
+            "content": "Apple reported record June-quarter services revenue and issued "
+            "upbeat guidance for the September quarter.",
+        },
+        {
+            "id": "10q:AAPL:000032019325000124:item_2:0000",
+            "type": "thesis",
+            "date": "2026-05-02",
+            "symbols": ["AAPL"],
+            "source_type": "sec_10q",
+            "source_id": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000124/aapl-10q.htm",
+            "content": "Management attributes gross margin expansion to a favorable "
+            "services mix shift and disciplined component costs.",
+        },
+    ],
+    cash_pct=0.12,
+)
+
 SCENARIOS = [
     BULL_MARKET,
     MARKET_CRASH,
@@ -148,4 +185,5 @@ SCENARIOS = [
     MISSING_DATA,
     STALE_MEMORY,
     DEBATE,
+    EARNINGS_CONTEXT,
 ]

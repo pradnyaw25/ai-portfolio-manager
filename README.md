@@ -116,15 +116,22 @@ continues without memory context.
 
 #### SEC filing ingestion (chunked)
 
-The weekly SEC 10-K ingestion (`scripts/ingest_sec_filings.py`) extracts Items 1,
-1A, 7, and 7A, then splits each section into overlapping ~1k-char chunks
-(`src/memory/chunking.py`) rather than storing one oversized vector per section —
+The weekly SEC ingestion (`scripts/ingest_sec_filings.py`) pulls three source types
+from EDGAR into the same memory schema:
+
+- **10-K** — Items 1, 1A, 7, 7A (`10k:…` ids).
+- **10-Q** — Part I MD&A and market-risk items (`10q:…` ids).
+- **8-K earnings** — the EX-99 earnings-release exhibit of the latest Item 2.02 8-K
+  (`earnings_event:…` ids).
+
+`--forms 10-K,10-Q,8-K` selects which to ingest. Each source splits into overlapping
+~1k-char chunks (`src/memory/chunking.py`) rather than storing one oversized vector —
 so retrieval surfaces the specific passage that answers a query. Each chunk is its
-own record with a deterministic id (`10k:{ticker}:{accession}:{item}:{chunk}`) and
-rich payload metadata (ticker, form, item, filing date, and **sector** from
-`config/sectors.yaml`). Retrieval pushes symbol/type/sector constraints into Qdrant
-as payload filters (`build_qdrant_filter`) instead of over-fetching and filtering in
-Python.
+own record with a deterministic id and rich payload metadata (ticker, form, item,
+filing date, and **sector** from `config/sectors.yaml`). All source ids are citable,
+so the decision journal can attribute a view to a specific filing or earnings release.
+Retrieval pushes symbol/type/sector constraints into Qdrant as payload filters
+(`build_qdrant_filter`) instead of over-fetching and filtering in Python.
 
 `make chunking-eval` quantifies the payoff offline (in-memory Qdrant + a
 deterministic hashing embedder, no API key): over 20 scenarios where the answer is a

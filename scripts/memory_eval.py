@@ -32,7 +32,7 @@ class FixtureMemoryRetriever:
         return {
             "symbol_theses": _filter_memories(
                 self.memories,
-                memory_types={"thesis", "report_summary"},
+                memory_types={"thesis", "report_summary", "earnings_event"},
                 symbols=symbols,
                 limit=k_per_group,
             ),
