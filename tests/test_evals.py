@@ -140,6 +140,28 @@ def test_runner_passes_when_all_decisions_are_compliant():
     assert summary["prompt_version"] == "portfolio_manager/v1"
 
 
+def test_grounding_is_advisory_and_does_not_gate():
+    # A fully compliant decision must PASS even when the grounding judge objects —
+    # grounding is a reported signal, not a gate.
+    def decide(scenario):
+        tradable = scenario.tradable_symbols()
+        decision = {"outlook": "NEUTRAL", "summary": "ok",
+                    "trades": [{"symbol": tradable[0], "action": "BUY", "confidence": 0.7}] if tradable else []}
+        if scenario.expects_cash_thesis:
+            decision["cash_thesis"] = "Holding cash on purpose."
+        return decision
+
+    summary = run_evals(
+        decide_fn=decide,
+        judge_fn=lambda d, s: GroundingVerdict(grounded=False, issues=["nitpick"]),
+        timestamp="2026-01-01T00:00:00Z",
+    )
+    assert summary["passed"] == summary["total"] == len(SCENARIOS)
+    # ...but the advisory grounding failure is still reported per scenario.
+    grounding_scores = [s for r in summary["results"] for s in r["scores"] if s["name"] == "grounding"]
+    assert grounding_scores and all(not s["passed"] for s in grounding_scores)
+
+
 def test_runner_fails_on_broken_decision():
     # Simulates a broken prompt: trades an off-universe symbol everywhere.
     def broken_decide(scenario):

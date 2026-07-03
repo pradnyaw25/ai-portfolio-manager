@@ -38,6 +38,7 @@ def build_daily_cycle_graph():
         ("build_research_context", build_research_context_node),
         ("retrieve_memory", retrieve_memory_node),
         ("decide_trades", decide_trades_node),
+        ("check_grounding", check_grounding_node),
         ("review_risk", review_risk_node),
         ("check_rebalance", check_rebalance_node),
         ("human_approval", human_approval_node),
@@ -210,6 +211,17 @@ def decide_trades_node(state: DailyGraphState) -> DailyGraphState:
     return {"run": run}
 
 
+def check_grounding_node(state: DailyGraphState) -> DailyGraphState:
+    run = state["run"]
+    run.grounding = steps.run_grounding_check(
+        run.decisions,
+        run.research,
+        run.memory_context,
+        run.engine.get_snapshot(),
+    )
+    return {"run": run}
+
+
 def review_risk_node(state: DailyGraphState) -> DailyGraphState:
     run = state["run"]
     run.risk_review = steps.review_risk(run.decisions, run.engine, run.prices)
@@ -335,6 +347,7 @@ def journal_run_node(state: DailyGraphState) -> DailyGraphState:
         trades=run.trades,
         memory_context=run.memory_context,
         memory_result=run.memory_result,
+        grounding=run.grounding,
         run_id=run.run_id,
     )
     return {"run": run}
@@ -395,6 +408,7 @@ def publish_tweet_node(state: DailyGraphState) -> DailyGraphState:
             run.tweet,
             run.run_id,
             run.run_status,
+            grounding=run.grounding,
         )
         steps.update_tweet_publish_status(run.tweet_publish_result, run.run_status)
         run.warnings = list(run.run_status.get("warnings", []))

@@ -131,6 +131,7 @@ def _mock_full_cycle(monkeypatch, approved):
         "build_research_context": ({}, {}),
         "retrieve_memory_context": (memres, [], {}),
         "decide_trades": {"trades": []},
+        "run_grounding_check": {"status": "ok", "grounded": True, "issues": []},
         "review_risk": SimpleNamespace(approved=approved),
         "check_rebalance": (SimpleNamespace(), list(approved)),
         "execute_trades": [SimpleNamespace(symbol="AAPL")],

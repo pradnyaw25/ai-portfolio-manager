@@ -133,12 +133,17 @@ Goal: measure the AI, don't just run it.
   `tests/test_calibration.py`, `tests/test_prediction_records.py`, and the exporter
   test in `tests/test_reporting.py`.
 
-### P2-3 ∥. Grounding check before journaling
-* Output: an evaluator step that verifies decision claims against available market
-  context, news, memory, and portfolio state; unsupported claims flagged and stored
-  with the decision (and block tweeting).
-* Acceptance: a fixture decision with a fabricated claim gets flagged; findings
-  appear in the decision journal.
+### P2-3 ∥. Grounding check before journaling — DONE
+* Output: `src/scoring/grounding.py` — an LLM-as-judge `check_grounding` that
+  verifies decision claims against the run's market context, memory, and portfolio.
+  Wired as a `check_grounding` graph node after `decide_trades`; findings stored on
+  the decision journal entry (`grounding` field) and surfaced on `run_status`. A
+  flagged decision **blocks tweeting** (`tweet_publish.status = "blocked_grounding"`).
+  Degrades to `unavailable` (non-blocking) on judge failure. Shares the
+  `GroundingVerdict` schema with the eval harness (deduped `evals/grounding.py`).
+* Acceptance: verified end-to-end — a decision with a fabricated claim is flagged,
+  the finding lands in the decision journal, and the tweet is blocked (service never
+  called). Covered by `tests/test_grounding_check.py` (6 tests).
 
 ## Phase 3 — Multi-Agent & Tools (2–3 weeks)
 

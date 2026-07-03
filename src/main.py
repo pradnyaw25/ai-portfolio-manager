@@ -35,7 +35,8 @@ from src.simulator.benchmark_tracker import BenchmarkTracker
 from src.memory.retriever import format_grouped_memory_for_prompt, retrieve_grouped_fund_memory
 from src.memory.ingestion_service import ingest_run_memory as ingest_run_memory_service
 from src.memory.citations import review_memory_citations
-from src.social.twitter import publish_tweet as publish_tweet_service
+from src.scoring.grounding import check_grounding
+from src.social.twitter import TweetPublishResult, publish_tweet as publish_tweet_service
 
 logger = get_logger(__name__)
 
@@ -201,6 +202,16 @@ def track_buy_predictions(trades, approved_trades, market_data):
             )
 
 
+def run_grounding_check(decisions, research, memory_context, snapshot):
+    """Verify the decision's claims are grounded in the context it had."""
+    return check_grounding(
+        decisions,
+        research=research,
+        memory=memory_context,
+        portfolio=snapshot,
+    ).to_dict()
+
+
 def journal_run(
     *,
     engine,
@@ -210,6 +221,7 @@ def journal_run(
     trades,
     memory_context,
     memory_result,
+    grounding=None,
     run_id,
 ):
     citation_review = review_memory_citations(
@@ -229,6 +241,7 @@ def journal_run(
         memory_error=memory_result.error,
         memory_citations=citation_review.to_dict()["citations"],
         memory_citation_warnings=citation_review.warnings,
+        grounding=grounding,
         run_id=run_id,
     )
 
@@ -323,7 +336,23 @@ def build_failure_run_status(
     }
 
 
-def publish_tweet(tweet, run_id, run_status):
+def publish_tweet(tweet, run_id, run_status, grounding=None):
+    if grounding and grounding.get("status") == "flagged":
+        logger.warning("Tweet blocked — decision failed grounding check: %s", grounding.get("issues"))
+        result = TweetPublishResult(
+            status="blocked_grounding",
+            posted=False,
+            dry_run=False,
+            text=tweet,
+            error="decision failed grounding check",
+            run_id=run_id,
+        )
+        run_status["tweet_publish"] = result.to_dict()
+        run_status.setdefault("warnings", []).append(
+            "Tweet blocked: decision failed grounding check"
+        )
+        return result
+
     result = publish_tweet_service(tweet, run_id=run_id)
     run_status["tweet_publish"] = result.to_dict()
     if result.status not in {"posted", "dry_run", "skipped"}:
