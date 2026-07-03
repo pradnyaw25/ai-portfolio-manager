@@ -1,0 +1,25 @@
+# GICS-style sector for each watchlist symbol. Used to tag memory records with a
+# `sector` (metadata-filtered retrieval, and later sector-concentration limits in
+# Risk Engine V2 / P5-2). Keep in sync with config/watchlist.yaml. ETFs and the
+# volatility index have no issuer sector and are intentionally omitted (they map
+# to the default "Unknown").
+sectors:
+  AAPL: Information Technology
+  MSFT: Information Technology
+  NVDA: Information Technology
+  AMD: Information Technology
+  AVGO: Information Technology
+  GOOGL: Communication Services
+  META: Communication Services
+  AMZN: Consumer Discretionary
+  TSLA: Consumer Discretionary
+  HD: Consumer Discretionary
+  JPM: Financials
+  V: Financials
+  MA: Financials
+  UNH: Health Care
+  JNJ: Health Care
+  WMT: Consumer Staples
+  PG: Consumer Staples
+  XOM: Energy
+  CAT: Industrials

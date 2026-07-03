@@ -20,6 +20,14 @@ def test_watchlist_loads_from_yaml_and_is_normalized():
     assert "AAPL" in config.WATCHLIST
 
 
+def test_sector_lookup_maps_known_and_unknown_symbols():
+    assert config.sector_for("AAPL") == "Information Technology"
+    assert config.sector_for("jpm") == "Financials"  # case-insensitive
+    # ETFs / unclassified symbols fall back to the default.
+    assert config.sector_for("SPY") == config.DEFAULT_SECTOR
+    assert config.sector_for("NOPE") == config.DEFAULT_SECTOR
+
+
 def test_validate_config_rejects_out_of_range_fraction(monkeypatch):
     monkeypatch.setattr(config, "TARGET_CASH_PCT", 1.5)
     with pytest.raises(ConfigError) as exc:
