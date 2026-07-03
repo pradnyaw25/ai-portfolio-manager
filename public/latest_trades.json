@@ -1,1 +1,22 @@
-[]
+[
+  {
+    "run_id": "run_20260703T164732Z_152c681b",
+    "date": "2026-07-03",
+    "symbol": "NVDA",
+    "action": "SELL",
+    "shares": 50,
+    "price": 194.8300018310547,
+    "total": 9741.500091552734,
+    "reasoning": "Nvidia continues to underperform based on market context and news indicating struggle below key price levels. This positions us to secure some cash back and reduce exposure."
+  },
+  {
+    "run_id": "run_20260703T164732Z_152c681b",
+    "date": "2026-07-03",
+    "symbol": "TSLA",
+    "action": "SELL",
+    "shares": 10,
+    "price": 393.45001220703125,
+    "total": 3934.5001220703125,
+    "reasoning": "Despite strong delivery reports, Tesla faces pressure from the market's overall volatility. Selling a portion allows us to mitigate losses."
+  }
+]

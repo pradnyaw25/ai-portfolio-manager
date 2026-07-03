@@ -1,0 +1,2 @@
+{"run_id": "run_20260703T164732Z_152c681b", "model": "gpt-4o-mini", "prompt_version": "portfolio_manager/v1", "prompt_tokens": 4478, "completion_tokens": 448, "latency_ms": 6753.3, "est_cost_usd": 0.00094}
+{"run_id": "run_20260703T164732Z_152c681b", "model": "gpt-4o-mini", "prompt_version": "tweet_writer/v1", "prompt_tokens": 366, "completion_tokens": 53, "latency_ms": 1146.4, "est_cost_usd": 8.7e-05}
