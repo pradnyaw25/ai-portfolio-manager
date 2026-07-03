@@ -60,6 +60,8 @@ def test_build_run_status_records_memory_warning():
     assert status["trades_executed"] == 0
     assert status["warnings"] == ["Memory unavailable: qdrant offline"]
     assert status["portfolio_value"] == 25000
+    # LLM cost summary is always present (zeros when no calls are logged for the run).
+    assert set(status["llm"]) == {"calls", "prompt_tokens", "completion_tokens", "cost_usd", "latency_ms"}
 
 
 def test_build_failure_run_status_records_failed_step_and_errors():

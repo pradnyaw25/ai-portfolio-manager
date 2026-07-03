@@ -9,6 +9,8 @@ orchestration or ``__main__`` of its own.
 """
 
 from src.config import INITIAL_CAPITAL
+from src.llm.cost import summarize_run_cost
+from src.storage.run_history_store import RunHistoryStore
 from src.storage.portfolio_store import PortfolioStore
 from src.storage.trade_store import TradeStore
 from src.storage.decision_store import DecisionStore
@@ -275,9 +277,21 @@ def build_run_status(run_id, started_at, memory_result, memory_context, trades, 
         "errors": [],
         "memory_ingestion": None,
         "tweet_publish": None,
+        "llm": summarize_run_cost(run_id),
         "portfolio_value": snapshot.total_value,
         "cash_pct": snapshot.cash_pct,
     }
+
+
+def record_run_history(run_status):
+    """Persist the run's final status durably and refresh the public export."""
+    if not run_status:
+        return
+    try:
+        RunHistoryStore().record(run_status)
+        PublicExporter().write_run_history()
+    except Exception as exc:  # run history is best-effort, never fatal
+        logger.warning("Failed to record run history: %s", exc)
 
 
 def build_failure_run_status(
@@ -303,6 +317,7 @@ def build_failure_run_status(
         "errors": errors,
         "memory_ingestion": None,
         "tweet_publish": None,
+        "llm": summarize_run_cost(run_id),
         "portfolio_value": snapshot.total_value if snapshot is not None else None,
         "cash_pct": snapshot.cash_pct if snapshot is not None else None,
     }

@@ -109,7 +109,20 @@ public/run_status.json
 ```
 
 The public dashboard displays the latest run status, completion time, memory
-retrieval status, number of trades executed, and warning count.
+retrieval status, number of trades executed, warning count, and per-run LLM
+cost. Every run's final status is also appended to a durable history
+(`data/run_history.jsonl`, exported to `public/run_history.json`) so run history
+survives across runs rather than only showing the latest.
+
+Per-run LLM cost/latency is aggregated from the gateway's call log (each call is
+tagged with its `run_id`) and included in `run_status.json` under `llm`.
+
+### LLM Tracing (optional)
+
+Set `LANGFUSE_PUBLIC_KEY` and `LANGFUSE_SECRET_KEY` to trace each run to
+[Langfuse](https://langfuse.com): one trace per run, with a span per graph node
+and a generation (model, tokens, cost) per LLM call. Without the keys, tracing is
+a silent no-op and never affects a run.
 
 ### Human-in-the-Loop Approval
 

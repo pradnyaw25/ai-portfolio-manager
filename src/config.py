@@ -56,6 +56,14 @@ LLM_CALL_LOG = DATA_DIR / "llm_calls.jsonl"
 
 SUPPORTED_LLM_PROVIDERS = {"openai"}
 
+# Observability. Langfuse tracing is optional: enabled only when both keys are
+# set, otherwise all tracing is a no-op. Run history is a durable record of every
+# run's final status (not just the latest).
+LANGFUSE_PUBLIC_KEY = os.getenv("LANGFUSE_PUBLIC_KEY", "")
+LANGFUSE_SECRET_KEY = os.getenv("LANGFUSE_SECRET_KEY", "")
+LANGFUSE_HOST = os.getenv("LANGFUSE_HOST", "https://cloud.langfuse.com")
+RUN_HISTORY_LOG = DATA_DIR / "run_history.jsonl"
+
 # Human-in-the-loop approval. When AUTO_APPROVE is true (the default), the daily
 # cycle runs unattended and the approval node is a pass-through — scheduled/CI
 # runs are unaffected. Set AUTO_APPROVE=false to pause the run after risk review

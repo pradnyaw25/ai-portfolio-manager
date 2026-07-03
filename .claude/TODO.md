@@ -84,12 +84,19 @@ Goal: LangGraph is *the* runner; every run is fully visible.
   gates execution; reject vetoes all trades; edit executes only the chosen subset;
   decision recorded in the run record. Covered by `tests/test_human_approval.py`.
 
-### P1-4 ∥. Langfuse tracing and cost tracking
-* Output: Langfuse tracing wired into the LLM gateway plus graph-node spans; run-level
-  cost/latency summary in `run_status.json` and on the dashboard; durable run-history
-  table (not just latest run).
-* Acceptance: a full daily run appears as one trace tree with per-node cost; run
-  history survives across runs.
+### P1-4 ∥. Langfuse tracing and cost tracking — DONE
+* Output: optional Langfuse tracing (`src/observability/tracing.py`) wired into the
+  LLM gateway (a generation per call, with model/tokens/cost) and every graph node
+  (a span each) under a per-run root span — a no-op unless `LANGFUSE_*` keys are set.
+  Per-run LLM cost/latency (`src/llm/cost.py`) aggregated from the gateway call log —
+  each call tagged with its `run_id` via a contextvar (`src/llm/context.py`) — and
+  surfaced in `run_status.json` under `llm` and on the dashboard. Durable run history
+  (`src/storage/run_history_store.py` → `data/run_history.jsonl`, exported to
+  `public/run_history.json`), upserted by run_id.
+* Acceptance: verified end-to-end — a run tags its LLM calls, aggregates cost into
+  run_status, records durable history, and (with keys) emits one trace tree with
+  per-node spans + per-call generations. Covered by `tests/test_llm_cost.py`,
+  `tests/test_run_history_store.py`, `tests/test_tracing.py`, and gateway run_id tagging.
 
 ## Phase 2 — Evals & Calibration (~2 weeks)
 
