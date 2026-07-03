@@ -114,12 +114,14 @@ Do not commit `.env` or real API keys.
 
 ## Roadmap
 
-Near-term work is focused on making the daily cycle easier to observe and safer to evolve:
+The full assessment and phased roadmap live in [docs/ROADMAP.md](docs/ROADMAP.md), with delegation-ready task specs in [.claude/TODO.md](.claude/TODO.md). The phases, in order:
 
-- Add sector/correlation diversification checks to the risk manager.
-- Add deterministic stop-loss and take-profit SELL proposals.
-
-The eventual migration target is LangGraph. The daily cycle in `src/main.py` is now split into explicit workflow step functions, and an opt-in linear LangGraph runner is available through `make run-graph`. The planned path is to prove the graph path against the existing runner, then add conditional routing and an optional human approval checkpoint before execution.
+0. **Harden the foundation** — an LLM gateway with Pydantic-validated structured outputs, retries, configurable models, and idempotent stores.
+1. **Orchestration & observability** — promote the LangGraph runner to the default path, add checkpointing, conditional routing, a human-in-the-loop approval gate before execution, and Langfuse tracing with cost tracking.
+2. **Evals & calibration** — golden-scenario decision evals in CI, grounding checks before journaling, and Brier-score/calibration dashboards for prediction accuracy.
+3. **Multi-agent & tools** — bull/bear/risk analyst debate with recorded transcripts, typed tool calling for research, and cheap-vs-strong model routing.
+4. **Knowledge layer** — chunked, metadata-filtered RAG over SEC filings and earnings transcripts, plus a weekly lessons-learned reflection agent.
+5. **Surface & reach** — an MCP server exposing the fund, Risk Engine V2 (sector limits, stop-loss/take-profit), and a weekly investor letter.
 
 ## License
 
