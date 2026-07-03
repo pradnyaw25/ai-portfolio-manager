@@ -1,0 +1,64 @@
+name: Weekly Investor Letter
+
+on:
+  schedule:
+    # After the trading week: write and publish the investor letter.
+    - cron: "40 13 * * 0"
+
+  workflow_dispatch:
+    inputs:
+      week_end:
+        description: "ISO date ending the 7-day window (default: today)."
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: weekly-investor-letter
+  cancel-in-progress: false
+
+jobs:
+  letter:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Install dependencies
+        run: |
+          pip install -U pip
+          pip install -e .
+
+      - name: Generate weekly investor letter
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          QDRANT_URL: ${{ secrets.QDRANT_URL }}
+          QDRANT_API_KEY: ${{ secrets.QDRANT_API_KEY }}
+          POST_INVESTOR_LETTER: ${{ vars.POST_INVESTOR_LETTER }}
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_SECRET: ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
+          WEEK_END: ${{ inputs.week_end }}
+        run: |
+          if [ -n "$WEEK_END" ]; then
+            python scripts/weekly_letter.py --week-end "$WEEK_END"
+          else
+            python scripts/weekly_letter.py
+          fi
+
+      - name: Commit investor letter artifacts
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add -f public/investor_letter.json public/investor_letter.md
+          git diff --staged --quiet || git commit -m "Update weekly investor letter"
+          git push
