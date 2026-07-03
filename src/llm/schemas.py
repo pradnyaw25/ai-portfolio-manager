@@ -95,3 +95,16 @@ class ReflectionResponse(BaseModel):
     model_config = ConfigDict(extra="allow")
 
     lessons: list[ReflectionLesson] = Field(default_factory=list)
+
+
+class InvestorLetterResponse(BaseModel):
+    """A weekly investor letter, grounded in the week's computed facts."""
+
+    model_config = ConfigDict(extra="allow")
+
+    headline: str = ""
+    performance: str = ""
+    winners: list[str] = Field(default_factory=list)
+    losers: list[str] = Field(default_factory=list)
+    portfolio_changes: str = ""
+    outlook: str = ""

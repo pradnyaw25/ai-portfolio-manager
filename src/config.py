@@ -24,6 +24,8 @@ SEC_USER_AGENT = os.getenv(
     "ai-portfolio-manager contact@example.com",
 )
 POST_TWEET = os.getenv("POST_TWEET", "false").lower() in {"1", "true", "yes"}
+# Optional: post the weekly investor letter as an X thread. Off by default.
+POST_INVESTOR_LETTER = os.getenv("POST_INVESTOR_LETTER", "false").lower() in {"1", "true", "yes"}
 X_API_KEY = os.getenv("X_API_KEY", "")
 X_API_SECRET = os.getenv("X_API_SECRET", "")
 X_ACCESS_TOKEN = os.getenv("X_ACCESS_TOKEN", "")

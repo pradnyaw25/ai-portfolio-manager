@@ -7,6 +7,7 @@ An AI-powered portfolio management system that uses LLM agents to analyze market
 - **Analyst Debate**: Bull, bear, and risk analyst agents each argue a structured thesis; the portfolio manager synthesizes them and must explicitly respond to the bear case. The full debate transcript is journaled and shown on the dashboard.
 - **Tool-Calling Research**: A research agent uses typed tools (price, history, news, memory, portfolio) to investigate targeted questions before the decision; the tool-call trace is journaled and shown on the dashboard.
 - **Weekly Reflection**: A weekly graph reads the week's resolved predictions (win/loss vs SPY) and trades and synthesizes `risk_lesson` / `mistake` memories — each grounded in the prediction/trade ids it came from — so lessons resurface in the next daily run's retrieved memory.
+- **Weekly Investor Letter**: An AI-written weekly letter (performance vs benchmark, winners/losers, portfolio changes, outlook) generated through the gateway from deterministically computed facts, gated by the grounding check before publish, and exported to the dashboard. Optional X-thread posting, off by default.
 - **Portfolio Management Agent**: Makes buy/sell/hold decisions based on market data and news
 - **Research Agent**: Gathers and synthesizes market data, news, and sentiment
 - **Tweet Generator**: Creates social media content about portfolio performance
@@ -247,6 +248,17 @@ Beyond per-position sizing and daily turnover, the deterministic risk layer adds
   basis. These take precedence over any LLM trade for the same symbol, flow through
   the same guardrails and execution path, and are journaled as first-class risk
   events (`risk_events`, `origin="system"`).
+
+### Weekly Investor Letter
+
+`make letter` (or the `Weekly Investor Letter` GitHub Action) computes the week's
+facts deterministically — portfolio return vs SPY, winners/losers, and the week's
+trades — then has the model (via the gateway) write a letter grounded in *exactly*
+those facts. The shared grounding check (`check_grounding`) runs **before publish**:
+a flagged letter is blocked and nothing is written. A grounded letter is recorded
+(idempotent per week via `InvestorLetterStore`) and exported to
+`public/investor_letter.{json,md}`. Set `POST_INVESTOR_LETTER=true` to also post it
+as an X thread (off by default).
 
 ### MCP Server
 

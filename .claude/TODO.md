@@ -324,12 +324,23 @@ Goal: make the system legible to outsiders.
   supersedes the LLM trade; journal records the event with `origin="system"`).
   Covered by `tests/test_risk_engine_v2.py` (11 tests).
 
-### P5-3 ∥. Weekly investor letter
-* Output: AI-written weekly letter (performance, winners/losers, portfolio changes,
-  outlook) generated through the gateway with grounding check, published to the
-  dashboard; optional X thread mode, disabled by default.
-* Acceptance: letter generation is idempotent per week; grounding check runs before
-  publish.
+### P5-3 ∥. Weekly investor letter — DONE
+* Output: `src/agents/investor_letter.py` — `gather_letter_facts` computes the week's
+  facts deterministically (portfolio return vs SPY from `portfolio_history.csv` /
+  `benchmark_history.csv`, winners/losers by position return, in-window trades);
+  `InvestorLetterAgent` (strong tier, `InvestorLetterResponse` schema) writes a letter
+  grounded in exactly those facts. `generate_weekly_letter` runs the shared
+  `check_grounding` **before publish** — a flagged letter is blocked and nothing is
+  written; a grounded letter is recorded (`InvestorLetterStore`, upsert by `week_end`)
+  and exported to `public/investor_letter.{json,md}`. Optional X-thread posting behind
+  `POST_INVESTOR_LETTER` (default off) via the existing `TwitterPublisher`.
+  `scripts/weekly_letter.py` + a `Weekly Investor Letter` GitHub Action + `make letter`.
+* Acceptance: verified — grounded → published + exported + one store row; flagged →
+  `blocked_grounding` with nothing published; re-running a week upserts (one row,
+  idempotent); X thread off by default, on when enabled. Covered by
+  `tests/test_investor_letter.py` (8 tests).
+* Follow-up (not in scope): a dedicated `investor_letter.html` dashboard page (the
+  JSON/markdown are published; no HTML view yet).
 
 ### P5-4 (optional). Replay backtester
 * Scope carefully — see `docs/ROADMAP.md` §7 (lookahead contamination). Build a
