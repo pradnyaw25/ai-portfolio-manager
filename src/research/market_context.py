@@ -1,27 +1,8 @@
 from dataclasses import dataclass, asdict
 from datetime import date
 
+from src.config import WATCHLIST
 from src.models.portfolio import PortfolioSnapshot
-
-
-WATCHLIST = [
-    "AAPL", "MSFT", "GOOGL", "AMZN", "META",
-    "NVDA", "AMD", "AVGO",
-
-    "TSLA",
-
-    "JPM", "V", "MA",
-
-    "UNH", "JNJ",
-
-    "WMT", "PG", "HD",
-
-    "XOM",
-
-    "CAT",
-
-    "SPY", "QQQ",
-]
 
 
 @dataclass

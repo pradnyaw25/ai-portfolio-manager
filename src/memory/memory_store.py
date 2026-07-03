@@ -4,10 +4,10 @@ from langchain_core.documents import Document
 from langchain_openai import OpenAIEmbeddings
 from langchain_qdrant import QdrantVectorStore
 
-from src.config import QDRANT_API_KEY, QDRANT_URL
+from src.config import QDRANT_API_KEY, QDRANT_COLLECTION, QDRANT_URL
 from src.memory.schemas import MemoryRecord
 
-COLLECTION_NAME = "fund_memory"
+COLLECTION_NAME = QDRANT_COLLECTION
 POINT_ID_NAMESPACE = uuid.UUID("9c2ef9d1-4b7d-4b7c-a344-ecf6ab01c7df")
 
 

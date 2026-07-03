@@ -1,5 +1,7 @@
 import os
 from pathlib import Path
+
+import yaml
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -8,16 +10,15 @@ PROJECT_ROOT = Path(__file__).parent.parent
 DATA_DIR = PROJECT_ROOT / "data"
 REPORTS_DIR = PROJECT_ROOT / "reports"
 PROMPTS_DIR = PROJECT_ROOT / "prompts"
+CONFIG_DIR = PROJECT_ROOT / "config"
 
 DATA_DIR.mkdir(exist_ok=True)
 REPORTS_DIR.mkdir(exist_ok=True)
 
-ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
-ALPHA_VANTAGE_API_KEY = os.getenv("ALPHA_VANTAGE_API_KEY", "")
-FINNHUB_API_KEY = os.getenv("FINNHUB_API_KEY", "")
 NEWS_API_KEY = os.getenv("NEWS_API_KEY", "")
 QDRANT_URL = os.getenv("QDRANT_URL", "http://localhost:6333")
 QDRANT_API_KEY = os.getenv("QDRANT_API_KEY", "")
+QDRANT_COLLECTION = os.getenv("QDRANT_COLLECTION", "fund_memory")
 SEC_USER_AGENT = os.getenv(
     "SEC_USER_AGENT",
     "ai-portfolio-manager contact@example.com",
@@ -30,7 +31,6 @@ X_ACCESS_TOKEN_SECRET = os.getenv("X_ACCESS_TOKEN_SECRET", "")
 
 INITIAL_CAPITAL = float(os.getenv("INITIAL_CAPITAL", "1000000"))
 MAX_POSITION_SIZE = float(os.getenv("MAX_POSITION_SIZE", "0.10"))
-MAX_POSITIONS = int(os.getenv("MAX_POSITIONS", "20"))
 
 MIN_TRADE_CONFIDENCE = float(os.getenv("MIN_TRADE_CONFIDENCE", "0.60"))
 MAX_DAILY_TURNOVER = float(os.getenv("MAX_DAILY_TURNOVER", "0.20"))
@@ -54,4 +54,91 @@ LLM_TEMPERATURE = float(os.getenv("LLM_TEMPERATURE", "1.0"))
 LLM_MAX_RETRIES = int(os.getenv("LLM_MAX_RETRIES", "2"))
 LLM_CALL_LOG = DATA_DIR / "llm_calls.jsonl"
 
+SUPPORTED_LLM_PROVIDERS = {"openai"}
+
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
+
+WATCHLIST_PATH = CONFIG_DIR / "watchlist.yaml"
+
+
+class ConfigError(Exception):
+    """Raised when configuration is missing or invalid."""
+
+
+def _load_watchlist() -> list[str]:
+    """Load and normalize the watchlist from ``config/watchlist.yaml``."""
+    if not WATCHLIST_PATH.exists():
+        raise ConfigError(f"Watchlist file not found: {WATCHLIST_PATH}")
+    try:
+        data = yaml.safe_load(WATCHLIST_PATH.read_text()) or {}
+    except yaml.YAMLError as exc:
+        raise ConfigError(f"Watchlist file is not valid YAML ({WATCHLIST_PATH}): {exc}") from exc
+
+    symbols = data.get("symbols") if isinstance(data, dict) else None
+    if not isinstance(symbols, list) or not symbols:
+        raise ConfigError(
+            f"Watchlist file must define a non-empty 'symbols' list ({WATCHLIST_PATH})"
+        )
+    # De-dupe while preserving order, uppercase, drop blanks.
+    seen: set[str] = set()
+    normalized: list[str] = []
+    for raw in symbols:
+        symbol = str(raw).strip().upper()
+        if symbol and symbol not in seen:
+            seen.add(symbol)
+            normalized.append(symbol)
+    return normalized
+
+
+WATCHLIST = _load_watchlist()
+
+
+def validate_config() -> None:
+    """Validate configuration at startup, raising ConfigError listing all problems.
+
+    Call this from process entrypoints so a misconfigured run fails loudly and
+    immediately instead of deep inside the daily cycle.
+    """
+    errors: list[str] = []
+
+    def check_fraction(name: str, value: float) -> None:
+        if not 0.0 <= value <= 1.0:
+            errors.append(f"{name} must be between 0 and 1, got {value}")
+
+    check_fraction("MAX_POSITION_SIZE", MAX_POSITION_SIZE)
+    check_fraction("MIN_TRADE_CONFIDENCE", MIN_TRADE_CONFIDENCE)
+    check_fraction("MAX_DAILY_TURNOVER", MAX_DAILY_TURNOVER)
+    check_fraction("REBALANCE_TURNOVER", REBALANCE_TURNOVER)
+    check_fraction("TARGET_CASH_PCT", TARGET_CASH_PCT)
+    check_fraction("REBALANCE_MIN_DEPLOY_PCT", REBALANCE_MIN_DEPLOY_PCT)
+
+    if INITIAL_CAPITAL <= 0:
+        errors.append(f"INITIAL_CAPITAL must be positive, got {INITIAL_CAPITAL}")
+
+    if LLM_PROVIDER not in SUPPORTED_LLM_PROVIDERS:
+        errors.append(
+            f"LLM_PROVIDER '{LLM_PROVIDER}' is not supported "
+            f"(supported: {sorted(SUPPORTED_LLM_PROVIDERS)})"
+        )
+    if not LLM_STRONG_MODEL.strip():
+        errors.append("LLM_STRONG_MODEL must not be empty")
+    if not LLM_CHEAP_MODEL.strip():
+        errors.append("LLM_CHEAP_MODEL must not be empty")
+    if not 0.0 <= LLM_TEMPERATURE <= 2.0:
+        errors.append(f"LLM_TEMPERATURE must be between 0 and 2, got {LLM_TEMPERATURE}")
+    if LLM_MAX_RETRIES < 0:
+        errors.append(f"LLM_MAX_RETRIES must be >= 0, got {LLM_MAX_RETRIES}")
+
+    if not QDRANT_COLLECTION.strip():
+        errors.append("QDRANT_COLLECTION must not be empty")
+
+    if not BENCHMARK_SYMBOLS:
+        errors.append("BENCHMARK_SYMBOLS must not be empty")
+
+    if not WATCHLIST:
+        errors.append("Watchlist must not be empty")
+
+    if errors:
+        raise ConfigError(
+            "Invalid configuration:\n  - " + "\n  - ".join(errors)
+        )
