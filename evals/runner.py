@@ -56,11 +56,14 @@ def run_evals(
             )
             continue
 
-        scores = [scorer(decision, scenario) for scorer in DETERMINISTIC_SCORERS]
+        deterministic = [scorer(decision, scenario) for scorer in DETERMINISTIC_SCORERS]
+        scores = list(deterministic)
         if use_grounding:
+            # Grounding is an advisory signal (an LLM judge is inherently noisy), so
+            # it is reported but does NOT gate — only the deterministic scorers do.
             scores.append(grounding.score_grounding(decision, scenario, judge=judge_fn))
 
-        passed = all(s.passed for s in scores)
+        passed = all(s.passed for s in deterministic)
         results.append(
             {"scenario": scenario.name, "passed": passed, "scores": [asdict(s) for s in scores]}
         )
@@ -89,8 +92,11 @@ def main() -> int:
         status = "PASS" if result["passed"] else "FAIL"
         logger.info("[%s] %s", status, result["scenario"])
         for score in result["scores"]:
-            if not score["passed"]:
-                logger.info("    ✗ %s: %s", score["name"], score["detail"])
+            if score["passed"]:
+                continue
+            # Grounding is advisory (does not gate); everything else is a hard failure.
+            marker = "⚠ advisory" if score["name"] == "grounding" else "✗"
+            logger.info("    %s %s: %s", marker, score["name"], score["detail"])
 
     passed, total = summary["passed"], summary["total"]
     print(

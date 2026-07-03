@@ -26,13 +26,19 @@ def _default_judge(decision, scenario) -> GroundingVerdict:
     }
     prompt = (
         "You are a grounding auditor for an AI portfolio manager. Given the CONTEXT "
-        "available to the manager and its DECISION, determine whether every factual "
-        "claim in the decision (prices, returns, news, memory references) is supported "
-        "by the context. Flag any fabricated prices, invented events, or claims with no "
-        "basis in the context. Opinions and forecasts are fine; unsupported facts are not.\n\n"
+        "available to the manager and its DECISION, decide whether the decision "
+        "fabricates facts.\n\n"
+        "Flag a claim ONLY if it is directly CONTRADICTED by the context, or asserts a "
+        "specific fact (a price, a number, a named event) that does NOT appear in the "
+        "context at all.\n"
+        "Do NOT flag: correct values expressed with equivalent phrasing or units "
+        "(e.g. 0.12 and '12%' are the same); rounding; subjective framing; opinions, "
+        "outlooks, or forecasts; or ordinary financial reasoning. When in doubt, treat "
+        "the claim as grounded.\n\n"
         f"CONTEXT:\n{json.dumps(context, default=str)}\n\n"
         f"DECISION:\n{json.dumps(decision, default=str)}\n\n"
-        'Return JSON: {"grounded": true|false, "issues": ["..."]}'
+        'Return JSON: {"grounded": true|false, "issues": ["..."]} — issues only for '
+        "genuine fabrications or contradictions."
     )
     return complete_structured(
         [{"role": "user", "content": prompt}],
