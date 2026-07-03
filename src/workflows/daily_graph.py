@@ -5,7 +5,9 @@ from langgraph.graph import END, START, StateGraph
 
 from src import config
 from src.config import validate_config
+from src.llm.context import set_run_id
 from src.models.run_state import PortfolioRunState
+from src.observability import tracing
 from src.utils.logger import get_logger
 from src.utils.run_id import create_run_id, utc_now_iso
 from src import main as steps
@@ -81,10 +83,14 @@ def run_daily_cycle_graph() -> PortfolioRunState:
     validate_config()
     state = create_initial_state()
     run = state["run"]
+    set_run_id(run.run_id)
     logger.info("Starting LangGraph daily portfolio cycle run_id=%s", run.run_id)
 
-    result = build_daily_cycle_graph().invoke(state)
+    with tracing.trace_run(run.run_id):
+        result = build_daily_cycle_graph().invoke(state)
     final_run = result["run"]
+
+    steps.record_run_history(final_run.run_status)
 
     if final_run.errors:
         logger.error(
@@ -112,18 +118,19 @@ def guarded_node(
         if run.errors:
             return {"run": run}
 
-        try:
-            return node_func(state)
-        except Exception as exc:
-            logger.exception(
-                "LangGraph node failed node=%s run_id=%s",
-                node_name,
-                run.run_id,
-            )
-            run.failed_step = node_name
-            run.errors.append(f"{node_name}: {exc}")
-            run.snapshot = _snapshot_if_available(run)
-            return {"run": run}
+        with tracing.span(node_name):
+            try:
+                return node_func(state)
+            except Exception as exc:
+                logger.exception(
+                    "LangGraph node failed node=%s run_id=%s",
+                    node_name,
+                    run.run_id,
+                )
+                run.failed_step = node_name
+                run.errors.append(f"{node_name}: {exc}")
+                run.snapshot = _snapshot_if_available(run)
+                return {"run": run}
 
     return wrapped
 

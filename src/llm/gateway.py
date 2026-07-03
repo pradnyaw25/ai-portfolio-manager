@@ -31,6 +31,8 @@ from src.config import (
     LLM_STRONG_MODEL,
     LLM_TEMPERATURE,
 )
+from src.llm.context import get_run_id
+from src.observability import tracing
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -187,9 +189,16 @@ class LLMGateway:
         response = self._request_with_backoff(kwargs)
         latency_ms = (time.monotonic() - started) * 1000
 
-        self._log_call(response, model=model, prompt_version=prompt_version, latency_ms=latency_ms)
-
         content = response.choices[0].message.content
+        self._log_call(
+            response,
+            model=model,
+            prompt_version=prompt_version,
+            latency_ms=latency_ms,
+            input_messages=messages,
+            output_content=content,
+        )
+
         if content is None:
             raise LLMError(f"Model {model} returned empty content")
         return content
@@ -217,7 +226,14 @@ class LLMGateway:
                 attempt += 1
 
     def _log_call(
-        self, response: Any, *, model: str, prompt_version: str, latency_ms: float
+        self,
+        response: Any,
+        *,
+        model: str,
+        prompt_version: str,
+        latency_ms: float,
+        input_messages: Any = None,
+        output_content: Any = None,
     ) -> None:
         """Record token usage, latency, and estimated cost. Never raises."""
         try:
@@ -226,6 +242,7 @@ class LLMGateway:
             completion_tokens = getattr(usage, "completion_tokens", 0) or 0
             cost = _estimate_cost(model, prompt_tokens, completion_tokens)
             record = {
+                "run_id": get_run_id(),
                 "model": model,
                 "prompt_version": prompt_version,
                 "prompt_tokens": prompt_tokens,
@@ -245,6 +262,17 @@ class LLMGateway:
             LLM_CALL_LOG.parent.mkdir(parents=True, exist_ok=True)
             with open(LLM_CALL_LOG, "a") as fh:
                 fh.write(json.dumps(record) + "\n")
+
+            tracing.record_generation(
+                name=prompt_version,
+                model=model,
+                input=input_messages,
+                output=output_content,
+                prompt_tokens=prompt_tokens,
+                completion_tokens=completion_tokens,
+                cost=cost,
+                latency_ms=round(latency_ms, 1),
+            )
         except Exception as exc:  # logging must never break a run
             logger.warning("Failed to log LLM call: %s", exc)
 

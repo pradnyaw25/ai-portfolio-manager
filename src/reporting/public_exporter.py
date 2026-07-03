@@ -45,6 +45,33 @@ class PublicExporter:
         PUBLIC_DIR.mkdir(exist_ok=True)
         self._write_memory_health(run_status)
 
+    def write_run_history(self, limit: int = 200) -> None:
+        """Export the durable run history (most recent first) for the dashboard."""
+        from src.storage.run_history_store import RunHistoryStore
+
+        PUBLIC_DIR.mkdir(exist_ok=True)
+        runs = RunHistoryStore().load()
+        payload = {
+            "updated_at": _utc_now(),
+            "count": len(runs),
+            "runs": [self._summarize_run(r) for r in reversed(runs[-limit:])],
+        }
+        (PUBLIC_DIR / "run_history.json").write_text(json.dumps(payload, indent=2))
+
+    def _summarize_run(self, run_status: dict) -> dict:
+        llm = run_status.get("llm") or {}
+        return {
+            "run_id": run_status.get("run_id"),
+            "status": run_status.get("status"),
+            "completed_at": run_status.get("completed_at"),
+            "trades_executed": run_status.get("trades_executed", 0),
+            "warnings": len(run_status.get("warnings", [])),
+            "portfolio_value": run_status.get("portfolio_value"),
+            "llm_cost_usd": llm.get("cost_usd", 0.0),
+            "llm_calls": llm.get("calls", 0),
+            "llm_latency_ms": llm.get("latency_ms", 0.0),
+        }
+
     def update_latest_tweet_status(self, publish_result: dict) -> None:
         PUBLIC_DIR.mkdir(exist_ok=True)
         path = PUBLIC_DIR / "latest_tweet.json"

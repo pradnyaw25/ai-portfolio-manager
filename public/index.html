@@ -896,6 +896,10 @@
               <div class="run-status-value" id="run-trades">Loading...</div>
             </div>
             <div class="run-status-item">
+              <div class="run-status-label">LLM Cost</div>
+              <div class="run-status-value" id="run-llm-cost">Loading...</div>
+            </div>
+            <div class="run-status-item">
               <div class="run-status-label">Run ID</div>
               <div class="run-status-value" id="run-id">Loading...</div>
             </div>
@@ -1124,10 +1128,13 @@
           `${status.trades_executed ?? 0} executed`;
         document.getElementById("run-warnings").textContent =
           `${warnings.length} warnings`;
+        const llm = status.llm || {};
+        document.getElementById("run-llm-cost").textContent =
+          `$${(llm.cost_usd ?? 0).toFixed(4)} / ${llm.calls ?? 0} calls`;
       } catch (e) {
         pill.textContent = "Run status: Unavailable";
         pill.className = "status-pill error";
-        ["run-status", "run-id", "run-completed", "run-memory", "run-trades", "run-warnings"]
+        ["run-status", "run-id", "run-completed", "run-memory", "run-trades", "run-warnings", "run-llm-cost"]
           .forEach(id => document.getElementById(id).textContent = "Unavailable");
       }
     }

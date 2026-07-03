@@ -176,3 +176,19 @@ def test_call_is_logged_to_jsonl(tmp_path, monkeypatch):
     assert record["prompt_tokens"] == 10
     assert record["completion_tokens"] == 20
     assert record["est_cost_usd"] > 0
+
+
+def test_call_is_tagged_with_current_run_id(tmp_path, monkeypatch):
+    from src.llm.context import set_run_id
+
+    log_path = tmp_path / "calls.jsonl"
+    monkeypatch.setattr(gateway_module, "LLM_CALL_LOG", log_path)
+    set_run_id("run_abc")
+    try:
+        gw, _ = _gateway([json.dumps({"action": "deploy"})])
+        gw.complete_structured([{"role": "user", "content": "x"}], RebalanceResponse)
+    finally:
+        set_run_id(None)
+
+    record = json.loads(log_path.read_text().strip().splitlines()[0])
+    assert record["run_id"] == "run_abc"
