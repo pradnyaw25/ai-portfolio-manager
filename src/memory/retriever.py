@@ -112,8 +112,18 @@ class FundMemoryRetriever:
         }
 
     def _search(self, query: str, k: int, flt: Any = None) -> list[dict]:
-        kwargs = {"filter": flt} if flt is not None else {}
-        docs = self.store.similarity_search(query, k=k, **kwargs)
+        if flt is not None:
+            try:
+                docs = self.store.similarity_search(query, k=k, filter=flt)
+                return [serialize_memory_doc(doc) for doc in docs]
+            except Exception as exc:
+                # A server-side payload filter can fail if Qdrant has no index for
+                # the field (e.g. metadata.symbols). Fall back to an unfiltered
+                # search — `_filter_memories` still narrows by type/symbol in Python.
+                logger.warning(
+                    "Server-side memory filter failed (%s); retrying unfiltered", exc
+                )
+        docs = self.store.similarity_search(query, k=k)
         return [serialize_memory_doc(doc) for doc in docs]
 
 
