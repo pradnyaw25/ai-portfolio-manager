@@ -37,3 +37,7 @@ class PortfolioRunState:
     # Notes on conditional-routing decisions (empty decision, no approved trades,
     # memory unavailable, execution failure), surfaced in run_status.
     diagnostics: dict = field(default_factory=dict)
+    # Durable progress tracking for crash recovery (P1-2). ``resumed`` is True when
+    # re-entering a run that a prior process left unfinished.
+    progress: Any | None = None
+    resumed: bool = False

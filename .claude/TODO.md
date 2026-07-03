@@ -84,12 +84,28 @@ Goal: LangGraph is *the* runner; every run is fully visible.
 * Acceptance: one orchestrator remains; CI uses it; `tests/test_daily_graph_integration.py`
   drives all 17 nodes in order to a success run_status.
 
-### P1-2. Checkpointing and conditional routing
-* Output: SQLite-backed LangGraph checkpointer; explicit graph branches for
-  memory-unavailable, empty-decision, all-trades-rejected, and execution-failure,
-  each still exporting run status and diagnostics.
-* Acceptance: killing the process mid-run and resuming completes the run without
-  duplicate trades or journal entries.
+### P1-2. Checkpointing and conditional routing — DONE
+* Output (shipped as two PRs):
+  * **PR 1/2 — conditional routing.** A semantic branch after `check_rebalance`: with
+    no approved trades (empty decision or all rejected), skip
+    human_approval/execute/track and route straight to `journal_run`, still exporting
+    run status. Branch conditions (empty decision, no approved trades, memory
+    unavailable, execution failure) recorded on `run_state.diagnostics` →
+    `run_status["diagnostics"]`.
+  * **PR 2/2 — durable resume.** Since the graph state carries non-serializable live
+    handles (the P1-3 blocker), LangGraph's native checkpointer isn't usable; instead a
+    SQLite `RunProgressStore` persists per-run phase completion. `run_daily_cycle_graph
+    (resume=True)` (and `scripts/daily_run.py --resume`) re-enters the most recent
+    unfinished run **reusing its run_id**, so the P0-3 idempotent stores dedupe
+    re-executed writes. The one non-idempotent external side effect (tweet publish) is
+    skipped on resume if already completed.
+* Note: chose idempotency-based resume over the large state-refactor needed for
+  LangGraph's native `SqliteSaver` (documented tradeoff; the durable store is still
+  SQLite-backed).
+* Acceptance: verified — resume reuses the unfinished run_id and completes, marking it
+  done; an already-published tweet is not re-posted; the router skips execution on no
+  approved trades but still journals + exports. Covered by `tests/test_run_progress.py`
+  (6) and `tests/test_daily_graph_routing.py` (4).
 
 ### P1-3. Human-in-the-loop approval gate — DONE (in-process)
 * Output: a `human_approval` graph node between rebalance and execution. With
