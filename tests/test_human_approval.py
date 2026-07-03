@@ -130,6 +130,7 @@ def _mock_full_cycle(monkeypatch, approved):
         "mark_to_market_and_score_predictions": None,
         "build_research_context": ({}, {}),
         "retrieve_memory_context": (memres, [], {}),
+        "run_research_followup": {"brief": "b", "tool_calls": []},
         "decide_trades": {"trades": []},
         "run_grounding_check": {"status": "ok", "grounded": True, "issues": []},
         "review_risk": SimpleNamespace(approved=approved),

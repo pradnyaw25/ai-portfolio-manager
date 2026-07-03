@@ -19,6 +19,7 @@ from src.data_sources.news import NewsClient
 from src.data_sources.benchmarks import BenchmarkClient
 from src.research.market_context import MarketContextBuilder
 from src.agents.debate import run_debate
+from src.agents.research_agent import ResearchAnalyst, build_research_registry
 from src.agents.tweet_generator import TweetGeneratorAgent
 from src.agents.risk_manager import RiskManagerAgent
 from src.agents.rebalance_checker import RebalanceChecker
@@ -147,6 +148,16 @@ def extract_memory_symbols(research: dict) -> list[str]:
     return sorted(set(symbols))
 
 
+def run_research_followup(engine, market_data, news_client, research, memory_context):
+    """Tool-calling research agent — targeted follow-up that augments the base
+    context with a brief (merged into ``research``) and its tool-call trace."""
+    snapshot = engine.get_snapshot()
+    registry = build_research_registry(market_data, news_client, snapshot)
+    brief = ResearchAnalyst().investigate(research, registry)
+    research["research_brief"] = brief.get("brief", "")
+    return brief
+
+
 def decide_trades(engine, research, benchmark_client, memory_context):
     return run_debate(
         portfolio=engine.get_snapshot(),
@@ -221,6 +232,7 @@ def journal_run(
     memory_context,
     memory_result,
     grounding=None,
+    research_brief=None,
     run_id,
 ):
     citation_review = review_memory_citations(
@@ -241,6 +253,7 @@ def journal_run(
         memory_citations=citation_review.to_dict()["citations"],
         memory_citation_warnings=citation_review.warnings,
         grounding=grounding,
+        research_brief=research_brief,
         run_id=run_id,
     )
 

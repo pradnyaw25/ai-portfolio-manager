@@ -621,6 +621,20 @@
           </div>`;
         }
 
+        const research = entry.research_brief || {};
+        if (research.brief || (research.tool_calls && research.tool_calls.length)) {
+          const toolCalls = research.tool_calls || [];
+          const toolList = toolCalls.map(tc => {
+            const ok = tc.outcome && tc.outcome.ok;
+            return `<li><code>${escapeHtml(tc.name)}(${escapeHtml(tc.arguments || "")})</code> ${ok ? "✓" : "✗"}</li>`;
+          }).join("");
+          html += `<div class="section">
+            <h3>Research Trace</h3>
+            ${research.brief ? `<p>${escapeHtml(research.brief)}</p>` : ""}
+            ${toolList ? `<div class="muted">Tool calls:</div><ul>${toolList}</ul>` : ""}
+          </div>`;
+        }
+
         const debate = decision.debate || {};
         const debateRoles = ["bull", "bear", "risk"].filter(r => debate[r] && debate[r].thesis);
         if (debateRoles.length) {
