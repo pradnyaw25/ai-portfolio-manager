@@ -288,11 +288,20 @@ Goal: RAG worth writing about, with measured retrieval quality.
 
 Goal: make the system legible to outsiders.
 
-### P5-1. MCP server for the fund
-* Output: `mcp/` server exposing read-only tools: holdings, performance history,
-  decision journal, debate transcripts, memory search.
-* Acceptance: Claude Desktop/Code can answer "why did the fund sell NVDA in June?"
-  against real data.
+### P5-1. MCP server for the fund — DONE
+* Output: a read-only FastMCP server (`mcp_server/`, `make mcp`) with 7 tools —
+  `get_holdings`, `get_performance_history`, `list_trades`, `list_decisions`,
+  `get_decision`, `get_debate`, `search_memory` — over the existing stores. Query
+  logic lives in `mcp_server/fund_data.py` (plain, injectable, no `mcp` import so it's
+  unit-testable); `mcp_server/server.py` wires them into FastMCP. Named `mcp_server`
+  (not `mcp`) to avoid shadowing the SDK; `pip install -e .` package discovery made
+  explicit. `mcp` added to deps; client config snippet in `mcp_server/README.md`.
+* Note: no tool can mutate state (read-only by construction). `search_memory` degrades
+  to `unavailable` when Qdrant/embeddings are offline.
+* Acceptance: verified — the tool chain answers "why did the fund sell NVDA?": a real
+  `list_trades(symbol="NVDA", action="SELL")` finds the trade, and `get_decision` /
+  `get_debate` return that run's reasoning. Covered by `tests/test_mcp_fund_data.py`
+  (9 tests) with fake stores.
 
 ### P5-2 ∥. Risk Engine V2 — DONE
 * Output:
