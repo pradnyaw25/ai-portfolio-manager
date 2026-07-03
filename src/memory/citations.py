@@ -10,6 +10,9 @@ MEMORY_ID_PREFIXES = (
     "macro_regime:",
     "mistake:",
     "earnings_event:",
+    # Knowledge-source memories (SEC filings) are citable too.
+    "10k:",
+    "10q:",
 )
 
 

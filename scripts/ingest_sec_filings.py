@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Ingest latest SEC 10-K sections for watchlist companies into memory."""
+"""Ingest latest SEC filings (10-K, 10-Q, 8-K earnings) for watchlist companies."""
 
 import argparse
 import json
@@ -10,21 +10,81 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.config import DATA_DIR, WATCHLIST
-from src.data_sources.sec_edgar import SECEdgarClient, extract_10k_sections
+from src.data_sources.sec_edgar import (
+    SECEdgarClient,
+    extract_10k_sections,
+    extract_10q_sections,
+    extract_earnings_release_text,
+)
 from src.memory.ingestion_service import MemoryIngestionService
-from src.memory.sec_filings import filing_sections_to_memory_records
+from src.memory.sec_filings import (
+    earnings_release_to_memory_records,
+    filing_sections_to_memory_records,
+)
 
 SKIP_SYMBOLS = {"SPY", "QQQ", "^VIX"}
 DEFAULT_SUMMARY_PATH = DATA_DIR / "memory_sec_filings.json"
+DEFAULT_FORMS = ["10-K", "10-Q", "8-K"]
+
+
+def _ingest_periodic(client, symbol, cik, args, *, form_label, get_filing, extract):
+    """Ingest a 10-K or 10-Q: fetch, extract sections, build chunked records."""
+    filing = get_filing(symbol, cik)
+    if filing is None:
+        return [], {"symbol": symbol, "form": form_label, "reason": f"no recent {form_label}"}
+    html = client.fetch_filing_html(filing, refresh=args.refresh_filings)
+    sections = extract(html)
+    records = filing_sections_to_memory_records(filing=filing, sections=sections)
+    return records, {
+        "symbol": symbol,
+        "form": form_label,
+        "accession_number": filing.accession_number,
+        "filing_date": filing.filing_date,
+        "sections": sorted(sections),
+        "records": len(records),
+    }
+
+
+def _ingest_earnings(client, symbol, cik, args):
+    """Ingest the latest 8-K earnings release (EX-99 exhibit)."""
+    filing = client.get_latest_earnings_8k(symbol, cik)
+    if filing is None:
+        return [], {"symbol": symbol, "form": "8-K", "reason": "no earnings 8-K"}
+    html = client.fetch_earnings_release_html(filing, refresh=args.refresh_filings)
+    if not html:
+        return [], {"symbol": symbol, "form": "8-K", "reason": "no EX-99 earnings exhibit"}
+    records = earnings_release_to_memory_records(
+        filing=filing, text=extract_earnings_release_text(html)
+    )
+    return records, {
+        "symbol": symbol,
+        "form": "8-K",
+        "accession_number": filing.accession_number,
+        "filing_date": filing.filing_date,
+        "records": len(records),
+    }
 
 
 def main() -> int:
     args = parse_args()
     symbols = [symbol.upper() for symbol in (args.symbols or WATCHLIST)]
     symbols = [symbol for symbol in symbols if symbol not in SKIP_SYMBOLS]
+    forms = [f.upper() for f in args.forms]
 
     client = SECEdgarClient(request_pause_seconds=args.pause)
     cik_by_ticker = client.load_company_tickers(refresh=args.refresh_tickers)
+
+    ingestors = {
+        "10-K": lambda s, c: _ingest_periodic(
+            client, s, c, args, form_label="10-K",
+            get_filing=client.get_latest_10k, extract=extract_10k_sections,
+        ),
+        "10-Q": lambda s, c: _ingest_periodic(
+            client, s, c, args, form_label="10-Q",
+            get_filing=client.get_latest_10q, extract=extract_10q_sections,
+        ),
+        "8-K": lambda s, c: _ingest_earnings(client, s, c, args),
+    }
 
     records = []
     skipped = []
@@ -36,25 +96,13 @@ def main() -> int:
             skipped.append({"symbol": symbol, "reason": "missing CIK mapping"})
             continue
 
-        filing = client.get_latest_10k(symbol, cik)
-        if filing is None:
-            skipped.append({"symbol": symbol, "reason": "no recent 10-K found"})
-            continue
-
-        html = client.fetch_filing_html(filing, refresh=args.refresh_filings)
-        sections = extract_10k_sections(html)
-        filing_records = filing_sections_to_memory_records(filing=filing, sections=sections)
-        records.extend(filing_records)
-        processed.append(
-            {
-                "symbol": symbol,
-                "cik": cik,
-                "accession_number": filing.accession_number,
-                "filing_date": filing.filing_date,
-                "sections": sorted(sections),
-                "records": len(filing_records),
-            }
-        )
+        for form in forms:
+            ingestor = ingestors.get(form)
+            if ingestor is None:
+                continue
+            filing_records, entry = ingestor(symbol, cik)
+            records.extend(filing_records)
+            (skipped if "reason" in entry else processed).append(entry)
 
     result = MemoryIngestionService().ingest_records(records)
     payload = {
@@ -86,6 +134,12 @@ def parse_args():
         "--refresh-filings",
         action="store_true",
         help="Refetch filings even if cached locally.",
+    )
+    parser.add_argument(
+        "--forms",
+        type=lambda v: [f.strip() for f in v.split(",") if f.strip()],
+        default=DEFAULT_FORMS,
+        help="Comma-separated forms to ingest (default: 10-K,10-Q,8-K).",
     )
     parser.add_argument(
         "--pause",

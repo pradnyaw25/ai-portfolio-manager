@@ -70,14 +70,14 @@ class FundMemoryRetriever:
             symbol_query,
             k=k_per_group * 2,
             flt=build_qdrant_filter(
-                memory_types={"thesis", "report_summary"},
+                memory_types={"thesis", "report_summary", "earnings_event"},
                 symbols=symbols,
             ),
         )
         return {
             "symbol_theses": _filter_memories(
                 symbol_candidates,
-                memory_types={"thesis", "report_summary"},
+                memory_types={"thesis", "report_summary", "earnings_event"},
                 symbols=symbols,
                 limit=k_per_group,
             ),
