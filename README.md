@@ -232,6 +232,21 @@ it was grounded in — and ingests them. Memory ids are deterministic per
 duplicating. Because the lessons are `risk_lesson` / `mistake` memories, they
 surface in the next daily run's `risk_lessons` retrieval group.
 
+### Risk Engine V2
+
+Beyond per-position sizing and daily turnover, the deterministic risk layer adds:
+
+- **Sector-concentration limits** — the `RiskManagerAgent` caps BUYs so no single
+  GICS sector (`config/sectors.yaml`) exceeds `MAX_SECTOR_CONCENTRATION` (default
+  40%) of the portfolio; a breaching BUY is trimmed or rejected. Applies wherever
+  risk review runs, including rebalance deployment.
+- **Stop-loss / take-profit exits** — before risk review, `generate_risk_events`
+  scans marked-to-market positions and emits **system** SELLs for any position down
+  more than `STOP_LOSS_PCT` (15%) or up more than `TAKE_PROFIT_PCT` (40%) from cost
+  basis. These take precedence over any LLM trade for the same symbol, flow through
+  the same guardrails and execution path, and are journaled as first-class risk
+  events (`risk_events`, `origin="system"`).
+
 Do not commit `.env` or real API keys.
 
 ## Roadmap

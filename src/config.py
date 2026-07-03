@@ -38,6 +38,13 @@ REBALANCE_TURNOVER = float(os.getenv("REBALANCE_TURNOVER", "0.75"))
 TARGET_CASH_PCT = float(os.getenv("TARGET_CASH_PCT", "0.25"))
 REBALANCE_MIN_DEPLOY_PCT = float(os.getenv("REBALANCE_MIN_DEPLOY_PCT", "0.05"))
 
+# Risk Engine V2. Cap exposure to any single GICS sector (config/sectors.yaml),
+# and auto-exit positions that breach a stop-loss or take-profit threshold
+# (fraction of cost basis).
+MAX_SECTOR_CONCENTRATION = float(os.getenv("MAX_SECTOR_CONCENTRATION", "0.40"))
+STOP_LOSS_PCT = float(os.getenv("STOP_LOSS_PCT", "0.15"))
+TAKE_PROFIT_PCT = float(os.getenv("TAKE_PROFIT_PCT", "0.40"))
+
 BENCHMARK_SYMBOLS = [
     s.strip()
     for s in os.getenv("BENCHMARK_SYMBOLS", "SPY,QQQ").split(",")
@@ -165,6 +172,12 @@ def validate_config() -> None:
     check_fraction("REBALANCE_TURNOVER", REBALANCE_TURNOVER)
     check_fraction("TARGET_CASH_PCT", TARGET_CASH_PCT)
     check_fraction("REBALANCE_MIN_DEPLOY_PCT", REBALANCE_MIN_DEPLOY_PCT)
+    check_fraction("MAX_SECTOR_CONCENTRATION", MAX_SECTOR_CONCENTRATION)
+
+    if STOP_LOSS_PCT <= 0:
+        errors.append(f"STOP_LOSS_PCT must be positive, got {STOP_LOSS_PCT}")
+    if TAKE_PROFIT_PCT <= 0:
+        errors.append(f"TAKE_PROFIT_PCT must be positive, got {TAKE_PROFIT_PCT}")
 
     if INITIAL_CAPITAL <= 0:
         errors.append(f"INITIAL_CAPITAL must be positive, got {INITIAL_CAPITAL}")
