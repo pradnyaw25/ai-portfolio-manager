@@ -1,0 +1,122 @@
+[
+  {
+    "id": "supply_chain_asia",
+    "query": "reliance on a limited number of contract manufacturers located in Asia",
+    "answer": "A significant portion of our final hardware assembly depends on a limited number of contract manufacturers located in Asia. This geographic concentration exposes us to regional disruptions, including natural disasters, labor disputes, and public health events that could interrupt supply and delay shipments.",
+    "distractor": "We rely on a limited number of suppliers for certain display components, and pricing negotiations with these suppliers can affect our gross margins each quarter."
+  },
+  {
+    "id": "fx_international_revenue",
+    "query": "foreign currency exchange rate fluctuations impact on international revenue",
+    "answer": "Because more than half of our net sales are generated outside the United States, foreign currency exchange rate fluctuations can materially impact our reported international revenue and gross margin when local-currency results are translated into US dollars.",
+    "distractor": "Foreign currency movements also affect the fair value of our marketable securities portfolio and the settlement value of outstanding hedging instruments."
+  },
+  {
+    "id": "data_center_gpu_demand",
+    "query": "demand for data center accelerators and GPUs from large cloud customers",
+    "answer": "Demand for our data center accelerators and GPUs is driven primarily by a small number of large cloud customers deploying generative AI training and inference clusters. A pause in their capital spending could cause our data center revenue to decline sharply.",
+    "distractor": "Gaming GPU demand tends to be seasonal and is driven by consumer upgrade cycles and new title releases rather than enterprise cloud spending."
+  },
+  {
+    "id": "customer_concentration",
+    "query": "revenue concentration among a small number of large customers",
+    "answer": "A substantial share of our revenue is concentrated among a small number of large customers. The loss of any one of these customers, or a material reduction in their orders, would have a disproportionate adverse effect on our results of operations.",
+    "distractor": "We serve a broad base of small and medium business customers through our online store, and their aggregate purchasing behavior is difficult to forecast."
+  },
+  {
+    "id": "cybersecurity_breach",
+    "query": "risk of a cybersecurity breach exposing customer data",
+    "answer": "A cybersecurity breach that exposes customer data could subject us to regulatory investigations, litigation, and reputational harm. Our systems and those of our vendors are frequent targets of sophisticated attacks, and our defenses may not prevent every intrusion.",
+    "distractor": "We invest in physical security at our data centers, including biometric access controls and redundant power, to protect against theft and environmental damage."
+  },
+  {
+    "id": "regulatory_antitrust",
+    "query": "antitrust and competition regulatory scrutiny of our platform",
+    "answer": "We face increasing antitrust and competition regulatory scrutiny of our platform in multiple jurisdictions. Adverse rulings could force changes to our business practices, limit acquisitions, or result in significant fines that affect profitability.",
+    "distractor": "Environmental regulations governing emissions and packaging waste in certain jurisdictions require ongoing compliance investment across our facilities."
+  },
+  {
+    "id": "gross_margin_pressure",
+    "query": "gross margin pressure from rising component and input costs",
+    "answer": "Our gross margin is sensitive to rising component and input costs, including memory, logic, and commodity materials. When we are unable to pass these increases through to customers, our margins compress and profitability declines.",
+    "distractor": "Operating margin can also be affected by increased research and development spending as we invest ahead of new product cycles."
+  },
+  {
+    "id": "key_personnel",
+    "query": "dependence on key engineering personnel and talent retention",
+    "answer": "Our success depends on retaining key engineering personnel in a highly competitive labor market. The loss of senior technical talent, or an inability to hire specialized AI researchers, could slow our product roadmap and impair our competitive position.",
+    "distractor": "We maintain succession plans for our executive officers and provide equity incentives designed to align management with long-term shareholder interests."
+  },
+  {
+    "id": "inventory_obsolescence",
+    "query": "inventory obsolescence risk from rapid product transitions",
+    "answer": "Rapid product transitions expose us to inventory obsolescence risk. If we misjudge demand for a product generation, we may be required to write down excess inventory, which would reduce gross margin and earnings in the affected period.",
+    "distractor": "We use contract manufacturers to hold buffer inventory of long-lead-time parts, which can increase our purchase commitments and working capital needs."
+  },
+  {
+    "id": "litigation_ip",
+    "query": "intellectual property litigation and patent infringement claims",
+    "answer": "We are subject to intellectual property litigation, including patent infringement claims brought by non-practicing entities. Defending these claims is costly, and an adverse judgment could require us to pay damages or redesign products.",
+    "distractor": "We hold a large portfolio of patents and periodically license our own intellectual property to third parties in exchange for royalty revenue."
+  },
+  {
+    "id": "climate_operations",
+    "query": "physical climate risk to manufacturing operations and facilities",
+    "answer": "Physical climate risk, including flooding, wildfire, and extreme heat, threatens our manufacturing operations and facilities. A severe event affecting a critical site could halt production for an extended period and disrupt customer deliveries.",
+    "distractor": "We have set greenhouse gas reduction targets and purchase renewable energy credits to reduce the carbon intensity of our data center operations."
+  },
+  {
+    "id": "interest_rate_debt",
+    "query": "interest rate increases raising the cost of our variable rate debt",
+    "answer": "A meaningful portion of our outstanding debt carries variable interest rates. Rising benchmark interest rates increase our interest expense, reduce net income, and could constrain our ability to refinance maturing obligations on favorable terms.",
+    "distractor": "Higher interest rates also tend to increase the discount rate applied to our pension obligations, which can lower the present value of those liabilities."
+  },
+  {
+    "id": "cloud_outage_reliability",
+    "query": "service outages and reliability failures in our cloud infrastructure",
+    "answer": "Service outages and reliability failures in our cloud infrastructure could cause customers to lose confidence and migrate workloads to competitors. Our service level agreements expose us to credits and penalties when availability targets are missed.",
+    "distractor": "We continuously expand data center capacity in new regions to reduce latency for customers, which increases our depreciation and construction commitments."
+  },
+  {
+    "id": "advertising_demand_cyclical",
+    "query": "cyclical advertising demand sensitivity to macroeconomic downturns",
+    "answer": "The majority of our revenue comes from advertising, which is cyclical and highly sensitive to macroeconomic downturns. When advertisers cut budgets during a recession, our revenue can decline rapidly and with little advance warning.",
+    "distractor": "Advertising measurement changes driven by privacy platform updates have made it harder for advertisers to attribute conversions to specific campaigns."
+  },
+  {
+    "id": "acquisition_integration",
+    "query": "risks integrating acquired companies and realizing expected synergies",
+    "answer": "We may fail to successfully integrate acquired companies or realize the expected synergies from acquisitions. Integration can divert management attention, and unanticipated liabilities or culture clashes could prevent us from achieving the anticipated benefits.",
+    "distractor": "Goodwill recorded from prior acquisitions is tested annually for impairment, and a sustained decline in a reporting unit could trigger a non-cash charge."
+  },
+  {
+    "id": "single_product_dependence",
+    "query": "dependence on a single flagship product for most of our revenue",
+    "answer": "We depend on a single flagship product for the majority of our revenue. Any decline in demand for this product, whether from competition, market saturation, or changing consumer preferences, would materially harm our overall financial performance.",
+    "distractor": "Our services segment, while smaller, has grown steadily and provides recurring revenue that partially offsets hardware sales seasonality."
+  },
+  {
+    "id": "export_controls_china",
+    "query": "export control restrictions limiting sales of advanced chips to China",
+    "answer": "New export control restrictions limit our ability to sell advanced chips to customers in China, a significant market. These rules can change with little notice, and further tightening could reduce our addressable market and strand inventory built for those customers.",
+    "distractor": "Tariffs on imported components raise our landed cost of goods and require us to evaluate alternative sourcing and country-of-origin strategies."
+  },
+  {
+    "id": "warranty_product_defects",
+    "query": "product defects leading to warranty claims and recalls",
+    "answer": "Undetected product defects could lead to widespread warranty claims and recalls. A large recall would be expensive, damage our brand, and could expose us to product liability litigation that exceeds our warranty reserves.",
+    "distractor": "We offer extended service plans that generate deferred revenue recognized over the coverage period, independent of underlying defect rates."
+  },
+  {
+    "id": "liquidity_covenants",
+    "query": "liquidity risk and financial covenants in our credit agreements",
+    "answer": "Our credit agreements contain financial covenants that require us to maintain specified leverage and coverage ratios. A downturn in earnings could cause us to breach these covenants, restricting access to liquidity precisely when we need it most.",
+    "distractor": "We maintain an undrawn revolving credit facility as a backstop for our commercial paper program to manage short-term working capital needs."
+  },
+  {
+    "id": "platform_dependence_appstore",
+    "query": "dependence on third party app stores and their fee policies",
+    "answer": "Our mobile business depends on third party app stores whose fee policies and review rules we do not control. An increase in platform commissions, or removal of our applications, would reduce our revenue and limit our access to users.",
+    "distractor": "We operate our own web storefront where customers can subscribe directly, which carries lower payment processing costs but attracts fewer new users."
+  }
+]

@@ -226,13 +226,28 @@ Goal: real agent architecture with the debate transcript as a product feature.
 
 Goal: RAG worth writing about, with measured retrieval quality.
 
-### P4-1. Chunking and metadata-filtered retrieval
+### P4-1. Chunking and metadata-filtered retrieval — DONE
 * Input: SEC ingestion (`scripts/ingest_sec_filings.py`, `src/memory/`).
-* Output: recursive chunk splitting of filing sections; rich payload metadata
-  (ticker, form type, item, filed date, sector); retrieval using metadata filters;
-  retrieval eval set expanded to 20+ scenarios with before/after scores.
-* Acceptance: retrieval eval score improves over the unchunked baseline and the
-  delta is documented in the eval fixtures.
+* Output (shipped as two PRs):
+  * **PR 1/2 — ingestion.** `src/memory/chunking.py` (`RecursiveCharacterTextSplitter`,
+    ~1k-char overlapping chunks, capped + logged). `filing_sections_to_memory_records`
+    emits one record/vector per chunk with a deterministic id
+    (`10k:{ticker}:{accession}:{item}:{NNNN}`) and payload metadata (item, form,
+    filing date, `chunk_index`, `total_chunks`, `sector`). Sector comes from a
+    repo-owned `config/sectors.yaml` via `config.sector_for()`. 12k truncation lifted
+    to a `SECTION_MAX_CHARS` pre-chunk cap.
+  * **PR 2/2 — retrieval + eval.** `build_qdrant_filter` pushes symbol/type/sector
+    constraints into Qdrant (langchain-nested payload keys) instead of Python
+    post-filtering; `_filter_memories` retained as a deterministic guard.
+    `FundMemoryRetriever` accepts an injected store. A deterministic offline eval
+    (`src/memory/retrieval_eval.py` + `src/memory/embeddings.py` hashing embedder +
+    in-memory Qdrant) compares chunked vs unchunked over 20 scenarios; `make
+    chunking-eval` runs it and gates on improvement.
+* Acceptance: verified — over 20 scenarios chunking lifts hit@1 0.15→1.00, MRR
+  0.26→1.00, recall@5 0.45→1.00; before/after committed at
+  `tests/fixtures/memory_evals/chunking_baseline.json`. Covered by
+  `tests/test_chunking.py`, `tests/test_embeddings.py`, `tests/test_retrieval_filters.py`,
+  `tests/test_retrieval_eval.py`, and expanded `test_sec_filings.py`/`test_config.py`.
 
 ### P4-2 ∥. Additional knowledge sources
 * Output: earnings-call transcript and 10-Q ingestion into the same memory schema,

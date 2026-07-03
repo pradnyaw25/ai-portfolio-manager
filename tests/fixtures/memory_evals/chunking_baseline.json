@@ -1,0 +1,26 @@
+{
+  "fixture": "tests/fixtures/memory_evals/chunking_scenarios.json",
+  "k": 5,
+  "num_scenarios": 20,
+  "chunked": {
+    "strategy": "chunked",
+    "hit_at_1": 1.0,
+    "mrr": 1.0,
+    "recall_at_k": 1.0,
+    "k": 5,
+    "num_scenarios": 20
+  },
+  "unchunked": {
+    "strategy": "unchunked",
+    "hit_at_1": 0.15,
+    "mrr": 0.255,
+    "recall_at_k": 0.45,
+    "k": 5,
+    "num_scenarios": 20
+  },
+  "improvement": {
+    "hit_at_1": 0.85,
+    "mrr": 0.745,
+    "recall_at_k": 0.55
+  }
+}

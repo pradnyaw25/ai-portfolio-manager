@@ -122,7 +122,15 @@ The weekly SEC 10-K ingestion (`scripts/ingest_sec_filings.py`) extracts Items 1
 so retrieval surfaces the specific passage that answers a query. Each chunk is its
 own record with a deterministic id (`10k:{ticker}:{accession}:{item}:{chunk}`) and
 rich payload metadata (ticker, form, item, filing date, and **sector** from
-`config/sectors.yaml`) for metadata-filtered retrieval.
+`config/sectors.yaml`). Retrieval pushes symbol/type/sector constraints into Qdrant
+as payload filters (`build_qdrant_filter`) instead of over-fetching and filtering in
+Python.
+
+`make chunking-eval` quantifies the payoff offline (in-memory Qdrant + a
+deterministic hashing embedder, no API key): over 20 scenarios where the answer is a
+passage buried in a section of boilerplate, chunking lifts hit@1 from 0.15 → 1.00 and
+MRR from 0.26 → 1.00 versus storing whole sections. The before/after is committed at
+`tests/fixtures/memory_evals/chunking_baseline.json`.
 
 ### Run Observability
 
