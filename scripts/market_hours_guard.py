@@ -4,24 +4,12 @@
 from __future__ import annotations
 
 import os
-from datetime import datetime, time
-from zoneinfo import ZoneInfo
+import sys
+from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
-MARKET_TZ = ZoneInfo("America/New_York")
-MARKET_OPEN = time(9, 30)
-MARKET_CLOSE = time(16, 0)
-
-
-def is_regular_market_hours(now: datetime | None = None) -> bool:
-    current = now or datetime.now(MARKET_TZ)
-    current = current.astimezone(MARKET_TZ)
-
-    if current.weekday() >= 5:
-        return False
-
-    current_time = current.time()
-    return MARKET_OPEN <= current_time < MARKET_CLOSE
+from src.utils.market_hours import is_regular_market_hours
 
 
 def _write_github_output(should_run: bool, reason: str) -> None:

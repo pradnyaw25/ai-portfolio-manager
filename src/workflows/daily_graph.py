@@ -10,6 +10,7 @@ from src.models.run_state import PortfolioRunState
 from src.observability import tracing
 from src.storage.run_progress_store import RunProgressStore
 from src.utils.logger import get_logger
+from src.utils.market_hours import is_regular_market_hours
 from src.utils.run_id import create_run_id, utc_now_iso
 from src import main as steps
 
@@ -98,12 +99,16 @@ def build_daily_cycle_graph():
 
 
 def route_after_rebalance(state: DailyGraphState) -> str:
-    """Skip the execution path when no trades were approved."""
+    """Skip execution when nothing was approved, or the market is closed."""
     run = state["run"]
     if run.errors:
         return "failed"
     if not run.approved_trades:
         run.diagnostics["execution"] = "skipped: no approved trades to execute"
+        return "skip_execution"
+    if not config.EXECUTE_OUTSIDE_MARKET_HOURS and not is_regular_market_hours():
+        run.diagnostics["execution"] = "skipped: market closed (outside regular hours)"
+        logger.info("Market closed — skipping execution of %d trade(s)", len(run.approved_trades))
         return "skip_execution"
     return "execute"
 

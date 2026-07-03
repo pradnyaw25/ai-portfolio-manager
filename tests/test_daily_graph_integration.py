@@ -37,6 +37,7 @@ EXPECTED_ORDER = [
 
 
 def test_graph_runs_full_pipeline_in_order(monkeypatch):
+    monkeypatch.setattr(daily_graph, "is_regular_market_hours", lambda: True)
     calls: list[str] = []
 
     def record(name, ret=None):
