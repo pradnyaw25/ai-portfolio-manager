@@ -4,10 +4,10 @@ from typing import Any
 from langchain_openai import OpenAIEmbeddings
 from langchain_qdrant import QdrantVectorStore
 
-from src.config import QDRANT_API_KEY, QDRANT_URL
+from src.config import QDRANT_API_KEY, QDRANT_COLLECTION, QDRANT_URL
 from src.utils.logger import get_logger
 
-COLLECTION_NAME = "fund_memory"
+COLLECTION_NAME = QDRANT_COLLECTION
 
 logger = get_logger(__name__)
 
