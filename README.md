@@ -35,6 +35,7 @@ Common local workflows are available through `make`:
 
 ```bash
 make test
+make eval
 make run
 make dashboard PORT=8001
 make ingest-memory
@@ -42,6 +43,18 @@ make status
 ```
 
 The daily cycle runs as a LangGraph workflow (`src/workflows/daily_graph.py`); `make run` and the scheduled GitHub Action both invoke it via `scripts/daily_run.py`.
+
+### Decision Evals
+
+`make eval` runs the portfolio manager against golden scenarios in `evals/` (bull
+market, crash, high cash, overconcentration, missing data, stale memory) and scores
+each decision with deterministic scorers (schema validity, risk compliance, citation
+validity) plus an optional LLM-as-judge grounding check. Results are persisted to
+`data/eval_results.jsonl` with the model and prompt version. A GitHub Action
+(`.github/workflows/evals.yml`) runs the evals at temperature 0 on pull requests that
+touch prompts, schemas, or the agent — so a change that breaks the prompt fails CI.
+Running live needs `OPENAI_API_KEY`; the scorers and runner are fully unit-tested
+without one.
 
 ## Project Structure
 

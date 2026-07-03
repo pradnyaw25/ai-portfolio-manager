@@ -1,13 +1,14 @@
 PYTHON ?= .venv/bin/python
 PORT ?= 8000
 
-.PHONY: help install test run dashboard ingest-memory ingest-sec-filings memory-eval market-hours benchmark backfill status
+.PHONY: help install test eval run dashboard ingest-memory ingest-sec-filings memory-eval market-hours benchmark backfill status
 
 help:
 	@echo "AI Portfolio Manager commands"
 	@echo ""
 	@echo "  make install         Install project dependencies into the active Python env"
 	@echo "  make test            Run the test suite"
+	@echo "  make eval            Run the decision eval harness (needs OPENAI_API_KEY)"
 	@echo "  make run             Run the daily portfolio cycle through LangGraph"
 	@echo "  make dashboard       Serve public/ locally on PORT (default: 8000)"
 	@echo "  make ingest-memory   Ingest existing reports into Qdrant memory"
@@ -23,6 +24,9 @@ install:
 
 test:
 	$(PYTHON) -m pytest -q
+
+eval:
+	LLM_TEMPERATURE=0 $(PYTHON) -m evals.runner
 
 run:
 	$(PYTHON) scripts/daily_run.py

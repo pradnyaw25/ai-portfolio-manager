@@ -102,14 +102,22 @@ Goal: LangGraph is *the* runner; every run is fully visible.
 
 Goal: measure the AI, don't just run it.
 
-### P2-1. Decision eval harness in CI
-* Output: `evals/` with 6+ golden scenarios (fixture market context + portfolio
-  state): bull market, crash, high cash, overconcentration, missing data, stale
-  memory. Deterministic scorers (schema validity, risk compliance, citation
-  validity) plus an LLM-as-judge grounding scorer. `make eval` target and a CI job
-  gating prompt/schema changes. Track results across models and prompt versions.
-* Acceptance: an intentionally broken prompt fails CI; eval results are persisted
-  per run with model + prompt version.
+### P2-1. Decision eval harness in CI — DONE
+* Output: `evals/` with 6 golden scenarios (bull market, crash, high cash,
+  overconcentration, missing data, stale memory). Deterministic scorers
+  (`evals/scorers.py`: schema validity, risk compliance, citation validity) plus an
+  optional LLM-as-judge grounding scorer (`evals/grounding.py`). `evals/runner.py`
+  runs the real agent, scores each decision, and persists a per-run summary with
+  model + prompt version to `data/eval_results.jsonl`; exits non-zero if any
+  scenario fails. `make eval` target (temperature 0) and `.github/workflows/evals.yml`
+  gating PRs that touch prompts/schemas/agent.
+* Note: the harness runs the live model in CI (deterministic scorers are the hard
+  gate — robust to wording; grounding is a soft signal, non-gating on judge error).
+  Everything is injectable, so `tests/test_evals.py` covers scorers + the full gate
+  with a fake decide/judge and no API key.
+* Acceptance: verified — a broken decision (off-universe trades, or decide raising)
+  drives the runner to 0/6 and a non-zero exit; results persist with model +
+  prompt version. Covered by `tests/test_evals.py` (16 tests).
 
 ### P2-2 ∥. Prediction calibration metrics — DONE
 * Output: `src/scoring/calibration.py` computes Brier score, a bucketed calibration
