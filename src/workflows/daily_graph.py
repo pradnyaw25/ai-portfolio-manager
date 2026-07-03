@@ -8,6 +8,7 @@ from src.config import validate_config
 from src.llm.context import set_run_id
 from src.models.run_state import PortfolioRunState
 from src.observability import tracing
+from src.storage.run_progress_store import RunProgressStore
 from src.utils.logger import get_logger
 from src.utils.run_id import create_run_id, utc_now_iso
 from src import main as steps
@@ -107,18 +108,39 @@ def route_after_rebalance(state: DailyGraphState) -> str:
     return "execute"
 
 
-def run_daily_cycle_graph() -> PortfolioRunState:
+def run_daily_cycle_graph(*, resume: bool = False, progress=None) -> PortfolioRunState:
     validate_config()
+    progress = progress or RunProgressStore()
+
     state = create_initial_state()
     run = state["run"]
+
+    # Resume: if a prior process left a run unfinished, re-enter it with the SAME
+    # run_id so the idempotent stores (P0-3) dedupe re-executed writes.
+    if resume:
+        unfinished = progress.latest_unfinished()
+        if unfinished:
+            run.run_id = unfinished["run_id"]
+            run.started_at = unfinished["started_at"]
+            run.resumed = True
+            logger.info("Resuming unfinished run_id=%s", run.run_id)
+        else:
+            logger.info("Resume requested but no unfinished run found; starting fresh")
+
+    run.progress = progress
     set_run_id(run.run_id)
-    logger.info("Starting LangGraph daily portfolio cycle run_id=%s", run.run_id)
+    progress.start_run(run.run_id, run.started_at)
+    logger.info(
+        "Starting LangGraph daily portfolio cycle run_id=%s resumed=%s",
+        run.run_id, run.resumed,
+    )
 
     with tracing.trace_run(run.run_id):
         result = build_daily_cycle_graph().invoke(state)
     final_run = result["run"]
 
     steps.record_run_history(final_run.run_status)
+    progress.finish_run(final_run.run_id, "failed" if final_run.errors else "completed")
 
     if final_run.errors:
         logger.error(
@@ -148,7 +170,11 @@ def guarded_node(
 
         with tracing.span(node_name):
             try:
-                return node_func(state)
+                result = node_func(state)
+                # Durably record the completed phase for crash recovery.
+                if run.progress is not None:
+                    run.progress.mark_phase(run.run_id, node_name)
+                return result
             except Exception as exc:
                 logger.exception(
                     "LangGraph node failed node=%s run_id=%s",
@@ -453,6 +479,15 @@ def export_public_artifacts_node(state: DailyGraphState) -> DailyGraphState:
 
 def publish_tweet_node(state: DailyGraphState) -> DailyGraphState:
     run = state["run"]
+
+    # Posting a tweet is the one non-idempotent external side effect: on a resumed
+    # run whose tweet already published, skip re-posting to avoid a duplicate.
+    if run.resumed and run.progress is not None and run.progress.phase_done(run.run_id, "publish_tweet"):
+        run.diagnostics["tweet"] = "skipped on resume (already published)"
+        run.run_status["diagnostics"] = dict(run.diagnostics)
+        steps.export_run_status(run.run_status)
+        return {"run": run}
+
     try:
         run.tweet_publish_result = steps.publish_tweet(
             run.tweet,

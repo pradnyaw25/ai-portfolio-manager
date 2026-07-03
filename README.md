@@ -161,6 +161,22 @@ survives across runs rather than only showing the latest.
 Per-run LLM cost/latency is aggregated from the gateway's call log (each call is
 tagged with its `run_id`) and included in `run_status.json` under `llm`.
 
+The graph also **routes conditionally**: an empty decision or an all-rejected risk
+review skips the execution nodes and goes straight to journaling, and each branch
+(empty decision, no approved trades, memory unavailable, execution failure) is
+recorded under `run_status.diagnostics`.
+
+### Crash Recovery (Resume)
+
+The daily graph's live state (engine, market/news clients, stores) isn't
+serializable, so instead of LangGraph's native checkpointer the run's *progress* is
+persisted to a SQLite store (`src/storage/run_progress_store.py`) — which phases have
+completed, per `run_id`. If a process dies mid-run, `python scripts/daily_run.py
+--resume` re-enters the most recent unfinished run **reusing its `run_id`**. The P0-3
+idempotent stores (trades/decisions/predictions keyed by `run_id`) make re-execution
+duplicate-free, and the one non-idempotent external side effect — publishing a tweet
+— is skipped on resume if it already went out.
+
 ### LLM Tracing (optional)
 
 Set `LANGFUSE_PUBLIC_KEY` and `LANGFUSE_SECRET_KEY` to trace each run to
