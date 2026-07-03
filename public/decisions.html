@@ -281,6 +281,20 @@
       font-style: italic;
     }
 
+    .debate-role {
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      padding: 8px 12px;
+      margin-bottom: 8px;
+      background: var(--surface-subtle);
+      border-radius: 8px;
+    }
+
+    .debate-role ul {
+      margin: 6px 0 0;
+      padding-left: 18px;
+    }
+
     .outlook {
       display: inline-block;
       padding: 3px 9px;
@@ -605,6 +619,30 @@
             <h3>Risk Assessment</h3>
             <p>${escapeHtml(decision.risk_assessment)}</p>
           </div>`;
+        }
+
+        const debate = decision.debate || {};
+        const debateRoles = ["bull", "bear", "risk"].filter(r => debate[r] && debate[r].thesis);
+        if (debateRoles.length) {
+          const label = { bull: "🐂 Bull", bear: "🐻 Bear", risk: "⚠️ Risk" };
+          html += `<div class="section"><h3>Analyst Debate</h3>`;
+          html += debateRoles.map(role => {
+            const t = debate[role];
+            const points = (t.key_points || []).map(p => `<li>${escapeHtml(p)}</li>`).join("");
+            const conv = t.conviction != null ? ` · conviction ${(t.conviction * 100).toFixed(0)}%` : "";
+            return `<div class="debate-role">
+              <strong>${label[role] || role}${conv}</strong>
+              <p>${escapeHtml(t.thesis)}</p>
+              ${points ? `<ul>${points}</ul>` : ""}
+            </div>`;
+          }).join("");
+          if (decision.bear_case_response) {
+            html += `<div class="debate-role">
+              <strong>PM response to the bear case</strong>
+              <p>${escapeHtml(decision.bear_case_response)}</p>
+            </div>`;
+          }
+          html += `</div>`;
         }
 
         if (cashThesis) {

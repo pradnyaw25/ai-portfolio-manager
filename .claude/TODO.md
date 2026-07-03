@@ -149,13 +149,20 @@ Goal: measure the AI, don't just run it.
 
 Goal: real agent architecture with the debate transcript as a product feature.
 
-### P3-1. Bull/bear/risk analyst debate
-* Output: three analyst nodes (cheap model tier) producing structured theses; a PM
-  synthesis node (strong tier) whose response schema requires an explicit
-  `bear_case_response`; full debate transcript persisted in the decision journal and
-  rendered on the dashboard.
-* Acceptance: journal entries contain all four structured outputs; eval harness
-  gains at least one debate scenario.
+### P3-1. Bull/bear/risk analyst debate — DONE
+* Output: `src/agents/analysts.py` (Bull/Bear/Risk analysts, cheap tier, structured
+  `AnalystThesis`) + `src/agents/debate.py` (`run_debate` orchestrates the three then
+  the PM). The PM (strong tier) gains a required `bear_case_response` when given the
+  debate. The transcript is embedded in the decision (`debate` key), so it persists in
+  the decision journal and renders on `decisions.html` (bull/bear/risk with conviction
+  + the PM's bear-case response). `decide_trades` now calls `run_debate`.
+* Eval: added a `debate` golden scenario (`expects_debate`) routed through `run_debate`,
+  plus a `score_debate_completeness` deterministic scorer (all three theses + a
+  non-empty `bear_case_response`).
+* Acceptance: verified — decision/journal carry all four structured outputs; dashboard
+  renders the debate (checked in a browser, no console errors); eval harness has a
+  debate scenario + scorer. Covered by `tests/test_debate.py` and `tests/test_evals.py`.
+* Note: adds 3 analyst LLM calls (cheap tier) per run ahead of the PM synthesis.
 
 ### P3-2 ∥. Typed tool calling for research
 * Output: a tool registry with Pydantic input/output schemas — `get_price`,

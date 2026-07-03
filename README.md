@@ -4,6 +4,7 @@ An AI-powered portfolio management system that uses LLM agents to analyze market
 
 ## Features
 
+- **Analyst Debate**: Bull, bear, and risk analyst agents each argue a structured thesis; the portfolio manager synthesizes them and must explicitly respond to the bear case. The full debate transcript is journaled and shown on the dashboard.
 - **Portfolio Management Agent**: Makes buy/sell/hold decisions based on market data and news
 - **Research Agent**: Gathers and synthesizes market data, news, and sentiment
 - **Tweet Generator**: Creates social media content about portfolio performance
@@ -137,6 +138,15 @@ Set `LANGFUSE_PUBLIC_KEY` and `LANGFUSE_SECRET_KEY` to trace each run to
 [Langfuse](https://langfuse.com): one trace per run, with a span per graph node
 and a generation (model, tokens, cost) per LLM call. Without the keys, tracing is
 a silent no-op and never affects a run.
+
+### Analyst Debate
+
+The decision step runs a mini investment committee: `BullAnalyst`, `BearAnalyst`,
+and `RiskAnalyst` (`src/agents/analysts.py`) each produce a structured thesis on the
+cheap model tier, then the portfolio manager (strong tier) synthesizes them into the
+final decision and must fill a `bear_case_response` addressing each major bear point.
+The debate transcript is embedded in the decision, stored in the journal, and
+rendered on the decisions dashboard. See `src/agents/debate.py`.
 
 ### Grounding Check
 

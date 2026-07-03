@@ -18,6 +18,7 @@ class Scenario:
     memory: list[dict] = field(default_factory=list)
     cash_pct: float = 0.1
     expects_cash_thesis: bool = False
+    expects_debate: bool = False
 
     def tradable_symbols(self) -> list[str]:
         symbols = []
@@ -123,6 +124,22 @@ STALE_MEMORY = Scenario(
     cash_pct=0.20,
 )
 
+DEBATE = Scenario(
+    name="debate",
+    description="Mixed signals — runs the full bull/bear/risk debate; the PM must "
+    "respond to the bear case.",
+    portfolio={"total_value": 1_000_000, "cash": 150_000, "cash_pct": 0.15, "positions": [
+        {"symbol": "NVDA", "shares": 800, "avg_cost": 130, "current_price": 140},
+    ]},
+    research={"symbols": _symbols(
+        ("NVDA", 140.0, 0.06, -0.03), ("AAPL", 205.0, 0.01, 0.05),
+        ("MSFT", 430.0, -0.01, 0.02), ("SPY", 560.0, 0.00, 0.03),
+    ), "market_news": [{"title": "Chip demand strong but valuations stretched"}]},
+    benchmark={"return_pct": 0.03, "current": 560.0},
+    cash_pct=0.15,
+    expects_debate=True,
+)
+
 SCENARIOS = [
     BULL_MARKET,
     MARKET_CRASH,
@@ -130,4 +147,5 @@ SCENARIOS = [
     OVERCONCENTRATION,
     MISSING_DATA,
     STALE_MEMORY,
+    DEBATE,
 ]

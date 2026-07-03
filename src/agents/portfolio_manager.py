@@ -7,13 +7,29 @@ PROMPT_VERSION = "portfolio_manager/v1"
 
 
 class PortfolioManagerAgent:
-    def decide(self, portfolio, research, benchmark, memory=None):
+    def decide(self, portfolio, research, benchmark, memory=None, analysts=None):
         memory_block = ""
         if memory:
             memory_block = (
                 "\n\nTyped fund memory grouped by purpose:\n"
                 f"{json.dumps(memory, indent=2)}\n"
             )
+
+        debate_block = ""
+        bear_rule = ""
+        bear_field = ""
+        if analysts:
+            debate_block = (
+                "\n\nInvestment committee debate — weigh these three analyst views, "
+                "then make the final call:\n"
+                f"{json.dumps(analysts, default=str, indent=2)}\n"
+            )
+            bear_rule = (
+                "\n- You MUST explicitly address the bear analyst's case in "
+                "'bear_case_response': for each major bear point, say whether you "
+                "accept or reject it and why. Do not ignore the bear case."
+            )
+            bear_field = '\n  "bear_case_response": "...",'
 
         context = f"""
 You are an AI portfolio manager managing a simulated public $1M portfolio.
@@ -34,7 +50,7 @@ Market context:
 
 Benchmark:
 {benchmark}
-{memory_block}
+{memory_block}{debate_block}
 
 Rules:
 - Only trade symbols present in market_context.symbols.
@@ -44,7 +60,7 @@ Rules:
 - If memory influenced a conclusion, cite memory IDs in sources_used.
 - Treat risk_lessons and recent_trades as higher-priority constraints than old theses.
 - Do not output markdown.
-- Do not invent prices or facts not present in the context.
+- Do not invent prices or facts not present in the context.{bear_rule}
 
 Return ONLY valid JSON in this format:
 {{
@@ -52,7 +68,7 @@ Return ONLY valid JSON in this format:
   "market_summary": "...",
   "portfolio_assessment": "...",
   "cash_thesis": "...",
-  "risk_assessment": "...",
+  "risk_assessment": "...",{bear_field}
   "trades": [
     {{
       "symbol": "AAPL",

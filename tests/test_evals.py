@@ -5,9 +5,10 @@ import json
 from evals import runner
 from evals.runner import run_evals
 from evals.grounding import GroundingVerdict, score_grounding
-from evals.scenarios import SCENARIOS, HIGH_CASH, MISSING_DATA, STALE_MEMORY, Scenario
+from evals.scenarios import DEBATE, SCENARIOS, HIGH_CASH, MISSING_DATA, STALE_MEMORY, Scenario
 from evals.scorers import (
     score_citation_validity,
+    score_debate_completeness,
     score_risk_compliance,
     score_schema_validity,
 )
@@ -30,6 +31,34 @@ def test_at_least_six_golden_scenarios():
     names = {s.name for s in SCENARIOS}
     assert {"bull_market", "market_crash", "high_cash", "overconcentration",
             "missing_data", "stale_memory"} <= names
+
+
+def test_eval_harness_has_a_debate_scenario():
+    assert any(getattr(s, "expects_debate", False) for s in SCENARIOS)
+
+
+# -- debate completeness scorer ----------------------------------------------
+
+
+def test_debate_scorer_is_noop_for_non_debate_scenarios():
+    assert score_debate_completeness({}, SCENARIOS[0]).passed
+
+
+def test_debate_scorer_requires_theses_and_bear_response():
+    complete = {
+        "debate": {"bull": {"thesis": "up"}, "bear": {"thesis": "down"}, "risk": {"thesis": "concentrated"}},
+        "bear_case_response": "I reject the valuation concern because...",
+    }
+    assert score_debate_completeness(complete, DEBATE).passed
+
+    missing_response = {**complete, "bear_case_response": ""}
+    result = score_debate_completeness(missing_response, DEBATE)
+    assert not result.passed
+    assert "bear_case_response" in result.detail
+
+    missing_bear = {"debate": {"bull": {"thesis": "up"}, "risk": {"thesis": "x"}},
+                    "bear_case_response": "ok"}
+    assert not score_debate_completeness(missing_bear, DEBATE).passed
 
 
 # -- schema validity ---------------------------------------------------------
@@ -121,15 +150,20 @@ def test_grounding_skips_non_gating_on_judge_error():
 # -- runner (the CI gate) ----------------------------------------------------
 
 
+def _apply_scenario_expectations(decision, scenario):
+    if scenario.expects_cash_thesis:
+        decision["cash_thesis"] = "Deliberately holding cash."
+    if getattr(scenario, "expects_debate", False):
+        decision["debate"] = {"bull": {"thesis": "up"}, "bear": {"thesis": "down"}, "risk": {"thesis": "x"}}
+        decision["bear_case_response"] = "I weighed the bear case and disagree because..."
+    tradable = scenario.tradable_symbols()
+    decision["trades"] = [{"symbol": tradable[0], "action": "BUY", "confidence": 0.7}] if tradable else []
+    return decision
+
+
 def test_runner_passes_when_all_decisions_are_compliant():
     def decide(scenario):
-        decision = _good_decision()
-        if scenario.expects_cash_thesis:
-            decision["cash_thesis"] = "Deliberately holding cash."
-        # Trade a symbol that is actually tradable in each scenario.
-        tradable = scenario.tradable_symbols()
-        decision["trades"] = [{"symbol": tradable[0], "action": "BUY", "confidence": 0.7}] if tradable else []
-        return decision
+        return _apply_scenario_expectations(_good_decision(), scenario)
 
     summary = run_evals(
         decide_fn=decide,
@@ -144,12 +178,7 @@ def test_grounding_is_advisory_and_does_not_gate():
     # A fully compliant decision must PASS even when the grounding judge objects —
     # grounding is a reported signal, not a gate.
     def decide(scenario):
-        tradable = scenario.tradable_symbols()
-        decision = {"outlook": "NEUTRAL", "summary": "ok",
-                    "trades": [{"symbol": tradable[0], "action": "BUY", "confidence": 0.7}] if tradable else []}
-        if scenario.expects_cash_thesis:
-            decision["cash_thesis"] = "Holding cash on purpose."
-        return decision
+        return _apply_scenario_expectations({"outlook": "NEUTRAL", "summary": "ok"}, scenario)
 
     summary = run_evals(
         decide_fn=decide,

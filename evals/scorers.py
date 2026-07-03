@@ -83,8 +83,26 @@ def score_citation_validity(decision, scenario) -> ScoreResult:
     return ScoreResult("citation_validity", not review.warnings, "; ".join(review.warnings))
 
 
+def score_debate_completeness(decision, scenario) -> ScoreResult:
+    """For debate scenarios: all three analyst theses plus a non-empty PM
+    response to the bear case must be present. No-op otherwise."""
+    if not getattr(scenario, "expects_debate", False):
+        return ScoreResult("debate_completeness", True, "n/a")
+
+    issues = []
+    debate = decision.get("debate") or {}
+    for role in ("bull", "bear", "risk"):
+        thesis = debate.get(role) or {}
+        if not str(thesis.get("thesis", "")).strip():
+            issues.append(f"missing {role} thesis")
+    if not str(decision.get("bear_case_response", "")).strip():
+        issues.append("missing bear_case_response")
+    return ScoreResult("debate_completeness", not issues, "; ".join(issues))
+
+
 DETERMINISTIC_SCORERS = [
     score_schema_validity,
     score_risk_compliance,
     score_citation_validity,
+    score_debate_completeness,
 ]
