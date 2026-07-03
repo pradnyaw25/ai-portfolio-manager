@@ -184,6 +184,34 @@
       </div>
     </section>
 
+    <!-- THE ARC -->
+    <section>
+      <div class="section-head">
+        <h2>The arc</h2>
+        <p>Six phases of deliberate work turned a working-but-shallow automation into a system that engineers AI. A principal-engineer assessment set the direction; every phase since has been an honest, reviewable step.</p>
+      </div>
+      <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));">
+        <div class="phase">
+          <span class="tag" style="color:var(--muted);background:var(--surface-subtle);border-color:var(--border);">Where it started</span>
+          <h3>A cool automation</h3>
+          <ul>
+            <li>A real daily LLM cycle: research → decide → execute → report → tweet</li>
+            <li>A paper-trading simulator, Qdrant memory, SEC 10-K ingestion</li>
+            <li>But the showcase layer was the weakest: model hardcoded and unvalidated, a single agent, no evals, and fragile append-only data</li>
+          </ul>
+        </div>
+        <div class="phase">
+          <span class="tag">Where it is now</span>
+          <h3>A system that engineers AI</h3>
+          <ul>
+            <li>A hardened LLM gateway, a bull/bear/risk debate, tool calling, and model routing</li>
+            <li>Measured RAG, evals gating CI, calibration, grounding, and tracing</li>
+            <li>Idempotent + resumable, a sector/stop-loss risk engine, an MCP server, and a grounded investor letter</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
     <!-- ARCHITECTURE DIAGRAM -->
     <section>
       <div class="section-head">
@@ -350,21 +378,40 @@
     <section>
       <div class="section-head">
         <h2>Key engineering decisions</h2>
-        <p>The calls worth remembering — where a constraint forced a choice, and why we went the way we did.</p>
+        <p>The calls that shaped the project — foundational bets first, then the choices a constraint forced later.</p>
       </div>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Decision</th><th>Why</th></tr></thead>
           <tbody>
-            <tr><td><b>Idempotency-based resume</b> over LangGraph's native <code>SqliteSaver</code></td><td>The graph state carries non-serializable live handles (engine, clients). Persisting <em>progress</em> + reusing the <code>run_id</code> leans on the P0-3 idempotent stores for duplicate-free re-execution — correct, without a large risky state refactor.</td></tr>
-            <tr><td><b>Trades keyed by the run, not (run_id, symbol, action)</b></td><td>A single run can legitimately hold two same-symbol/action trades (a PM buy + a rebalance top-up). A per-row key would silently collapse them and lose shares.</td></tr>
+            <tr><td><b>One LLM gateway as the single choke point</b></td><td>The highest-leverage refactor in the repo: routing, retries, structured-output validation, tracing, and cost tracking become one-time costs instead of per-agent ones. Every agent flows through it — the later provider seam and tool loop were built on it.</td></tr>
+            <tr><td><b>Deterministic guardrails outside the LLM</b></td><td>The portfolio manager can be creative; the risk layer is boring on purpose. Position sizing, turnover, sector limits, and stop-loss/take-profit are enforced in code the model can't argue past.</td></tr>
+            <tr><td><b>LangGraph as the only runner</b></td><td>The legacy linear orchestrator was deleted once the graph reached parity. Two orchestrators is debt, not safety.</td></tr>
+            <tr><td><b>SQLite, not Postgres, as the system of record</b></td><td>Transactions, upserts, and queryability without running a server. Stop committing raw state to <code>main</code>; keep committing exports to Pages.</td></tr>
+            <tr><td><b>Langfuse over LangSmith</b> for tracing</td><td>Self-hostable and open source — a better story for an in-public project, and a no-op unless keys are set.</td></tr>
+            <tr><td><b>Idempotency-based resume</b> over LangGraph's native <code>SqliteSaver</code></td><td>The graph state carries non-serializable live handles (engine, clients). Persisting <em>progress</em> + reusing the <code>run_id</code> leans on the idempotent stores for duplicate-free re-execution — correct, without a large risky state refactor.</td></tr>
             <tr><td><b>Chunking eval with a deterministic hashing embedder + in-memory Qdrant</b></td><td>Runs in CI with no API key, yet does real vector search. Cosine over TF vectors rewards term concentration — the actual reason chunking helps — so the <span class="delta">0.15 → 1.00</span> hit@1 win is honest, not rigged.</td></tr>
-            <tr><td><b>Research augments, doesn't replace</b> the deterministic context</td><td>Keeps the base context reliable/auditable while still demonstrating the tool-calling stack.</td></tr>
-            <tr><td><b>Real EDGAR 8-K earnings exhibits</b> over a paid transcript feed</td><td>Official, free, and reuses the existing SEC client; full call transcripts aren't available free.</td></tr>
-            <tr><td><b>Deterministic risk exits win over the LLM</b></td><td>Stop-loss/take-profit SELLs are generated from the book and supersede any LLM trade on that symbol — the guardrail layer is boring on purpose.</td></tr>
-            <tr><td><b>Grounding gate before publish</b> for the investor letter</td><td>A letter whose numbers aren't supported by the week's computed facts is blocked, never published.</td></tr>
+            <tr><td><b>Grounding gate before publish</b></td><td>Both a daily decision and the weekly letter are checked against the facts they had; unsupported claims are blocked, never published or tweeted.</td></tr>
           </tbody>
         </table>
+      </div>
+    </section>
+
+    <!-- NOT BUILT -->
+    <section>
+      <div class="section-head">
+        <h2>Deliberately not built</h2>
+        <p>Scope is a feature. What was consciously left out — because it would add surface area, not engineering signal.</p>
+      </div>
+      <div class="branch-note">
+        <div class="chip"><b>Live brokerage / real money</b> — compliance surface, real risk, zero added signal; the transparency angle works <em>because</em> it's simulated</div>
+        <div class="chip"><b>Fine-tuning / DPO</b> — dozens of decisions, no reliable reward signal</div>
+        <div class="chip"><b>A knowledge graph (Neo4j)</b> — metadata-filtered vectors get 90% of the value at 10% of the cost</div>
+        <div class="chip"><b>Market microstructure</b> — a quant-infra project, not an AI one; flat slippage suffices</div>
+        <div class="chip"><b>Multi-user SaaS</b> — enormous effort, zero AI learning</div>
+        <div class="chip"><b>A React SPA dashboard</b> — upgrade the dashboard only where it surfaces the AI work</div>
+        <div class="chip"><b>A hand-rolled agent framework</b> — LangGraph is the point</div>
+        <div class="chip"><b>A naive historical backtest</b> — lookahead contamination; a replay/determinism harness is the honest version</div>
       </div>
     </section>
 
