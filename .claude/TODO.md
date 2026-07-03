@@ -1,150 +1,189 @@
 # AI Portfolio Manager Roadmap
 
-This list tracks open engineering work only. Completed foundation work such as
-run IDs, run status export, step-function refactoring, typed run state, and local
-`make` commands has been removed from the active roadmap.
+This list tracks open engineering work only, organized into phases. Each task is
+scoped so an independent coding agent can execute it: inputs, outputs, and
+acceptance criteria are explicit. Rationale, architecture, and the
+not-worth-building list live in `docs/ROADMAP.md`.
 
-## Near-Term Priorities
+Execution order: phases are sequential; tasks marked ∥ can run in parallel within
+their phase. Tasks assume the `.venv` environment and `make test` green before/after.
 
-1. Complete the LangGraph migration.
-   * Make the graph runner the primary daily workflow once behavior matches the existing runner.
-   * Add conditional routing for memory failures, empty decisions, rejected trades, and execution failures.
-   * Add per-node failure capture so failed runs still export status and diagnostics.
-   * Add an optional human approval checkpoint before trade execution.
-   * Add parity tests or fixtures comparing standard-run and graph-run outputs.
+## Phase 0 — Harden the Foundation (~1 week)
 
-2. Add Twitter/X publishing integration.
-   * Keep generated tweets as drafts by default.
-   * Add dry-run versus live-post mode controlled by environment config.
-   * Publish via Twitter/X API only when explicitly enabled.
-   * Store publish status, tweet ID, timestamp, and API errors in a durable social-post log.
-   * Add an AI safety/evaluator step to reject hype, unsupported claims, and compliance-risk language.
-   * Add tests for disabled publishing, successful publishing, and API failure handling.
+Goal: kill the fragility before building on it. Everything later flows through P0-1.
 
-3. Build Risk Engine V2.
-   * Add sector exposure limits using repo-owned symbol metadata.
-   * Add max single-position allocation checks.
-   * Add portfolio concentration and cash-deployment guardrails.
-   * Add correlation-aware diversification checks.
-   * Add max daily and weekly turnover controls.
-   * Add deterministic stop-loss and take-profit SELL proposals.
-   * Journal capped, rejected, and system-generated trades as first-class risk events.
+### P0-1. Create the LLM gateway
+* Input: the three existing LLM call sites (`src/agents/portfolio_manager.py`,
+  `src/agents/rebalance_checker.py`, `src/agents/tweet_generator.py`).
+* Output: `src/llm/gateway.py` exposing `complete(prompt, schema: type[BaseModel], model_tier)`:
+  * Pydantic validation of every LLM response; one repair-retry on invalid output
+    (re-prompt with the validation error).
+  * Exponential backoff retry on transient API errors.
+  * Model, provider, and temperature resolved from config (per tier: `cheap` / `strong`).
+  * Per-call log of model, prompt version, tokens, latency, and estimated cost.
+* Migrate all three agents onto the gateway with per-agent Pydantic response schemas.
+* Acceptance: no raw `json.loads` on LLM output anywhere in `src/`; a test with a
+  mocked malformed response proves the repair path; a mocked API error proves backoff.
 
-4. Move portfolio inputs into typed config.
-   * Move the hardcoded watchlist out of `src/research/market_context.py`.
-   * Add typed config files for watchlists, sector metadata, risk limits, and model settings.
-   * Validate config at startup with clear error messages.
+### P0-2 ∥. Config consolidation and dead-code removal
+* Output:
+  * Model names/tiers, temperature, watchlist, and Qdrant collection name in typed
+    config, validated at startup with clear errors. Watchlist moves from
+    `src/research/market_context.py` to a YAML file (also used by
+    `scripts/ingest_sec_filings.py`).
+  * Delete `src/agents/researcher.py` (dead code) and unused config keys
+    (`ALPHA_VANTAGE_API_KEY`, `FINNHUB_API_KEY`, `MAX_POSITIONS`).
+  * Remove unused dependencies (`plotly`, `anthropic` until the gateway uses it).
+* Acceptance: `grep -r "gpt-4o-mini" src/` returns nothing; startup fails loudly on
+  invalid config; tests green.
 
-## AI Architecture
+### P0-3 ∥. Idempotent stores
+* Input: `src/storage/` (trades CSV, decisions JSONL, predictions JSONL).
+* Output: writes keyed by (run_id, symbol/date) with upsert semantics instead of
+  blind append.
+* Acceptance: running the daily cycle twice with the same run_id produces identical
+  files/rows — no duplicates.
 
-1. Add a model/provider abstraction.
-   * Support OpenAI, Anthropic, and local or cheaper fallback models behind one interface.
-   * Add model routing: cheaper models for summaries, stronger models for final decisions.
-   * Track model name, provider, prompt version, latency, token usage, and estimated cost.
-   * Add graceful fallback behavior when a provider fails.
+## Phase 1 — Orchestration & Observability (1–2 weeks)
 
-2. Introduce multi-agent research and decision flow.
-   * Add bull analyst, bear analyst, risk analyst, and portfolio manager roles.
-   * Add a critic/evaluator agent before final journaling.
-   * Add agent debate or compare-and-rank step for high-impact trades.
-   * Require structured outputs from every agent.
+Goal: LangGraph is *the* runner; every run is fully visible.
 
-3. Add structured tool calling.
-   * Expose market data, news, memory retrieval, benchmark lookup, and portfolio actions as typed tools.
-   * Validate tool inputs and outputs before they enter the decision state.
-   * Record tool calls in the decision trace for observability.
+### P1-1. Graph parity and promotion
+* Input: `src/workflows/daily_graph.py`, `src/main.py`.
+* Output: fixture-based parity test comparing standard-run and graph-run outputs;
+  `scripts/daily_run.py` invokes the graph; legacy runner
+  (`scripts/daily_run_legacy.py` and `main.py` orchestration) deleted.
+* Acceptance: parity test green; exactly one orchestrator remains; CI workflow uses it.
 
-4. Add prompt and decision versioning.
-   * Version prompts and schemas used by each agent.
-   * Store prompt version with decisions, reports, predictions, and tweets.
-   * Add regression tests for prompt output shape and risk compliance.
+### P1-2. Checkpointing and conditional routing
+* Output: SQLite-backed LangGraph checkpointer; explicit graph branches for
+  memory-unavailable, empty-decision, all-trades-rejected, and execution-failure,
+  each still exporting run status and diagnostics.
+* Acceptance: killing the process mid-run and resuming completes the run without
+  duplicate trades or journal entries.
 
-## Memory And RAG
+### P1-3. Human-in-the-loop approval gate
+* Output: LangGraph interrupt after risk review, before execution. CLI to
+  approve/reject/edit pending trades; `AUTO_APPROVE=true` env flag for scheduled CI runs.
+* Acceptance: with auto-approve off, the run pauses and persists across process
+  restarts; approval resumes and executes; rejection journals a vetoed-run record.
 
-1. Upgrade the Qdrant memory schema.
-   * Store typed memories: thesis, trade, mistake, macro regime, earnings event, and risk lesson.
-   * Add metadata for symbol, sector, date, run ID, source type, and outcome.
-   * Deduplicate and score memory quality before indexing.
-   * First implementation slice:
-     * Add `MemoryRecord` and `MemoryIngestionResult` schemas.
-     * Add deterministic memory extraction from reports, decision journal entries, and trades.
-     * Add stable memory IDs so ingestion can be idempotent.
-     * Add a Qdrant upsert wrapper that stores rich metadata payloads.
-     * Add an `ingest_run_memory` LangGraph node after public export.
-     * Record ingestion status in `public/run_status.json`.
+### P1-4 ∥. Langfuse tracing and cost tracking
+* Output: Langfuse tracing wired into the LLM gateway plus graph-node spans; run-level
+  cost/latency summary in `run_status.json` and on the dashboard; durable run-history
+  table (not just latest run).
+* Acceptance: a full daily run appears as one trace tree with per-node cost; run
+  history survives across runs.
 
-2. Automate memory ingestion.
-   * Ingest each completed report, decision, trade set, and prediction outcome after the daily run.
-   * Add backfill tooling for historical reports and decision journals.
-   * Export memory ingestion status in run diagnostics.
+## Phase 2 — Evals & Calibration (~2 weeks)
 
-3. Add retrieval evaluation.
-   * Build fixtures with known prior decisions and expected retrieved memories.
-   * Score retrieval relevance, freshness, and source diversity.
-   * Add citations from retrieved memories into AI decisions.
+Goal: measure the AI, don't just run it.
 
-4. Add lessons-learned synthesis.
-   * Summarize successful and failed theses over time.
-   * Extract recurring risk mistakes and missed opportunities.
-   * Feed lessons back into future portfolio decisions.
+### P2-1. Decision eval harness in CI
+* Output: `evals/` with 6+ golden scenarios (fixture market context + portfolio
+  state): bull market, crash, high cash, overconcentration, missing data, stale
+  memory. Deterministic scorers (schema validity, risk compliance, citation
+  validity) plus an LLM-as-judge grounding scorer. `make eval` target and a CI job
+  gating prompt/schema changes. Track results across models and prompt versions.
+* Acceptance: an intentionally broken prompt fails CI; eval results are persisted
+  per run with model + prompt version.
 
-## Evaluation And Observability
+### P2-2 ∥. Prediction calibration metrics
+* Input: `data/predictions.jsonl` history.
+* Output: Brier score, calibration curve data, and per-confidence-bucket hit rate,
+  recomputed from history and rendered on the public dashboard. Expand prediction
+  records with horizon, thesis, and benchmark-relative return.
+* Acceptance: metrics recompute deterministically from historical data; dashboard
+  page renders with real data.
 
-1. Build an AI decision eval harness.
-   * Create golden scenarios for bull market, crash, high cash, overconcentration, missing data, and stale memory.
-   * Score schema validity, factual grounding, risk compliance, and actionability.
-   * Track eval results across models, prompt versions, and code changes.
+### P2-3 ∥. Grounding check before journaling
+* Output: an evaluator step that verifies decision claims against available market
+  context, news, memory, and portfolio state; unsupported claims flagged and stored
+  with the decision (and block tweeting).
+* Acceptance: a fixture decision with a fabricated claim gets flagged; findings
+  appear in the decision journal.
 
-2. Add hallucination and grounding checks.
-   * Verify claims against available market context, news, memory, and portfolio state.
-   * Flag unsupported claims before journaling, reporting, or tweeting.
-   * Store evaluator findings with each decision.
+## Phase 3 — Multi-Agent & Tools (2–3 weeks)
 
-3. Improve run diagnostics.
-   * Add durable run history instead of only latest run status.
-   * Emit structured JSON logs with run ID, graph node, model, latency, token usage, and error details.
-   * Add failure-status export when the daily run crashes.
-   * Add cost and latency summaries per run.
+Goal: real agent architecture with the debate transcript as a product feature.
 
-4. Add dashboard observability views.
-   * Decision trace: inputs, memories, tool calls, agent outputs, risk review, and final trades.
-   * Model cost and latency dashboard.
-   * Rejected trades and risk adjustments table.
-   * Prediction calibration dashboard.
-   * Run comparison page for legacy runner versus LangGraph runner.
+### P3-1. Bull/bear/risk analyst debate
+* Output: three analyst nodes (cheap model tier) producing structured theses; a PM
+  synthesis node (strong tier) whose response schema requires an explicit
+  `bear_case_response`; full debate transcript persisted in the decision journal and
+  rendered on the dashboard.
+* Acceptance: journal entries contain all four structured outputs; eval harness
+  gains at least one debate scenario.
 
-## Research Intelligence
+### P3-2 ∥. Typed tool calling for research
+* Output: a tool registry with Pydantic input/output schemas — `get_price`,
+  `get_history`, `search_news`, `retrieve_memory`, `get_portfolio` — and a
+  tool-calling research agent that loops over them; every tool call recorded in the
+  decision trace.
+* Acceptance: decision journal shows the tool-call sequence; invalid tool arguments
+  are rejected and retried.
 
-1. Build Market Context V2.
-   * Add 5D, 30D, and 90D returns.
-   * Add volatility, market cap, sector, benchmark-relative performance, and drawdown.
-   * Add sector rotation and macro regime indicators.
+### P3-3 ∥. Model routing
+* Output: gateway routing — cheap tier for analysts/summaries/tweets, strong tier for
+  the final decision; graceful fallback to a second provider on failure.
+* Acceptance: a simulated provider outage falls back and the run completes; per-run
+  cost drops vs. all-strong baseline (documented).
 
-2. Improve news and catalyst intelligence.
-   * Prioritize news for current holdings and high-conviction candidates.
-   * Add earnings-date awareness.
-   * Summarize earnings calls, analyst upgrades/downgrades, and major headlines.
-   * Add sentiment scoring with source citations.
+## Phase 4 — Knowledge Layer (~2 weeks)
 
-3. Expand candidate generation.
-   * Combine current holdings, configurable watchlist, momentum names, biggest losers, earnings candidates, and news catalysts.
-   * Rank candidates with deterministic features before asking an LLM for analysis.
-   * Store candidate-generation inputs and scores for auditability.
+Goal: RAG worth writing about, with measured retrieval quality.
 
-## Forecasting And Product Surface
+### P4-1. Chunking and metadata-filtered retrieval
+* Input: SEC ingestion (`scripts/ingest_sec_filings.py`, `src/memory/`).
+* Output: recursive chunk splitting of filing sections; rich payload metadata
+  (ticker, form type, item, filed date, sector); retrieval using metadata filters;
+  retrieval eval set expanded to 20+ scenarios with before/after scores.
+* Acceptance: retrieval eval score improves over the unchunked baseline and the
+  delta is documented in the eval fixtures.
 
-1. Deepen prediction tracking.
-   * Track forecast horizon, thesis, confidence, start price, end price, benchmark return, and outcome.
-   * Add confidence calibration metrics including Brier score.
-   * Compare AI recommendations against actual executed trades.
+### P4-2 ∥. Additional knowledge sources
+* Output: earnings-call transcript and 10-Q ingestion into the same memory schema,
+  with source metadata and citations.
+* Acceptance: retrieved earnings context appears (cited) in at least one golden-
+  scenario eval.
 
-2. Improve public dashboard.
-   * Add portfolio versus SPY and QQQ charts.
-   * Add cash allocation, sector allocation, and concentration warnings.
-   * Add top holdings table with gain/loss and portfolio weight.
-   * Add recent trades, rejected trades, and generated risk events.
+### P4-3 ∥. Lessons-learned reflection agent
+* Output: a weekly graph that reads closed predictions and trades, synthesizes
+  `risk_lesson`/`mistake` memories with citations, and ingests them.
+* Acceptance: lessons appear in the next daily run's retrieved memory context;
+  re-running the same week is idempotent.
 
-3. Add investor-facing publishing workflows.
-   * Generate weekly investor letter with performance, winners, losers, portfolio changes, and market outlook.
-   * Add optional Twitter/X thread mode for weekly summaries.
-   * Keep all publishing workflows auditable and disabled by default in local development.
+## Phase 5 — Surface & Reach (2–3 weeks)
+
+Goal: make the system legible to outsiders.
+
+### P5-1. MCP server for the fund
+* Output: `mcp/` server exposing read-only tools: holdings, performance history,
+  decision journal, debate transcripts, memory search.
+* Acceptance: Claude Desktop/Code can answer "why did the fund sell NVDA in June?"
+  against real data.
+
+### P5-2 ∥. Risk Engine V2
+* Output: repo-owned sector metadata file; sector-concentration limits; deterministic
+  stop-loss (>15% drop) and take-profit (>40% gain) SELL proposals journaled as
+  first-class risk events and routed through the normal risk/execution pipeline.
+* Acceptance: unit tests per rule; system-generated SELLs appear in the journal with
+  a `system` origin marker.
+
+### P5-3 ∥. Weekly investor letter
+* Output: AI-written weekly letter (performance, winners/losers, portfolio changes,
+  outlook) generated through the gateway with grounding check, published to the
+  dashboard; optional X thread mode, disabled by default.
+* Acceptance: letter generation is idempotent per week; grounding check runs before
+  publish.
+
+### P5-4 (optional). Replay backtester
+* Scope carefully — see `docs/ROADMAP.md` §7 (lookahead contamination). Build a
+  *replay* harness for pipeline determinism and cached-decision regression testing,
+  not a historical "would the LLM have won" backtest.
+
+## Parked / Rejected
+
+See `docs/ROADMAP.md` §7: live brokerage integration, decision-model fine-tuning,
+knowledge graphs, market microstructure simulation, SaaS-ification, React SPA
+dashboard, hand-rolled agent frameworks, naive historical backtesting.
