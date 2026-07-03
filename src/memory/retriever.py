@@ -3,6 +3,7 @@ from typing import Any
 
 from langchain_openai import OpenAIEmbeddings
 from langchain_qdrant import QdrantVectorStore
+from qdrant_client import models
 
 from src.config import QDRANT_API_KEY, QDRANT_COLLECTION, QDRANT_URL
 from src.utils.logger import get_logger
@@ -28,7 +29,13 @@ class MemoryRetrievalResult:
 
 
 class FundMemoryRetriever:
-    def __init__(self):
+    def __init__(self, store: Any = None):
+        # An injected store (e.g. an in-memory Qdrant for evals/tests) skips the
+        # OpenAI/Qdrant Cloud setup so retrieval logic runs without external deps.
+        if store is not None:
+            self.store = store
+            return
+
         embeddings = OpenAIEmbeddings()
         qdrant_options = {"url": QDRANT_URL}
         if QDRANT_API_KEY:
@@ -55,7 +62,18 @@ class FundMemoryRetriever:
         if symbols:
             symbol_query = f"{query} Relevant symbols: {', '.join(symbols)}."
 
-        symbol_candidates = self._search(symbol_query, k=k_per_group * 2)
+        # Push type/symbol constraints into Qdrant so it returns matching
+        # candidates directly instead of over-fetching and discarding in Python.
+        # `_filter_memories` still runs as a deterministic guard (dedup, limit,
+        # and correctness against stores that ignore the filter).
+        symbol_candidates = self._search(
+            symbol_query,
+            k=k_per_group * 2,
+            flt=build_qdrant_filter(
+                memory_types={"thesis", "report_summary"},
+                symbols=symbols,
+            ),
+        )
         return {
             "symbol_theses": _filter_memories(
                 symbol_candidates,
@@ -67,6 +85,7 @@ class FundMemoryRetriever:
                 self._search(
                     "Prior risk lessons, rejected trades, cash discipline, mistakes, and warnings.",
                     k=k_per_group,
+                    flt=build_qdrant_filter(memory_types={"risk_lesson", "mistake"}),
                 ),
                 memory_types={"risk_lesson", "mistake"},
                 limit=k_per_group,
@@ -75,6 +94,7 @@ class FundMemoryRetriever:
                 self._search(
                     "Recent executed trades, trade rationales, and portfolio action history.",
                     k=k_per_group,
+                    flt=build_qdrant_filter(memory_types={"trade"}, symbols=symbols),
                 ),
                 memory_types={"trade"},
                 symbols=symbols,
@@ -84,14 +104,16 @@ class FundMemoryRetriever:
                 self._search(
                     "Macro regime, market outlook, benchmark context, and portfolio report summaries.",
                     k=k_per_group,
+                    flt=build_qdrant_filter(memory_types={"macro_regime", "report_summary"}),
                 ),
                 memory_types={"macro_regime", "report_summary"},
                 limit=k_per_group,
             ),
         }
 
-    def _search(self, query: str, k: int) -> list[dict]:
-        docs = self.store.similarity_search(query, k=k)
+    def _search(self, query: str, k: int, flt: Any = None) -> list[dict]:
+        kwargs = {"filter": flt} if flt is not None else {}
+        docs = self.store.similarity_search(query, k=k, **kwargs)
         return [serialize_memory_doc(doc) for doc in docs]
 
 
@@ -198,6 +220,40 @@ def format_grouped_memory_for_prompt(grouped: dict[str, list[dict]]) -> dict[str
             for memory in memories
         ]
     return formatted
+
+
+def build_qdrant_filter(
+    *,
+    symbols: list[str] | None = None,
+    memory_types: set[str] | list[str] | None = None,
+    sectors: list[str] | None = None,
+    items: list[str] | None = None,
+) -> models.Filter | None:
+    """Build a Qdrant payload filter over memory metadata, or None if empty.
+
+    Keys reflect how ``langchain-qdrant`` nests document metadata under the
+    ``metadata`` payload key (the record's own ``metadata`` dict nests one level
+    deeper). List-valued fields (symbols, sectors) match if any value overlaps.
+    """
+    conditions: list[models.FieldCondition] = []
+
+    def match_any(key: str, values) -> None:
+        cleaned = [str(v) for v in values if str(v)]
+        if cleaned:
+            conditions.append(
+                models.FieldCondition(key=key, match=models.MatchAny(any=cleaned))
+            )
+
+    if symbols:
+        match_any("metadata.symbols", [s.upper() for s in symbols])
+    if memory_types:
+        match_any("metadata.memory_type", sorted(memory_types))
+    if sectors:
+        match_any("metadata.sectors", sectors)
+    if items:
+        match_any("metadata.metadata.item", items)
+
+    return models.Filter(must=conditions) if conditions else None
 
 
 def _filter_memories(

@@ -1,7 +1,7 @@
 PYTHON ?= .venv/bin/python
 PORT ?= 8000
 
-.PHONY: help install test eval run dashboard ingest-memory ingest-sec-filings memory-eval market-hours benchmark backfill status
+.PHONY: help install test eval run dashboard ingest-memory ingest-sec-filings memory-eval chunking-eval market-hours benchmark backfill status
 
 help:
 	@echo "AI Portfolio Manager commands"
@@ -14,6 +14,7 @@ help:
 	@echo "  make ingest-memory   Ingest existing reports into Qdrant memory"
 	@echo "  make ingest-sec-filings Ingest latest SEC 10-Ks for watchlist companies"
 	@echo "  make memory-eval     Run offline memory retrieval evaluation fixtures"
+	@echo "  make chunking-eval   Compare chunked vs unchunked retrieval (offline, no API key)"
 	@echo "  make market-hours    Check whether a scheduled run should execute now"
 	@echo "  make benchmark       Run benchmark script"
 	@echo "  make backfill        Run backfill script"
@@ -42,6 +43,9 @@ ingest-sec-filings:
 
 memory-eval:
 	$(PYTHON) scripts/memory_eval.py
+
+chunking-eval:
+	$(PYTHON) scripts/chunking_eval.py
 
 market-hours:
 	$(PYTHON) scripts/market_hours_guard.py

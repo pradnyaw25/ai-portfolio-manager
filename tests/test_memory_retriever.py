@@ -13,7 +13,7 @@ class FakeStore:
     def __init__(self, docs_by_query):
         self.docs_by_query = docs_by_query
 
-    def similarity_search(self, query, k):
+    def similarity_search(self, query, k, filter=None):
         for query_part, docs in self.docs_by_query.items():
             if query_part in query:
                 return docs[:k]
