@@ -88,6 +88,26 @@ def test_retrieve_grouped_fund_memory_groups_typed_results(monkeypatch):
     assert [m["id"] for m in result.chunks] == ["thesis:1", "risk:1", "trade:1", "macro:1"]
 
 
+def test_search_falls_back_to_unfiltered_when_server_filter_fails():
+    """A missing Qdrant payload index makes a filtered query 400 — retrieval must
+    still work by retrying unfiltered (then Python-side _filter_memories narrows)."""
+    calls = []
+
+    class UnindexedStore:
+        def similarity_search(self, query, k, filter=None):
+            calls.append(filter is not None)
+            if filter is not None:
+                raise RuntimeError('Index required but not found for "metadata.symbols"')
+            return [memory_doc("thesis:1", "thesis", "NVDA thesis", ["NVDA"])][:k]
+
+    result = retriever.FundMemoryRetriever(store=UnindexedStore())._search(
+        "q", k=3, flt=retriever.build_qdrant_filter(symbols=["NVDA"])
+    )
+
+    assert [m["id"] for m in result] == ["thesis:1"]
+    assert calls == [True, False]  # tried filtered, then fell back to unfiltered
+
+
 def test_format_grouped_memory_for_prompt_keeps_citation_fields():
     grouped = {
         "symbol_theses": [
