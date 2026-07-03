@@ -28,10 +28,18 @@ def test_validate_config_rejects_out_of_range_fraction(monkeypatch):
 
 
 def test_validate_config_rejects_unsupported_provider(monkeypatch):
-    monkeypatch.setattr(config, "LLM_PROVIDER", "megacorp")
+    monkeypatch.setattr(config, "LLM_STRONG_PROVIDER", "megacorp")
     with pytest.raises(ConfigError) as exc:
         validate_config()
-    assert "LLM_PROVIDER" in str(exc.value)
+    assert "LLM_STRONG_PROVIDER" in str(exc.value)
+
+
+def test_validate_config_rejects_partial_fallback(monkeypatch):
+    monkeypatch.setattr(config, "LLM_FALLBACK_PROVIDER", "openai")
+    monkeypatch.setattr(config, "LLM_FALLBACK_MODEL", "")
+    with pytest.raises(ConfigError) as exc:
+        validate_config()
+    assert "LLM_FALLBACK" in str(exc.value)
 
 
 def test_validate_config_rejects_empty_model(monkeypatch):

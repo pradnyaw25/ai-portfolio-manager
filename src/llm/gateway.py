@@ -20,18 +20,13 @@ import json
 import time
 from typing import Any, Callable, Sequence, TypeVar
 
-import openai
-from openai import OpenAI
 from pydantic import BaseModel, ValidationError
 
-from src.config import (
-    LLM_CALL_LOG,
-    LLM_CHEAP_MODEL,
-    LLM_MAX_RETRIES,
-    LLM_STRONG_MODEL,
-    LLM_TEMPERATURE,
-)
+from src.config import LLM_CALL_LOG, LLM_MAX_RETRIES, LLM_TEMPERATURE
 from src.llm.context import get_run_id
+from src.llm.providers import ProviderError, ProviderResponse, build_default_providers
+from src.llm.providers.openai_provider import OpenAIProvider
+from src.llm.routing import Route, resolve_fallback, resolve_route
 from src.observability import tracing
 from src.utils.logger import get_logger
 
@@ -64,21 +59,35 @@ def _estimate_cost(model: str, prompt_tokens: int, completion_tokens: int) -> fl
     return (prompt_tokens / 1000) * in_rate + (completion_tokens / 1000) * out_rate
 
 
-class LLMGateway:
-    """Wraps an OpenAI client with validation, retries, and cost logging.
+_DEFAULT_FALLBACK = object()  # sentinel: resolve fallback route from config
 
-    The client and sleep function are injectable so tests run offline and without
-    real backoff delays.
+
+class LLMGateway:
+    """Routes calls to LLM providers by tier, with validation, retries, backoff,
+    an optional cross-provider fallback, and cost logging.
+
+    Providers/client, fallback route, and sleep are injectable so tests run offline.
+    Passing ``client=`` wraps it as the OpenAI provider (back-compat).
     """
 
     def __init__(
         self,
-        client: OpenAI | None = None,
+        client=None,
         *,
+        providers: dict | None = None,
+        fallback_route=_DEFAULT_FALLBACK,
         sleep: Callable[[float], None] = time.sleep,
         max_retries: int = LLM_MAX_RETRIES,
     ) -> None:
-        self._client = client or OpenAI()
+        if providers is not None:
+            self._providers = providers
+        elif client is not None:
+            self._providers = {"openai": OpenAIProvider(client)}
+        else:
+            self._providers = build_default_providers()
+        self._fallback_route = (
+            resolve_fallback() if fallback_route is _DEFAULT_FALLBACK else fallback_route
+        )
         self._sleep = sleep
         self._max_retries = max_retries
 
@@ -99,14 +108,13 @@ class LLMGateway:
         schema validation, the model is re-prompted with the error and asked to
         fix it. Raises :class:`LLMValidationError` if that also fails.
         """
-        model = self._model_for_tier(tier)
         convo: list[Message] = list(messages)
 
         last_error: Exception | None = None
         for attempt in range(2):  # initial attempt + one repair
             content = self._call(
                 convo,
-                model=model,
+                tier=tier,
                 temperature=temperature,
                 prompt_version=prompt_version,
                 response_format={"type": "json_object"},
@@ -147,10 +155,9 @@ class LLMGateway:
         prompt_version: str = "unversioned",
     ) -> str:
         """Call the model for free-form text (no schema). Returns stripped content."""
-        model = self._model_for_tier(tier)
         content = self._call(
             list(messages),
-            model=model,
+            tier=tier,
             temperature=temperature,
             prompt_version=prompt_version,
             max_tokens=max_tokens,
@@ -159,66 +166,88 @@ class LLMGateway:
 
     # -- internals ------------------------------------------------------------
 
-    def _model_for_tier(self, tier: str) -> str:
-        if tier == "cheap":
-            return LLM_CHEAP_MODEL
-        return LLM_STRONG_MODEL
-
     def _call(
         self,
         messages: list[Message],
         *,
-        model: str,
+        tier: str,
         temperature: float | None,
         prompt_version: str,
         response_format: dict[str, Any] | None = None,
         max_tokens: int | None = None,
     ) -> str:
-        """One model call with exponential backoff on transient API errors."""
-        kwargs: dict[str, Any] = {
-            "model": model,
+        """Resolve the tier's route and call it, falling back if the primary fails."""
+        route = resolve_route(tier)
+        chat_kwargs: dict[str, Any] = {
             "messages": messages,
             "temperature": LLM_TEMPERATURE if temperature is None else temperature,
+            "response_format": response_format,
+            "max_tokens": max_tokens,
         }
-        if response_format is not None:
-            kwargs["response_format"] = response_format
-        if max_tokens is not None:
-            kwargs["max_tokens"] = max_tokens
 
         started = time.monotonic()
-        response = self._request_with_backoff(kwargs)
+        response, served, fell_back = self._request_with_fallback(route, chat_kwargs)
         latency_ms = (time.monotonic() - started) * 1000
 
-        content = response.choices[0].message.content
         self._log_call(
             response,
-            model=model,
+            model=served.model,
+            provider=served.provider,
+            fell_back=fell_back,
             prompt_version=prompt_version,
             latency_ms=latency_ms,
             input_messages=messages,
-            output_content=content,
+            output_content=response.content,
         )
 
-        if content is None:
-            raise LLMError(f"Model {model} returned empty content")
-        return content
+        if response.content is None:
+            raise LLMError(f"Model {served.model} returned empty content")
+        return response.content
 
-    def _request_with_backoff(self, kwargs: dict[str, Any]) -> Any:
+    def _request_with_fallback(
+        self, primary: Route, chat_kwargs: dict[str, Any]
+    ) -> tuple[ProviderResponse, Route, bool]:
+        try:
+            return self._request_with_backoff(primary, chat_kwargs), primary, False
+        except LLMError as exc:
+            if self._fallback_route is None:
+                raise
+            logger.warning(
+                "Primary route %s/%s failed; falling back to %s/%s: %s",
+                primary.provider,
+                primary.model,
+                self._fallback_route.provider,
+                self._fallback_route.model,
+                str(exc)[:150],
+            )
+            return self._request_with_backoff(self._fallback_route, chat_kwargs), self._fallback_route, True
+
+    def _request_with_backoff(self, route: Route, chat_kwargs: dict[str, Any]) -> ProviderResponse:
+        provider = self._providers.get(route.provider)
+        if provider is None:
+            raise LLMError(f"No provider registered for '{route.provider}'")
+
         attempt = 0
         while True:
             try:
-                return self._client.chat.completions.create(**kwargs)
-            except openai.APIError as exc:
+                return provider.chat(model=route.model, **chat_kwargs)
+            except ProviderError as exc:
                 if attempt >= self._max_retries:
                     logger.error(
-                        "LLM call failed after %d retries: %s", self._max_retries, exc
+                        "LLM call failed after %d retries (%s/%s): %s",
+                        self._max_retries,
+                        route.provider,
+                        route.model,
+                        exc,
                     )
                     raise LLMError(str(exc)) from exc
                 delay = 2.0**attempt
                 logger.warning(
-                    "LLM call error (attempt %d/%d), backing off %.1fs: %s",
+                    "LLM call error (attempt %d/%d) %s/%s, backing off %.1fs: %s",
                     attempt + 1,
                     self._max_retries,
+                    route.provider,
+                    route.model,
                     delay,
                     str(exc)[:200],
                 )
@@ -227,9 +256,11 @@ class LLMGateway:
 
     def _log_call(
         self,
-        response: Any,
+        response: ProviderResponse,
         *,
         model: str,
+        provider: str,
+        fell_back: bool,
         prompt_version: str,
         latency_ms: float,
         input_messages: Any = None,
@@ -237,13 +268,14 @@ class LLMGateway:
     ) -> None:
         """Record token usage, latency, and estimated cost. Never raises."""
         try:
-            usage = getattr(response, "usage", None)
-            prompt_tokens = getattr(usage, "prompt_tokens", 0) or 0
-            completion_tokens = getattr(usage, "completion_tokens", 0) or 0
+            prompt_tokens = response.prompt_tokens or 0
+            completion_tokens = response.completion_tokens or 0
             cost = _estimate_cost(model, prompt_tokens, completion_tokens)
             record = {
                 "run_id": get_run_id(),
+                "provider": provider,
                 "model": model,
+                "fell_back": fell_back,
                 "prompt_version": prompt_version,
                 "prompt_tokens": prompt_tokens,
                 "completion_tokens": completion_tokens,

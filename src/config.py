@@ -44,12 +44,17 @@ BENCHMARK_SYMBOLS = [
     if s.strip()
 ]
 
-# LLM gateway configuration. Models are split into a "strong" tier (final
-# decisions) and a "cheap" tier (summaries, tweets). Both default to the same
-# model today; real routing between them is a later roadmap item (P3-3).
-LLM_PROVIDER = os.getenv("LLM_PROVIDER", "openai")
+# LLM gateway configuration. Calls are routed by tier: a "strong" tier (final
+# decisions, PM synthesis, judges) and a "cheap" tier (analysts, summaries,
+# tweets). Each tier resolves to a (provider, model) route; an optional fallback
+# route is tried if the primary provider fails after retries.
+LLM_PROVIDER = os.getenv("LLM_PROVIDER", "openai")  # legacy default provider
 LLM_STRONG_MODEL = os.getenv("LLM_STRONG_MODEL", "gpt-4o-mini")
 LLM_CHEAP_MODEL = os.getenv("LLM_CHEAP_MODEL", "gpt-4o-mini")
+LLM_STRONG_PROVIDER = os.getenv("LLM_STRONG_PROVIDER", LLM_PROVIDER)
+LLM_CHEAP_PROVIDER = os.getenv("LLM_CHEAP_PROVIDER", LLM_PROVIDER)
+LLM_FALLBACK_PROVIDER = os.getenv("LLM_FALLBACK_PROVIDER", "")  # empty = no fallback
+LLM_FALLBACK_MODEL = os.getenv("LLM_FALLBACK_MODEL", "")
 LLM_TEMPERATURE = float(os.getenv("LLM_TEMPERATURE", "1.0"))
 LLM_MAX_RETRIES = int(os.getenv("LLM_MAX_RETRIES", "2"))
 LLM_CALL_LOG = DATA_DIR / "llm_calls.jsonl"
@@ -130,11 +135,24 @@ def validate_config() -> None:
     if INITIAL_CAPITAL <= 0:
         errors.append(f"INITIAL_CAPITAL must be positive, got {INITIAL_CAPITAL}")
 
-    if LLM_PROVIDER not in SUPPORTED_LLM_PROVIDERS:
-        errors.append(
-            f"LLM_PROVIDER '{LLM_PROVIDER}' is not supported "
-            f"(supported: {sorted(SUPPORTED_LLM_PROVIDERS)})"
-        )
+    for name, provider in [
+        ("LLM_STRONG_PROVIDER", LLM_STRONG_PROVIDER),
+        ("LLM_CHEAP_PROVIDER", LLM_CHEAP_PROVIDER),
+    ]:
+        if provider not in SUPPORTED_LLM_PROVIDERS:
+            errors.append(
+                f"{name} '{provider}' is not supported "
+                f"(supported: {sorted(SUPPORTED_LLM_PROVIDERS)})"
+            )
+    # Fallback is optional, but if a provider or model is set, both must be set and valid.
+    if LLM_FALLBACK_PROVIDER or LLM_FALLBACK_MODEL:
+        if not (LLM_FALLBACK_PROVIDER and LLM_FALLBACK_MODEL):
+            errors.append("LLM_FALLBACK_PROVIDER and LLM_FALLBACK_MODEL must be set together")
+        elif LLM_FALLBACK_PROVIDER not in SUPPORTED_LLM_PROVIDERS:
+            errors.append(
+                f"LLM_FALLBACK_PROVIDER '{LLM_FALLBACK_PROVIDER}' is not supported "
+                f"(supported: {sorted(SUPPORTED_LLM_PROVIDERS)})"
+            )
     if not LLM_STRONG_MODEL.strip():
         errors.append("LLM_STRONG_MODEL must not be empty")
     if not LLM_CHEAP_MODEL.strip():
