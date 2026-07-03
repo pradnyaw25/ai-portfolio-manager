@@ -45,6 +45,7 @@ class PredictionScorer:
                 "spy_end_price": spy_price,
                 "symbol_return": round(symbol_return, 4),
                 "spy_return": round(spy_return, 4),
+                "alpha": round(symbol_return - spy_return, 4),
                 "outperformed": outperformed,
                 "scored_date": today,
             }

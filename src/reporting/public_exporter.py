@@ -7,6 +7,7 @@ from pathlib import Path
 from src.config import DATA_DIR, REPORTS_DIR
 from src.models.portfolio import PortfolioSnapshot
 from src.models.trade import Trade
+from src.scoring.calibration import compute_calibration
 
 
 PUBLIC_DIR = Path("public")
@@ -253,6 +254,7 @@ class PublicExporter:
                 "open": len(open_predictions),
                 "accuracy_pct": round((len(wins) / len(resolved)) * 100, 1) if resolved else None,
             },
+            "calibration": compute_calibration(predictions),
             "best_predictions": self._rank_resolved_predictions(resolved, reverse=True)[:10],
             "worst_predictions": self._rank_resolved_predictions(resolved, reverse=False)[:10],
             "upcoming_predictions": sorted(
@@ -286,6 +288,8 @@ class PublicExporter:
             "date": prediction.get("date"),
             "symbol": prediction.get("symbol"),
             "prediction": prediction.get("prediction"),
+            "thesis": prediction.get("thesis"),
+            "horizon_days": prediction.get("horizon_days"),
             "confidence": prediction.get("confidence"),
             "start_price": prediction.get("start_price"),
             "spy_start_price": prediction.get("spy_start_price"),

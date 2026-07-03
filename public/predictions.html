@@ -4,6 +4,7 @@
   <title>Prediction Accuracy — AI Portfolio Manager</title>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
       color-scheme: light dark;
@@ -381,6 +382,27 @@
     <div class="stats" id="stats"></div>
 
     <section class="section">
+      <h2>Confidence Calibration</h2>
+      <p class="updated-at" id="calibration-summary">Loading...</p>
+      <div style="max-width: 520px; margin: 0 auto 1.5rem;">
+        <canvas id="calibration-chart"></canvas>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Confidence Bucket</th>
+              <th class="num">Predicted</th>
+              <th class="num">Actual Win Rate</th>
+              <th class="num">Count</th>
+            </tr>
+          </thead>
+          <tbody id="calibration-buckets"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
       <h2>Best Predictions</h2>
       <div class="table-wrap">
         <table>
@@ -579,10 +601,115 @@
           open: open.length,
           accuracy_pct: resolved.length ? Number(((wins.length / resolved.length) * 100).toFixed(1)) : null,
         },
+        calibration: computeCalibration(resolved),
         best_predictions: ranked.slice(0, 10),
         worst_predictions: [...ranked].reverse().slice(0, 10),
         upcoming_predictions: open.map(serialize).sort((a, b) => String(a.due_date).localeCompare(String(b.due_date))).slice(0, 10),
       };
+    }
+
+    // Mirror of src/scoring/calibration.py, for the JSONL fallback path.
+    function computeCalibration(resolved, bucketSize = 0.1) {
+      const usable = resolved.filter(p => p.result && p.result.outperformed !== undefined && p.result.outperformed !== null);
+      const n = usable.length;
+      if (n === 0) return { sample_size: 0, brier_score: null, mean_confidence: null, win_rate: null, buckets: [] };
+
+      const numBuckets = Math.round(1 / bucketSize);
+      const conf = Array(numBuckets).fill(0);
+      const outcomes = Array(numBuckets).fill(0);
+      const count = Array(numBuckets).fill(0);
+      let brier = 0, totalConf = 0, totalWins = 0;
+
+      for (const p of usable) {
+        const c = Number(p.confidence) || 0;
+        const outcome = p.result.outperformed ? 1 : 0;
+        brier += (c - outcome) ** 2;
+        totalConf += c;
+        totalWins += outcome;
+        const idx = Math.min(Math.max(Math.floor(c / bucketSize), 0), numBuckets - 1);
+        conf[idx] += c; outcomes[idx] += outcome; count[idx] += 1;
+      }
+
+      const buckets = [];
+      for (let idx = 0; idx < numBuckets; idx++) {
+        if (count[idx] === 0) continue;
+        buckets.push({
+          lower: Number((idx * bucketSize).toFixed(2)),
+          upper: Number(((idx + 1) * bucketSize).toFixed(2)),
+          predicted: Number((conf[idx] / count[idx]).toFixed(4)),
+          actual: Number((outcomes[idx] / count[idx]).toFixed(4)),
+          count: count[idx],
+        });
+      }
+      return {
+        sample_size: n,
+        brier_score: Number((brier / n).toFixed(4)),
+        mean_confidence: Number((totalConf / n).toFixed(4)),
+        win_rate: Number((totalWins / n).toFixed(4)),
+        buckets,
+      };
+    }
+
+    let calibrationChart;
+    function renderCalibration(calibration) {
+      calibration = calibration || { sample_size: 0, buckets: [] };
+      const summary = document.getElementById("calibration-summary");
+      const buckets = calibration.buckets || [];
+
+      if (!calibration.sample_size) {
+        summary.textContent = "No resolved predictions yet — calibration appears once predictions are scored.";
+        document.getElementById("calibration-buckets").innerHTML =
+          '<tr><td colspan="4" style="text-align:center; opacity:0.6;">No data yet.</td></tr>';
+        return;
+      }
+
+      summary.textContent =
+        `Brier score ${calibration.brier_score} (lower is better) · ` +
+        `mean confidence ${(calibration.mean_confidence * 100).toFixed(0)}% vs ` +
+        `win rate ${(calibration.win_rate * 100).toFixed(0)}% · ${calibration.sample_size} resolved`;
+
+      document.getElementById("calibration-buckets").innerHTML = buckets.map(b => `
+        <tr>
+          <td>${(b.lower * 100).toFixed(0)}–${(b.upper * 100).toFixed(0)}%</td>
+          <td class="num">${(b.predicted * 100).toFixed(0)}%</td>
+          <td class="num">${(b.actual * 100).toFixed(0)}%</td>
+          <td class="num">${b.count}</td>
+        </tr>
+      `).join("");
+
+      const canvas = document.getElementById("calibration-chart");
+      if (!canvas || typeof Chart === "undefined") return;
+      if (calibrationChart) calibrationChart.destroy();
+      calibrationChart = new Chart(canvas, {
+        type: "scatter",
+        data: {
+          datasets: [
+            {
+              label: "Model (predicted vs actual)",
+              data: buckets.map(b => ({ x: b.predicted, y: b.actual })),
+              backgroundColor: "#4f8ef7",
+              pointRadius: 6,
+              showLine: true,
+              borderColor: "#4f8ef7",
+            },
+            {
+              label: "Perfect calibration",
+              data: [{ x: 0, y: 0 }, { x: 1, y: 1 }],
+              borderColor: "rgba(150,150,150,0.6)",
+              borderDash: [6, 6],
+              pointRadius: 0,
+              showLine: true,
+            },
+          ],
+        },
+        options: {
+          scales: {
+            x: { min: 0, max: 1, title: { display: true, text: "Predicted confidence" } },
+            y: { min: 0, max: 1, title: { display: true, text: "Observed win rate" } },
+          },
+          plugins: { legend: { position: "bottom" } },
+        },
+      });
     }
 
     async function loadPredictionDashboard() {
@@ -611,6 +738,8 @@
         <div class="stat-box"><div class="stat-value">${metrics.open ?? 0}</div><div class="stat-label">Open</div></div>
         <div class="stat-box"><div class="stat-value">${pct(metrics.accuracy_pct, 1)}</div><div class="stat-label">Accuracy</div></div>
       `;
+
+      renderCalibration(dashboard.calibration);
 
       document.getElementById("best-predictions").innerHTML =
         renderResolvedRows(dashboard.best_predictions || [], "No resolved predictions yet.");

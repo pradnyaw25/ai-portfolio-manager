@@ -38,17 +38,22 @@ class PredictionStore:
             for p in predictions:
                 f.write(json.dumps(p) + "\n")
 
+    HORIZON_DAYS = 30
+
     def create_from_trade(self, trade, confidence: float, spy_price: float) -> dict:
+        horizon = self.HORIZON_DAYS
         prediction = {
             "id": str(uuid.uuid4())[:8],
             "run_id": getattr(trade, "run_id", None),
             "date": date.today().isoformat(),
             "symbol": trade.symbol,
-            "prediction": f"{trade.symbol} will outperform SPY over 30 days",
+            "prediction": f"{trade.symbol} will outperform SPY over {horizon} days",
+            "thesis": getattr(trade, "reasoning", "") or "",
+            "horizon_days": horizon,
             "confidence": confidence,
             "start_price": trade.price,
             "spy_start_price": spy_price,
-            "due_date": (date.today() + timedelta(days=30)).isoformat(),
+            "due_date": (date.today() + timedelta(days=horizon)).isoformat(),
             "status": "open",
             "result": None,
         }

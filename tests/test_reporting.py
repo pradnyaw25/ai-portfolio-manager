@@ -240,3 +240,10 @@ def test_public_exporter_writes_prediction_dashboard(tmp_path, monkeypatch):
     assert payload["worst_predictions"][0]["id"] == "worst"
     assert payload["worst_predictions"][0]["alpha_pct"] == -7.0
     assert payload["upcoming_predictions"][0]["id"] == "open"
+
+    # Calibration is computed over the 2 resolved predictions (one win, one loss).
+    calibration = payload["calibration"]
+    assert calibration["sample_size"] == 2
+    assert calibration["win_rate"] == 0.5
+    # Brier: (0.8-1)^2 + (0.7-0)^2 = 0.04 + 0.49 → mean 0.265
+    assert calibration["brier_score"] == 0.265
