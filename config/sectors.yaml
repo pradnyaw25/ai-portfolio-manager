@@ -23,3 +23,16 @@ sectors:
   PG: Consumer Staples
   XOM: Energy
   CAT: Industrials
+  # AI-compute cluster (inspired by Situational Awareness LP's long book)
+  ASML: Information Technology
+  MU: Information Technology
+  TSM: Information Technology
+  INTC: Information Technology
+  SNDK: Information Technology
+  ORCL: Information Technology
+  CRWV: Information Technology
+  IREN: Information Technology
+  CORZ: Information Technology
+  APLD: Information Technology
+  GLW: Information Technology
+  BE: Industrials
