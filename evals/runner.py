@@ -15,7 +15,7 @@ from evals.scenarios import SCENARIOS
 from evals.scorers import DETERMINISTIC_SCORERS, ScoreResult
 from src.agents.debate import run_debate
 from src.agents.portfolio_manager import PROMPT_VERSION, PortfolioManagerAgent
-from src.config import DATA_DIR, LLM_STRONG_MODEL
+from src.config import DATA_DIR, LLM_STRONG_MODEL, validate_config
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -93,6 +93,8 @@ def persist(summary: dict, *, path=EVAL_RESULTS_LOG) -> None:
 
 
 def main() -> int:
+    # Fail loudly on misconfiguration before spending API calls on the harness.
+    validate_config()
     summary = run_evals()
     persist(summary)
 
