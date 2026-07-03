@@ -13,6 +13,7 @@ from datetime import UTC, datetime
 from evals import grounding
 from evals.scenarios import SCENARIOS
 from evals.scorers import DETERMINISTIC_SCORERS, ScoreResult
+from src.agents.debate import run_debate
 from src.agents.portfolio_manager import PROMPT_VERSION, PortfolioManagerAgent
 from src.config import DATA_DIR, LLM_STRONG_MODEL
 from src.utils.logger import get_logger
@@ -23,6 +24,13 @@ EVAL_RESULTS_LOG = DATA_DIR / "eval_results.jsonl"
 
 
 def default_decide(scenario):
+    if getattr(scenario, "expects_debate", False):
+        return run_debate(
+            scenario.portfolio,
+            scenario.research,
+            scenario.benchmark,
+            scenario.memory,
+        )
     return PortfolioManagerAgent().decide(
         portfolio=scenario.portfolio,
         research=scenario.research,

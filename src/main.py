@@ -18,7 +18,7 @@ from src.data_sources.market_data import MarketDataClient
 from src.data_sources.news import NewsClient
 from src.data_sources.benchmarks import BenchmarkClient
 from src.research.market_context import MarketContextBuilder
-from src.agents.portfolio_manager import PortfolioManagerAgent
+from src.agents.debate import run_debate
 from src.agents.tweet_generator import TweetGeneratorAgent
 from src.agents.risk_manager import RiskManagerAgent
 from src.agents.rebalance_checker import RebalanceChecker
@@ -148,8 +148,7 @@ def extract_memory_symbols(research: dict) -> list[str]:
 
 
 def decide_trades(engine, research, benchmark_client, memory_context):
-    manager = PortfolioManagerAgent()
-    return manager.decide(
+    return run_debate(
         portfolio=engine.get_snapshot(),
         research=research,
         benchmark=benchmark_client.get_sp500_performance(),

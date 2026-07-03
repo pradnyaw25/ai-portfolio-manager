@@ -35,6 +35,18 @@ class TradeProposal(BaseModel):
     sources_used: list[str] = Field(default_factory=list)
 
 
+class AnalystThesis(BaseModel):
+    """A single analyst's structured argument (bull / bear / risk)."""
+
+    model_config = ConfigDict(extra="allow")
+
+    role: str = ""
+    thesis: str = ""
+    key_points: list[str] = Field(default_factory=list)
+    focus_symbols: list[str] = Field(default_factory=list)
+    conviction: float = 0.5
+
+
 class DecisionResponse(BaseModel):
     """Portfolio manager decision. Field set mirrors the prompt contract and
     everything ``main.py`` and the memory/citation layers read downstream."""
@@ -46,6 +58,7 @@ class DecisionResponse(BaseModel):
     portfolio_assessment: str = ""
     cash_thesis: str | None = None
     risk_assessment: str = ""
+    bear_case_response: str = ""
     trades: list[TradeProposal] = Field(default_factory=list)
     summary: str = ""
     sources_used: list[str] = Field(default_factory=list)
