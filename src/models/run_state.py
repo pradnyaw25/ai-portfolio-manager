@@ -34,3 +34,6 @@ class PortfolioRunState:
     warnings: list[str] = field(default_factory=list)
     errors: list[str] = field(default_factory=list)
     failed_step: str | None = None
+    # Notes on conditional-routing decisions (empty decision, no approved trades,
+    # memory unavailable, execution failure), surfaced in run_status.
+    diagnostics: dict = field(default_factory=dict)

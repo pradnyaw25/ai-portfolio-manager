@@ -60,6 +60,21 @@ def build_daily_cycle_graph():
 
     graph.add_edge(START, "load_portfolio")
     for (node_name, _), (next_node_name, _) in zip(workflow_nodes, workflow_nodes[1:]):
+        # After rebalance, branch on whether there is anything to execute: with no
+        # approved trades (empty decision or all rejected), skip the
+        # approval/execute/track nodes and go straight to journaling — still
+        # exporting run status and diagnostics.
+        if node_name == "check_rebalance":
+            graph.add_conditional_edges(
+                node_name,
+                route_after_rebalance,
+                {
+                    "execute": "human_approval",
+                    "skip_execution": "journal_run",
+                    "failed": "finalize_failure",
+                },
+            )
+            continue
         graph.add_conditional_edges(
             node_name,
             route_after_node,
@@ -79,6 +94,17 @@ def build_daily_cycle_graph():
     graph.add_edge("finalize_failure", END)
 
     return graph.compile()
+
+
+def route_after_rebalance(state: DailyGraphState) -> str:
+    """Skip the execution path when no trades were approved."""
+    run = state["run"]
+    if run.errors:
+        return "failed"
+    if not run.approved_trades:
+        run.diagnostics["execution"] = "skipped: no approved trades to execute"
+        return "skip_execution"
+    return "execute"
 
 
 def run_daily_cycle_graph() -> PortfolioRunState:
@@ -152,6 +178,10 @@ def finalize_failure_node(state: DailyGraphState) -> DailyGraphState:
         warnings=run.warnings,
         snapshot=run.snapshot,
     )
+    if run.failed_step:
+        run.diagnostics["execution"] = f"failed at {run.failed_step}"
+    if run.diagnostics:
+        run.run_status["diagnostics"] = dict(run.diagnostics)
     steps.export_run_status(run.run_status)
     return {"run": run}
 
@@ -198,6 +228,8 @@ def build_research_context_node(state: DailyGraphState) -> DailyGraphState:
 def retrieve_memory_node(state: DailyGraphState) -> DailyGraphState:
     run = state["run"]
     run.memory_result, run.memory_context, run.memory_groups = steps.retrieve_memory_context(run.research)
+    if getattr(run.memory_result, "status", None) == "unavailable":
+        run.diagnostics["memory"] = "unavailable — proceeding without memory context"
     return {"run": run}
 
 
@@ -221,6 +253,8 @@ def decide_trades_node(state: DailyGraphState) -> DailyGraphState:
         run.benchmark_client,
         run.memory_groups,
     )
+    if not (run.decisions or {}).get("trades"):
+        run.diagnostics["decision"] = "empty: model proposed no trades"
     return {"run": run}
 
 
@@ -398,6 +432,8 @@ def build_run_status_node(state: DailyGraphState) -> DailyGraphState:
         snapshot=run.snapshot,
     )
     run.run_status["human_review"] = run.human_review
+    if run.diagnostics:
+        run.run_status["diagnostics"] = dict(run.diagnostics)
     run.warnings = list(run.run_status.get("warnings", []))
     return {"run": run}
 

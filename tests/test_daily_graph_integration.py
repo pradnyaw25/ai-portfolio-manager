@@ -62,7 +62,8 @@ def test_graph_runs_full_pipeline_in_order(monkeypatch):
         "decide_trades": {"trades": []},
         "run_grounding_check": {"status": "ok", "grounded": True, "issues": []},
         "review_risk": risk_review,
-        "check_rebalance": (SimpleNamespace(), []),
+        # Non-empty approved trades so the graph routes through the execution path.
+        "check_rebalance": (SimpleNamespace(), trades),
         "execute_trades": trades,
         "track_buy_predictions": None,
         "journal_run": None,
