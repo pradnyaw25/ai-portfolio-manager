@@ -60,7 +60,7 @@ jobs:
           X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
           SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
         run: |
-          python -m src.main
+          python scripts/daily_run.py
 
       - name: Commit updated public files
         if: steps.market-hours.outputs.should_run == 'true'
