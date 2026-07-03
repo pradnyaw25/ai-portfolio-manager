@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <title>Architecture &amp; Retrospective — AI Portfolio Manager</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f6f7f9;
+      --surface: #ffffff;
+      --surface-subtle: #f0f3f7;
+      --border: #d9dee7;
+      --border-strong: #c6ceda;
+      --text: #17202a;
+      --muted: #637083;
+      --muted-strong: #465365;
+      --positive: #16784b;
+      --positive-bg: #e8f5ee;
+      --negative: #b8323b;
+      --negative-bg: #fdeced;
+      --warning: #946200;
+      --warning-bg: #fff6dd;
+      --accent: #2454a6;
+      --accent-bg: #e9f0ff;
+      --ink: #101820;
+      --shadow: 0 12px 36px rgba(16, 24, 32, 0.08);
+      --row-border: #edf0f4;
+      --panel-subtle: #fbfcfe;
+    }
+    :root[data-theme="dark"] {
+      --bg: #0f141b;
+      --surface: #171e28;
+      --surface-subtle: #202938;
+      --border: #2f3a49;
+      --border-strong: #465365;
+      --text: #dbe3ee;
+      --muted: #97a4b5;
+      --muted-strong: #bdc7d5;
+      --positive: #5ed39a;
+      --positive-bg: #10291f;
+      --negative: #ff7a86;
+      --negative-bg: #35171c;
+      --warning: #f2c766;
+      --warning-bg: #2d230f;
+      --accent: #83aaff;
+      --accent-bg: #172747;
+      --ink: #f5f7fb;
+      --shadow: 0 16px 42px rgba(0, 0, 0, 0.34);
+      --row-border: #263241;
+      --panel-subtle: #131a24;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-width: 320px; background: var(--bg); color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+    a { color: inherit; }
+    .app-shell { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 22px 0 56px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-bottom: 24px; }
+    .topbar-actions { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .brand { display: flex; align-items: center; gap: 10px; min-width: 0; font-weight: 800; color: var(--ink); }
+    .brand-mark {
+      display: grid; width: 34px; height: 34px; place-items: center; border: 1px solid var(--border-strong);
+      border-radius: 8px; background: var(--surface); color: var(--accent); font-size: 18px; font-weight: 850;
+    }
+    .nav { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); padding: 4px; }
+    .nav a {
+      display: inline-flex; align-items: center; min-height: 34px; padding: 0 12px; border-radius: 6px;
+      color: var(--muted-strong); font-size: 14px; font-weight: 700; text-decoration: none; white-space: nowrap;
+    }
+    .nav a.active { background: var(--ink); color: var(--bg); }
+    .nav a:hover:not(.active) { background: var(--surface-subtle); }
+    .theme-toggle { display: flex; align-items: center; gap: 3px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); padding: 3px; }
+    .theme-toggle button {
+      min-width: 30px; min-height: 30px; border: 0; border-radius: 6px; background: transparent; color: var(--muted-strong);
+      font-size: 13px; font-weight: 800; cursor: pointer;
+    }
+    .theme-toggle button.active { background: var(--ink); color: var(--bg); }
+
+    h1 { margin: 0 0 8px; color: var(--ink); font-size: clamp(30px, 5vw, 50px); line-height: 1.02; }
+    h2 { margin: 0 0 4px; color: var(--ink); font-size: 22px; }
+    h3 { margin: 0 0 4px; color: var(--ink); font-size: 15px; }
+    p { margin-top: 0; }
+    .subtitle { max-width: 720px; color: var(--muted); font-size: 15px; margin: 0; }
+    .page-header { margin-bottom: 26px; }
+    .eyebrow { color: var(--muted); font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
+
+    section { margin-bottom: 30px; }
+    .section-head { margin-bottom: 14px; }
+    .section-head p { color: var(--muted); font-size: 14px; margin: 4px 0 0; max-width: 760px; }
+
+    .card {
+      border: 1px solid var(--border); border-radius: 10px; background: var(--surface);
+      box-shadow: var(--shadow); padding: 20px 22px;
+    }
+    .lede { font-size: 16px; color: var(--muted-strong); }
+    .lede strong { color: var(--ink); }
+
+    /* ---- diagram primitives ---- */
+    .diagram { border: 1px solid var(--border); border-radius: 10px; background: var(--panel-subtle); padding: 18px; overflow-x: auto; }
+    .layer { display: grid; grid-template-columns: 116px minmax(0,1fr); gap: 14px; align-items: center; padding: 12px 0; }
+    .layer + .layer { border-top: 1px dashed var(--border); }
+    .layer-label { color: var(--muted); font-size: 11px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; }
+    .nodes { display: flex; flex-wrap: wrap; gap: 8px; }
+    .node {
+      border: 1px solid var(--border-strong); border-radius: 8px; background: var(--surface);
+      padding: 8px 12px; font-size: 13px; font-weight: 700; color: var(--text); min-width: 0;
+    }
+    .node small { display: block; font-weight: 600; color: var(--muted); font-size: 11px; }
+    .node.accent { border-color: var(--accent); background: var(--accent-bg); color: var(--accent); }
+    .node.gate { border-color: var(--accent); background: var(--accent-bg); color: var(--accent); font-weight: 800; }
+    .node.pos { border-color: var(--positive); background: var(--positive-bg); color: var(--positive); }
+
+    /* ---- pipeline flow ---- */
+    .flow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+    .step {
+      border: 1px solid var(--border-strong); border-radius: 999px; background: var(--surface);
+      padding: 6px 12px; font-size: 12.5px; font-weight: 700; white-space: nowrap;
+    }
+    .step.tool { border-color: var(--accent); color: var(--accent); background: var(--accent-bg); }
+    .step.risk { border-color: var(--warning); color: var(--warning); background: var(--warning-bg); }
+    .step.exec { border-color: var(--positive); color: var(--positive); background: var(--positive-bg); }
+    .arrow { color: var(--muted); font-size: 14px; }
+    .branch-note { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 10px; }
+    .chip {
+      border: 1px solid var(--border); border-radius: 8px; background: var(--surface); padding: 8px 12px;
+      font-size: 12.5px; color: var(--muted-strong);
+    }
+    .chip b { color: var(--ink); }
+
+    /* ---- grids ---- */
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+    .stat { border: 1px solid var(--border); border-radius: 10px; background: var(--surface); padding: 18px 20px; box-shadow: var(--shadow); }
+    .stat .num { color: var(--ink); font-size: 34px; font-weight: 850; line-height: 1; }
+    .stat .lbl { color: var(--muted); font-size: 13px; margin-top: 6px; }
+
+    .phase { border: 1px solid var(--border); border-radius: 10px; background: var(--surface); padding: 18px 20px; box-shadow: var(--shadow); }
+    .phase .tag { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; color: var(--positive); background: var(--positive-bg); border: 1px solid var(--positive); border-radius: 999px; padding: 2px 10px; margin-bottom: 10px; }
+    .phase ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted-strong); font-size: 13.5px; }
+    .phase li { margin-bottom: 4px; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); box-shadow: var(--shadow); }
+    th, td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--row-border); vertical-align: top; }
+    th { color: var(--muted); font-size: 11px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; background: var(--panel-subtle); }
+    tr:last-child td { border-bottom: 0; }
+    td b { color: var(--ink); }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; background: var(--surface-subtle); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; }
+    .delta { color: var(--positive); font-weight: 800; }
+
+    footer { margin-top: 34px; padding-top: 16px; border-top: 1px solid var(--border); color: var(--muted); font-size: 13px; }
+    @media (max-width: 640px) {
+      .layer { grid-template-columns: 1fr; gap: 6px; }
+      .topbar { flex-direction: column; align-items: stretch; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app-shell">
+    <div class="topbar">
+      <div class="brand"><span class="brand-mark">A</span><span>AI Portfolio Manager</span></div>
+      <div class="topbar-actions">
+        <nav class="nav" aria-label="Dashboard navigation">
+          <a href="index.html">Dashboard</a>
+          <a href="decisions.html">Decision Journal</a>
+          <a href="predictions.html">Prediction Accuracy</a>
+          <a class="active" href="architecture.html">Architecture</a>
+        </nav>
+        <div class="theme-toggle" aria-label="Theme preference">
+          <button type="button" data-theme-option="light" title="Use light theme">L</button>
+          <button type="button" data-theme-option="dark" title="Use dark theme">D</button>
+        </div>
+      </div>
+    </div>
+
+    <header class="page-header">
+      <div class="eyebrow">Architecture &amp; Retrospective</div>
+      <h1>How the fund is built</h1>
+      <p class="subtitle">An explainable, LLM-run paper hedge fund — in public. A LangGraph-orchestrated daily cycle sits on a hardened LLM gateway, with idempotent stores as the system of record, Qdrant as long-term memory, evals in CI, and every decision traced, cited, and scored.</p>
+    </header>
+
+    <section>
+      <div class="card">
+        <p class="lede" style="margin:0;">The fund analyzes markets, debates, trades a simulated <strong>$1M</strong> book, and justifies itself — every run. Deterministic guardrails (position sizing, turnover, sector limits, stop-loss/take-profit) sit <strong>outside</strong> the model; the LLM must argue its case and respond to the bear thesis before anything executes. The differentiator isn't returns — it's <strong>radical transparency</strong>.</p>
+      </div>
+    </section>
+
+    <!-- ARCHITECTURE DIAGRAM -->
+    <section>
+      <div class="section-head">
+        <h2>System architecture</h2>
+        <p>One LLM gateway is the single choke point — routing, retries, tracing, and cost tracking are one-time costs, not per-agent ones.</p>
+      </div>
+      <div class="diagram">
+        <div class="layer">
+          <div class="layer-label">Orchestrate</div>
+          <div class="nodes">
+            <div class="node accent">LangGraph daily cycle<small>conditional routing · SQLite resume · HITL approval</small></div>
+          </div>
+        </div>
+        <div class="layer">
+          <div class="layer-label">Agents</div>
+          <div class="nodes">
+            <div class="node">Research<small>tool-calling</small></div>
+            <div class="node">Debate<small>bull · bear · risk</small></div>
+            <div class="node">PM synthesis<small>strong tier</small></div>
+            <div class="node">Risk engine<small>deterministic</small></div>
+            <div class="node">Reflection<small>weekly</small></div>
+            <div class="node">Investor letter<small>weekly</small></div>
+          </div>
+        </div>
+        <div class="layer">
+          <div class="layer-label">Gateway</div>
+          <div class="nodes">
+            <div class="node gate">LLM Gateway — Pydantic schemas · repair retry · backoff · tier routing + fallback · tool loop · cost/latency log</div>
+          </div>
+        </div>
+        <div class="layer">
+          <div class="layer-label">Providers</div>
+          <div class="nodes">
+            <div class="node">OpenAI</div>
+            <div class="node">Fallback route</div>
+            <div class="node">Langfuse<small>tracing (opt-in)</small></div>
+          </div>
+        </div>
+        <div class="layer">
+          <div class="layer-label">Data</div>
+          <div class="nodes">
+            <div class="node">SQLite<small>run-progress / resume</small></div>
+            <div class="node">CSV · JSONL<small>idempotent by run_id</small></div>
+            <div class="node">Qdrant<small>chunked RAG · sector metadata</small></div>
+            <div class="node">Durable run history</div>
+          </div>
+        </div>
+        <div class="layer">
+          <div class="layer-label">Assure</div>
+          <div class="nodes">
+            <div class="node">Decision evals in CI</div>
+            <div class="node">Grounding judge</div>
+            <div class="node">Calibration<small>Brier · curves</small></div>
+            <div class="node">Retrieval eval</div>
+          </div>
+        </div>
+        <div class="layer">
+          <div class="layer-label">Surface</div>
+          <div class="nodes">
+            <div class="node pos">GitHub Pages dashboard</div>
+            <div class="node pos">MCP server<small>7 read-only tools</small></div>
+            <div class="node pos">Weekly investor letter</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PIPELINE FLOW -->
+    <section>
+      <div class="section-head">
+        <h2>The daily cycle</h2>
+        <p>Twenty guarded LangGraph nodes. Every LLM claim is grounded before it's journaled or tweeted; every deterministic guardrail runs before execution.</p>
+      </div>
+      <div class="diagram">
+        <div class="flow">
+          <span class="step">Mark-to-market</span><span class="arrow">→</span>
+          <span class="step">Research context</span><span class="arrow">→</span>
+          <span class="step tool">Memory retrieval</span><span class="arrow">→</span>
+          <span class="step tool">Tool-calling research</span><span class="arrow">→</span>
+          <span class="step">Debate → PM decide</span><span class="arrow">→</span>
+          <span class="step">Grounding check</span><span class="arrow">→</span>
+          <span class="step risk">Risk review</span><span class="arrow">→</span>
+          <span class="step risk">Rebalance</span><span class="arrow">→</span>
+          <span class="step">Human approval</span><span class="arrow">→</span>
+          <span class="step exec">Execute</span><span class="arrow">→</span>
+          <span class="step exec">Journal</span><span class="arrow">→</span>
+          <span class="step">Report + tweet</span><span class="arrow">→</span>
+          <span class="step tool">Memory ingest</span>
+        </div>
+        <div class="branch-note">
+          <div class="chip"><b>Conditional routing:</b> empty decision or all-rejected → skip execution, straight to journaling</div>
+          <div class="chip"><b>Resume:</b> a killed run re-enters by <code>run_id</code>; idempotent stores dedupe; an already-sent tweet isn't re-posted</div>
+          <div class="chip"><b>Failure:</b> any node error → finalize with diagnostics + exported status</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BY THE NUMBERS -->
+    <section>
+      <div class="section-head"><h2>By the numbers</h2></div>
+      <div class="grid">
+        <div class="stat"><div class="num">6</div><div class="lbl">phases complete (0–5)</div></div>
+        <div class="stat"><div class="num">18 / 18</div><div class="lbl">non-optional roadmap tasks done</div></div>
+        <div class="stat"><div class="num">248</div><div class="lbl">tests, green (from 165)</div></div>
+        <div class="stat"><div class="num">0.15 <span style="font-size:20px;color:var(--muted)">→</span> 1.00</div><div class="lbl">retrieval hit@1, chunked vs unchunked</div></div>
+      </div>
+    </section>
+
+    <!-- PHASE RETRO -->
+    <section>
+      <div class="section-head">
+        <h2>Phase-by-phase</h2>
+        <p>The roadmap moved the project from "cool automation" to a system that demonstrably engineers AI. Each phase, and what it shipped.</p>
+      </div>
+      <div class="grid">
+        <div class="phase">
+          <span class="tag">✓ Phase 0</span>
+          <h3>Harden the foundation</h3>
+          <ul>
+            <li>LLM gateway: the single choke point — validated structured outputs, repair-retry, backoff</li>
+            <li>Config consolidation; watchlist &amp; sectors in YAML</li>
+            <li>Idempotent stores (upsert by <code>run_id</code>) — later load-bearing for resume</li>
+          </ul>
+        </div>
+        <div class="phase">
+          <span class="tag">✓ Phase 1</span>
+          <h3>Orchestration &amp; observability</h3>
+          <ul>
+            <li>LangGraph is the runner; conditional routing + diagnostics</li>
+            <li>Human-in-the-loop approval gate</li>
+            <li>Langfuse tracing, per-run cost, durable history</li>
+            <li>SQLite progress store → crash-safe resume</li>
+          </ul>
+        </div>
+        <div class="phase">
+          <span class="tag">✓ Phase 2</span>
+          <h3>Evals &amp; calibration</h3>
+          <ul>
+            <li>Golden-scenario decision evals gating CI</li>
+            <li>LLM-as-judge grounding check before journaling</li>
+            <li>Brier score + calibration curves on the dashboard</li>
+          </ul>
+        </div>
+        <div class="phase">
+          <span class="tag">✓ Phase 3</span>
+          <h3>Multi-agent &amp; tools</h3>
+          <ul>
+            <li>Bull / bear / risk debate → PM must answer the bear case</li>
+            <li>Typed tool-calling research agent</li>
+            <li>Provider abstraction, cheap-vs-strong routing, fallback</li>
+          </ul>
+        </div>
+        <div class="phase">
+          <span class="tag">✓ Phase 4</span>
+          <h3>Knowledge layer</h3>
+          <ul>
+            <li>Chunked, metadata-filtered RAG over SEC filings — measured</li>
+            <li>10-Q + 8-K earnings sources; citable provenance</li>
+            <li>Weekly reflection agent: outcomes → cited lessons</li>
+          </ul>
+        </div>
+        <div class="phase">
+          <span class="tag">✓ Phase 5</span>
+          <h3>Surface &amp; reach</h3>
+          <ul>
+            <li>Read-only MCP server — interrogate the fund from Claude</li>
+            <li>Risk Engine V2: sector limits + stop-loss/take-profit</li>
+            <li>Grounded weekly investor letter</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- KEY DECISIONS -->
+    <section>
+      <div class="section-head">
+        <h2>Key engineering decisions</h2>
+        <p>The calls worth remembering — where a constraint forced a choice, and why we went the way we did.</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Decision</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td><b>Idempotency-based resume</b> over LangGraph's native <code>SqliteSaver</code></td><td>The graph state carries non-serializable live handles (engine, clients). Persisting <em>progress</em> + reusing the <code>run_id</code> leans on the P0-3 idempotent stores for duplicate-free re-execution — correct, without a large risky state refactor.</td></tr>
+            <tr><td><b>Trades keyed by the run, not (run_id, symbol, action)</b></td><td>A single run can legitimately hold two same-symbol/action trades (a PM buy + a rebalance top-up). A per-row key would silently collapse them and lose shares.</td></tr>
+            <tr><td><b>Chunking eval with a deterministic hashing embedder + in-memory Qdrant</b></td><td>Runs in CI with no API key, yet does real vector search. Cosine over TF vectors rewards term concentration — the actual reason chunking helps — so the <span class="delta">0.15 → 1.00</span> hit@1 win is honest, not rigged.</td></tr>
+            <tr><td><b>Research augments, doesn't replace</b> the deterministic context</td><td>Keeps the base context reliable/auditable while still demonstrating the tool-calling stack.</td></tr>
+            <tr><td><b>Real EDGAR 8-K earnings exhibits</b> over a paid transcript feed</td><td>Official, free, and reuses the existing SEC client; full call transcripts aren't available free.</td></tr>
+            <tr><td><b>Deterministic risk exits win over the LLM</b></td><td>Stop-loss/take-profit SELLs are generated from the book and supersede any LLM trade on that symbol — the guardrail layer is boring on purpose.</td></tr>
+            <tr><td><b>Grounding gate before publish</b> for the investor letter</td><td>A letter whose numbers aren't supported by the week's computed facts is blocked, never published.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer>
+      Paper trading — simulated capital, not investment advice. Source &amp; full roadmap in the repository;
+      the fund is also queryable from any MCP client (Claude Desktop / Code) via the read-only server.
+    </footer>
+  </main>
+
+  <script>
+    const THEME_KEY = "ai-portfolio-theme";
+    function getThemePreference() {
+      const stored = localStorage.getItem(THEME_KEY);
+      if (stored === "light" || stored === "dark") return stored;
+      return window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+    }
+    function applyTheme(pref = getThemePreference()) {
+      document.documentElement.setAttribute("data-theme", pref);
+      document.querySelectorAll("[data-theme-option]").forEach(btn => {
+        const active = btn.dataset.themeOption === pref;
+        btn.classList.toggle("active", active);
+        btn.setAttribute("aria-pressed", String(active));
+      });
+    }
+    document.querySelectorAll("[data-theme-option]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        localStorage.setItem(THEME_KEY, btn.dataset.themeOption);
+        applyTheme(btn.dataset.themeOption);
+      });
+    });
+    applyTheme();
+  </script>
+</body>
+</html>
