@@ -1,0 +1,42 @@
+name: Decision Evals
+
+# Gate prompt/schema/agent changes on the decision eval harness. Runs the real
+# model against the golden scenarios at temperature 0 and fails if any scenario
+# violates the deterministic scorers (schema / risk / citation).
+on:
+  pull_request:
+    paths:
+      - "prompts/**"
+      - "src/agents/portfolio_manager.py"
+      - "src/llm/**"
+      - "evals/**"
+  workflow_dispatch:
+
+jobs:
+  evals:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Install dependencies
+        run: |
+          pip install -U pip
+          pip install -e .
+
+      - name: Run decision evals
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          LLM_TEMPERATURE: "0"
+        run: python -m evals.runner
+
+      - name: Upload eval results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-results
+          path: data/eval_results.jsonl
+          if-no-files-found: ignore
