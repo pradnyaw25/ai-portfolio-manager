@@ -1,7 +1,9 @@
 import json
-from openai import OpenAI
 
-client = OpenAI()
+from src.llm import complete_structured
+from src.llm.schemas import DecisionResponse
+
+PROMPT_VERSION = "portfolio_manager/v1"
 
 
 class PortfolioManagerAgent:
@@ -66,12 +68,13 @@ Return ONLY valid JSON in this format:
 }}
 """
 
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "user", "content": context}
-            ],
-            response_format={"type": "json_object"},
+        decision = complete_structured(
+            [{"role": "user", "content": context}],
+            DecisionResponse,
+            tier="strong",
+            prompt_version=PROMPT_VERSION,
         )
 
-        return json.loads(response.choices[0].message.content)
+        # Return a plain dict — the risk manager, memory/citation layers, and
+        # decision journal all consume the decision as a dict.
+        return decision.model_dump()
