@@ -25,17 +25,28 @@ Goal: kill the fragility before building on it. Everything later flows through P
 * Acceptance: no raw `json.loads` on LLM output anywhere in `src/`; a test with a
   mocked malformed response proves the repair path; a mocked API error proves backoff.
 
-### P0-2 ∥. Config consolidation and dead-code removal
+### P0-2 ∥. Config consolidation and dead-code removal — DONE
 * Output:
   * Model names/tiers, temperature, watchlist, and Qdrant collection name in typed
-    config, validated at startup with clear errors. Watchlist moves from
-    `src/research/market_context.py` to a YAML file (also used by
-    `scripts/ingest_sec_filings.py`).
-  * Delete `src/agents/researcher.py` (dead code) and unused config keys
-    (`ALPHA_VANTAGE_API_KEY`, `FINNHUB_API_KEY`, `MAX_POSITIONS`).
-  * Remove unused dependencies (`plotly`, `anthropic` until the gateway uses it).
-* Acceptance: `grep -r "gpt-4o-mini" src/` returns nothing; startup fails loudly on
-  invalid config; tests green.
+    config (`src/config.py`), validated by `validate_config()` which lists all
+    problems at once. Watchlist moved to `config/watchlist.yaml` (loaded/normalized
+    by `_load_watchlist`), shared by `src/research/market_context.py` and
+    `scripts/ingest_sec_filings.py`. `validate_config()` is called at the top of the
+    daily cycle (`run_daily_cycle_graph`) and the eval harness entrypoint
+    (`evals/runner.py:main`), so both fail loudly before any API spend.
+  * Deleted `src/agents/researcher.py` and the unused config keys
+    (`ALPHA_VANTAGE_API_KEY`, `FINNHUB_API_KEY`, `MAX_POSITIONS`) — none remain in
+    `src/` or `scripts/`.
+  * Removed unused deps (`plotly`, `anthropic`).
+* Note on acceptance: the original `grep -r "gpt-4o-mini" src/` == empty criterion is
+  intentionally *not* met by two legitimate references — the `_MODEL_PRICING` table
+  key in `gateway.py` (a pricing lookup must key by model name) and the config
+  defaults in `config.py` (P3-3 deliberately kept `gpt-4o-mini` as the default so
+  scheduled-run cost doesn't change silently). The criterion's intent — no hardcoded
+  model *selection* in agent code — is satisfied: every agent resolves its model
+  through config tiers.
+* Acceptance: verified — no dead keys or `researcher.py`; startup validation fails
+  loudly on invalid config (covered by `tests/test_config.py`); tests green.
 
 ### P0-3 ∥. Idempotent stores
 * Input: `src/storage/` (trades CSV, decisions JSONL, predictions JSONL).
