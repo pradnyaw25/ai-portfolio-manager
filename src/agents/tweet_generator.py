@@ -1,31 +1,33 @@
 from datetime import date
-from openai import OpenAI
 from src.config import PROMPTS_DIR
+from src.llm import complete_text
 from src.models.portfolio import PortfolioSnapshot
 from src.models.trade import Trade
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+PROMPT_VERSION = "tweet_writer/v1"
+
 
 class TweetGeneratorAgent:
     def __init__(self):
-        self.client = OpenAI()
         self.system_prompt = (PROMPTS_DIR / "tweet_writer.txt").read_text()
 
     def generate(self, portfolio: PortfolioSnapshot, trades: list[Trade]) -> str:
         context = self._build_context(portfolio, trades)
 
-        response = self.client.chat.completions.create(
-            model="gpt-4o-mini",
-            max_tokens=512,
-            messages=[
+        text = complete_text(
+            [
                 {"role": "system", "content": self.system_prompt},
                 {"role": "user", "content": context},
             ],
+            tier="cheap",
+            max_tokens=512,
+            prompt_version=PROMPT_VERSION,
         )
 
-        return self._clean_tweet(response.choices[0].message.content)
+        return self._clean_tweet(text)
 
     def _build_context(self, portfolio: PortfolioSnapshot, trades: list[Trade]) -> str:
         today = date.today().strftime("%b %d")

@@ -1,17 +1,17 @@
 import json
 from dataclasses import dataclass
 
-from openai import OpenAI
-
 from src.agents.risk_manager import RiskManagerAgent
 from src.config import TARGET_CASH_PCT, REBALANCE_MIN_DEPLOY_PCT, REBALANCE_TURNOVER
+from src.llm import complete_structured
+from src.llm.schemas import RebalanceResponse
 from src.models.portfolio import PortfolioSnapshot
 from src.models.prediction import TradePrediction
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
-client = OpenAI()
+PROMPT_VERSION = "rebalance_checker/v1"
 
 
 @dataclass
@@ -133,13 +133,12 @@ Return ONLY valid JSON:
 }}
 """
 
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[{"role": "user", "content": prompt}],
-            response_format={"type": "json_object"},
-        )
-
-        result = json.loads(response.choices[0].message.content)
+        result = complete_structured(
+            [{"role": "user", "content": prompt}],
+            RebalanceResponse,
+            tier="strong",
+            prompt_version=PROMPT_VERSION,
+        ).model_dump()
         cash_thesis = result.get("cash_thesis")
 
         if result.get("action") == "hold_cash" and cash_thesis:

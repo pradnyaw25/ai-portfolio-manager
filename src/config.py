@@ -44,4 +44,14 @@ BENCHMARK_SYMBOLS = [
     if s.strip()
 ]
 
+# LLM gateway configuration. Models are split into a "strong" tier (final
+# decisions) and a "cheap" tier (summaries, tweets). Both default to the same
+# model today; real routing between them is a later roadmap item (P3-3).
+LLM_PROVIDER = os.getenv("LLM_PROVIDER", "openai")
+LLM_STRONG_MODEL = os.getenv("LLM_STRONG_MODEL", "gpt-4o-mini")
+LLM_CHEAP_MODEL = os.getenv("LLM_CHEAP_MODEL", "gpt-4o-mini")
+LLM_TEMPERATURE = float(os.getenv("LLM_TEMPERATURE", "1.0"))
+LLM_MAX_RETRIES = int(os.getenv("LLM_MAX_RETRIES", "2"))
+LLM_CALL_LOG = DATA_DIR / "llm_calls.jsonl"
+
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
