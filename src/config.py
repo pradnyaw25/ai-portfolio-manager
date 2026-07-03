@@ -79,6 +79,11 @@ AUTO_APPROVE = os.getenv("AUTO_APPROVE", "true").lower() in {"1", "true", "yes"}
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
 
 WATCHLIST_PATH = CONFIG_DIR / "watchlist.yaml"
+SECTORS_PATH = CONFIG_DIR / "sectors.yaml"
+
+# Sector assigned to symbols absent from config/sectors.yaml (ETFs, ^VIX, or any
+# ticker not yet classified).
+DEFAULT_SECTOR = "Unknown"
 
 
 class ConfigError(Exception):
@@ -111,6 +116,35 @@ def _load_watchlist() -> list[str]:
 
 
 WATCHLIST = _load_watchlist()
+
+
+def _load_sectors() -> dict[str, str]:
+    """Load the symbol→sector map from ``config/sectors.yaml``.
+
+    Optional file: a missing or empty map simply means every symbol resolves to
+    ``DEFAULT_SECTOR``. Malformed YAML is a hard error so it fails loudly.
+    """
+    if not SECTORS_PATH.exists():
+        return {}
+    try:
+        data = yaml.safe_load(SECTORS_PATH.read_text()) or {}
+    except yaml.YAMLError as exc:
+        raise ConfigError(f"Sectors file is not valid YAML ({SECTORS_PATH}): {exc}") from exc
+
+    mapping = data.get("sectors") if isinstance(data, dict) else None
+    if mapping is None:
+        return {}
+    if not isinstance(mapping, dict):
+        raise ConfigError(f"Sectors file must define a 'sectors' mapping ({SECTORS_PATH})")
+    return {str(symbol).strip().upper(): str(sector).strip() for symbol, sector in mapping.items()}
+
+
+SECTORS = _load_sectors()
+
+
+def sector_for(symbol: str) -> str:
+    """Return the configured sector for ``symbol``, or ``DEFAULT_SECTOR``."""
+    return SECTORS.get(str(symbol).strip().upper(), DEFAULT_SECTOR)
 
 
 def validate_config() -> None:

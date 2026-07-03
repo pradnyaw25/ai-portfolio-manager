@@ -103,9 +103,39 @@ def test_filing_sections_to_memory_records():
         },
     )
 
+    # Short sections yield a single chunk each; ids carry a zero-padded chunk index.
     assert [record.memory_type for record in records] == ["thesis", "risk_lesson"]
-    assert records[0].id == "10k:AAPL:000032019325000079:item_1"
+    assert records[0].id == "10k:AAPL:000032019325000079:item_1:0000"
     assert records[0].symbols == ["AAPL"]
+    assert records[0].sectors == ["Information Technology"]
     assert records[0].source_type == "sec_10k"
     assert records[0].metadata["accession_number"] == "0000320193-25-000079"
+    assert records[0].metadata["sector"] == "Information Technology"
+    assert records[0].metadata["chunk_index"] == 0
+    assert records[0].metadata["total_chunks"] == 1
     assert records[1].metadata["item_title"] == "Risk Factors"
+
+
+def test_filing_sections_chunk_long_section():
+    filing = CompanyFiling(
+        ticker="AAPL",
+        cik="0000320193",
+        accession_number="0000320193-25-000079",
+        form="10-K",
+        filing_date="2025-10-31",
+        report_date="2025-09-27",
+        primary_document="aapl-20250927.htm",
+    )
+    long_section = "Supply chain concentration risk. " * 400  # ~13k chars → many chunks
+
+    records = filing_sections_to_memory_records(
+        filing=filing,
+        sections={"item_1a": long_section},
+    )
+
+    assert len(records) > 1
+    # Ids are unique, ordered, and every chunk agrees on the total count.
+    assert len({r.id for r in records}) == len(records)
+    assert [r.metadata["chunk_index"] for r in records] == list(range(len(records)))
+    assert all(r.metadata["total_chunks"] == len(records) for r in records)
+    assert records[0].id == "10k:AAPL:000032019325000079:item_1a:0000"

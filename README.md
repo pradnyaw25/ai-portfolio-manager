@@ -114,6 +114,16 @@ If Qdrant or embeddings are unavailable, the daily cycle logs the failure, recor
 `memory_status="unavailable"` and `memory_error` in the decision journal, and
 continues without memory context.
 
+#### SEC filing ingestion (chunked)
+
+The weekly SEC 10-K ingestion (`scripts/ingest_sec_filings.py`) extracts Items 1,
+1A, 7, and 7A, then splits each section into overlapping ~1k-char chunks
+(`src/memory/chunking.py`) rather than storing one oversized vector per section —
+so retrieval surfaces the specific passage that answers a query. Each chunk is its
+own record with a deterministic id (`10k:{ticker}:{accession}:{item}:{chunk}`) and
+rich payload metadata (ticker, form, item, filing date, and **sector** from
+`config/sectors.yaml`) for metadata-filtered retrieval.
+
 ### Run Observability
 
 Each daily cycle generates a `run_id` and records it in the decision journal,

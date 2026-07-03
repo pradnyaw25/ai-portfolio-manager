@@ -178,7 +178,13 @@ def html_to_text(html: str) -> str:
     return re.sub(r"[ \t]+", " ", text)
 
 
-def clean_section_text(text: str, *, max_chars: int = 12000) -> str:
+# Sections are chunked downstream, so this cap only bounds how much of a very
+# long section (e.g. Item 1A risk factors) we retain before splitting — it is no
+# longer the size of a single stored vector.
+SECTION_MAX_CHARS = 40000
+
+
+def clean_section_text(text: str, *, max_chars: int = SECTION_MAX_CHARS) -> str:
     lines = [line.strip() for line in text.splitlines()]
     compact = "\n".join(line for line in lines if line)
     compact = re.sub(r"\n{3,}", "\n\n", compact)
