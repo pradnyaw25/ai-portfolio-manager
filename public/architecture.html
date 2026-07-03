@@ -132,9 +132,6 @@
 
     /* ---- grids ---- */
     .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
-    .stat { border: 1px solid var(--border); border-radius: 10px; background: var(--surface); padding: 18px 20px; box-shadow: var(--shadow); }
-    .stat .num { color: var(--ink); font-size: 34px; font-weight: 850; line-height: 1; }
-    .stat .lbl { color: var(--muted); font-size: 13px; margin-top: 6px; }
 
     .phase { border: 1px solid var(--border); border-radius: 10px; background: var(--surface); padding: 18px 20px; box-shadow: var(--shadow); }
     .phase .tag { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; color: var(--positive); background: var(--positive-bg); border: 1px solid var(--positive); border-radius: 999px; padding: 2px 10px; margin-bottom: 10px; }
@@ -281,17 +278,6 @@
           <div class="chip"><b>Resume:</b> a killed run re-enters by <code>run_id</code>; idempotent stores dedupe; an already-sent tweet isn't re-posted</div>
           <div class="chip"><b>Failure:</b> any node error → finalize with diagnostics + exported status</div>
         </div>
-      </div>
-    </section>
-
-    <!-- BY THE NUMBERS -->
-    <section>
-      <div class="section-head"><h2>By the numbers</h2></div>
-      <div class="grid">
-        <div class="stat"><div class="num">6</div><div class="lbl">phases complete (0–5)</div></div>
-        <div class="stat"><div class="num">18 / 18</div><div class="lbl">non-optional roadmap tasks done</div></div>
-        <div class="stat"><div class="num">248</div><div class="lbl">tests, green (from 165)</div></div>
-        <div class="stat"><div class="num">0.15 <span style="font-size:20px;color:var(--muted)">→</span> 1.00</div><div class="lbl">retrieval hit@1, chunked vs unchunked</div></div>
       </div>
     </section>
 
