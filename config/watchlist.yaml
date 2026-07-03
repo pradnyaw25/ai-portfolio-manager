@@ -12,6 +12,19 @@ symbols:
   - NVDA
   - AMD
   - AVGO
+  - ASML   # semi equipment
+  - MU     # memory
+  - TSM    # foundry (ADR — 20-F filer, no SEC 10-K/Q ingestion)
+  - INTC
+  - SNDK   # SanDisk — storage
+  # AI infrastructure & data centers (long-only picks-and-shovels)
+  - ORCL   # AI cloud / software
+  - CRWV   # CoreWeave — AI "neocloud"
+  - IREN   # AI data centers
+  - CORZ   # Core Scientific — AI/HPC data centers
+  - APLD   # Applied Digital — AI data centers
+  - GLW    # Corning — optical / interconnect
+  - BE     # Bloom Energy — on-site power for data centers
   # Autos / EV
   - TSLA
   # Financials
