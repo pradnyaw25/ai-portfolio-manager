@@ -37,6 +37,7 @@ def build_daily_cycle_graph():
         ("mark_to_market", mark_to_market_node),
         ("build_research_context", build_research_context_node),
         ("retrieve_memory", retrieve_memory_node),
+        ("research_followup", research_followup_node),
         ("decide_trades", decide_trades_node),
         ("check_grounding", check_grounding_node),
         ("review_risk", review_risk_node),
@@ -200,6 +201,18 @@ def retrieve_memory_node(state: DailyGraphState) -> DailyGraphState:
     return {"run": run}
 
 
+def research_followup_node(state: DailyGraphState) -> DailyGraphState:
+    run = state["run"]
+    run.research_brief = steps.run_research_followup(
+        run.engine,
+        run.market_data,
+        run.news_client,
+        run.research,
+        run.memory_context,
+    )
+    return {"run": run}
+
+
 def decide_trades_node(state: DailyGraphState) -> DailyGraphState:
     run = state["run"]
     run.decisions = steps.decide_trades(
@@ -348,6 +361,7 @@ def journal_run_node(state: DailyGraphState) -> DailyGraphState:
         memory_context=run.memory_context,
         memory_result=run.memory_result,
         grounding=run.grounding,
+        research_brief=run.research_brief,
         run_id=run.run_id,
     )
     return {"run": run}

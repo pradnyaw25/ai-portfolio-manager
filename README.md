@@ -5,6 +5,7 @@ An AI-powered portfolio management system that uses LLM agents to analyze market
 ## Features
 
 - **Analyst Debate**: Bull, bear, and risk analyst agents each argue a structured thesis; the portfolio manager synthesizes them and must explicitly respond to the bear case. The full debate transcript is journaled and shown on the dashboard.
+- **Tool-Calling Research**: A research agent uses typed tools (price, history, news, memory, portfolio) to investigate targeted questions before the decision; the tool-call trace is journaled and shown on the dashboard.
 - **Portfolio Management Agent**: Makes buy/sell/hold decisions based on market data and news
 - **Research Agent**: Gathers and synthesizes market data, news, and sentiment
 - **Tweet Generator**: Creates social media content about portfolio performance
@@ -147,6 +148,19 @@ cheap model tier, then the portfolio manager (strong tier) synthesizes them into
 final decision and must fill a `bear_case_response` addressing each major bear point.
 The debate transcript is embedded in the decision, stored in the journal, and
 rendered on the decisions dashboard. See `src/agents/debate.py`.
+
+### Tool-Calling Research
+
+After the deterministic `MarketContextBuilder` assembles the base context, a
+tool-calling research agent (`src/agents/research_agent.py`) does targeted
+follow-up. It has five typed tools (`get_price`, `get_history`, `search_news`,
+`retrieve_memory`, `get_portfolio`) exposed through a registry (`src/llm/tools.py`)
+that validates the model's arguments — invalid args return a structured error the
+model corrects rather than crashing the run. The gateway's `complete_with_tools`
+loop executes the tools and feeds results back until the agent writes a brief
+(capped at `max_rounds`). The brief is merged into the decision context; the brief
+and its ordered tool-call trace are stored on the decision journal and rendered on
+the decisions dashboard. Runs on the cheap tier.
 
 ### Model Routing & Fallback
 

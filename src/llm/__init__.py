@@ -10,14 +10,18 @@ from src.llm.gateway import (
     LLMGateway,
     LLMError,
     LLMValidationError,
+    ToolCallingResult,
     complete_structured,
     complete_text,
+    complete_with_tools,
 )
 
 __all__ = [
     "LLMGateway",
     "LLMError",
     "LLMValidationError",
+    "ToolCallingResult",
     "complete_structured",
     "complete_text",
+    "complete_with_tools",
 ]

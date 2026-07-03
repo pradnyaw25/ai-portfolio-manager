@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import json
 import time
+from dataclasses import dataclass, field
 from typing import Any, Callable, Sequence, TypeVar
 
 from pydantic import BaseModel, ValidationError
@@ -52,6 +53,13 @@ class LLMError(Exception):
 
 class LLMValidationError(LLMError):
     """Raised when a response cannot be parsed/validated even after a repair retry."""
+
+
+@dataclass
+class ToolCallingResult:
+    content: str
+    tool_calls: list[dict] = field(default_factory=list)
+    truncated: bool = False
 
 
 def _estimate_cost(model: str, prompt_tokens: int, completion_tokens: int) -> float:
@@ -163,6 +171,72 @@ class LLMGateway:
             max_tokens=max_tokens,
         )
         return content.strip()
+
+    def complete_with_tools(
+        self,
+        messages: Sequence[Message],
+        registry,
+        *,
+        tier: str = "cheap",
+        temperature: float | None = None,
+        max_rounds: int = 4,
+        prompt_version: str = "unversioned",
+    ) -> "ToolCallingResult":
+        """Run a tool-calling loop: the model may request tools, which are executed
+        and fed back, until it returns a final text answer or ``max_rounds`` is hit.
+        Returns the final content plus the ordered list of tool calls made."""
+        convo: list[Message] = list(messages)
+        tool_calls: list[dict] = []
+
+        for _ in range(max_rounds):
+            route = resolve_route(tier)
+            chat_kwargs: dict[str, Any] = {
+                "messages": convo,
+                "temperature": LLM_TEMPERATURE if temperature is None else temperature,
+                "response_format": None,
+                "max_tokens": None,
+                "tools": registry.openai_tools(),
+            }
+            started = time.monotonic()
+            response, served, fell_back = self._request_with_fallback(route, chat_kwargs)
+            self._log_call(
+                response,
+                model=served.model,
+                provider=served.provider,
+                fell_back=fell_back,
+                prompt_version=prompt_version,
+                latency_ms=(time.monotonic() - started) * 1000,
+                input_messages=convo,
+                output_content=response.content,
+            )
+
+            if not response.tool_calls:
+                return ToolCallingResult(content=(response.content or "").strip(), tool_calls=tool_calls)
+
+            # Append the assistant's tool-call turn, then each tool result.
+            convo.append(
+                {
+                    "role": "assistant",
+                    "content": response.content or "",
+                    "tool_calls": [
+                        {
+                            "id": call.id,
+                            "type": "function",
+                            "function": {"name": call.name, "arguments": call.arguments},
+                        }
+                        for call in response.tool_calls
+                    ],
+                }
+            )
+            for call in response.tool_calls:
+                outcome = registry.dispatch(call.name, call.arguments)
+                tool_calls.append({"name": call.name, "arguments": call.arguments, "outcome": outcome})
+                convo.append(
+                    {"role": "tool", "tool_call_id": call.id, "content": json.dumps(outcome, default=str)}
+                )
+
+        logger.warning("Tool loop hit max_rounds=%d without a final answer", max_rounds)
+        return ToolCallingResult(content="", tool_calls=tool_calls, truncated=True)
 
     # -- internals ------------------------------------------------------------
 
@@ -351,5 +425,24 @@ def complete_text(
         tier=tier,
         max_tokens=max_tokens,
         temperature=temperature,
+        prompt_version=prompt_version,
+    )
+
+
+def complete_with_tools(
+    messages: Sequence[Message],
+    registry,
+    *,
+    tier: str = "cheap",
+    temperature: float | None = None,
+    max_rounds: int = 4,
+    prompt_version: str = "unversioned",
+) -> ToolCallingResult:
+    return _gateway().complete_with_tools(
+        messages,
+        registry,
+        tier=tier,
+        temperature=temperature,
+        max_rounds=max_rounds,
         prompt_version=prompt_version,
     )

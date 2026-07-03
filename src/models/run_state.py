@@ -17,6 +17,7 @@ class PortfolioRunState:
     memory_result: Any | None = None
     memory_context: list[dict] = field(default_factory=list)
     memory_groups: dict[str, list[dict]] = field(default_factory=dict)
+    research_brief: dict | None = None
     decisions: dict = field(default_factory=dict)
     grounding: dict | None = None
     risk_review: Any | None = None

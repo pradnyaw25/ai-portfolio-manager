@@ -164,13 +164,24 @@ Goal: real agent architecture with the debate transcript as a product feature.
   debate scenario + scorer. Covered by `tests/test_debate.py` and `tests/test_evals.py`.
 * Note: adds 3 analyst LLM calls (cheap tier) per run ahead of the PM synthesis.
 
-### P3-2 ∥. Typed tool calling for research
-* Output: a tool registry with Pydantic input/output schemas — `get_price`,
-  `get_history`, `search_news`, `retrieve_memory`, `get_portfolio` — and a
-  tool-calling research agent that loops over them; every tool call recorded in the
-  decision trace.
-* Acceptance: decision journal shows the tool-call sequence; invalid tool arguments
-  are rejected and retried.
+### P3-2 ∥. Typed tool calling for research — DONE
+* Output: a tool registry (`src/llm/tools.py`) with Pydantic input schemas that
+  validates model args (invalid → structured error the model corrects); five tools
+  (`get_price`, `get_history`, `search_news`, `retrieve_memory`, `get_portfolio`) in
+  `src/agents/research_agent.py`; a gateway tool-calling loop
+  (`complete_with_tools`, capped at `max_rounds`) built on the P3-3 provider seam.
+  A `research_followup` graph node (augments — keeps `MarketContextBuilder`) runs the
+  agent before `decide_trades`; the brief is merged into the context and the brief +
+  tool-call trace are stored on the decision journal (`research_brief`) and rendered
+  on `decisions.html`. Runs on the cheap tier.
+* Note (design Q1): augment, not replace — the deterministic base context is
+  unchanged. Eval scorer for the research node deferred (the eval harness only
+  exercises the decide path, not the graph node).
+* Acceptance: verified end-to-end — the agent makes tool calls (loop tested,
+  `max_rounds` enforced), the tool-call sequence lands in the decision journal, and
+  invalid tool arguments return a structured error for the model to retry. Dashboard
+  renders the research trace (browser-checked, no console errors). Covered by
+  `tests/test_tool_calling.py`.
 
 ### P3-3 ∥. Model routing — DONE
 * Output: provider abstraction (`src/llm/providers/` — `LLMProvider`,

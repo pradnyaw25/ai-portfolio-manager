@@ -34,6 +34,7 @@ class DecisionStore:
         memory_citations: list[dict] | None = None,
         memory_citation_warnings: list[str] | None = None,
         grounding: dict | None = None,
+        research_brief: dict | None = None,
         run_id: str | None = None,
     ) -> None:
         row = {
@@ -58,6 +59,7 @@ class DecisionStore:
             "memory_citations": memory_citations or [],
             "memory_citation_warnings": memory_citation_warnings or [],
             "grounding": grounding,
+            "research_brief": research_brief,
         }
         with open(DECISIONS_FILE, "a") as f:
             f.write(json.dumps(row, default=self._json_default) + "\n")
