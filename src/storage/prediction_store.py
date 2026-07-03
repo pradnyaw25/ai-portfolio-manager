@@ -10,14 +10,35 @@ logger = get_logger(__name__)
 
 PREDICTIONS_FILE = DATA_DIR / "predictions.jsonl"
 
+# Namespace for deterministic prediction IDs. Keying the id on (run_id, symbol)
+# means re-running a run recreates the same id, so upsert leaves an identical row.
+_PREDICTION_NAMESPACE = uuid.UUID("6f2a4e1c-0b7d-4f8a-9c3e-2a1b5d6e7f80")
+
+
+def _prediction_id(run_id: str | None, symbol: str | None) -> str:
+    if run_id and symbol:
+        return str(uuid.uuid5(_PREDICTION_NAMESPACE, f"{run_id}:{symbol}"))[:8]
+    return str(uuid.uuid4())[:8]
+
 
 class PredictionStore:
     def save(self, prediction: dict) -> None:
         if "id" not in prediction:
-            prediction["id"] = str(uuid.uuid4())[:8]
+            prediction["id"] = _prediction_id(
+                prediction.get("run_id"), prediction.get("symbol")
+            )
 
-        with open(PREDICTIONS_FILE, "a") as f:
-            f.write(json.dumps(prediction) + "\n")
+        run_id, symbol = prediction.get("run_id"), prediction.get("symbol")
+        entries = self.load_all()
+        if run_id is not None and symbol is not None:
+            # One prediction per (run_id, symbol): re-running a run replaces its
+            # prediction rather than appending a duplicate.
+            entries = [
+                p for p in entries
+                if not (p.get("run_id") == run_id and p.get("symbol") == symbol)
+            ]
+        entries.append(prediction)
+        self.save_all(entries)
 
         logger.info("Saved prediction: %s %s", prediction["symbol"], prediction["prediction"])
 
@@ -42,9 +63,10 @@ class PredictionStore:
 
     def create_from_trade(self, trade, confidence: float, spy_price: float) -> dict:
         horizon = self.HORIZON_DAYS
+        run_id = getattr(trade, "run_id", None)
         prediction = {
-            "id": str(uuid.uuid4())[:8],
-            "run_id": getattr(trade, "run_id", None),
+            "id": _prediction_id(run_id, trade.symbol),
+            "run_id": run_id,
             "date": date.today().isoformat(),
             "symbol": trade.symbol,
             "prediction": f"{trade.symbol} will outperform SPY over {horizon} days",

@@ -61,9 +61,23 @@ class DecisionStore:
             "grounding": grounding,
             "research_brief": research_brief,
         }
-        with open(DECISIONS_FILE, "a") as f:
-            f.write(json.dumps(row, default=self._json_default) + "\n")
+        self._upsert(row, run_id)
         logger.info("Saved decision journal entry")
+
+    def _upsert(self, row: dict[str, Any], run_id: str | None) -> None:
+        """Write ``row``, replacing any existing entry with the same run_id.
+
+        One decision per run: re-running a run_id overwrites its journal entry
+        instead of appending a duplicate. Entries without a run_id (legacy rows)
+        are always kept and this row is appended.
+        """
+        rows = self.load_all()
+        if run_id is not None:
+            rows = [r for r in rows if r.get("run_id") != run_id]
+        rows.append(row)
+        with open(DECISIONS_FILE, "w") as f:
+            for entry in rows:
+                f.write(json.dumps(entry, default=self._json_default) + "\n")
 
     def load_all(self) -> list[dict[str, Any]]:
         if not DECISIONS_FILE.exists():

@@ -37,12 +37,25 @@ Goal: kill the fragility before building on it. Everything later flows through P
 * Acceptance: `grep -r "gpt-4o-mini" src/` returns nothing; startup fails loudly on
   invalid config; tests green.
 
-### P0-3 ∥. Idempotent stores
+### P0-3 ∥. Idempotent stores — DONE
 * Input: `src/storage/` (trades CSV, decisions JSONL, predictions JSONL).
-* Output: writes keyed by (run_id, symbol/date) with upsert semantics instead of
-  blind append.
-* Acceptance: running the daily cycle twice with the same run_id produces identical
-  files/rows — no duplicates.
+* Output: upsert keyed by run_id instead of blind append, following the existing
+  `run_history_store.record()` pattern (load → filter matching key → rewrite):
+  * `TradeStore.save_run(run_id, trades)` — batch upsert replacing all rows for the
+    run. Keyed on the *run as a whole*, not (run_id, symbol, action): a single run
+    can legitimately hold two same-symbol/action trades (a PM buy + a rebalance
+    top-up), which a natural per-row key would collapse. `execute_trades` in
+    `main.py` now calls it once per run (empty batch clears prior rows).
+  * `DecisionStore.save(...)` upserts the single journal row by run_id.
+  * `PredictionStore.save(...)` upserts by (run_id, symbol); prediction IDs are now
+    deterministic (`uuid5(namespace, "{run_id}:{symbol}")`) so a re-run recreates an
+    identical row rather than a new random id. Legacy rows without a run_id still
+    append.
+* Note: kept the CSV/JSONL formats (the SQLite migration in `docs/ROADMAP.md` §3 is a
+  separate, larger bet); P0-3's scope is upsert semantics on the current stores.
+* Acceptance: verified — re-running a run_id yields byte-identical files with no
+  duplicates, other runs are preserved, and the same-symbol collision case keeps both
+  trades. Covered by `tests/test_store_idempotency.py` (8 tests).
 
 ## Phase 1 — Orchestration & Observability (1–2 weeks)
 
