@@ -8,17 +8,13 @@ reported as skipped (non-gating) so a flaky judge never breaks CI.
 
 import json
 
-from pydantic import BaseModel, Field
-
 from evals.scorers import ScoreResult
 from src.llm import complete_structured
+from src.scoring.grounding import GroundingVerdict
 
 JUDGE_PROMPT_VERSION = "grounding_judge/v1"
 
-
-class GroundingVerdict(BaseModel):
-    grounded: bool = True
-    issues: list[str] = Field(default_factory=list)
+__all__ = ["GroundingVerdict", "score_grounding", "JUDGE_PROMPT_VERSION"]
 
 
 def _default_judge(decision, scenario) -> GroundingVerdict:

@@ -138,6 +138,17 @@ Set `LANGFUSE_PUBLIC_KEY` and `LANGFUSE_SECRET_KEY` to trace each run to
 and a generation (model, tokens, cost) per LLM call. Without the keys, tracing is
 a silent no-op and never affects a run.
 
+### Grounding Check
+
+Before a decision is journaled and tweeted, an LLM-as-judge grounding check
+(`src/scoring/grounding.py`) verifies its factual claims (prices, returns, news,
+memory references) against the context the manager actually had. Findings are
+stored on the decision journal entry under `grounding`, and a flagged decision
+**blocks tweeting** (`tweet_publish.status = "blocked_grounding"`) so the fund never
+posts unsupported claims. If the judge is unavailable the check degrades to
+`unavailable` (non-blocking) rather than failing the run. The judge shares its
+schema with the offline eval harness (`evals/grounding.py`).
+
 ### Human-in-the-Loop Approval
 
 By default (`AUTO_APPROVE=true`) the daily cycle runs unattended. Set

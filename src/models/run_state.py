@@ -18,6 +18,7 @@ class PortfolioRunState:
     memory_context: list[dict] = field(default_factory=list)
     memory_groups: dict[str, list[dict]] = field(default_factory=dict)
     decisions: dict = field(default_factory=dict)
+    grounding: dict | None = None
     risk_review: Any | None = None
     rebalance_result: Any | None = None
     approved_trades: list = field(default_factory=list)

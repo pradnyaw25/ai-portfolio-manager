@@ -18,6 +18,7 @@ EXPECTED_ORDER = [
     "build_research_context",
     "retrieve_memory",
     "decide_trades",
+    "check_grounding",
     "review_risk",
     "check_rebalance",
     "execute_trades",
@@ -57,6 +58,7 @@ def test_graph_runs_full_pipeline_in_order(monkeypatch):
         "build_research_context": ({"research": True}, {"AAPL": 200.0}),
         "retrieve_memory_context": (memory_result, [], {}),
         "decide_trades": {"trades": []},
+        "run_grounding_check": {"status": "ok", "grounded": True, "issues": []},
         "review_risk": risk_review,
         "check_rebalance": (SimpleNamespace(), []),
         "execute_trades": trades,
@@ -76,6 +78,7 @@ def test_graph_runs_full_pipeline_in_order(monkeypatch):
     labels = {
         "mark_to_market_and_score_predictions": "mark_to_market",
         "retrieve_memory_context": "retrieve_memory",
+        "run_grounding_check": "check_grounding",
         "check_rebalance": "check_rebalance",
         "track_buy_predictions": "track_predictions",
         "save_portfolio_and_performance": "save_portfolio",
