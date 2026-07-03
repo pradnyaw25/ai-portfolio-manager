@@ -15,6 +15,7 @@ An AI-powered portfolio management system that uses LLM agents to analyze market
 - **Benchmarking**: Compare portfolio performance against S&P 500 and other indices
 - **Prediction Calibration**: Every BUY spawns a 30-day "beat SPY" prediction; the dashboard scores them and reports a Brier score and confidence-calibration curve (predicted confidence vs. observed win rate)
 - **Public Dashboard**: Static HTML dashboard with portfolio, run status, prediction accuracy, and decision journal views, including last-updated metadata
+- **MCP Server**: A read-only [MCP](https://modelcontextprotocol.io) server (`mcp_server/`) exposes the fund to Claude Desktop/Code — holdings, performance history, trades, decision journal, debate transcripts, and memory search — so you can ask "why did the fund sell NVDA in June?" against real data
 
 ## Setup
 
@@ -246,6 +247,15 @@ Beyond per-position sizing and daily turnover, the deterministic risk layer adds
   basis. These take precedence over any LLM trade for the same symbol, flow through
   the same guardrails and execution path, and are journaled as first-class risk
   events (`risk_events`, `origin="system"`).
+
+### MCP Server
+
+A read-only MCP server (`mcp_server/`, `make mcp`) exposes the fund to any MCP
+client (Claude Desktop / Claude Code) with tools for holdings, performance history,
+trades, decision journal, debate transcripts, and memory search — so you can ask
+*"why did the fund sell NVDA in June?"* against the real committed data. No tool can
+place a trade or mutate state. Setup and the client config snippet are in
+[`mcp_server/README.md`](mcp_server/README.md).
 
 Do not commit `.env` or real API keys.
 

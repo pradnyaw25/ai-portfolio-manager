@@ -23,6 +23,7 @@ dependencies = [
     "langchain-text-splitters>=1.1.0",
     "langgraph>=1.2.0",
     "langfuse>=3.0",
+    "mcp>=1.2.0",
 ]
 
 [project.optional-dependencies]
@@ -30,6 +31,9 @@ dev = [
     "pytest>=8.0.0",
     "ruff>=0.4.0",
 ]
+
+[tool.setuptools.packages.find]
+include = ["src*", "evals*", "mcp_server*"]
 
 [tool.ruff]
 line-length = 100
