@@ -111,6 +111,15 @@ public/run_status.json
 The public dashboard displays the latest run status, completion time, memory
 retrieval status, number of trades executed, and warning count.
 
+### Human-in-the-Loop Approval
+
+By default (`AUTO_APPROVE=true`) the daily cycle runs unattended. Set
+`AUTO_APPROVE=false` to insert a human approval gate after risk review and before
+execution: the run prints the pending trades and prompts you in the terminal to
+approve all, reject all, or edit down to a chosen subset. The decision is recorded
+in `run_status.human_review`. (This gate is in-process; the run must stay open for
+approval. Durable cross-process approval is a planned follow-up.)
+
 Do not commit `.env` or real API keys.
 
 ## Roadmap
