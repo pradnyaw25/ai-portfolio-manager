@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-07-03T19:54:01.972139Z",
+  "updated_at": "2026-07-04T14:48:20.652291Z",
   "run_id": "run_20260703T195307Z_3d22e07c",
   "retrieval": {
     "status": "ok",
@@ -18,7 +18,7 @@
     "reports": {
       "count": 10,
       "latest": "report_2026-07-03.md",
-      "latest_updated_at": "2026-07-03T19:53:59.561483Z"
+      "latest_updated_at": "2026-07-04T14:46:07.009774Z"
     },
     "decisions": {
       "count": 36,
@@ -31,19 +31,19 @@
       "latest_run_id": "run_20260703T195307Z_3d22e07c"
     },
     "sec_filings": {
-      "ingested_at": "2026-06-30T17:23:07.649388Z",
+      "ingested_at": "2026-07-04T14:48:20.065044Z",
       "ingestion": {
         "status": "ok",
-        "created": 68,
+        "created": 2864,
         "updated": 0,
         "skipped": 0,
         "errors": [],
-        "total_processed": 68
+        "total_processed": 2864
       },
       "processed": [
         {
           "symbol": "AAPL",
-          "cik": "0000320193",
+          "form": "10-K",
           "accession_number": "0000320193-25-000079",
           "filing_date": "2025-10-31",
           "sections": [
@@ -52,11 +52,29 @@
             "item_7",
             "item_7a"
           ],
-          "records": 4
+          "records": 51
+        },
+        {
+          "symbol": "AAPL",
+          "form": "10-Q",
+          "accession_number": "0000320193-26-000013",
+          "filing_date": "2026-05-01",
+          "sections": [
+            "item_2",
+            "item_3"
+          ],
+          "records": 60
+        },
+        {
+          "symbol": "AAPL",
+          "form": "8-K",
+          "accession_number": "0000320193-26-000011",
+          "filing_date": "2026-04-30",
+          "records": 15
         },
         {
           "symbol": "MSFT",
-          "cik": "0000789019",
+          "form": "10-K",
           "accession_number": "0000950170-25-100235",
           "filing_date": "2025-07-30",
           "sections": [
@@ -65,11 +83,29 @@
             "item_7",
             "item_7a"
           ],
-          "records": 4
+          "records": 66
+        },
+        {
+          "symbol": "MSFT",
+          "form": "10-Q",
+          "accession_number": "0001193125-26-191507",
+          "filing_date": "2026-04-29",
+          "sections": [
+            "item_2",
+            "item_3"
+          ],
+          "records": 60
+        },
+        {
+          "symbol": "MSFT",
+          "form": "8-K",
+          "accession_number": "0001193125-26-191457",
+          "filing_date": "2026-04-29",
+          "records": 25
         },
         {
           "symbol": "GOOGL",
-          "cik": "0001652044",
+          "form": "10-K",
           "accession_number": "0001652044-26-000018",
           "filing_date": "2026-02-05",
           "sections": [
@@ -78,11 +114,22 @@
             "item_7",
             "item_7a"
           ],
-          "records": 4
+          "records": 67
+        },
+        {
+          "symbol": "GOOGL",
+          "form": "10-Q",
+          "accession_number": "0001652044-26-000048",
+          "filing_date": "2026-04-30",
+          "sections": [
+            "item_2",
+            "item_3"
+          ],
+          "records": 41
         },
         {
           "symbol": "AMZN",
-          "cik": "0001018724",
+          "form": "10-K",
           "accession_number": "0001018724-26-000004",
           "filing_date": "2026-02-06",
           "sections": [
@@ -91,11 +138,29 @@
             "item_7",
             "item_7a"
           ],
-          "records": 4
+          "records": 51
+        },
+        {
+          "symbol": "AMZN",
+          "form": "10-Q",
+          "accession_number": "0001018724-26-000014",
+          "filing_date": "2026-04-30",
+          "sections": [
+            "item_2",
+            "item_3"
+          ],
+          "records": 60
+        },
+        {
+          "symbol": "AMZN",
+          "form": "8-K",
+          "accession_number": "0001018724-26-000012",
+          "filing_date": "2026-04-29",
+          "records": 30
         },
         {
           "symbol": "META",
-          "cik": "0001326801",
+          "form": "10-K",
           "accession_number": "0001628280-26-003942",
           "filing_date": "2026-01-29",
           "sections": [
@@ -104,11 +169,22 @@
             "item_7",
             "item_7a"
           ],
-          "records": 4
+          "records": 79
+        },
+        {
+          "symbol": "META",
+          "form": "10-Q",
+          "accession_number": "0001628280-26-028526",
+          "filing_date": "2026-04-30",
+          "sections": [
+            "item_2",
+            "item_3"
+          ],
+          "records": 60
         },
         {
           "symbol": "NVDA",
-          "cik": "0001045810",
+          "form": "10-K",
           "accession_number": "0001045810-26-000021",
           "filing_date": "2026-02-25",
           "sections": [
@@ -117,21 +193,43 @@
             "item_7",
             "item_7a"
           ],
-          "records": 4
+          "records": 38
+        },
+        {
+          "symbol": "NVDA",
+          "form": "10-Q",
+          "accession_number": "0001045810-26-000052",
+          "filing_date": "2026-05-20",
+          "sections": [
+            "item_2",
+            "item_3"
+          ],
+          "records": 60
         },
         {
           "symbol": "AMD",
-          "cik": "0000002488",
+          "form": "10-K",
           "accession_number": "0000002488-26-000021",
           "filing_date": "2026-02-04",
           "sections": [
             "item_7"
           ],
-          "records": 1
+          "records": 30
+        },
+        {
+          "symbol": "AMD",
+          "form": "10-Q",
+          "accession_number": "0000002488-26-000076",
+          "filing_date": "2026-05-06",
+          "sections": [
+            "item_2",
+            "item_3"
+          ],
+          "records": 36
         },
         {
           "symbol": "AVGO",
-          "cik": "0001730168",
+          "form": "10-K",
           "accession_number": "0001730168-25-000121",
           "filing_date": "2025-12-18",
           "sections": [
@@ -140,19 +238,309 @@
             "item_7",
             "item_7a"
           ],
-          "records": 4
+          "records": 37
+        },
+        {
+          "symbol": "AVGO",
+          "form": "10-Q",
+          "accession_number": "0001730168-26-000054",
+          "filing_date": "2026-06-09",
+          "sections": [
+            "item_2",
+            "item_3"
+          ],
+          "records": 60
+        },
+        {
+          "symbol": "AVGO",
+          "form": "8-K",
+          "accession_number": "0001730168-26-000051",
+          "filing_date": "2026-06-03",
+          "records": 30
+        },
+        {
+          "symbol": "MU",
+          "form": "10-K",
+          "accession_number": "0000723125-25-000028",
+          "filing_date": "2025-10-03",
+          "sections": [
+            "item_1",
+            "item_1a",
+            "item_7",
+            "item_7a"
+          ],
+          "records": 40
+        },
+        {
+          "symbol": "MU",
+          "form": "10-Q",
+          "accession_number": "0000723125-26-000015",
+          "filing_date": "2026-06-25",
+          "sections": [
+            "item_2",
+            "item_3"
+          ],
+          "records": 60
+        },
+        {
+          "symbol": "MU",
+          "form": "8-K",
+          "accession_number": "0000723125-26-000013",
+          "filing_date": "2026-06-24",
+          "records": 24
+        },
+        {
+          "symbol": "INTC",
+          "form": "10-K",
+          "accession_number": "0000050863-26-000011",
+          "filing_date": "2026-01-23",
+          "sections": [
+            "item_1a",
+            "item_7",
+            "item_7a"
+          ],
+          "records": 6
+        },
+        {
+          "symbol": "INTC",
+          "form": "10-Q",
+          "accession_number": "0000050863-26-000079",
+          "filing_date": "2026-04-24",
+          "sections": [
+            "item_2",
+            "item_3"
+          ],
+          "records": 2
+        },
+        {
+          "symbol": "SNDK",
+          "form": "10-K",
+          "accession_number": "0002023554-25-000034",
+          "filing_date": "2025-08-21",
+          "sections": [
+            "item_1",
+            "item_1a",
+            "item_7",
+            "item_7a"
+          ],
+          "records": 24
+        },
+        {
+          "symbol": "SNDK",
+          "form": "10-Q",
+          "accession_number": "0001628280-26-029401",
+          "filing_date": "2026-05-01",
+          "sections": [
+            "item_2",
+            "item_3"
+          ],
+          "records": 60
+        },
+        {
+          "symbol": "SNDK",
+          "form": "8-K",
+          "accession_number": "0001628280-26-028879",
+          "filing_date": "2026-04-30",
+          "records": 30
+        },
+        {
+          "symbol": "ORCL",
+          "form": "10-K",
+          "accession_number": "0001193125-26-277521",
+          "filing_date": "2026-06-22",
+          "sections": [
+            "item_1",
+            "item_1a",
+            "item_7",
+            "item_7a"
+          ],
+          "records": 64
+        },
+        {
+          "symbol": "ORCL",
+          "form": "10-Q",
+          "accession_number": "0001193125-26-101045",
+          "filing_date": "2026-03-11",
+          "sections": [
+            "item_2",
+            "item_3"
+          ],
+          "records": 43
+        },
+        {
+          "symbol": "ORCL",
+          "form": "8-K",
+          "accession_number": "0001193125-26-265848",
+          "filing_date": "2026-06-10",
+          "records": 30
+        },
+        {
+          "symbol": "CRWV",
+          "form": "10-K",
+          "accession_number": "0001769628-26-000104",
+          "filing_date": "2026-03-02",
+          "sections": [
+            "item_1",
+            "item_1a",
+            "item_7",
+            "item_7a"
+          ],
+          "records": 72
+        },
+        {
+          "symbol": "CRWV",
+          "form": "10-Q",
+          "accession_number": "0001769628-26-000222",
+          "filing_date": "2026-05-08",
+          "sections": [
+            "item_2",
+            "item_3"
+          ],
+          "records": 60
+        },
+        {
+          "symbol": "IREN",
+          "form": "10-K",
+          "accession_number": "0001878848-25-000063",
+          "filing_date": "2025-08-28",
+          "sections": [
+            "item_1",
+            "item_1a",
+            "item_7",
+            "item_7a"
+          ],
+          "records": 73
+        },
+        {
+          "symbol": "IREN",
+          "form": "10-Q",
+          "accession_number": "0001878848-26-000026",
+          "filing_date": "2026-05-08",
+          "sections": [
+            "item_2",
+            "item_3"
+          ],
+          "records": 60
+        },
+        {
+          "symbol": "CORZ",
+          "form": "10-K",
+          "accession_number": "0001628280-26-019505",
+          "filing_date": "2026-03-18",
+          "sections": [],
+          "records": 0
+        },
+        {
+          "symbol": "CORZ",
+          "form": "10-Q",
+          "accession_number": "0001628280-26-031396",
+          "filing_date": "2026-05-06",
+          "sections": [
+            "item_2",
+            "item_3"
+          ],
+          "records": 36
+        },
+        {
+          "symbol": "APLD",
+          "form": "10-K",
+          "accession_number": "0001144879-25-000021",
+          "filing_date": "2025-07-30",
+          "sections": [
+            "item_1",
+            "item_1a",
+            "item_7",
+            "item_7a"
+          ],
+          "records": 41
+        },
+        {
+          "symbol": "APLD",
+          "form": "10-Q",
+          "accession_number": "0001144879-26-000030",
+          "filing_date": "2026-04-08",
+          "sections": [
+            "item_2",
+            "item_3"
+          ],
+          "records": 60
+        },
+        {
+          "symbol": "GLW",
+          "form": "10-K",
+          "accession_number": "0000024741-26-000124",
+          "filing_date": "2026-02-12",
+          "sections": [
+            "item_1",
+            "item_1a",
+            "item_7",
+            "item_7a"
+          ],
+          "records": 105
+        },
+        {
+          "symbol": "GLW",
+          "form": "10-Q",
+          "accession_number": "0000024741-26-000205",
+          "filing_date": "2026-05-01",
+          "sections": [
+            "item_2",
+            "item_3"
+          ],
+          "records": 36
+        },
+        {
+          "symbol": "GLW",
+          "form": "8-K",
+          "accession_number": "0000024741-26-000198",
+          "filing_date": "2026-04-28",
+          "records": 30
+        },
+        {
+          "symbol": "BE",
+          "form": "10-K",
+          "accession_number": "0001628280-26-006516",
+          "filing_date": "2026-02-09",
+          "sections": [],
+          "records": 0
+        },
+        {
+          "symbol": "BE",
+          "form": "10-Q",
+          "accession_number": "0001628280-26-028021",
+          "filing_date": "2026-04-29",
+          "sections": [],
+          "records": 0
+        },
+        {
+          "symbol": "BE",
+          "form": "8-K",
+          "accession_number": "0001628280-26-027913",
+          "filing_date": "2026-04-28",
+          "records": 30
         },
         {
           "symbol": "TSLA",
-          "cik": "0001318605",
+          "form": "10-K",
           "accession_number": "0001104659-26-053166",
           "filing_date": "2026-04-30",
           "sections": [],
           "records": 0
         },
         {
+          "symbol": "TSLA",
+          "form": "10-Q",
+          "accession_number": "0001628280-26-026673",
+          "filing_date": "2026-04-23",
+          "sections": [
+            "item_2",
+            "item_3"
+          ],
+          "records": 60
+        },
+        {
           "symbol": "JPM",
-          "cik": "0000019617",
+          "form": "10-K",
           "accession_number": "0001628280-26-008131",
           "filing_date": "2026-02-13",
           "sections": [
@@ -164,8 +552,26 @@
           "records": 4
         },
         {
+          "symbol": "JPM",
+          "form": "10-Q",
+          "accession_number": "0001628280-26-029344",
+          "filing_date": "2026-05-01",
+          "sections": [
+            "item_2",
+            "item_3"
+          ],
+          "records": 31
+        },
+        {
+          "symbol": "JPM",
+          "form": "8-K",
+          "accession_number": "0001628280-26-024990",
+          "filing_date": "2026-04-14",
+          "records": 30
+        },
+        {
           "symbol": "V",
-          "cik": "0001403161",
+          "form": "10-K",
           "accession_number": "0001403161-25-000089",
           "filing_date": "2025-11-06",
           "sections": [
@@ -174,11 +580,22 @@
             "item_7",
             "item_7a"
           ],
-          "records": 4
+          "records": 120
+        },
+        {
+          "symbol": "V",
+          "form": "10-Q",
+          "accession_number": "0001403161-26-000079",
+          "filing_date": "2026-04-29",
+          "sections": [
+            "item_2",
+            "item_3"
+          ],
+          "records": 60
         },
         {
           "symbol": "MA",
-          "cik": "0001141391",
+          "form": "10-K",
           "accession_number": "0001141391-26-000013",
           "filing_date": "2026-02-11",
           "sections": [
@@ -187,11 +604,22 @@
             "item_7",
             "item_7a"
           ],
-          "records": 4
+          "records": 18
+        },
+        {
+          "symbol": "MA",
+          "form": "10-Q",
+          "accession_number": "0001141391-26-000031",
+          "filing_date": "2026-04-30",
+          "sections": [
+            "item_2",
+            "item_3"
+          ],
+          "records": 37
         },
         {
           "symbol": "UNH",
-          "cik": "0000731766",
+          "form": "10-K",
           "accession_number": "0000731766-26-000062",
           "filing_date": "2026-03-02",
           "sections": [
@@ -200,11 +628,22 @@
             "item_7",
             "item_7a"
           ],
-          "records": 4
+          "records": 62
+        },
+        {
+          "symbol": "UNH",
+          "form": "10-Q",
+          "accession_number": "0000731766-26-000127",
+          "filing_date": "2026-05-05",
+          "sections": [
+            "item_2",
+            "item_3"
+          ],
+          "records": 35
         },
         {
           "symbol": "JNJ",
-          "cik": "0000200406",
+          "form": "10-K",
           "accession_number": "0000200406-26-000016",
           "filing_date": "2026-02-11",
           "sections": [
@@ -212,11 +651,19 @@
             "item_1a",
             "item_7"
           ],
-          "records": 3
+          "records": 51
+        },
+        {
+          "symbol": "JNJ",
+          "form": "10-Q",
+          "accession_number": "0000200406-26-000087",
+          "filing_date": "2026-04-22",
+          "sections": [],
+          "records": 0
         },
         {
           "symbol": "WMT",
-          "cik": "0000104169",
+          "form": "10-K",
           "accession_number": "0000104169-26-000055",
           "filing_date": "2026-03-13",
           "sections": [
@@ -225,11 +672,22 @@
             "item_7",
             "item_7a"
           ],
-          "records": 4
+          "records": 86
+        },
+        {
+          "symbol": "WMT",
+          "form": "10-Q",
+          "accession_number": "0000104169-26-000102",
+          "filing_date": "2026-05-29",
+          "sections": [
+            "item_2",
+            "item_3"
+          ],
+          "records": 46
         },
         {
           "symbol": "PG",
-          "cik": "0000080424",
+          "form": "10-K",
           "accession_number": "0000080424-25-000076",
           "filing_date": "2025-08-04",
           "sections": [
@@ -238,11 +696,22 @@
             "item_7",
             "item_7a"
           ],
-          "records": 4
+          "records": 53
+        },
+        {
+          "symbol": "PG",
+          "form": "10-Q",
+          "accession_number": "0000080424-26-000060",
+          "filing_date": "2026-04-24",
+          "sections": [
+            "item_2",
+            "item_3"
+          ],
+          "records": 34
         },
         {
           "symbol": "HD",
-          "cik": "0000354950",
+          "form": "10-K",
           "accession_number": "0001628280-26-019436",
           "filing_date": "2026-03-18",
           "sections": [
@@ -251,11 +720,22 @@
             "item_7",
             "item_7a"
           ],
-          "records": 4
+          "records": 21
+        },
+        {
+          "symbol": "HD",
+          "form": "10-Q",
+          "accession_number": "0001628280-26-038247",
+          "filing_date": "2026-05-27",
+          "sections": [
+            "item_2",
+            "item_3"
+          ],
+          "records": 11
         },
         {
           "symbol": "XOM",
-          "cik": "0000034088",
+          "form": "10-K",
           "accession_number": "0000034088-26-000045",
           "filing_date": "2026-02-18",
           "sections": [
@@ -264,11 +744,22 @@
             "item_7",
             "item_7a"
           ],
-          "records": 4
+          "records": 12
+        },
+        {
+          "symbol": "XOM",
+          "form": "10-Q",
+          "accession_number": "0000034088-26-000067",
+          "filing_date": "2026-05-04",
+          "sections": [
+            "item_2",
+            "item_3"
+          ],
+          "records": 32
         },
         {
           "symbol": "CAT",
-          "cik": "0000018230",
+          "form": "10-K",
           "accession_number": "0000018230-26-000008",
           "filing_date": "2026-02-13",
           "sections": [
@@ -277,10 +768,149 @@
             "item_7",
             "item_7a"
           ],
-          "records": 4
+          "records": 29
+        },
+        {
+          "symbol": "CAT",
+          "form": "10-Q",
+          "accession_number": "0000018230-26-000021",
+          "filing_date": "2026-05-06",
+          "sections": [
+            "item_2",
+            "item_3"
+          ],
+          "records": 60
+        },
+        {
+          "symbol": "CAT",
+          "form": "8-K",
+          "accession_number": "0000018230-26-000017",
+          "filing_date": "2026-04-30",
+          "records": 30
         }
       ],
-      "skipped": []
+      "skipped": [
+        {
+          "symbol": "GOOGL",
+          "form": "8-K",
+          "reason": "no EX-99 earnings exhibit"
+        },
+        {
+          "symbol": "META",
+          "form": "8-K",
+          "reason": "no EX-99 earnings exhibit"
+        },
+        {
+          "symbol": "NVDA",
+          "form": "8-K",
+          "reason": "no EX-99 earnings exhibit"
+        },
+        {
+          "symbol": "AMD",
+          "form": "8-K",
+          "reason": "no EX-99 earnings exhibit"
+        },
+        {
+          "symbol": "ASML",
+          "form": "10-K",
+          "reason": "no recent 10-K"
+        },
+        {
+          "symbol": "ASML",
+          "form": "10-Q",
+          "reason": "no recent 10-Q"
+        },
+        {
+          "symbol": "ASML",
+          "form": "8-K",
+          "reason": "no earnings 8-K"
+        },
+        {
+          "symbol": "TSM",
+          "form": "10-K",
+          "reason": "no recent 10-K"
+        },
+        {
+          "symbol": "TSM",
+          "form": "10-Q",
+          "reason": "no recent 10-Q"
+        },
+        {
+          "symbol": "TSM",
+          "form": "8-K",
+          "reason": "no earnings 8-K"
+        },
+        {
+          "symbol": "INTC",
+          "form": "8-K",
+          "reason": "no EX-99 earnings exhibit"
+        },
+        {
+          "symbol": "CRWV",
+          "form": "8-K",
+          "reason": "no EX-99 earnings exhibit"
+        },
+        {
+          "symbol": "IREN",
+          "form": "8-K",
+          "reason": "no EX-99 earnings exhibit"
+        },
+        {
+          "symbol": "CORZ",
+          "form": "8-K",
+          "reason": "no EX-99 earnings exhibit"
+        },
+        {
+          "symbol": "APLD",
+          "form": "8-K",
+          "reason": "no EX-99 earnings exhibit"
+        },
+        {
+          "symbol": "TSLA",
+          "form": "8-K",
+          "reason": "no EX-99 earnings exhibit"
+        },
+        {
+          "symbol": "V",
+          "form": "8-K",
+          "reason": "no EX-99 earnings exhibit"
+        },
+        {
+          "symbol": "MA",
+          "form": "8-K",
+          "reason": "no EX-99 earnings exhibit"
+        },
+        {
+          "symbol": "UNH",
+          "form": "8-K",
+          "reason": "no EX-99 earnings exhibit"
+        },
+        {
+          "symbol": "JNJ",
+          "form": "8-K",
+          "reason": "no EX-99 earnings exhibit"
+        },
+        {
+          "symbol": "WMT",
+          "form": "8-K",
+          "reason": "no EX-99 earnings exhibit"
+        },
+        {
+          "symbol": "PG",
+          "form": "8-K",
+          "reason": "no EX-99 earnings exhibit"
+        },
+        {
+          "symbol": "HD",
+          "form": "8-K",
+          "reason": "no EX-99 earnings exhibit"
+        },
+        {
+          "symbol": "XOM",
+          "form": "8-K",
+          "reason": "no EX-99 earnings exhibit"
+        }
+      ]
     },
     "eval": null
   },
