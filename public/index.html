@@ -89,15 +89,9 @@
     .step b { color: var(--ink); display: block; margin-bottom: 3px; }
     .step span { color: var(--muted); }
 
-    .mcp { border: 1px solid var(--border); border-radius: 14px; background: var(--surface); box-shadow: var(--shadow); padding: 26px; margin-bottom: 56px; display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.1fr); gap: 28px; align-items: center; }
-    .mcp h2 { margin: 0 0 8px; color: var(--ink); font-size: 22px; }
-    .mcp p { margin: 0; color: var(--muted-strong); font-size: 14.5px; }
-    .term { background: var(--ink); color: var(--bg); border-radius: 12px; padding: 18px 20px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; line-height: 1.6; }
-    .term .q { color: #cfe0a8; } .term .dim { opacity: 0.6; }
-
     footer { border-top: 1px solid var(--border); padding-top: 20px; color: var(--muted); font-size: 13px; display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: space-between; }
     footer a { font-weight: 700; }
-    @media (max-width: 820px) { .hero, .mcp { grid-template-columns: 1fr; } .topbar { flex-wrap: wrap; } }
+    @media (max-width: 820px) { .hero { grid-template-columns: 1fr; } .topbar { flex-wrap: wrap; } }
   </style>
 </head>
 <body>
@@ -121,6 +115,7 @@
           <a href="decisions.html">Journal</a>
           <a href="predictions.html">Predictions</a>
           <a href="architecture.html">Architecture</a>
+          <a href="about.html">About</a>
         </nav>
         <div class="theme-toggle" aria-label="Theme">
           <button type="button" data-theme-option="light" title="Light">L</button>
@@ -168,17 +163,6 @@
       <div class="step"><b>Grounding</b><span>claims verified against evidence before publishing</span></div>
       <div class="step"><b>Journal</b><span>decision, trades &amp; predictions recorded openly</span></div>
     </div>
-
-    <section class="mcp">
-      <div>
-        <h2>Interrogate the fund</h2>
-        <p>Glasshouse ships a read-only <b>MCP server</b> — open Claude and ask it anything about its own decisions, answered from the real audit trail.</p>
-      </div>
-      <div class="term">
-        <div><span class="q">you ▸</span> why did the fund sell NVDA?</div>
-        <div class="dim">glasshouse ▸ On 2026-06-14 the risk engine flagged a stop-loss:<br>NVDA was −16% from cost basis. The PM trimmed 50 sh;<br>the bear case cited weakening data-center demand.</div>
-      </div>
-    </section>
 
     <footer>
       <span>Paper trading — simulated capital, not investment advice.</span>
