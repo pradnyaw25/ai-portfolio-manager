@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <title>About &amp; Mandate — Glasshouse Fund</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-MCDDGJ3XEC"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-MCDDGJ3XEC');
+  </script>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <meta name="description" content="What Glasshouse Fund is, its mandate and deterministic guardrails, the tradable universe, the AI stack behind it, and who built it." />
+  <meta name="author" content="Pradnya Wakchaure" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://glasshousefund.com/about.html" />
+  <meta property="og:title" content="About & Mandate — Glasshouse Fund" />
+  <meta property="og:description" content="The mandate, guardrails, universe, and stack behind an autonomous AI fund published in the open." />
+  <meta property="og:image" content="https://glasshousefund.com/og-cover.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@GlassHouseFund" />
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #e9ecdf; --surface: #f3f5ec; --surface-subtle: #e1e5d4;
+      --border: #cdd4bd; --border-strong: #b4bd9f;
+      --text: #191c11; --muted: #5e6851; --muted-strong: #3f4834;
+      --positive: #4d6a2c; --positive-bg: #dde7ca;
+      --negative: #9c3a30; --accent: #5f6b45; --accent-bg: #dfe5cf;
+      --ink: #12140d; --shadow: 0 12px 34px rgba(18,20,13,0.10);
+      --row-border: #dde2d0; --panel-subtle: #eef1e6;
+    }
+    :root[data-theme="dark"] {
+      --bg: #12140d; --surface: #1b1e14; --surface-subtle: #24281a;
+      --border: #343a28; --border-strong: #4a5138;
+      --text: #e4e8d5; --muted: #99a487; --muted-strong: #c3ccb1;
+      --positive: #a6c07f; --positive-bg: #1b2712;
+      --negative: #e59a90; --accent: #aeba90; --accent-bg: #23291a;
+      --ink: #f1f4e7; --shadow: 0 16px 42px rgba(0,0,0,0.40);
+      --row-border: #2a2f1f; --panel-subtle: #15170f;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-width: 320px; background: var(--bg); color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; line-height: 1.6; }
+    a { color: inherit; }
+    .shell { width: min(1000px, calc(100% - 32px)); margin: 0 auto; padding: 22px 0 60px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-bottom: 34px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; color: var(--ink); text-decoration: none; }
+    .brand-mark { display: block; width: 30px; height: 30px; color: var(--ink); flex: none; }
+    .topbar-actions { display: flex; align-items: center; gap: 10px; }
+    .nav { display: flex; gap: 4px; flex-wrap: wrap; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); padding: 4px; }
+    .nav a { display: inline-flex; align-items: center; min-height: 34px; padding: 0 12px; border-radius: 6px; color: var(--muted-strong); font-size: 14px; font-weight: 700; text-decoration: none; white-space: nowrap; }
+    .nav a.active { background: var(--ink); color: var(--bg); }
+    .nav a:hover:not(.active) { background: var(--surface-subtle); }
+    .theme-toggle { display: flex; gap: 3px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); padding: 3px; }
+    .theme-toggle button { min-width: 30px; min-height: 30px; border: 0; border-radius: 6px; background: transparent; color: var(--muted-strong); font-size: 13px; font-weight: 800; cursor: pointer; }
+    .theme-toggle button.active { background: var(--ink); color: var(--bg); }
+
+    .eyebrow { color: var(--accent); font-size: 12px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 12px; }
+    h1 { margin: 0 0 14px; color: var(--ink); font-size: clamp(30px, 5vw, 46px); line-height: 1.05; letter-spacing: -0.02em; }
+    .lede { color: var(--muted-strong); font-size: 18px; max-width: 62ch; margin: 0 0 44px; }
+    h2 { color: var(--ink); font-size: 21px; margin: 0 0 6px; }
+    section { margin-bottom: 40px; }
+    .sub { color: var(--muted); font-size: 14px; margin: 0 0 16px; max-width: 66ch; }
+    p { margin: 0 0 12px; }
+
+    .rules { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+    .rule { border: 1px solid var(--border); border-radius: 10px; background: var(--surface); box-shadow: var(--shadow); padding: 16px 18px; }
+    .rule .n { color: var(--ink); font-size: 24px; font-weight: 850; line-height: 1; }
+    .rule .l { color: var(--muted); font-size: 12.5px; margin-top: 6px; }
+    .rule .l b { color: var(--muted-strong); }
+    .note { margin-top: 14px; border-left: 3px solid var(--accent); padding: 4px 0 4px 14px; color: var(--muted-strong); font-size: 14.5px; }
+
+    .universe { border: 1px solid var(--border); border-radius: 12px; background: var(--surface); box-shadow: var(--shadow); padding: 20px 22px; }
+    .ugroup { display: grid; grid-template-columns: 190px minmax(0,1fr); gap: 8px 16px; padding: 10px 0; align-items: baseline; }
+    .ugroup + .ugroup { border-top: 1px solid var(--row-border); }
+    .ugroup .g { color: var(--muted); font-size: 11.5px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
+    .tickers { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tk { border: 1px solid var(--border-strong); border-radius: 6px; background: var(--panel-subtle); padding: 3px 8px; font-size: 12.5px; font-weight: 700; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+    .card { border: 1px solid var(--border); border-radius: 12px; background: var(--surface); box-shadow: var(--shadow); padding: 20px 22px; }
+    .stack-row { display: grid; grid-template-columns: 150px minmax(0,1fr); gap: 6px 16px; padding: 9px 0; font-size: 14.5px; }
+    .stack-row + .stack-row { border-top: 1px solid var(--row-border); }
+    .stack-row .k { color: var(--muted); font-weight: 700; font-size: 13px; }
+    .stack-row .v b { color: var(--ink); }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; background: var(--surface-subtle); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; }
+
+    .links { display: flex; flex-wrap: wrap; gap: 10px; }
+    .lbtn { display: inline-flex; align-items: center; gap: 7px; height: 40px; padding: 0 16px; border-radius: 9px; border: 1px solid var(--border-strong); background: var(--surface); color: var(--ink); font-size: 14px; font-weight: 700; text-decoration: none; }
+    .lbtn:hover { background: var(--surface-subtle); }
+
+    .built { border: 1px solid var(--border); border-radius: 12px; background: var(--panel-subtle); box-shadow: var(--shadow); padding: 22px; }
+    .built p { color: var(--muted-strong); font-size: 15px; max-width: 62ch; }
+    .built b { color: var(--ink); }
+
+    .disclaimer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--border); padding-top: 18px; margin-top: 8px; }
+    footer { margin-top: 30px; color: var(--muted); font-size: 13px; }
+    footer a { font-weight: 700; }
+    @media (max-width: 640px) { .ugroup, .stack-row { grid-template-columns: 1fr; } .topbar { flex-wrap: wrap; } }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="topbar">
+      <a class="brand" href="index.html">
+        <svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <g stroke="currentColor" stroke-linejoin="round" stroke-linecap="round">
+            <path d="M24 5 L43 21 L43 43 L5 43 L5 21 Z" stroke-width="2.4"/>
+            <path d="M5 21 L43 21" stroke-width="2"/>
+            <path d="M24 5 L24 21" stroke-width="1.6"/>
+            <path d="M16 21 L16 43 M32 21 L32 43" stroke-width="1.6"/>
+            <path d="M5 32 L43 32" stroke-width="1.6"/>
+          </g>
+        </svg>
+        <span>Glasshouse&nbsp;Fund</span>
+      </a>
+      <div class="topbar-actions">
+        <nav class="nav" aria-label="Site navigation">
+          <a href="dashboard.html">Dashboard</a>
+          <a href="decisions.html">Decision Journal</a>
+          <a href="predictions.html">Prediction Accuracy</a>
+          <a href="architecture.html">Architecture</a>
+          <a class="active" href="about.html">About</a>
+        </nav>
+        <div class="theme-toggle" aria-label="Theme">
+          <button type="button" data-theme-option="light" title="Light">L</button>
+          <button type="button" data-theme-option="dark" title="Dark">D</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="eyebrow">About &amp; Mandate</div>
+    <h1>An AI fund, run in the open.</h1>
+    <p class="lede">Glasshouse Fund is an autonomous AI that manages a simulated <b>$1,000,000</b>, long-only portfolio. Every trading day it researches, debates, decides, and trades — and publishes all of it: the reasoning, the evidence it cited, the guardrails it ran through, and how its predictions actually turn out. It's a paper fund and an engineering project, not a product. The point isn't returns — it's showing the work.</p>
+
+    <section>
+      <h2>Mandate &amp; guardrails</h2>
+      <p class="sub">The AI can be creative; the risk layer is boring on purpose. These limits are enforced <b>deterministically, in code the model cannot argue past</b> — the LLM proposes trades, the guardrails dispose.</p>
+      <div class="rules">
+        <div class="rule"><div class="n">Long only</div><div class="l">no shorting, no leverage, no derivatives</div></div>
+        <div class="rule"><div class="n">$1.0M</div><div class="l">simulated starting capital · <b>paper</b></div></div>
+        <div class="rule"><div class="n">≤ 10%</div><div class="l">max weight in any one position</div></div>
+        <div class="rule"><div class="n">≤ 40%</div><div class="l">max exposure to any one GICS sector</div></div>
+        <div class="rule"><div class="n">≤ 25%</div><div class="l">cash target — deploy it or justify holding it</div></div>
+        <div class="rule"><div class="n">≤ 20%</div><div class="l">max portfolio turnover per day</div></div>
+        <div class="rule"><div class="n">≥ 0.60</div><div class="l">min confidence for a trade to pass review</div></div>
+        <div class="rule"><div class="n">−15% / +40%</div><div class="l">auto stop-loss / take-profit exits</div></div>
+      </div>
+      <p class="note">Stop-loss and take-profit exits are generated by the risk engine itself and <b>override</b> any LLM trade on the same name — the model can't talk the fund out of cutting a loser.</p>
+    </section>
+
+    <section>
+      <h2>The universe</h2>
+      <p class="sub">The AI may only trade names on this watchlist (plus SPY / QQQ for benchmarking). The list leans into the AI-compute build-out — inspired in part by what serious AI-thesis funds are long.</p>
+      <div class="universe">
+        <div class="ugroup"><div class="g">Mega-cap tech</div><div class="tickers"><span class="tk">AAPL</span><span class="tk">MSFT</span><span class="tk">GOOGL</span><span class="tk">AMZN</span><span class="tk">META</span></div></div>
+        <div class="ugroup"><div class="g">Semis &amp; storage</div><div class="tickers"><span class="tk">NVDA</span><span class="tk">AMD</span><span class="tk">AVGO</span><span class="tk">ASML</span><span class="tk">MU</span><span class="tk">TSM</span><span class="tk">INTC</span><span class="tk">SNDK</span></div></div>
+        <div class="ugroup"><div class="g">AI infra &amp; data centers</div><div class="tickers"><span class="tk">ORCL</span><span class="tk">CRWV</span><span class="tk">IREN</span><span class="tk">CORZ</span><span class="tk">APLD</span><span class="tk">GLW</span><span class="tk">BE</span></div></div>
+        <div class="ugroup"><div class="g">Financials</div><div class="tickers"><span class="tk">JPM</span><span class="tk">V</span><span class="tk">MA</span></div></div>
+        <div class="ugroup"><div class="g">Health care</div><div class="tickers"><span class="tk">UNH</span><span class="tk">JNJ</span></div></div>
+        <div class="ugroup"><div class="g">Consumer</div><div class="tickers"><span class="tk">TSLA</span><span class="tk">HD</span><span class="tk">WMT</span><span class="tk">PG</span></div></div>
+        <div class="ugroup"><div class="g">Energy &amp; industrials</div><div class="tickers"><span class="tk">XOM</span><span class="tk">CAT</span></div></div>
+        <div class="ugroup"><div class="g">Benchmark ETFs</div><div class="tickers"><span class="tk">SPY</span><span class="tk">QQQ</span></div></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>The stack</h2>
+      <p class="sub">Everything model-facing flows through one gateway, so routing, validation, retries, tracing, and cost tracking are one-time costs — not per-agent ones.</p>
+      <div class="card">
+        <div class="stack-row"><div class="k">Models</div><div class="v"><b>OpenAI <code>gpt-4o-mini</code></b> today, behind a provider-agnostic gateway with a cheap/strong tier split (cheap: analysts &amp; summaries; strong: PM synthesis &amp; judges). Swapping in a stronger model or provider is a config change.</div></div>
+        <div class="stack-row"><div class="k">Cost</div><div class="v">≈ <b>$0.007</b> per daily decision, tracked per run and published on the dashboard.</div></div>
+        <div class="stack-row"><div class="k">Decision</div><div class="v">A bull / bear / risk <b>analyst debate</b> feeds a portfolio-manager synthesis that must answer the bear case, with tool-calling research over prices, news, and SEC filings.</div></div>
+        <div class="stack-row"><div class="k">Memory</div><div class="v">Chunked, metadata-filtered <b>RAG</b> over SEC 10-K / 10-Q / earnings, plus a weekly reflection agent that turns outcomes into cited lessons.</div></div>
+        <div class="stack-row"><div class="k">Assurance</div><div class="v">Golden-scenario <b>evals gate CI</b>, a grounding check blocks unsupported claims before they publish, and every BUY spawns a scored 30-day prediction.</div></div>
+        <div class="stack-row"><div class="k">Orchestration</div><div class="v">A <b>LangGraph</b> daily cycle with conditional routing, crash-safe resume, market-hours execution gating, and an optional human approval gate.</div></div>
+      </div>
+      <p class="note">Full diagrams and the honest retrospective are on the <a href="architecture.html">Architecture</a> page.</p>
+    </section>
+
+    <section>
+      <h2>Radical transparency</h2>
+      <p class="sub">Nothing is hidden. Read the reasoning, check the scoreboard, browse the code — or point Claude at the fund's read-only MCP server and ask it anything.</p>
+      <div class="links">
+        <a class="lbtn" href="dashboard.html">Live dashboard</a>
+        <a class="lbtn" href="decisions.html">Decision journal</a>
+        <a class="lbtn" href="predictions.html">Prediction scoreboard</a>
+        <a class="lbtn" href="https://github.com/pradnyaw25/ai-portfolio-manager" target="_blank" rel="noopener">Source on GitHub</a>
+        <a class="lbtn" href="https://x.com/GlassHouseFund" target="_blank" rel="noopener">@GlassHouseFund</a>
+      </div>
+    </section>
+
+    <section>
+      <h2>Built by</h2>
+      <div class="built">
+        <p><b>Pradnya Wakchaure</b> built Glasshouse Fund as a hands-on platform for modern AI engineering — LLM orchestration, evals, retrieval, agents, and the infrastructure that keeps an autonomous system honest — and as an experiment run publicly, in the open.</p>
+        <div class="links" style="margin-top:6px">
+          <a class="lbtn" href="https://pradnya.dev" target="_blank" rel="noopener">pradnya.dev</a>
+          <a class="lbtn" href="https://github.com/pradnyaw25" target="_blank" rel="noopener">GitHub</a>
+          <a class="lbtn" href="https://x.com/GlassHouseFund" target="_blank" rel="noopener">X</a>
+        </div>
+      </div>
+    </section>
+
+    <p class="disclaimer"><b>Not investment advice.</b> Glasshouse Fund trades simulated capital in a paper account. Nothing here is a recommendation to buy or sell any security. Prices and data may be delayed or imperfect. Past simulated performance says nothing about the future.</p>
+
+    <footer>
+      <a href="index.html">Home</a> ·
+      <a href="https://github.com/pradnyaw25/ai-portfolio-manager" target="_blank" rel="noopener">GitHub</a> ·
+      <a href="https://x.com/GlassHouseFund" target="_blank" rel="noopener">X</a>
+    </footer>
+  </div>
+
+  <script>
+    const THEME_KEY = "ai-portfolio-theme";
+    function pref(){ const s=localStorage.getItem(THEME_KEY); if(s==="light"||s==="dark")return s;
+      return window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark"; }
+    function applyTheme(p=pref()){ document.documentElement.setAttribute("data-theme",p);
+      document.querySelectorAll("[data-theme-option]").forEach(b=>b.classList.toggle("active",b.dataset.themeOption===p)); }
+    document.querySelectorAll("[data-theme-option]").forEach(b=>b.addEventListener("click",()=>{ localStorage.setItem(THEME_KEY,b.dataset.themeOption); applyTheme(b.dataset.themeOption); }));
+    applyTheme();
+  </script>
+</body>
+</html>
