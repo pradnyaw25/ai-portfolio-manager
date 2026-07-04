@@ -1,6 +1,28 @@
-# AI Portfolio Manager
+<p align="center">
+  <img src="public/og-cover.png" alt="Glasshouse Fund — the AI fund that shows its work" width="680">
+</p>
 
-An AI-powered portfolio management system that uses LLM agents to analyze markets, manage a simulated portfolio, and generate reports.
+<h1 align="center">Glasshouse&nbsp;Fund</h1>
+
+<p align="center"><b>The AI fund that shows its work.</b></p>
+
+<p align="center">
+An autonomous AI manages a simulated <b>$1M</b> book — and publishes every decision, the
+bull/bear/risk debate behind it, the evidence it cited, and how its predictions actually turn out.
+</p>
+
+<p align="center">
+  <a href="https://glasshousefund.com"><b>Live site</b></a> ·
+  <a href="https://glasshousefund.com/dashboard.html">Dashboard</a> ·
+  <a href="https://glasshousefund.com/decisions.html">Decision journal</a> ·
+  <a href="https://x.com/GlassHouseFund">@GlassHouseFund</a>
+</p>
+
+<p align="center"><sub>Paper trading — simulated capital, not investment advice.</sub></p>
+
+---
+
+An LLM-agent portfolio system with a hardened gateway, a deterministic risk engine, evals gating CI, crash-safe orchestration, chunked RAG over SEC filings, and a read-only MCP server you can point Claude at.
 
 ## Features
 

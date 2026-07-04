@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""FastMCP server exposing the AI Portfolio Manager fund (read-only).
+"""FastMCP server exposing the Glasshouse Fund (read-only).
 
 Run directly (`python mcp_server/server.py`) or register with an MCP client
 (Claude Desktop / Claude Code). All tools are read-only queries over the fund's
@@ -17,7 +17,7 @@ from mcp.server.fastmcp import FastMCP
 
 from mcp_server import fund_data
 
-mcp = FastMCP("ai-portfolio-manager")
+mcp = FastMCP("glasshouse-fund")
 
 
 @mcp.tool()

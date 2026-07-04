@@ -1,54 +1,51 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-  <title>Architecture &amp; Retrospective — AI Portfolio Manager</title>
+  <title>Architecture &amp; Retrospective — Glasshouse Fund</title>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Glasshouse Fund — the AI fund that shows its work" />
+  <meta property="og:description" content="An autonomous AI fund managing $1M of simulated money — every decision debated, grounded, scored, and published in the open." />
+  <meta property="og:image" content="https://glasshousefund.com/og-cover.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@GlassHouseFund" />
   <style>
     :root {
       color-scheme: light dark;
-      --bg: #f6f7f9;
-      --surface: #ffffff;
-      --surface-subtle: #f0f3f7;
-      --border: #d9dee7;
-      --border-strong: #c6ceda;
-      --text: #17202a;
-      --muted: #637083;
-      --muted-strong: #465365;
-      --positive: #16784b;
-      --positive-bg: #e8f5ee;
-      --negative: #b8323b;
-      --negative-bg: #fdeced;
-      --warning: #946200;
-      --warning-bg: #fff6dd;
-      --accent: #2454a6;
-      --accent-bg: #e9f0ff;
-      --ink: #101820;
-      --shadow: 0 12px 36px rgba(16, 24, 32, 0.08);
-      --row-border: #edf0f4;
-      --panel-subtle: #fbfcfe;
+      --bg: #e9ecdf; --surface: #f3f5ec; --surface-subtle: #e1e5d4;
+      --border: #cdd4bd; --border-strong: #b4bd9f;
+      --text: #191c11; --muted: #5e6851; --muted-strong: #3f4834;
+      --positive: #4d6a2c; --positive-bg: #dde7ca;
+      --negative: #9c3a30; --negative-bg: #f0dbd6;
+      --warning: #8a6a1c; --warning-bg: #efe6c9;
+      --accent: #5f6b45; --accent-bg: #dfe5cf;
+      --ink: #12140d; --shadow: 0 12px 34px rgba(18,20,13,0.10);
+      --row-border: #dde2d0; --panel-subtle: #eef1e6; --bar-track: #dbe0cd;
+      --tooltip-bg: #12140d; --tooltip-text: #eef1e6;
+      --chart-grid: #d3d9c4; --chart-axis: #5e6851;
+      --chart-ai: #5f6b45; --chart-ai-fill: rgba(95,107,69,0.14);
+      --chart-spy: #4d6a2c; --chart-spy-fill: rgba(77,106,44,0.08);
+      --chart-qqq: #8a6a1c; --chart-qqq-fill: rgba(138,106,28,0.08);
+      --chart-border: #f3f5ec;
     }
     :root[data-theme="dark"] {
-      --bg: #0f141b;
-      --surface: #171e28;
-      --surface-subtle: #202938;
-      --border: #2f3a49;
-      --border-strong: #465365;
-      --text: #dbe3ee;
-      --muted: #97a4b5;
-      --muted-strong: #bdc7d5;
-      --positive: #5ed39a;
-      --positive-bg: #10291f;
-      --negative: #ff7a86;
-      --negative-bg: #35171c;
-      --warning: #f2c766;
-      --warning-bg: #2d230f;
-      --accent: #83aaff;
-      --accent-bg: #172747;
-      --ink: #f5f7fb;
-      --shadow: 0 16px 42px rgba(0, 0, 0, 0.34);
-      --row-border: #263241;
-      --panel-subtle: #131a24;
+      --bg: #12140d; --surface: #1b1e14; --surface-subtle: #24281a;
+      --border: #343a28; --border-strong: #4a5138;
+      --text: #e4e8d5; --muted: #99a487; --muted-strong: #c3ccb1;
+      --positive: #a6c07f; --positive-bg: #1b2712;
+      --negative: #e59a90; --negative-bg: #2f1a16;
+      --warning: #d9bd6f; --warning-bg: #2b2410;
+      --accent: #aeba90; --accent-bg: #23291a;
+      --ink: #f1f4e7; --shadow: 0 16px 42px rgba(0,0,0,0.40);
+      --row-border: #2a2f1f; --panel-subtle: #15170f; --bar-track: #2c3120;
+      --tooltip-bg: #f1f4e7; --tooltip-text: #14160e;
+      --chart-grid: #2c3120; --chart-axis: #99a487;
+      --chart-ai: #aeba90; --chart-ai-fill: rgba(174,186,144,0.16);
+      --chart-spy: #a6c07f; --chart-spy-fill: rgba(166,192,127,0.12);
+      --chart-qqq: #d9bd6f; --chart-qqq-fill: rgba(217,189,111,0.12);
+      --chart-border: #1b1e14;
     }
     * { box-sizing: border-box; }
     body {
@@ -61,10 +58,7 @@
     .topbar { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-bottom: 24px; }
     .topbar-actions { display: flex; align-items: center; gap: 10px; min-width: 0; }
     .brand { display: flex; align-items: center; gap: 10px; min-width: 0; font-weight: 800; color: var(--ink); }
-    .brand-mark {
-      display: grid; width: 34px; height: 34px; place-items: center; border: 1px solid var(--border-strong);
-      border-radius: 8px; background: var(--surface); color: var(--accent); font-size: 18px; font-weight: 850;
-    }
+    .brand-mark { display: block; width: 30px; height: 30px; color: var(--ink); flex: none; }
     .nav { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); padding: 4px; }
     .nav a {
       display: inline-flex; align-items: center; min-height: 34px; padding: 0 12px; border-radius: 6px;
@@ -163,10 +157,10 @@
 <body>
   <main class="app-shell">
     <div class="topbar">
-      <div class="brand"><span class="brand-mark">A</span><span>AI Portfolio Manager</span></div>
+      <a class="brand" href="index.html" style="text-decoration:none"><svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-linejoin="round" stroke-linecap="round"><path d="M24 5 L43 21 L43 43 L5 43 L5 21 Z" stroke-width="2.4"/><path d="M5 21 L43 21" stroke-width="2"/><path d="M24 5 L24 21" stroke-width="1.6"/><path d="M16 21 L16 43 M32 21 L32 43" stroke-width="1.6"/><path d="M5 32 L43 32" stroke-width="1.6"/></g></svg><span>Glasshouse Fund</span></a>
       <div class="topbar-actions">
         <nav class="nav" aria-label="Dashboard navigation">
-          <a href="index.html">Dashboard</a>
+          <a href="dashboard.html">Dashboard</a>
           <a href="decisions.html">Decision Journal</a>
           <a href="predictions.html">Prediction Accuracy</a>
           <a class="active" href="architecture.html">Architecture</a>

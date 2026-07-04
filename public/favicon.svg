@@ -1,0 +1,13 @@
+<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Glasshouse">
+  <style>svg{color:#12140d}@media (prefers-color-scheme:dark){svg{color:#e4e8d5}}</style>
+  <g stroke="currentColor" stroke-linejoin="round" stroke-linecap="round">
+    <!-- glasshouse outline -->
+    <path d="M24 5 L43 21 L43 43 L5 43 L5 21 Z" stroke-width="2.4"/>
+    <!-- eave where the roof meets the walls -->
+    <path d="M5 21 L43 21" stroke-width="2"/>
+    <!-- glass panes: gable ridge + mullion grid -->
+    <path d="M24 5 L24 21" stroke-width="1.6"/>
+    <path d="M16 21 L16 43 M32 21 L32 43" stroke-width="1.6"/>
+    <path d="M5 32 L43 32" stroke-width="1.6"/>
+  </g>
+</svg>
