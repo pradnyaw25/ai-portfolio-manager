@@ -44,6 +44,7 @@ def test_latest_unfinished_picks_most_recent_running(tmp_path):
 # ---- resume through the graph ------------------------------------------------
 
 def _mock_full_cycle(monkeypatch):
+    monkeypatch.setattr(daily_graph, "is_regular_market_hours", lambda: True)
     snap = SimpleNamespace(total_value=1_000_000.0, cash_pct=0.1)
     engine = SimpleNamespace(get_snapshot=lambda: snap)
     memres = SimpleNamespace(status="ok", error=None)

@@ -118,6 +118,7 @@ def test_prompt_falls_back_to_reject_without_tty(monkeypatch):
 
 
 def _mock_full_cycle(monkeypatch, approved):
+    monkeypatch.setattr(daily_graph, "is_regular_market_hours", lambda: True)
     snap = SimpleNamespace(total_value=1_000_000.0, cash_pct=0.1)
     engine = SimpleNamespace(get_snapshot=lambda: snap)
     memres = SimpleNamespace(status="ok", error=None)

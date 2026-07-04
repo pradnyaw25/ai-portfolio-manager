@@ -85,6 +85,13 @@ RUN_HISTORY_LOG = DATA_DIR / "run_history.jsonl"
 # execution.
 AUTO_APPROVE = os.getenv("AUTO_APPROVE", "true").lower() in {"1", "true", "yes"}
 
+# Trades only execute during regular US market hours (9:30–16:00 America/New_York).
+# The rest of the cycle (research, decision, journal) still runs outside hours; only
+# execution is skipped. Set true to override for testing/backfill.
+EXECUTE_OUTSIDE_MARKET_HOURS = os.getenv(
+    "EXECUTE_OUTSIDE_MARKET_HOURS", "false"
+).lower() in {"1", "true", "yes"}
+
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
 
 WATCHLIST_PATH = CONFIG_DIR / "watchlist.yaml"
