@@ -4,6 +4,18 @@
   <title>Glasshouse Fund — the AI fund that shows its work</title>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script>
+    // Apply the saved theme before first paint to avoid a flash of the wrong theme on navigation.
+    (function () {
+      try {
+        var stored = localStorage.getItem("ai-portfolio-theme");
+        var theme = (stored === "light" || stored === "dark")
+          ? stored
+          : (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+        document.documentElement.setAttribute("data-theme", theme);
+      } catch (e) {}
+    })();
+  </script>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-MCDDGJ3XEC"></script>
   <script>
