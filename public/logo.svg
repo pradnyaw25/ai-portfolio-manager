@@ -1,0 +1,12 @@
+<svg viewBox="0 0 250 48" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Glasshouse Fund">
+  <style>svg{color:#12140d}@media (prefers-color-scheme:dark){svg{color:#e4e8d5}}</style>
+  <g stroke="currentColor" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M24 5 L43 21 L43 43 L5 43 L5 21 Z" stroke-width="2.4"/>
+    <path d="M5 21 L43 21" stroke-width="2"/>
+    <path d="M24 5 L24 21" stroke-width="1.6"/>
+    <path d="M16 21 L16 43 M32 21 L32 43" stroke-width="1.6"/>
+    <path d="M5 32 L43 32" stroke-width="1.6"/>
+  </g>
+  <text x="60" y="31" fill="currentColor" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="25" font-weight="700" letter-spacing="-0.5">Glasshouse</text>
+  <text x="61" y="43" fill="currentColor" opacity="0.6" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="10" font-weight="600" letter-spacing="4.5">FUND</text>
+</svg>

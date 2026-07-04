@@ -1,4 +1,4 @@
-"""Read-only MCP server exposing the AI Portfolio Manager fund to any MCP client.
+"""Read-only MCP server exposing the Glasshouse Fund to any MCP client.
 
 `fund_data` holds the plain, testable query functions over the existing stores;
 `server` wires them into a FastMCP server. Kept out of `src/` and named
