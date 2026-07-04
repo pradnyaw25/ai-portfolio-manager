@@ -4,6 +4,18 @@
   <title>Glasshouse Fund — the AI fund that shows its work</title>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script>
+    // Apply the saved theme before first paint to avoid a flash of the wrong theme on navigation.
+    (function () {
+      try {
+        var stored = localStorage.getItem("ai-portfolio-theme");
+        var theme = (stored === "light" || stored === "dark")
+          ? stored
+          : (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+        document.documentElement.setAttribute("data-theme", theme);
+      } catch (e) {}
+    })();
+  </script>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-MCDDGJ3XEC"></script>
   <script>
@@ -69,12 +81,22 @@
 
     .hero-card { border: 1px solid var(--border); border-radius: 14px; background: var(--surface); box-shadow: var(--shadow); padding: 26px; }
     .hc-eyebrow { color: var(--muted); font-size: 11px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
-    .hc-value { color: var(--ink); font-size: clamp(38px, 6vw, 52px); font-weight: 850; line-height: 1; margin: 8px 0 4px; overflow-wrap: anywhere; }
+    .hc-value { color: var(--ink); font-size: clamp(40px, 6.4vw, 56px); font-weight: 850; line-height: 1; margin: 8px 0 4px; overflow-wrap: anywhere; }
+    .hc-value.pos { color: var(--positive); } .hc-value.neg { color: var(--negative); }
     .hc-sub { color: var(--muted-strong); font-size: 14px; }
-    .hc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
-    .hc-stat { border: 1px solid var(--border); border-radius: 9px; background: var(--panel-subtle); padding: 12px 14px; }
-    .hc-stat .n { color: var(--ink); font-size: 20px; font-weight: 800; }
-    .hc-stat .l { color: var(--muted); font-size: 11.5px; margin-top: 2px; }
+    .hc-sub b { color: var(--ink); font-weight: 800; }
+    .compare { display: grid; gap: 10px; margin-top: 22px; }
+    .crow { display: grid; grid-template-columns: 78px 1fr auto; align-items: center; gap: 12px; }
+    .crow .cname { color: var(--muted); font-size: 12.5px; font-weight: 700; }
+    .crow .cval { color: var(--muted-strong); font-size: 14px; font-weight: 800; font-variant-numeric: tabular-nums; }
+    .crow .cbar { height: 8px; border-radius: 999px; background: var(--panel-subtle); overflow: hidden; }
+    .crow .cbar > i { display: block; height: 100%; width: 0; border-radius: 999px; background: var(--border-strong); transition: width .5s ease; }
+    .crow.me .cname { color: var(--ink); } .crow.me .cval { color: var(--ink); font-size: 16px; }
+    .crow.me .cbar > i { background: var(--positive); }
+    .cval.pos { color: var(--positive) !important; } .cval.neg { color: var(--negative) !important; }
+    .crow .cbar > i.neg { background: var(--negative); }
+    .hc-foot { display: inline-block; margin-top: 20px; color: var(--accent); font-size: 13px; font-weight: 700; text-decoration: none; }
+    .hc-foot:hover { text-decoration: underline; }
 
     .sec-title { font-size: 13px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin: 0 0 16px; }
     .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap: 16px; margin-bottom: 56px; }
@@ -89,15 +111,9 @@
     .step b { color: var(--ink); display: block; margin-bottom: 3px; }
     .step span { color: var(--muted); }
 
-    .mcp { border: 1px solid var(--border); border-radius: 14px; background: var(--surface); box-shadow: var(--shadow); padding: 26px; margin-bottom: 56px; display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1.1fr); gap: 28px; align-items: center; }
-    .mcp h2 { margin: 0 0 8px; color: var(--ink); font-size: 22px; }
-    .mcp p { margin: 0; color: var(--muted-strong); font-size: 14.5px; }
-    .term { background: var(--ink); color: var(--bg); border-radius: 12px; padding: 18px 20px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; line-height: 1.6; }
-    .term .q { color: #cfe0a8; } .term .dim { opacity: 0.6; }
-
     footer { border-top: 1px solid var(--border); padding-top: 20px; color: var(--muted); font-size: 13px; display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: space-between; }
     footer a { font-weight: 700; }
-    @media (max-width: 820px) { .hero, .mcp { grid-template-columns: 1fr; } .topbar { flex-wrap: wrap; } }
+    @media (max-width: 820px) { .hero { grid-template-columns: 1fr; } .topbar { flex-wrap: wrap; } }
   </style>
 </head>
 <body>
@@ -121,6 +137,7 @@
           <a href="decisions.html">Journal</a>
           <a href="predictions.html">Predictions</a>
           <a href="architecture.html">Architecture</a>
+          <a href="about.html">About</a>
         </nav>
         <div class="theme-toggle" aria-label="Theme">
           <button type="button" data-theme-option="light" title="Light">L</button>
@@ -141,15 +158,27 @@
         </div>
       </div>
       <div class="hero-card">
-        <div class="hc-eyebrow">Portfolio value</div>
-        <div class="hc-value" id="pv">$1,000,000</div>
-        <div class="hc-sub" id="pv-sub">Simulated capital · not investment advice</div>
-        <div class="hc-grid">
-          <div class="hc-stat"><div class="n" id="s-cash">—</div><div class="l">Cash</div></div>
-          <div class="hc-stat"><div class="n" id="s-pos">—</div><div class="l">Positions</div></div>
-          <div class="hc-stat"><div class="n" id="s-cost">—</div><div class="l">Cost / decision</div></div>
-          <div class="hc-stat"><div class="n" id="s-updated">—</div><div class="l">Last run</div></div>
+        <div class="hc-eyebrow">Return since inception · simulated $1M</div>
+        <div class="hc-value" id="pv-return">—</div>
+        <div class="hc-sub" id="pv-sub">Portfolio value <b id="pv">$1,000,000</b></div>
+        <div class="compare" id="compare">
+          <div class="crow me">
+            <span class="cname">This fund</span>
+            <span class="cbar"><i id="bar-fund"></i></span>
+            <span class="cval" id="c-fund">—</span>
+          </div>
+          <div class="crow">
+            <span class="cname">S&amp;P 500</span>
+            <span class="cbar"><i id="bar-spy"></i></span>
+            <span class="cval" id="c-spy">—</span>
+          </div>
+          <div class="crow">
+            <span class="cname">Nasdaq 100</span>
+            <span class="cbar"><i id="bar-qqq"></i></span>
+            <span class="cval" id="c-qqq">—</span>
+          </div>
         </div>
+        <a class="hc-foot" href="dashboard.html" id="alpha-line">See the full performance dashboard →</a>
       </div>
     </section>
 
@@ -168,17 +197,6 @@
       <div class="step"><b>Grounding</b><span>claims verified against evidence before publishing</span></div>
       <div class="step"><b>Journal</b><span>decision, trades &amp; predictions recorded openly</span></div>
     </div>
-
-    <section class="mcp">
-      <div>
-        <h2>Interrogate the fund</h2>
-        <p>Glasshouse ships a read-only <b>MCP server</b> — open Claude and ask it anything about its own decisions, answered from the real audit trail.</p>
-      </div>
-      <div class="term">
-        <div><span class="q">you ▸</span> why did the fund sell NVDA?</div>
-        <div class="dim">glasshouse ▸ On 2026-06-14 the risk engine flagged a stop-loss:<br>NVDA was −16% from cost basis. The PM trimmed 50 sh;<br>the bear case cited weakening data-center demand.</div>
-      </div>
-    </section>
 
     <footer>
       <span>Paper trading — simulated capital, not investment advice.</span>
@@ -200,20 +218,62 @@
     applyTheme();
 
     const money = new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",maximumFractionDigits:0});
+    const signedPct = (x) => (x >= 0 ? "+" : "−") + Math.abs(x*100).toFixed(2) + "%";
+    const setText = (id,t) => { const el = document.getElementById(id); if (el) el.textContent = t; };
+
+    async function fetchCsv(path){
+      const text = (await (await fetch(path)).text()).replace(/\r/g,"").trim();
+      if (!text) return [];
+      const [head, ...rows] = text.split("\n");
+      const cols = head.split(",");
+      return rows.map(line => { const v = line.split(","); return Object.fromEntries(cols.map((c,i)=>[c,v[i]])); });
+    }
+
     (async () => {
+      // Portfolio value (headline dollar figure)
       try {
         const s = await (await fetch("run_status.json")).json();
-        if (s.portfolio_value) document.getElementById("pv").textContent = money.format(s.portfolio_value);
-        if (s.cash_pct != null) document.getElementById("s-cash").textContent = (s.cash_pct*100).toFixed(1) + "%";
-        const cost = s.llm && s.llm.cost_usd; if (cost != null) document.getElementById("s-cost").textContent = "$" + cost.toFixed(3);
+        if (s.portfolio_value) setText("pv", money.format(s.portfolio_value));
       } catch (_) {}
+
+      // Performance vs benchmarks — the story: is the fund beating the market?
       try {
-        const p = await (await fetch("portfolio.json")).json();
-        const n = (p.positions || []).length; if (n) document.getElementById("s-pos").textContent = n;
-      } catch (_) {}
-      try {
-        const m = await (await fetch("site_meta.json")).json();
-        if (m.updated_at) document.getElementById("s-updated").textContent = new Date(m.updated_at).toLocaleDateString("en-US",{month:"short",day:"numeric"});
+        const ph = await fetchCsv("portfolio_history.csv");
+        const bh = await fetchCsv("benchmark_history.csv");
+        const values = ph.map(r => Number(r.total_value));
+        const dates = ph.map(r => r.date);
+        const ret = (a) => (a.length >= 2 && Number(a[0])) ? Number(a[a.length-1])/Number(a[0]) - 1 : 0;
+
+        const spy = Object.fromEntries(bh.filter(r=>r.symbol==="SPY").map(r=>[r.date, Number(r.price)]));
+        const qqq = Object.fromEntries(bh.filter(r=>r.symbol==="QQQ").map(r=>[r.date, Number(r.price)]));
+        const d0 = dates[0], dn = dates[dates.length-1];
+
+        const fundRet = ret(values);
+        const spyRet = (spy[d0] && spy[dn]) ? spy[dn]/spy[d0] - 1 : 0;
+        const qqqRet = (qqq[d0] && qqq[dn]) ? qqq[dn]/qqq[d0] - 1 : 0;
+
+        // Headline return
+        const big = document.getElementById("pv-return");
+        big.textContent = signedPct(fundRet);
+        big.className = "hc-value " + (fundRet >= 0 ? "pos" : "neg");
+
+        // Outperformance callout
+        const alpha = fundRet - spyRet;
+        const line = document.getElementById("alpha-line");
+        const verb = alpha >= 0 ? "Beating" : "Trailing";
+        line.textContent = `${verb} the S&P 500 by ${signedPct(Math.abs(alpha)).replace("+","")} · full dashboard →`;
+
+        // Comparison rows + bars (scaled to the largest magnitude among the three)
+        const rows = [["fund", fundRet], ["spy", spyRet], ["qqq", qqqRet]];
+        const scale = Math.max(0.0001, ...rows.map(([,v]) => Math.abs(v)));
+        rows.forEach(([k,v]) => {
+          const val = document.getElementById("c-"+k);
+          val.textContent = signedPct(v);
+          val.className = "cval " + (v >= 0 ? "pos" : "neg");
+          const bar = document.getElementById("bar-"+k);
+          bar.style.width = (Math.abs(v)/scale*100).toFixed(0) + "%";
+          if (v < 0) bar.classList.add("neg");
+        });
       } catch (_) {}
     })();
   </script>

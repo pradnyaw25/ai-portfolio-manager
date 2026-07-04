@@ -4,6 +4,18 @@
   <title>About &amp; Mandate — Glasshouse Fund</title>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script>
+    // Apply the saved theme before first paint to avoid a flash of the wrong theme on navigation.
+    (function () {
+      try {
+        var stored = localStorage.getItem("ai-portfolio-theme");
+        var theme = (stored === "light" || stored === "dark")
+          ? stored
+          : (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+        document.documentElement.setAttribute("data-theme", theme);
+      } catch (e) {}
+    })();
+  </script>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-MCDDGJ3XEC"></script>
   <script>
@@ -173,8 +185,9 @@
       <div class="card">
         <div class="stack-row"><div class="k">Models</div><div class="v"><b>OpenAI <code>gpt-4o-mini</code></b> today, behind a provider-agnostic gateway with a cheap/strong tier split (cheap: analysts &amp; summaries; strong: PM synthesis &amp; judges). Swapping in a stronger model or provider is a config change.</div></div>
         <div class="stack-row"><div class="k">Cost</div><div class="v">≈ <b>$0.007</b> per daily decision, tracked per run and published on the dashboard.</div></div>
+        <div class="stack-row"><div class="k">Data</div><div class="v">Live market prices and movers, real-time news from <b>Google News RSS</b> (keyless, with a NewsAPI fallback), and primary filings pulled straight from <b>SEC EDGAR</b>.</div></div>
         <div class="stack-row"><div class="k">Decision</div><div class="v">A bull / bear / risk <b>analyst debate</b> feeds a portfolio-manager synthesis that must answer the bear case, with tool-calling research over prices, news, and SEC filings.</div></div>
-        <div class="stack-row"><div class="k">Memory</div><div class="v">Chunked, metadata-filtered <b>RAG</b> over SEC 10-K / 10-Q / earnings, plus a weekly reflection agent that turns outcomes into cited lessons.</div></div>
+        <div class="stack-row"><div class="k">Memory</div><div class="v">Chunked, metadata-filtered <b>RAG</b> over SEC 10-K / 10-Q / earnings in a <b>Qdrant</b> vector store, plus a weekly reflection agent that turns outcomes into cited lessons.</div></div>
         <div class="stack-row"><div class="k">Assurance</div><div class="v">Golden-scenario <b>evals gate CI</b>, a grounding check blocks unsupported claims before they publish, and every BUY spawns a scored 30-day prediction.</div></div>
         <div class="stack-row"><div class="k">Orchestration</div><div class="v">A <b>LangGraph</b> daily cycle with conditional routing, crash-safe resume, market-hours execution gating, and an optional human approval gate.</div></div>
       </div>
@@ -200,6 +213,7 @@
         <div class="links" style="margin-top:6px">
           <a class="lbtn" href="https://pradnya.dev" target="_blank" rel="noopener">pradnya.dev</a>
           <a class="lbtn" href="https://github.com/pradnyaw25" target="_blank" rel="noopener">GitHub</a>
+          <a class="lbtn" href="https://www.linkedin.com/in/pradnyaw25/" target="_blank" rel="noopener">LinkedIn</a>
           <a class="lbtn" href="https://x.com/GlassHouseFund" target="_blank" rel="noopener">X</a>
         </div>
       </div>
