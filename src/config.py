@@ -16,6 +16,10 @@ DATA_DIR.mkdir(exist_ok=True)
 REPORTS_DIR.mkdir(exist_ok=True)
 
 NEWS_API_KEY = os.getenv("NEWS_API_KEY", "")
+# Default to the keyless, real-time Google News RSS feed; NewsAPI (free tier has a
+# ~24h delay and a 100/day cap) is used only as a fallback when RSS returns nothing.
+# Set true to prefer NewsAPI first (worth it on a paid plan).
+PREFER_NEWSAPI = os.getenv("PREFER_NEWSAPI", "false").lower() in {"1", "true", "yes"}
 QDRANT_URL = os.getenv("QDRANT_URL", "http://localhost:6333")
 QDRANT_API_KEY = os.getenv("QDRANT_API_KEY", "")
 QDRANT_COLLECTION = os.getenv("QDRANT_COLLECTION", "fund_memory")
