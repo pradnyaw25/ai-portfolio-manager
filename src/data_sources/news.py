@@ -1,7 +1,7 @@
 import feedparser
 import requests
 
-from src.config import NEWS_API_KEY
+from src.config import NEWS_API_KEY, PREFER_NEWSAPI
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -13,28 +13,35 @@ NEWSAPI_URL = "https://newsapi.org/v2/everything"
 class NewsClient:
     """Fetches news, normalized to ``{title, link, published, source, provider}``.
 
-    Prefers NewsAPI.org when ``NEWS_API_KEY`` is set (richer, structured), and
-    falls back to the keyless Google News RSS feed when the key is absent or a
-    NewsAPI request fails or returns nothing.
+    Defaults to the keyless, real-time Google News RSS feed. NewsAPI.org is used
+    only as a fallback when RSS returns nothing (and a key is set) — unless
+    ``PREFER_NEWSAPI`` is set, which flips the order (better on a paid plan).
     """
 
-    def __init__(self, api_key: str = NEWS_API_KEY, session: requests.Session | None = None):
+    def __init__(
+        self,
+        api_key: str = NEWS_API_KEY,
+        prefer_newsapi: bool = PREFER_NEWSAPI,
+        session: requests.Session | None = None,
+    ):
         self.api_key = api_key
+        self.prefer_newsapi = prefer_newsapi
         self.session = session or requests.Session()
 
     def get_stock_news(self, symbol: str, limit: int = 5) -> list[dict]:
-        if self.api_key:
-            articles = self._fetch_newsapi(f"{symbol} stock", limit)
-            if articles:
-                return articles
-        return self._fetch_rss(f"{symbol}+stock", limit)
+        return self._fetch(newsapi_query=f"{symbol} stock", rss_query=f"{symbol}+stock", limit=limit)
 
     def get_market_news(self, limit: int = 10) -> list[dict]:
-        if self.api_key:
-            articles = self._fetch_newsapi("stock market", limit)
-            if articles:
-                return articles
-        return self._fetch_rss("stock+market", limit)
+        return self._fetch(newsapi_query="stock market", rss_query="stock+market", limit=limit)
+
+    def _fetch(self, *, newsapi_query: str, rss_query: str, limit: int) -> list[dict]:
+        if self.api_key and self.prefer_newsapi:
+            return self._fetch_newsapi(newsapi_query, limit) or self._fetch_rss(rss_query, limit)
+        # RSS-first (default): fall back to NewsAPI only when RSS is empty and keyed.
+        articles = self._fetch_rss(rss_query, limit)
+        if not articles and self.api_key:
+            articles = self._fetch_newsapi(newsapi_query, limit)
+        return articles
 
     def _fetch_newsapi(self, query: str, limit: int) -> list[dict]:
         try:
