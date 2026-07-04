@@ -1,12 +1,129 @@
 # AI Portfolio Manager Roadmap
 
-This list tracks open engineering work only, organized into phases. Each task is
-scoped so an independent coding agent can execute it: inputs, outputs, and
-acceptance criteria are explicit. Rationale, architecture, and the
-not-worth-building list live in `docs/ROADMAP.md`.
+Each task is scoped so an independent coding agent can execute it: inputs, outputs,
+and acceptance criteria are explicit. Rationale and prioritization live in
+`docs/ROADMAP-V2.md` (current) and `docs/ROADMAP.md` (v1, all executed).
 
-Execution order: phases are sequential; tasks marked ∥ can run in parallel within
-their phase. Tasks assume the `.venv` environment and `make test` green before/after.
+Tasks assume the `.venv` environment and `make test` green before/after.
+
+**Status:** Phases 0–5 (v1) are all DONE (archived below). The current plan is the
+**V2** block: the v1 roadmap built the machinery; V2 proves it works, makes it legible,
+and turns it into a platform.
+
+---
+
+# V2 — Evidence, Distribution & Platform (current plan)
+
+Ordered by ROI. `∥` = parallelizable. See `docs/ROADMAP-V2.md` §2/§6 for the why.
+
+## V2 · Next 30 days (highest ROI)
+
+### V1-1. Baseline + ablation harness
+* Input: the daily cycle + stores; a config knob for fund variants (fund-as-config).
+* Output: a runner that executes, over the same days, the live fund plus baselines
+  (buy-and-hold SPY, random-from-watchlist) and ablated variants (no-memory,
+  no-debate, no-tools). Metrics per variant (return, alpha, Brier once resolved,
+  decision-quality proxy). Results persisted and rendered on the dashboard.
+* Acceptance: a single command produces a comparison table across ≥4 variants; the
+  dashboard shows fund-vs-SPY-vs-random; the numbers are reproducible.
+
+### V1-2 ∥. Strong-tier PM model + measured delta
+* Output: PM/judges on a frontier model (analysts stay cheap), selected by measuring
+  eval-pass rate and a decision-quality delta vs the cost increase (using the existing
+  cost log). Decision documented.
+* Acceptance: `make eval` shows the delta; the model choice is justified by data, not
+  vibes; defaults remain cost-safe.
+
+### V1-3 ∥. Presentation pass
+* Output: README hero image + 3-line pitch + 90s demo GIF + MCP clip; landing page
+  self-explains (what/why/how) and links GitHub + X; the empty calibration module is
+  hidden until predictions resolve.
+* Acceptance: a cold visitor understands the project in <10s; GitHub reachable from the
+  site; no "Loading…"/empty-metric first impression.
+
+### V1-4 ∥. Real-query retrieval eval
+* Output: 25–30 hand-labeled queries against the live Qdrant corpus with real
+  embeddings; recall/precision/MRR reported alongside (not replacing) the synthetic
+  chunking eval, with the honesty caveat documented.
+* Acceptance: a keyed `make retrieval-eval` reports real-corpus numbers; the synthetic
+  eval is explicitly labeled as mechanism-demonstration.
+
+### V1-5. Debate that earns its keep
+* Output: information asymmetry per analyst (bear ← risk-factor filings, bull ←
+  momentum/news, risk ← exposures) + one rebuttal turn (bear sees bull) + a
+  disagreement/conviction-spread metric recorded per debate.
+* Acceptance: convictions no longer cluster; the debate feeds a measurable variant in
+  V1-1 (debate vs no-debate); a real transcript shows genuine disagreement.
+
+## V2 · Next 90 days (depth)
+
+### V1-6. Replay harness
+* Output: record each run's exact inputs (prices, news, memory snapshot) to a replay
+  store; deterministic re-execution; prompt/schema-change regression on frozen days in
+  CI. (Promotes + reframes v1 P5-4.)
+* Acceptance: replaying a past run reproduces its decision byte-for-byte from cached
+  inputs; a prompt change that alters a frozen-day decision is caught in CI.
+
+### V1-7 ∥. SQLite/DuckDB system of record
+* Output: migrate trades/decisions/predictions off CSV/JSONL into a real DB with
+  transactional upserts; decouple Pages exports; stop committing `data/` to `main`
+  (branch/artifacts).
+* Acceptance: no daily-data commits on `main`; the ledger is queryable; existing
+  idempotency guarantees preserved.
+
+### V1-8 ∥. Second real provider (Anthropic) + routing experiment
+* Output: an Anthropic provider behind the existing seam; a cross-provider eval
+  comparison; make "routing" actually route.
+* Acceptance: a run can be served by either provider; an eval compares them; fallback
+  crosses providers.
+
+### V1-9. Durable two-phase HITL
+* Output: decide→persist→approve→execute split so a run can be approved after a
+  restart or from the dashboard. (Closes the honest P1-3 deferral.)
+* Acceptance: kill the process mid-approval, resume, approve, execute — no duplicates.
+
+### V1-10. Intraday event reactor
+* Output: price-move triggers evaluated by a cheap agent restricted to *proposing risk
+  exits* (bounded authority); routed through the same risk/execution guardrails.
+* Acceptance: a simulated intraday drop proposes a stop-loss exit that flows through
+  the normal pipeline; the reactor cannot open new positions.
+
+### V1-11 ∥. Memory impact instrumentation
+* Output: correlate cited memories with won/lost predictions; a decay/consolidation
+  policy for the memory store.
+* Acceptance: a report shows which memory types/citations precede better outcomes;
+  stale low-value memories are decayed.
+
+## V2 · Next 6–12 months (standout)
+
+### V1-12. Multi-fund tournament (flagship)
+* Output: N fund configs (model × memory × debate × risk) running in public with a
+  league table on the dashboard; the tournament reuses the V1-1 fund-as-config seam.
+* Acceptance: ≥3 funds run concurrently on shared data; a public league table ranks
+  them; weekly content is generated from the standings.
+
+### V1-13 ∥. Extract `decision-audit` OSS package
+* Output: the grounding gate + citations + decision journal as a standalone pip
+  package; this repo becomes its reference deployment.
+* Acceptance: `pip install` + a minimal example works outside this repo; docs + CI +
+  license.
+
+### V1-14 ∥. Calibration-aware position sizing
+* Output: size positions by a Kelly fraction scaled by the fund's *measured* confidence
+  reliability (from its own calibration data).
+* Acceptance: sizing provably responds to calibration; unit-tested against the
+  deterministic risk layer.
+
+### V1-15. Streaming data plane + budgeted intraday agents
+* Output: event-log-backed streaming inputs; intraday agents under explicit token/
+  latency budgets.
+* Acceptance: bounded, backpressure-aware intraday operation within budget.
+
+---
+
+# Archive — v1 (all DONE)
+
+Delivered by the v1 roadmap (`docs/ROADMAP.md`); kept for provenance.
 
 ## Phase 0 — Harden the Foundation (~1 week)
 

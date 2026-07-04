@@ -1,4 +1,8 @@
-# AI Portfolio Manager — Assessment & Roadmap (July 2026)
+# AI Portfolio Manager — Assessment & Roadmap V1 (July 2026)
+
+> **Superseded by [`ROADMAP-V2.md`](ROADMAP-V2.md).** All six phases below were
+> executed; V2 is the current plan. This document is kept for provenance and its
+> still-valid rationale (target architecture, §7 not-worth-building).
 
 A principal-engineer review of the project as of 2026-07-02 (89 commits, ~4,400 LOC src
 + ~1,400 LOC tests), and the phased roadmap derived from it. The actionable task list

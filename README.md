@@ -289,7 +289,14 @@ Do not commit `.env` or real API keys.
 
 ## Roadmap
 
-The full assessment and phased roadmap live in [docs/ROADMAP.md](docs/ROADMAP.md), with delegation-ready task specs in [.claude/TODO.md](.claude/TODO.md). The phases, in order:
+**Current plan (V2):** [docs/ROADMAP-V2.md](docs/ROADMAP-V2.md) — after the v1 roadmap
+was fully executed, a clean-slate audit reframed the work around *proving the AI
+machinery helps* (baselines + ablations), distribution (presentation, launch,
+content), and turning the fund into a multi-fund experimentation platform. Task specs
+are in [.claude/TODO.md](.claude/TODO.md).
+
+**v1 (all delivered):** [docs/ROADMAP.md](docs/ROADMAP.md) — six phases that built the
+machinery:
 
 0. **Harden the foundation** — an LLM gateway with Pydantic-validated structured outputs, retries, configurable models, and idempotent stores.
 1. **Orchestration & observability** — promote the LangGraph runner to the default path, add checkpointing, conditional routing, a human-in-the-loop approval gate before execution, and Langfuse tracing with cost tracking.
