@@ -1,62 +1,12 @@
 [
   {
-    "run_id": "run_20260703T195307Z_3d22e07c",
-    "date": "2026-07-03",
-    "symbol": "NVDA",
-    "action": "SELL",
-    "shares": 50,
-    "price": 194.8300018310547,
-    "total": 9741.500091552734,
-    "reasoning": "Nvidia has been consistently underperforming below key price levels and requires pruning to enhance the overall portfolio strength."
-  },
-  {
-    "run_id": "run_20260703T195307Z_3d22e07c",
-    "date": "2026-07-03",
-    "symbol": "TSLA",
-    "action": "SELL",
-    "shares": 10,
-    "price": 393.45001220703125,
-    "total": 3934.5001220703125,
-    "reasoning": "Tesla's significant drop despite better delivery reports and ongoing market volatility warrants reduction of exposure."
-  },
-  {
-    "run_id": "run_20260703T195307Z_3d22e07c",
-    "date": "2026-07-03",
+    "run_id": "run_20260706T175254Z_475fbe5a",
+    "date": "2026-07-06",
     "symbol": "AAPL",
     "action": "BUY",
-    "shares": 37,
-    "price": 308.6300048828125,
-    "total": 11419.310180664062,
-    "reasoning": "AAPL has shown consistent growth and innovation, making it a strong addition to the portfolio."
-  },
-  {
-    "run_id": "run_20260703T195307Z_3d22e07c",
-    "date": "2026-07-03",
-    "symbol": "NVDA",
-    "action": "BUY",
-    "shares": 58,
-    "price": 194.8300018310547,
-    "total": 11300.140106201172,
-    "reasoning": "With increasing demand for AI and gaming, NVDA remains a strong performer and has potential for further upside."
-  },
-  {
-    "run_id": "run_20260703T195307Z_3d22e07c",
-    "date": "2026-07-03",
-    "symbol": "TSLA",
-    "action": "BUY",
-    "shares": 29,
-    "price": 393.45001220703125,
-    "total": 11410.050354003906,
-    "reasoning": "TSLA continues to lead in electric vehicles and has a strong brand presence in a growing market."
-  },
-  {
-    "run_id": "run_20260703T195307Z_3d22e07c",
-    "date": "2026-07-03",
-    "symbol": "AMZN",
-    "action": "BUY",
-    "shares": 23,
-    "price": 242.6699981689453,
-    "total": 5581.409957885742,
-    "reasoning": "AMZN's diversified business model and growth in e-commerce and cloud services present a solid investment opportunity."
+    "shares": 20,
+    "price": 312.44000244140625,
+    "total": 6248.800048828125,
+    "reasoning": "AAPL has shown strong growth momentum amidst a challenging market, indicating potential for continued appreciation. Increasing our position capitalizes on this strength."
   }
 ]
