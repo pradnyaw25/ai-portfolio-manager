@@ -59,3 +59,14 @@ def test_publish_without_media_never_calls_upload():
     TwitterPublisher(**_CREDS, session=session).publish("plain tweet")
 
     assert not any("media/upload" in c["url"] for c in session.calls)
+
+
+def test_publish_tweet_dry_run_never_posts(tmp_path, monkeypatch):
+    # dry_run must force dry_run even if POST_TWEET is enabled — the explicit kill switch.
+    from src.social import twitter
+
+    monkeypatch.setattr(twitter, "SOCIAL_POSTS_FILE", tmp_path / "social.jsonl")
+    result = twitter.publish_tweet("hello", dry_run=True)
+
+    assert result.status == "dry_run"
+    assert result.posted is False

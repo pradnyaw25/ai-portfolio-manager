@@ -11,6 +11,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+import argparse
 import json
 
 from src.agents.state_of_fund import gather_state_facts, generate_state_tweet
@@ -34,7 +35,18 @@ def _export(text: str, chart: bytes | None, facts: dict, grounding: dict, publis
     )
 
 
+def _parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Generate everything but never publish, regardless of POST_TWEET.",
+    )
+    return parser.parse_args()
+
+
 def main() -> int:
+    args = _parse_args()
     validate_config()
     facts = gather_state_facts()
     if not facts.get("enough_data"):
@@ -57,7 +69,7 @@ def main() -> int:
         print("State tweet blocked by grounding check — not published.")
         return 0
 
-    result = publish_tweet(text, media=chart, run_id=create_run_id())
+    result = publish_tweet(text, media=chart, run_id=create_run_id(), dry_run=args.dry_run)
     _export(text, chart, facts, grounding.to_dict(), result.to_dict())
     print(f"State tweet {result.status} (posted={result.posted}) {result.tweet_url or ''}")
     return 0
