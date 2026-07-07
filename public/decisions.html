@@ -274,6 +274,12 @@
       color: var(--muted);
     }
 
+    .sym-name {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
     .cash-thesis {
       border: 1px solid var(--border);
       border-left: 4px solid var(--warning);
@@ -476,7 +482,7 @@
       if (rejected) {
         return `
           <div class="trade rejected">
-            <strong>${escapeHtml(action)} ${escapeHtml(shares)} <span title="${escapeHtml(symbolNames[symbol] || symbol)}">${escapeHtml(symbol)}</span></strong>
+            <strong>${escapeHtml(action)} ${escapeHtml(shares)} ${escapeHtml(symbol)}</strong> <span class="sym-name">${escapeHtml(symbolNames[symbol] || symbol)}</span>
             <span class="confidence conf-low">${(confidence * 100).toFixed(0)}%</span>
             <br /><span class="muted">Rejected: ${escapeHtml(rejectReason)}</span>
           </div>
@@ -485,7 +491,7 @@
 
       let html = `
         <div class="trade">
-          <strong>${escapeHtml(action)} ${escapeHtml(shares)} ${escapeHtml(symbol)}</strong>
+          <strong>${escapeHtml(action)} ${escapeHtml(shares)} ${escapeHtml(symbol)}</strong> <span class="sym-name">${escapeHtml(symbolNames[symbol] || symbol)}</span>
           <span class="confidence ${confClass(confidence)}">${(confidence * 100).toFixed(0)}%</span>
           <br />${escapeHtml(reason)}
       `;
@@ -512,7 +518,7 @@
 
       return `
         <div class="trade">
-          <strong>${escapeHtml(action)} ${escapeHtml(shares)} ${escapeHtml(symbol)}</strong>
+          <strong>${escapeHtml(action)} ${escapeHtml(shares)} ${escapeHtml(symbol)}</strong> <span class="sym-name">${escapeHtml(symbolNames[symbol] || symbol)}</span>
           <span class="muted">@ ${money.format(price)} · ${money.format(total)}</span>
           ${reasoning ? `<br />${escapeHtml(reasoning)}` : ""}
         </div>

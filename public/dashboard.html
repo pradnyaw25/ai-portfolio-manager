@@ -577,26 +577,18 @@
       font-weight: 850;
     }
 
-    .ticker .tip {
-      display: none;
-      position: absolute;
-      left: 0;
-      bottom: 100%;
-      margin-bottom: 6px;
-      max-width: 220px;
-      background: var(--tooltip-bg);
-      color: var(--tooltip-text);
-      font-weight: 650;
-      font-size: 12px;
-      padding: 5px 8px;
-      border-radius: 6px;
-      white-space: nowrap;
-      pointer-events: none;
-      z-index: 10;
+    .sym {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
     }
 
-    .ticker:hover .tip {
-      display: block;
+    .sym-name {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
     }
 
     .allocation-bar {
@@ -1092,7 +1084,7 @@
 
       tradesDiv.innerHTML = trades.map(t => `
         <div class="trade-item">
-          <strong>${escapeHtml(t.action)} ${escapeHtml(t.shares)} <span class="ticker">${escapeHtml(t.symbol)}<span class="tip">${escapeHtml(symbolNames[t.symbol] || t.symbol)}</span></span></strong>
+          <strong>${escapeHtml(t.action)} ${escapeHtml(t.shares)} <span class="ticker">${escapeHtml(t.symbol)}</span></strong> <span class="sym-name">${escapeHtml(symbolNames[t.symbol] || t.symbol)}</span>
           <div class="trade-meta">at ${money.format(t.price)} / ${money.format(t.total)}</div>
           <div class="trade-meta">${escapeHtml(t.reasoning)}</div>
         </div>
@@ -1158,7 +1150,7 @@
         holdingsData.forEach((p) => {
           const row = document.createElement("tr");
           row.innerHTML = `
-            <td><span class="ticker">${escapeHtml(p.symbol)}<span class="tip">${escapeHtml(symbolNames[p.symbol] || p.symbol)}</span></span></td>
+            <td><span class="sym"><span class="ticker">${escapeHtml(p.symbol)}</span><span class="sym-name">${escapeHtml(symbolNames[p.symbol] || p.symbol)}</span></span></td>
             <td class="num">
               <span class="allocation-bar">
                 <span>${pct(p.allocation_pct, 1)}</span>
