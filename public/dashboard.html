@@ -577,26 +577,57 @@
       font-weight: 850;
     }
 
-    .ticker .tip {
-      display: none;
-      position: absolute;
-      left: 0;
-      bottom: 100%;
-      margin-bottom: 6px;
-      max-width: 220px;
-      background: var(--tooltip-bg);
-      color: var(--tooltip-text);
-      font-weight: 650;
-      font-size: 12px;
-      padding: 5px 8px;
-      border-radius: 6px;
-      white-space: nowrap;
-      pointer-events: none;
-      z-index: 10;
+    .sym {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
     }
 
-    .ticker:hover .tip {
-      display: block;
+    .sym-name {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .sym-cell {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo {
+      flex: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface-subtle);
+      vertical-align: middle;
+    }
+
+    .logo .glyph {
+      width: 15px;
+      height: 15px;
+      background-color: var(--muted-strong);
+      -webkit-mask-position: center;
+      mask-position: center;
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      -webkit-mask-size: contain;
+      mask-size: contain;
+    }
+
+    .logo.mono {
+      background: var(--accent-bg);
+      color: var(--accent);
+      font-size: 10px;
+      font-weight: 850;
+      letter-spacing: 0.3px;
     }
 
     .allocation-bar {
@@ -634,6 +665,12 @@
       border-radius: 8px;
       background: var(--panel-subtle);
       padding: 14px;
+    }
+
+    .trade-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
     .trade-item strong {
@@ -943,6 +980,20 @@
       CAT: "Caterpillar Inc.", SPY: "SPDR S&P 500 ETF", QQQ: "Invesco QQQ Trust",
     };
 
+    // Symbols with a bundled brand logo in public/logos/. Others fall back to a monogram.
+    const logoSymbols = new Set([
+      "AAPL", "MSFT", "GOOGL", "AMZN", "META", "NVDA",
+      "AMD", "AVGO", "TSLA", "V", "MA", "WMT",
+    ]);
+
+    function logoHtml(symbol) {
+      if (logoSymbols.has(symbol)) {
+        const url = `logos/${symbol}.svg`;
+        return `<span class="logo" aria-hidden="true"><span class="glyph" style="-webkit-mask-image:url('${url}');mask-image:url('${url}')"></span></span>`;
+      }
+      return `<span class="logo mono" aria-hidden="true">${escapeHtml(symbol.slice(0, 2))}</span>`;
+    }
+
     function getThemePreference() {
       const stored = localStorage.getItem(THEME_KEY);
       if (stored === "light" || stored === "dark") return stored;
@@ -1092,7 +1143,7 @@
 
       tradesDiv.innerHTML = trades.map(t => `
         <div class="trade-item">
-          <strong>${escapeHtml(t.action)} ${escapeHtml(t.shares)} <span class="ticker">${escapeHtml(t.symbol)}<span class="tip">${escapeHtml(symbolNames[t.symbol] || t.symbol)}</span></span></strong>
+          <div class="trade-head">${logoHtml(t.symbol)}<span><strong>${escapeHtml(t.action)} ${escapeHtml(t.shares)} <span class="ticker">${escapeHtml(t.symbol)}</span></strong> <span class="sym-name">${escapeHtml(symbolNames[t.symbol] || t.symbol)}</span></span></div>
           <div class="trade-meta">at ${money.format(t.price)} / ${money.format(t.total)}</div>
           <div class="trade-meta">${escapeHtml(t.reasoning)}</div>
         </div>
@@ -1158,7 +1209,7 @@
         holdingsData.forEach((p) => {
           const row = document.createElement("tr");
           row.innerHTML = `
-            <td><span class="ticker">${escapeHtml(p.symbol)}<span class="tip">${escapeHtml(symbolNames[p.symbol] || p.symbol)}</span></span></td>
+            <td><span class="sym-cell">${logoHtml(p.symbol)}<span class="sym"><span class="ticker">${escapeHtml(p.symbol)}</span><span class="sym-name">${escapeHtml(symbolNames[p.symbol] || p.symbol)}</span></span></span></td>
             <td class="num">
               <span class="allocation-bar">
                 <span>${pct(p.allocation_pct, 1)}</span>
