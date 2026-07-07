@@ -20,8 +20,12 @@ from src.config import (
     X_API_KEY,
     X_API_SECRET,
 )
+from src.utils.logger import get_logger
+
+logger = get_logger(__name__)
 
 TWEET_CREATE_URL = "https://api.twitter.com/2/tweets"
+MEDIA_UPLOAD_URL = "https://upload.twitter.com/1.1/media/upload.json"
 SOCIAL_POSTS_FILE = DATA_DIR / "social_posts.jsonl"
 
 
@@ -73,7 +77,9 @@ class TwitterPublisher:
         self.post_enabled = post_enabled
         self.session = session or requests.Session()
 
-    def publish(self, text: str, *, run_id: str | None = None) -> TweetPublishResult:
+    def publish(
+        self, text: str, *, media: bytes | None = None, run_id: str | None = None
+    ) -> TweetPublishResult:
         text = sanitize_tweet_for_x(text.strip())[:280]
         created_at = _utc_now()
 
@@ -113,6 +119,12 @@ class TwitterPublisher:
             )
 
         payload = {"text": text}
+        if media is not None:
+            media_id = self._upload_media(media)
+            if media_id:
+                payload["media"] = {"media_ids": [media_id]}
+            # If upload fails, degrade to a text-only tweet rather than dropping it.
+
         headers = {
             "Authorization": self._authorization_header(
                 method="POST",
@@ -168,6 +180,27 @@ class TwitterPublisher:
             run_id=run_id,
         )
 
+    def _upload_media(self, image: bytes) -> str | None:
+        """Upload a PNG via the v1.1 media endpoint (multipart — its body is excluded
+        from the OAuth signature, so the standard header signing applies). Returns the
+        media id, or None on failure so publishing can fall back to text-only."""
+        try:
+            headers = {"Authorization": self._authorization_header(method="POST", url=MEDIA_UPLOAD_URL)}
+            response = self.session.post(
+                MEDIA_UPLOAD_URL,
+                headers=headers,
+                files={"media": ("chart.png", image, "image/png")},
+                timeout=60,
+            )
+            response.raise_for_status()
+            media_id = (response.json() or {}).get("media_id_string")
+            if not media_id:
+                logger.warning("Media upload returned no media_id_string")
+            return media_id
+        except Exception as exc:
+            logger.warning("Media upload failed — posting text-only: %s", exc)
+            return None
+
     def _missing_credentials(self) -> list[str]:
         missing = []
         for name, value in [
@@ -203,8 +236,8 @@ class TwitterPublisher:
         )
 
 
-def publish_tweet(text: str, *, run_id: str | None = None) -> TweetPublishResult:
-    result = TwitterPublisher().publish(text, run_id=run_id)
+def publish_tweet(text: str, *, media: bytes | None = None, run_id: str | None = None) -> TweetPublishResult:
+    result = TwitterPublisher().publish(text, media=media, run_id=run_id)
     append_social_post(result)
     return result
 
