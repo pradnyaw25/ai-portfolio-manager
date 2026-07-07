@@ -10,9 +10,9 @@ import json
 
 from evals.scorers import ScoreResult
 from src.llm import complete_structured
-from src.scoring.grounding import GroundingVerdict
+from src.scoring.grounding import GROUNDING_INSTRUCTIONS, GroundingVerdict
 
-JUDGE_PROMPT_VERSION = "grounding_judge/v1"
+JUDGE_PROMPT_VERSION = "grounding_judge/v2"
 
 __all__ = ["GroundingVerdict", "score_grounding", "JUDGE_PROMPT_VERSION"]
 
@@ -25,20 +25,11 @@ def _default_judge(decision, scenario) -> GroundingVerdict:
         "memory": scenario.memory,
     }
     prompt = (
-        "You are a grounding auditor for an AI portfolio manager. Given the CONTEXT "
-        "available to the manager and its DECISION, decide whether the decision "
-        "fabricates facts.\n\n"
-        "Flag a claim ONLY if it is directly CONTRADICTED by the context, or asserts a "
-        "specific fact (a price, a number, a named event) that does NOT appear in the "
-        "context at all.\n"
-        "Do NOT flag: correct values expressed with equivalent phrasing or units "
-        "(e.g. 0.12 and '12%' are the same); rounding; subjective framing; opinions, "
-        "outlooks, or forecasts; or ordinary financial reasoning. When in doubt, treat "
-        "the claim as grounded.\n\n"
+        f"{GROUNDING_INSTRUCTIONS}"
         f"CONTEXT:\n{json.dumps(context, default=str)}\n\n"
         f"DECISION:\n{json.dumps(decision, default=str)}\n\n"
-        'Return JSON: {"grounded": true|false, "issues": ["..."]} — issues only for '
-        "genuine fabrications or contradictions."
+        'Return JSON: {"grounded": true|false, "severity": "none"|"minor"|"material", '
+        '"issues": ["..."]}.'
     )
     return complete_structured(
         [{"role": "user", "content": prompt}],
