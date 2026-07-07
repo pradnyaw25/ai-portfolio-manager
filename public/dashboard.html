@@ -805,11 +805,10 @@
     <header class="page-header">
       <div>
         <h1>Portfolio Console</h1>
-        <p class="subtitle">A simulated $1M AI-managed portfolio with live run health, benchmark context, holdings, and generated reporting. Not investment advice.</p>
+        <p class="subtitle">A simulated $1M AI-managed portfolio with benchmark context, holdings, and generated reporting. Not investment advice.</p>
       </div>
       <div>
         <div class="updated-at" id="updated-at">Updated at: Loading...</div>
-        <div class="status-pill" id="run-status-pill">Run status: Loading...</div>
       </div>
     </header>
 
@@ -906,40 +905,6 @@
 
       <aside>
         <section class="card">
-          <h2>Run Status</h2>
-          <div class="run-status-grid">
-            <div class="run-status-item">
-              <div class="run-status-label">Status</div>
-              <div class="run-status-value" id="run-status">Loading...</div>
-            </div>
-            <div class="run-status-item">
-              <div class="run-status-label">Completed</div>
-              <div class="run-status-value" id="run-completed">Loading...</div>
-            </div>
-            <div class="run-status-item">
-              <div class="run-status-label">Memory</div>
-              <div class="run-status-value" id="run-memory">Loading...</div>
-            </div>
-            <div class="run-status-item">
-              <div class="run-status-label">Warnings</div>
-              <div class="run-status-value" id="run-warnings">Loading...</div>
-            </div>
-            <div class="run-status-item">
-              <div class="run-status-label">Trades</div>
-              <div class="run-status-value" id="run-trades">Loading...</div>
-            </div>
-            <div class="run-status-item">
-              <div class="run-status-label">LLM Cost</div>
-              <div class="run-status-value" id="run-llm-cost">Loading...</div>
-            </div>
-            <div class="run-status-item">
-              <div class="run-status-label">Run ID</div>
-              <div class="run-status-value" id="run-id">Loading...</div>
-            </div>
-          </div>
-        </section>
-
-        <section class="card">
           <h2>Capital Allocation</h2>
           <div class="chart-wrap mini-chart">
             <canvas id="allocation-chart"></canvas>
@@ -949,21 +914,6 @@
         <section class="card">
           <h2>Latest Trades</h2>
           <div class="trade-list" id="trades">Loading...</div>
-        </section>
-
-        <section class="card">
-          <h2>Latest Tweet Draft</h2>
-          <p class="tweet-box" id="tweet">Loading...</p>
-        </section>
-
-        <section class="card">
-          <h2>Social Publishing</h2>
-          <div class="audit-list" id="social-audit">Loading...</div>
-        </section>
-
-        <section class="card">
-          <h2>Memory Health</h2>
-          <div class="audit-list" id="memory-health">Loading...</div>
         </section>
       </aside>
     </section>
@@ -1135,109 +1085,6 @@
       }
     }
 
-    async function loadRunStatus() {
-      const pill = document.getElementById("run-status-pill");
-      try {
-        const res = await fetch("./run_status.json");
-        if (!res.ok) throw new Error("run_status unavailable");
-        const status = await res.json();
-        const warnings = status.warnings || [];
-        const statusText = status.status || "unknown";
-        const statusClass = statusText === "success"
-          ? (warnings.length > 0 ? "warning" : "success")
-          : "error";
-
-        pill.textContent = `Run status: ${statusText}`;
-        pill.className = `status-pill ${statusClass}`;
-
-        document.getElementById("run-status").textContent = statusText;
-        document.getElementById("run-status").className =
-          `run-status-value ${statusText === "success" ? "pos" : "neg"}`;
-        document.getElementById("run-id").textContent = status.run_id || "Unknown";
-        document.getElementById("run-completed").textContent =
-          formatUpdatedAt(status.completed_at);
-        document.getElementById("run-memory").textContent =
-          `${status.memory_status || "unknown"} / ${status.memory_chunks ?? 0} chunks`;
-        document.getElementById("run-trades").textContent =
-          `${status.trades_executed ?? 0} executed`;
-        document.getElementById("run-warnings").textContent =
-          `${warnings.length} warnings`;
-        const llm = status.llm || {};
-        document.getElementById("run-llm-cost").textContent =
-          `$${(llm.cost_usd ?? 0).toFixed(4)} / ${llm.calls ?? 0} calls`;
-      } catch (e) {
-        pill.textContent = "Run status: Unavailable";
-        pill.className = "status-pill error";
-        ["run-status", "run-id", "run-completed", "run-memory", "run-trades", "run-warnings", "run-llm-cost"]
-          .forEach(id => document.getElementById(id).textContent = "Unavailable");
-      }
-    }
-
-    function renderAuditRows(elementId, rows) {
-      document.getElementById(elementId).innerHTML = rows.map(([label, value, className = ""]) => `
-        <div class="audit-row">
-          <div class="audit-label">${escapeHtml(label)}</div>
-          <div class="audit-value ${className}">${value}</div>
-        </div>
-      `).join("");
-    }
-
-    async function loadSocialAudit() {
-      try {
-        const res = await fetch("./social_posts.json");
-        if (!res.ok) throw new Error("social audit unavailable");
-        const audit = await res.json();
-        const latest = (audit.posts || [])[0] || {};
-        const metrics = audit.metrics || {};
-        const statusClass = latest.status === "posted"
-          ? "pos"
-          : (latest.status === "error" ? "neg" : "");
-        const tweetLink = latest.tweet_url
-          ? `<a href="${escapeHtml(latest.tweet_url)}" target="_blank" rel="noreferrer">Open tweet</a>`
-          : "No live tweet link";
-
-        renderAuditRows("social-audit", [
-          ["Latest", escapeHtml(latest.status || "unknown"), statusClass],
-          ["Run", escapeHtml(latest.run_id || "Unknown")],
-          ["Published", tweetLink],
-          ["History", `${metrics.posted || 0} posted / ${metrics.errors || 0} errors / ${metrics.dry_runs || 0} dry runs`],
-        ]);
-      } catch (e) {
-        renderAuditRows("social-audit", [["Status", "Unavailable", "neg"]]);
-      }
-    }
-
-    async function loadMemoryHealth() {
-      try {
-        const res = await fetch("./memory_health.json");
-        if (!res.ok) throw new Error("memory health unavailable");
-        const health = await res.json();
-        const retrieval = health.retrieval || {};
-        const ingestion = health.ingestion || {};
-        const sources = health.sources || {};
-        const reports = sources.reports || {};
-        const sec = sources.sec_filings || {};
-        const evalResult = sources.eval || {};
-        const retrievalClass = retrieval.status === "ok"
-          ? "pos"
-          : (retrieval.status ? "neg" : "");
-        const ingestionClass = ["ok", "skipped"].includes(ingestion.status) ? "pos" : "neg";
-        const evalText = evalResult.evaluated_at
-          ? `${evalResult.passed ? "passed" : "failed"} / recall ${(Number(evalResult.recall || 0) * 100).toFixed(0)}%`
-          : "Not recorded";
-
-        renderAuditRows("memory-health", [
-          ["Retrieval", `${escapeHtml(retrieval.status || "unknown")} / ${retrieval.chunks || 0} chunks`, retrievalClass],
-          ["Ingestion", `${escapeHtml(ingestion.status || "unknown")} / ${ingestion.total_processed || 0} records`, ingestionClass],
-          ["Reports", `${reports.count || 0} tracked${reports.latest ? ` / ${escapeHtml(reports.latest)}` : ""}`],
-          ["SEC 10-Ks", `${(sec.processed || []).length || 0} processed / ${(sec.skipped || []).length || 0} skipped`],
-          ["Eval", evalText],
-        ]);
-      } catch (e) {
-        renderAuditRows("memory-health", [["Status", "Unavailable", "neg"]]);
-      }
-    }
-
     function renderTrades(trades) {
       const tradesDiv = document.getElementById("trades");
 
@@ -1264,15 +1111,13 @@
     }
 
     async function loadDashboard() {
-      const [portfolioRes, tradesRes, tweetRes] = await Promise.all([
+      const [portfolioRes, tradesRes] = await Promise.all([
         fetch("./portfolio.json"),
-        fetch("./latest_trades.json"),
-        fetch("./latest_tweet.json")
+        fetch("./latest_trades.json")
       ]);
 
       const portfolio = await portfolioRes.json();
       const trades = await tradesRes.json();
-      const tweet = await tweetRes.json();
 
       const positions = portfolio.positions || [];
       const invested = Number(portfolio.invested_value || 0);
@@ -1290,7 +1135,6 @@
       setText("positions-sub", `${money.format(invested)} invested`);
       setText("invested-value", compactMoney.format(invested));
       setText("latest-trade-count", trades.length);
-      document.getElementById("tweet").textContent = tweet.text || "No tweet draft exported.";
 
       let holdingsData = positions.map(p => ({
         ...p,
@@ -1561,9 +1405,6 @@
 
     setupThemeToggle();
     loadUpdatedAt();
-    loadRunStatus();
-    loadSocialAudit();
-    loadMemoryHealth();
     loadDashboard();
   </script>
 </body>
