@@ -280,6 +280,40 @@
       font-weight: 600;
     }
 
+    .logo {
+      flex: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      background: var(--surface-subtle);
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+
+    .logo .glyph {
+      width: 13px;
+      height: 13px;
+      background-color: var(--muted-strong);
+      -webkit-mask-position: center;
+      mask-position: center;
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      -webkit-mask-size: contain;
+      mask-size: contain;
+    }
+
+    .logo.mono {
+      background: var(--accent-bg);
+      color: var(--accent);
+      font-size: 9px;
+      font-weight: 850;
+      letter-spacing: 0.3px;
+    }
+
     .cash-thesis {
       border: 1px solid var(--border);
       border-left: 4px solid var(--warning);
@@ -454,6 +488,20 @@
       CAT: "Caterpillar Inc.", SPY: "SPDR S&P 500 ETF", QQQ: "Invesco QQQ Trust",
     };
 
+    // Symbols with a bundled brand logo in public/logos/. Others fall back to a monogram.
+    const logoSymbols = new Set([
+      "AAPL", "MSFT", "GOOGL", "AMZN", "META", "NVDA",
+      "AMD", "AVGO", "TSLA", "V", "MA", "WMT",
+    ]);
+
+    function logoHtml(symbol) {
+      if (logoSymbols.has(symbol)) {
+        const url = `logos/${symbol}.svg`;
+        return `<span class="logo" aria-hidden="true"><span class="glyph" style="-webkit-mask-image:url('${url}');mask-image:url('${url}')"></span></span>`;
+      }
+      return `<span class="logo mono" aria-hidden="true">${escapeHtml(symbol.slice(0, 2))}</span>`;
+    }
+
     function confClass(c) {
       if (c >= 0.7) return "conf-high";
       if (c >= 0.5) return "conf-med";
@@ -482,7 +530,7 @@
       if (rejected) {
         return `
           <div class="trade rejected">
-            <strong>${escapeHtml(action)} ${escapeHtml(shares)} ${escapeHtml(symbol)}</strong> <span class="sym-name">${escapeHtml(symbolNames[symbol] || symbol)}</span>
+            ${logoHtml(symbol)}<strong>${escapeHtml(action)} ${escapeHtml(shares)} ${escapeHtml(symbol)}</strong> <span class="sym-name">${escapeHtml(symbolNames[symbol] || symbol)}</span>
             <span class="confidence conf-low">${(confidence * 100).toFixed(0)}%</span>
             <br /><span class="muted">Rejected: ${escapeHtml(rejectReason)}</span>
           </div>
@@ -491,7 +539,7 @@
 
       let html = `
         <div class="trade">
-          <strong>${escapeHtml(action)} ${escapeHtml(shares)} ${escapeHtml(symbol)}</strong> <span class="sym-name">${escapeHtml(symbolNames[symbol] || symbol)}</span>
+          ${logoHtml(symbol)}<strong>${escapeHtml(action)} ${escapeHtml(shares)} ${escapeHtml(symbol)}</strong> <span class="sym-name">${escapeHtml(symbolNames[symbol] || symbol)}</span>
           <span class="confidence ${confClass(confidence)}">${(confidence * 100).toFixed(0)}%</span>
           <br />${escapeHtml(reason)}
       `;
@@ -518,7 +566,7 @@
 
       return `
         <div class="trade">
-          <strong>${escapeHtml(action)} ${escapeHtml(shares)} ${escapeHtml(symbol)}</strong> <span class="sym-name">${escapeHtml(symbolNames[symbol] || symbol)}</span>
+          ${logoHtml(symbol)}<strong>${escapeHtml(action)} ${escapeHtml(shares)} ${escapeHtml(symbol)}</strong> <span class="sym-name">${escapeHtml(symbolNames[symbol] || symbol)}</span>
           <span class="muted">@ ${money.format(price)} · ${money.format(total)}</span>
           ${reasoning ? `<br />${escapeHtml(reasoning)}` : ""}
         </div>
