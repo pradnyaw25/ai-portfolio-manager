@@ -1,7 +1,15 @@
-"""Runtime grounding check (P2-3): flag ungrounded decisions and block tweeting."""
+"""Runtime grounding check (P2-3): flag ungrounded decisions and block tweeting.
 
+Only a *material* fabrication blocks publication. Minor imprecisions (rounding,
+phrasing) are recorded for transparency but must never block — this is the fix for
+the 2026-07-06 incident where a tweet was muzzled over "~5%" vs an actual 4.84%.
+"""
+
+import os
 from datetime import date
 from types import SimpleNamespace
+
+import pytest
 
 from src import main
 from src.models.portfolio import PortfolioSnapshot
@@ -25,12 +33,33 @@ def test_grounded_decision_is_ok():
     assert result.grounded is True
 
 
-def test_ungrounded_decision_is_flagged():
-    verdict = GroundingVerdict(grounded=False, issues=["fabricated NVDA price of $999"])
+def test_material_fabrication_is_flagged():
+    verdict = GroundingVerdict(grounded=False, severity="material",
+                               issues=["fabricated NVDA price of $999"])
     result = _check(judge=lambda d, c: verdict)
     assert result.status == "flagged"
     assert result.grounded is False
+    assert result.severity == "material"
     assert "fabricated" in result.issues[0]
+
+
+def test_minor_rounding_is_recorded_but_not_blocking():
+    # The regression case: an approximation noted as a minor issue must NOT block.
+    verdict = GroundingVerdict(
+        grounded=True, severity="minor",
+        issues=["decision says 'about 5%' where context says 4.84% (rounding)"],
+    )
+    result = _check(judge=lambda d, c: verdict)
+    assert result.status == "ok"  # not "flagged" — the tweet would go out
+    assert result.grounded is True
+    assert result.issues  # still recorded for transparency
+
+
+def test_minor_severity_never_blocks_even_if_judge_sets_grounded_false():
+    # Defense in depth: blocking is gated on severity == "material" only.
+    verdict = GroundingVerdict(grounded=False, severity="minor", issues=["nitpick"])
+    result = _check(judge=lambda d, c: verdict)
+    assert result.status == "ok"
 
 
 def test_judge_failure_degrades_to_unavailable_non_blocking():
@@ -100,3 +129,26 @@ def test_grounded_decision_allows_tweeting(monkeypatch):
                        grounding={"status": "ok", "grounded": True, "issues": []})
 
     assert called["published"] is True
+
+
+# -- live regression: the real judge must not block on rounding --------------
+
+
+@pytest.mark.skipif(not os.getenv("OPENAI_API_KEY"), reason="needs a live model for the judge")
+def test_live_judge_does_not_block_rounding_approximation():
+    """Reproduces the 2026-07-06 incident against the REAL judge: a decision that
+    approximates a 4.84% move as '~5%' must not be flagged as material."""
+    decision = {
+        "outlook": "BULLISH",
+        "market_summary": "AAPL has increased approximately 5% over the past five days; "
+        "added to the position.",
+        "portfolio_assessment": "Cash near 26%.",
+        "trades": [{"symbol": "AAPL", "action": "BUY", "shares": 10, "confidence": 0.7}],
+    }
+    research = {"symbols": [{"symbol": "AAPL", "price": 312.68, "return_5d": 0.0484, "return_30d": 0.07}]}
+    portfolio = {"total_value": 1_022_983, "cash_pct": 0.267}
+
+    result = check_grounding(decision, research=research, memory=[], portfolio=portfolio)
+
+    assert result.severity != "material", f"rounding wrongly flagged material: {result.issues}"
+    assert result.status != "flagged"

@@ -133,7 +133,8 @@ def test_grounded_letter_is_published_and_exported(tmp_path):
 
 def test_flagged_letter_is_blocked_before_publish(tmp_path):
     result = _run(
-        lambda decision, context: GroundingVerdict(grounded=False, issues=["made up a number"]),
+        lambda decision, context: GroundingVerdict(
+            grounded=False, severity="material", issues=["made up a number"]),
         tmp_path,
     )
     assert result["status"] == "blocked_grounding"
