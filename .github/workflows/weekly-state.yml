@@ -1,0 +1,50 @@
+name: Weekly State-of-Fund Tweet
+
+on:
+  schedule:
+    # Sunday, after the trading week — a context + performance tweet with a chart.
+    - cron: "15 15 * * 0"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: weekly-state-tweet
+  cancel-in-progress: false
+
+jobs:
+  state-tweet:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Install dependencies
+        run: |
+          pip install -U pip
+          pip install -e .
+
+      - name: Post weekly state-of-fund tweet
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          # Gate the weekly image tweet independently of the daily recap.
+          POST_TWEET: ${{ vars.POST_STATE_TWEET }}
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_SECRET: ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
+        run: |
+          python scripts/weekly_state_tweet.py
+
+      - name: Commit artifacts
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add -f public/perf_chart.png public/state_tweet.json data/social_posts.jsonl
+          git diff --staged --quiet || git commit -m "Update weekly state-of-fund tweet"
+          git push
