@@ -27,12 +27,18 @@ Ordered by ROI. `∥` = parallelizable. See `docs/ROADMAP-V2.md` §2/§6 for the
 * Acceptance: a single command produces a comparison table across ≥4 variants; the
   dashboard shows fund-vs-SPY-vs-random; the numbers are reproducible.
 
-### V1-2 ∥. Strong-tier PM model + measured delta
+### V1-2 ∥. Strong-tier PM model + measured delta — DONE
 * Output: PM/judges on a frontier model (analysts stay cheap), selected by measuring
   eval-pass rate and a decision-quality delta vs the cost increase (using the existing
   cost log). Decision documented.
 * Acceptance: `make eval` shows the delta; the model choice is justified by data, not
   vibes; defaults remain cost-safe.
+* Done: `make eval-compare` (`scripts/compare_strong_model.py`) runs the eval set under
+  each candidate strong model with a fixed LLM judge (`src/scoring/decision_quality.py`)
+  and reports pass-rate + rubric quality + cost/latency. Measured curve
+  (`docs/model-selection.md`): flagships `gpt-4o`/`gpt-4.1` cost ~11x for no reliable
+  quality gain; `gpt-4.1-mini` is the sweet spot. Default strong tier promoted
+  `gpt-4o-mini` -> `gpt-4.1-mini` (cheap stays `gpt-4o-mini`); cost-safe (<$0.001/decision).
 
 ### V1-3 ∥. Presentation pass
 * Output: README hero image + 3-line pitch + 90s demo GIF + MCP clip; landing page
