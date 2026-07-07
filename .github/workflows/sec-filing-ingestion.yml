@@ -57,22 +57,18 @@ jobs:
           fi
           echo "exit_code=$?" >> "$GITHUB_OUTPUT"
 
-      - name: Refresh public memory health
-        run: |
-          python scripts/export_memory_health.py
-
       - name: Commit SEC memory artifacts
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
 
-          git add -f data/sec_filings/company_tickers.json public/memory_health.json
+          git add -f data/sec_filings/company_tickers.json
           if [ -f data/memory_sec_filings.json ]; then
             git add -f data/memory_sec_filings.json
           fi
 
           git diff --staged --quiet || \
-          git commit -m "Update SEC filing memory health"
+          git commit -m "Update SEC filing memory artifacts"
 
       - name: Push changes
         run: |

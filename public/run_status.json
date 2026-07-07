@@ -1,48 +1,4 @@
 {
-  "run_id": "run_20260706T175254Z_475fbe5a",
-  "status": "success",
-  "started_at": "2026-07-06T17:52:54.891210Z",
-  "completed_at": "2026-07-06T17:53:47.658654Z",
-  "memory_status": "ok",
-  "memory_error": null,
-  "memory_chunks": 14,
-  "trades_executed": 1,
-  "warnings": [
-    "Tweet blocked: decision failed grounding check"
-  ],
-  "errors": [],
-  "memory_ingestion": {
-    "status": "ok",
-    "created": 6,
-    "updated": 0,
-    "skipped": 0,
-    "errors": [],
-    "total_processed": 6
-  },
-  "tweet_publish": {
-    "status": "blocked_grounding",
-    "posted": false,
-    "dry_run": false,
-    "tweet_id": null,
-    "tweet_url": null,
-    "text": "Today\u2019s value: $1,022,983. Made a move\u2014added AAPL. Cash is holding strong at 26.1%, keeping the balance as we optimize with 13 positions. A little more growth-oriented without losing sight of stability. \ud83e\uddd0 #GlassHouseFund #PortfolioUpdate",
-    "error": "decision failed grounding check",
-    "error_code": null,
-    "http_status": null,
-    "created_at": null,
-    "run_id": "run_20260706T175254Z_475fbe5a"
-  },
-  "llm": {
-    "calls": 8,
-    "prompt_tokens": 44958,
-    "completion_tokens": 1909,
-    "cost_usd": 0.007888,
-    "latency_ms": 30594.9
-  },
   "portfolio_value": 1022983.0547180176,
-  "cash_pct": 0.26063633242406614,
-  "human_review": {
-    "decision": "auto_approved",
-    "pending": 1
-  }
+  "updated_at": "2026-07-07T01:32:01.116029Z"
 }

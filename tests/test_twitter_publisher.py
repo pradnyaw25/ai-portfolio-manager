@@ -1,7 +1,5 @@
 import json
 
-from src.reporting import public_exporter
-from src.reporting.public_exporter import PublicExporter
 from src.social.twitter import TwitterPublisher, append_social_post, sanitize_tweet_for_x
 
 
@@ -115,33 +113,3 @@ def test_append_social_post_writes_jsonl(tmp_path):
     assert payload["status"] == "dry_run"
     assert payload["run_id"] == "run_1"
     assert "tweet_url" in payload
-
-
-def test_public_exporter_updates_latest_tweet_publish_status(tmp_path, monkeypatch):
-    monkeypatch.setattr(public_exporter, "PUBLIC_DIR", tmp_path)
-    (tmp_path / "latest_tweet.json").write_text(
-        json.dumps(
-            {
-                "run_id": "run_1",
-                "text": "hello",
-                "posted": False,
-            }
-        )
-    )
-
-    PublicExporter().update_latest_tweet_status(
-        {
-            "status": "posted",
-            "posted": True,
-            "tweet_id": "tweet_123",
-            "error": None,
-            "created_at": "2026-06-28T12:00:00Z",
-        }
-    )
-
-    payload = json.loads((tmp_path / "latest_tweet.json").read_text())
-    assert payload["posted"]
-    assert payload["publish_status"] == "posted"
-    assert payload["tweet_id"] == "tweet_123"
-    assert payload["tweet_url"] == "https://x.com/i/web/status/tweet_123"
-    assert payload["published_at"] == "2026-06-28T12:00:00Z"

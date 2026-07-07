@@ -392,9 +392,9 @@ def publish_tweet(tweet, run_id, run_status, grounding=None):
 
 
 def update_tweet_publish_status(tweet_publish_result, run_status):
-    exporter = PublicExporter()
-    exporter.update_latest_tweet_status(tweet_publish_result.to_dict())
-    exporter.write_run_status(run_status)
+    # Refresh the public run status (headline portfolio value). Tweet publish
+    # details are no longer exported to the public site — see public_exporter.
+    PublicExporter().write_run_status(run_status)
 
 
 def ingest_run_memory(run_id, report_markdown):
