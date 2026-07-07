@@ -61,8 +61,13 @@ BENCHMARK_SYMBOLS = [
 # decisions, PM synthesis, judges) and a "cheap" tier (analysts, summaries,
 # tweets). Each tier resolves to a (provider, model) route; an optional fallback
 # route is tried if the primary provider fails after retries.
+#
+# The strong tier defaults to gpt-4.1-mini (a real generational step up from the
+# cheap gpt-4o-mini) rather than the flagship: `make eval-compare` measured that
+# gpt-4o/gpt-4.1 cost ~11x more for no reliable decision-quality gain on the eval
+# set. See docs/model-selection.md.
 LLM_PROVIDER = os.getenv("LLM_PROVIDER", "openai")  # legacy default provider
-LLM_STRONG_MODEL = os.getenv("LLM_STRONG_MODEL", "gpt-4o-mini")
+LLM_STRONG_MODEL = os.getenv("LLM_STRONG_MODEL", "gpt-4.1-mini")
 LLM_CHEAP_MODEL = os.getenv("LLM_CHEAP_MODEL", "gpt-4o-mini")
 LLM_STRONG_PROVIDER = os.getenv("LLM_STRONG_PROVIDER", LLM_PROVIDER)
 LLM_CHEAP_PROVIDER = os.getenv("LLM_CHEAP_PROVIDER", LLM_PROVIDER)
