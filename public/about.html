@@ -68,8 +68,8 @@
     .nav a { display: inline-flex; align-items: center; min-height: 34px; padding: 0 12px; border-radius: 6px; color: var(--muted-strong); font-size: 14px; font-weight: 700; text-decoration: none; white-space: nowrap; }
     .nav a.active { background: var(--ink); color: var(--bg); }
     .nav a:hover:not(.active) { background: var(--surface-subtle); }
-    .theme-toggle { display: flex; gap: 3px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); padding: 3px; }
-    .theme-toggle button { min-width: 30px; min-height: 30px; border: 0; border-radius: 6px; background: transparent; color: var(--muted-strong); font-size: 13px; font-weight: 800; cursor: pointer; }
+    .theme-toggle { display: flex; gap: 3px; border: 1px solid var(--border); border-radius: 7px; background: var(--surface); padding: 2px; }
+    .theme-toggle button { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border: 0; border-radius: 5px; background: transparent; color: var(--muted-strong); cursor: pointer; }
     .theme-toggle button.active { background: var(--ink); color: var(--bg); }
 
     .eyebrow { color: var(--accent); font-size: 12px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 12px; }
@@ -139,8 +139,8 @@
           <a class="active" href="about.html">About</a>
         </nav>
         <div class="theme-toggle" aria-label="Theme">
-          <button type="button" data-theme-option="light" title="Light">L</button>
-          <button type="button" data-theme-option="dark" title="Dark">D</button>
+          <button type="button" data-theme-option="light" title="Light"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.3v2M12 19.7v2M4.4 4.4l1.5 1.5M18.1 18.1l1.5 1.5M2.3 12h2M19.7 12h2M4.4 19.6l1.5-1.5M18.1 5.9l1.5-1.5"/></svg></button>
+          <button type="button" data-theme-option="dark" title="Dark"><svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M21 12.9A9 9 0 1 1 11.1 3a7 7 0 0 0 9.9 9.9z"/></svg></button>
         </div>
       </div>
     </div>
