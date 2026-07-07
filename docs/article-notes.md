@@ -73,3 +73,46 @@ Entry template:
   Model for an AI Agent" post. Also a data point for the retrospective. Source of
   truth for the decision itself: `docs/model-selection.md`; harness:
   `scripts/compare_strong_model.py`.
+
+---
+
+## 2026-07-07 · "My multi-agent debate was theater — here's what made it real"
+
+- **Hook.** I had a bull, a bear, and a risk "analyst" arguing before every trade.
+  It looked sophisticated. It was theater: three copies of the same cheap model, fed
+  the *same context*, that never talked to each other — so their convictions clustered
+  at 0.75–0.90 and the "debate" changed nothing.
+
+- **The finding.** Three targeted changes turned parallel monologues into a debate:
+  1. **Information asymmetry** — each analyst now argues from a *different slice* of the
+     context. Bull sees momentum + news; bear sees downside signals + cautionary memory
+     (past risk lessons, mistakes); risk sees a *computed* exposure block (position +
+     sector concentration, cash). Same models, different evidence.
+  2. **A rebuttal turn** — the bear reads the bull's actual case and responds to it,
+     updating its conviction. Interaction, not three isolated takes.
+  3. **A disagreement metric** — `conviction_spread` (max−min across analysts), recorded
+     per debate, so "did they actually disagree?" is a number, not a vibe.
+  On the mixed-signal test case (NVDA, up short-term but fading on 30d) the analysts
+  landed at bull 0.70 / bear 0.80 / risk 0.90 (spread 0.20) — each citing *different*
+  evidence: the bull on chip-demand momentum, the bear on the 30-day fade, the risk
+  analyst on "100% concentrated in one name and sector." The clustering broke because
+  the *inputs* stopped being identical.
+
+- **Method worth stealing.**
+  - **Asymmetry beats bigger models for multi-agent.** The cheap fix wasn't a smarter
+    model — it was giving each agent a genuinely different view. Identical context is
+    why "debates" collapse into agreement.
+  - **Make disagreement observable.** A one-number spread metric turns "is the committee
+    doing anything?" into something you can chart and gate on.
+  - **Interaction, not just aggregation.** One rebuttal turn (agent B sees agent A) is a
+    disproportionate upgrade over N parallel calls a synthesizer merges.
+  - **Config-as-experiment.** An `ENABLE_DEBATE` flag lets a later ablation measure
+    debate-vs-no-debate on the same days — the honest test of whether it's worth the tokens.
+
+- **Why it's shareable.** Everyone building agent committees hits the "they all agree"
+  problem. The failure→fix arc (theater → asymmetry + rebuttal + a disagreement metric)
+  is concrete, reusable, and honest about the first version being fake sophistication.
+
+- **Feeds.** Article 2 — "Three LLMs Walk Into an Investment Committee" (the roadmap's
+  planned agent-layer piece; the conviction-clustering failure IS the article). Code:
+  `src/agents/analysts.py`, `src/agents/debate.py`.

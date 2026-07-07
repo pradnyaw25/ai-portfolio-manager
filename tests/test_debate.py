@@ -32,19 +32,54 @@ def test_each_analyst_uses_its_prompt_version(monkeypatch):
     for cls in (BullAnalyst, BearAnalyst, RiskAnalyst):
         cls().analyze("pf", "r", "b")
 
-    assert set(seen) == {"bull_analyst/v1", "bear_analyst/v1", "risk_analyst/v1"}
+    assert set(seen) == {"bull_analyst/v2", "bear_analyst/v2", "risk_analyst/v2"}
     assert all(tier == "cheap" for tier in seen.values())  # analysts run on the cheap tier
+
+
+# -- information asymmetry: each analyst sees a different slice ----------------
+
+
+def test_analysts_get_asymmetric_context():
+    pf = {"cash_pct": 0.15, "positions": [{"symbol": "NVDA", "shares": 800, "current_price": 140}]}
+    research = {
+        "symbols": [{"symbol": "NVDA", "price": 140, "return_5d": 0.06, "return_30d": -0.03}],
+        "market_news": [{"title": "Chip demand strong but valuations stretched"}],
+        "cash_pct": 0.15,
+    }
+    bench = {"return_pct": 0.03, "current": 560.0}
+
+    bull = BullAnalyst().build_context(pf, research, bench, None).lower()
+    bear = BearAnalyst().build_context(pf, research, bench, None).lower()
+    risk = RiskAnalyst().build_context(pf, research, bench, None).lower()
+
+    # bull sees momentum/news, not the exposure breakdown
+    assert "momentum & news" in bull and "exposures & concentration" not in bull
+    # bear sees downside signals (NVDA's fading 30d), not the exposure breakdown
+    assert "downside signals" in bear and "exposures & concentration" not in bear
+    assert "nvda" in bear  # the fading-momentum name surfaces for the bear
+    # risk sees exposures + sector concentration, not momentum/news
+    assert "exposures & concentration" in risk and "sector concentration" in risk
+    assert "momentum & news" not in risk
 
 
 # -- orchestration -----------------------------------------------------------
 
 
 class _FakeAnalyst:
-    def __init__(self, role):
+    def __init__(self, role, conviction=0.6):
         self.role = role
+        self.conviction = conviction
 
     def analyze(self, portfolio, research, benchmark, memory=None):
-        return AnalystThesis(role=self.role, thesis=f"{self.role} view", conviction=0.6)
+        return AnalystThesis(role=self.role, thesis=f"{self.role} view", conviction=self.conviction)
+
+
+class _RebuttingBear(_FakeAnalyst):
+    def __init__(self, conviction=0.3):
+        super().__init__("bear", conviction)
+
+    def rebut(self, bull_thesis, own_thesis, portfolio, research, benchmark, memory=None):
+        return AnalystThesis(role="bear_rebuttal", thesis="still bearish after the bull", conviction=0.35)
 
 
 class _FakeManager:
@@ -70,6 +105,37 @@ def test_run_debate_embeds_transcript_and_feeds_pm():
     assert set(decision["debate"]) == {"bull", "bear", "risk"}
     assert decision["debate"]["bear"]["thesis"] == "bear view"
     assert decision["bear_case_response"] == "addressed the bear points"
+
+
+def test_run_debate_adds_rebuttal_and_conviction_spread():
+    manager = _FakeManager()
+    decision = run_debate(
+        "pf", "research", "bench",
+        analysts=[_FakeAnalyst("bull", 0.9), _RebuttingBear(0.3), _FakeAnalyst("risk", 0.5)],
+        manager=manager,
+    )
+
+    # the bear rebutted the bull — a real second turn, not a parallel monologue
+    assert decision["debate"]["bear_rebuttal"]["thesis"] == "still bearish after the bull"
+    # PM saw the rebuttal in the transcript too
+    assert "bear_rebuttal" in manager.received
+    # spread = max(0.9, 0.3, 0.5) - min = 0.6, rebuttal excluded
+    assert decision["conviction_spread"] == 0.6
+
+
+def test_conviction_spread_excludes_rebuttal_and_needs_two():
+    from src.agents.debate import conviction_spread
+
+    assert conviction_spread(
+        {"bull": {"conviction": 0.9}, "bear": {"conviction": 0.3}, "risk": {"conviction": 0.5}}
+    ) == 0.6
+    # rebuttal is not counted toward the spread
+    assert conviction_spread(
+        {"bull": {"conviction": 0.5}, "bear": {"conviction": 0.5}, "risk": {"conviction": 0.5},
+         "bear_rebuttal": {"conviction": 0.1}}
+    ) == 0.0
+    # fewer than two convictions → 0
+    assert conviction_spread({"bull": {"conviction": 0.7}}) == 0.0
 
 
 # -- PM synthesis requires the bear-case response ----------------------------

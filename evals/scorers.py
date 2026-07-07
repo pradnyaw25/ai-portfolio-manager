@@ -84,8 +84,9 @@ def score_citation_validity(decision, scenario) -> ScoreResult:
 
 
 def score_debate_completeness(decision, scenario) -> ScoreResult:
-    """For debate scenarios: all three analyst theses plus a non-empty PM
-    response to the bear case must be present. No-op otherwise."""
+    """For debate scenarios: all three analyst theses, the bear's rebuttal to the
+    bull, a recorded conviction spread, and a non-empty PM response to the bear
+    case must all be present. No-op otherwise."""
     if not getattr(scenario, "expects_debate", False):
         return ScoreResult("debate_completeness", True, "n/a")
 
@@ -95,6 +96,10 @@ def score_debate_completeness(decision, scenario) -> ScoreResult:
         thesis = debate.get(role) or {}
         if not str(thesis.get("thesis", "")).strip():
             issues.append(f"missing {role} thesis")
+    if not str((debate.get("bear_rebuttal") or {}).get("thesis", "")).strip():
+        issues.append("missing bear rebuttal")
+    if not isinstance(decision.get("conviction_spread"), (int, float)):
+        issues.append("missing conviction_spread")
     if not str(decision.get("bear_case_response", "")).strip():
         issues.append("missing bear_case_response")
     return ScoreResult("debate_completeness", not issues, "; ".join(issues))

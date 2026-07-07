@@ -46,8 +46,14 @@ def test_debate_scorer_is_noop_for_non_debate_scenarios():
 
 def test_debate_scorer_requires_theses_and_bear_response():
     complete = {
-        "debate": {"bull": {"thesis": "up"}, "bear": {"thesis": "down"}, "risk": {"thesis": "concentrated"}},
+        "debate": {
+            "bull": {"thesis": "up"},
+            "bear": {"thesis": "down"},
+            "risk": {"thesis": "concentrated"},
+            "bear_rebuttal": {"thesis": "still down after the bull"},
+        },
         "bear_case_response": "I reject the valuation concern because...",
+        "conviction_spread": 0.4,
     }
     assert score_debate_completeness(complete, DEBATE).passed
 
@@ -55,6 +61,12 @@ def test_debate_scorer_requires_theses_and_bear_response():
     result = score_debate_completeness(missing_response, DEBATE)
     assert not result.passed
     assert "bear_case_response" in result.detail
+
+    missing_rebuttal = {**complete, "debate": {**complete["debate"], "bear_rebuttal": {}}}
+    assert not score_debate_completeness(missing_rebuttal, DEBATE).passed
+
+    missing_spread = {k: v for k, v in complete.items() if k != "conviction_spread"}
+    assert not score_debate_completeness(missing_spread, DEBATE).passed
 
     missing_bear = {"debate": {"bull": {"thesis": "up"}, "risk": {"thesis": "x"}},
                     "bear_case_response": "ok"}
@@ -154,8 +166,14 @@ def _apply_scenario_expectations(decision, scenario):
     if scenario.expects_cash_thesis:
         decision["cash_thesis"] = "Deliberately holding cash."
     if getattr(scenario, "expects_debate", False):
-        decision["debate"] = {"bull": {"thesis": "up"}, "bear": {"thesis": "down"}, "risk": {"thesis": "x"}}
+        decision["debate"] = {
+            "bull": {"thesis": "up"},
+            "bear": {"thesis": "down"},
+            "risk": {"thesis": "x"},
+            "bear_rebuttal": {"thesis": "still down after hearing the bull"},
+        }
         decision["bear_case_response"] = "I weighed the bear case and disagree because..."
+        decision["conviction_spread"] = 0.4
     tradable = scenario.tradable_symbols()
     decision["trades"] = [{"symbol": tradable[0], "action": "BUY", "confidence": 0.7}] if tradable else []
     return decision
