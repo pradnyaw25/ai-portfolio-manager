@@ -236,8 +236,13 @@ class TwitterPublisher:
         )
 
 
-def publish_tweet(text: str, *, media: bytes | None = None, run_id: str | None = None) -> TweetPublishResult:
-    result = TwitterPublisher().publish(text, media=media, run_id=run_id)
+def publish_tweet(
+    text: str, *, media: bytes | None = None, run_id: str | None = None, dry_run: bool = False
+) -> TweetPublishResult:
+    # dry_run forces posting off regardless of POST_TWEET — an explicit kill switch,
+    # so a test can never publish by accident (see docs/incidents.md 2026-07-06).
+    publisher = TwitterPublisher(post_enabled=False) if dry_run else TwitterPublisher()
+    result = publisher.publish(text, media=media, run_id=run_id)
     append_social_post(result)
     return result
 
