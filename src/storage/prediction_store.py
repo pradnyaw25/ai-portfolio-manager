@@ -62,6 +62,16 @@ class PredictionStore:
     HORIZON_DAYS = 30
 
     def create_from_trade(self, trade, confidence: float, spy_price: float) -> dict:
+        # One open prediction per symbol at a time. Buying the same name across
+        # several runs (or an early run that recorded no run_id) must not stack
+        # overlapping "X will outperform SPY over 30 days" bets — that inflates the
+        # count and produces the redundant rows on the predictions page. A fresh
+        # prediction only opens once the prior one for this symbol has resolved.
+        for existing in self.load_open():
+            if existing.get("symbol") == trade.symbol:
+                logger.info("Open prediction already tracks %s — not duplicating", trade.symbol)
+                return existing
+
         horizon = self.HORIZON_DAYS
         run_id = getattr(trade, "run_id", None)
         prediction = {
