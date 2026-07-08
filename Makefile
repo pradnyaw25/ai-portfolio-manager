@@ -1,7 +1,7 @@
 PYTHON ?= .venv/bin/python
 PORT ?= 8000
 
-.PHONY: help install test eval eval-compare run dashboard ingest-memory ingest-sec-filings memory-eval chunking-eval reflect letter mcp market-hours benchmark backfill status
+.PHONY: help install test eval eval-compare baselines run dashboard ingest-memory ingest-sec-filings memory-eval chunking-eval reflect letter mcp market-hours benchmark backfill status
 
 help:
 	@echo "AI Portfolio Manager commands"
@@ -10,6 +10,7 @@ help:
 	@echo "  make test            Run the test suite"
 	@echo "  make eval            Run the decision eval harness (needs OPENAI_API_KEY)"
 	@echo "  make eval-compare    Compare strong-tier models: quality vs cost delta (needs OPENAI_API_KEY)"
+	@echo "  make baselines       Compare the fund vs buy-and-hold SPY/QQQ and random-from-watchlist"
 	@echo "  make run             Run the daily portfolio cycle through LangGraph"
 	@echo "  make dashboard       Serve public/ locally on PORT (default: 8000)"
 	@echo "  make ingest-memory   Ingest existing reports into Qdrant memory"
@@ -35,6 +36,9 @@ eval:
 
 eval-compare:
 	LLM_TEMPERATURE=0 $(PYTHON) scripts/compare_strong_model.py
+
+baselines:
+	$(PYTHON) scripts/compare_baselines.py
 
 run:
 	$(PYTHON) scripts/daily_run.py
