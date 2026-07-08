@@ -92,6 +92,17 @@ p { margin:0 0 12px; }
 .trade .head { color:var(--ink); font-weight:800; font-size:15px; }
 .conf { border-radius:5px; background:var(--positive-bg); color:var(--positive);
   padding:1px 7px; font-size:12px; font-weight:800; margin-left:6px; }
+.calls-wrap { overflow-x:auto; margin:6px 0 12px; }
+.calls { width:100%; border-collapse:collapse; font-size:13.5px; }
+.calls th { text-align:left; font-size:11.5px; text-transform:uppercase; letter-spacing:.05em;
+  color:var(--muted); font-weight:800; padding:6px 12px 6px 0; border-bottom:1px solid var(--border); white-space:nowrap; }
+.calls td { padding:7px 12px 7px 0; border-bottom:1px solid var(--row-border); vertical-align:top; }
+.calls td.sym { font-weight:800; color:var(--ink); white-space:nowrap; }
+.dir { display:inline-block; border-radius:5px; padding:1px 7px; font-size:12px; font-weight:800; white-space:nowrap; }
+.dir.up { background:var(--positive-bg); color:var(--positive); }
+.dir.down { background:var(--negative-bg); color:var(--negative); }
+.tag { display:inline-block; border:1px solid var(--border-strong); border-radius:999px;
+  padding:0 8px; font-size:11px; font-weight:800; color:var(--muted-strong); white-space:nowrap; }
 .muted { color:var(--muted); }
 ul { margin:6px 0 0; padding-left:20px; }
 li { margin-bottom:4px; }
@@ -250,6 +261,66 @@ def _render_trades(entry: dict) -> str:
     return "".join(out)
 
 
+def _render_market_calls(entry: dict) -> str:
+    """The fund's directional beat/lag-SPY call on every researched name — traded or
+    not — with confidence and thesis. This is the calibration record, and it adds real
+    crawlable text on days the fund barely traded. ``became_trade`` is derived from the
+    day's executed BUYs, so the names the fund actually bet on are visibly tagged."""
+    calls = entry["raw_decision"].get("market_calls") or []
+    if not calls:
+        return ""
+
+    bought = {
+        t.get("symbol")
+        for t in (entry.get("executed_trades") or [])
+        if str(t.get("action", "")).upper() == "BUY"
+    }
+
+    def _conf(call: dict) -> float:
+        try:
+            return float(call.get("confidence") or 0)
+        except (TypeError, ValueError):
+            return 0.0
+
+    def _is_outperform(call: dict) -> bool:
+        return str(call.get("direction") or "OUTPERFORM").upper() != "UNDERPERFORM"
+
+    rows = []
+    for call in sorted(calls, key=_conf, reverse=True):
+        symbol = str(call.get("symbol") or "?").upper()
+        outperform = _is_outperform(call)
+        conf = _conf(call)
+        conf_html = f"{conf * 100:.0f}%" if conf else "—"
+        traded = (
+            '<span class="tag" title="The fund opened or added this position">traded</span>'
+            if symbol in bought
+            else ""
+        )
+        rows.append(
+            f'<tr><td class="sym">{escape(symbol)}</td>'
+            f'<td><span class="dir {"up" if outperform else "down"}">'
+            f'{"Outperform" if outperform else "Underperform"} SPY</span></td>'
+            f"<td>{conf_html}</td><td>{traded}</td>"
+            f'<td class="muted">{escape(str(call.get("thesis") or ""))}</td></tr>'
+        )
+
+    n_out = sum(1 for c in calls if _is_outperform(c))
+    n_traded = len(bought & {str(c.get("symbol") or "").upper() for c in calls})
+    intro = (
+        "A directional call — beat or lag the S&amp;P 500 over the horizon — on every "
+        f"researched name, whether or not the fund traded it. {len(calls)} calls "
+        f"({n_out} outperform, {len(calls) - n_out} underperform); {n_traded} became trades. "
+        "These are the fund's calibration record."
+    )
+    return (
+        "<h2>Market calls</h2>"
+        f'<p class="muted">{intro}</p>'
+        '<div class="calls-wrap"><table class="calls">'
+        "<thead><tr><th>Symbol</th><th>Call</th><th>Conf.</th><th></th><th>Why</th></tr></thead>"
+        f"<tbody>{''.join(rows)}</tbody></table></div>"
+    )
+
+
 def _render_debate(debate: dict) -> str:
     if not debate:
         return ""
@@ -311,6 +382,7 @@ def render_decision_page(entry: dict, *, prev: dict | None, next_: dict | None) 
     <div class="facts">{"".join(facts)}</div>
     <h2>Trades</h2>
     {_render_trades(entry)}
+    {_render_market_calls(entry)}
     {_render_debate(rd.get("debate") or {})}
     {_section("Bear case response", rd.get("bear_case_response"))}
     {_section("Market summary", rd.get("market_summary"))}
