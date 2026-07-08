@@ -7,6 +7,7 @@ from datetime import date
 import pytest
 
 from src.agents.investor_letter import (
+    _PERCENT_KEYS,
     format_facts_for_prompt,
     gather_letter_facts,
     generate_weekly_letter,
@@ -203,6 +204,49 @@ BENCH_062 = [
     {"date": "2026-06-29", "symbol": "SPY", "price": "500"},
     {"date": "2026-07-05", "symbol": "SPY", "price": "503.10"},
 ]
+
+
+def test_every_numeric_fact_is_classified_as_ratio_or_non_ratio():
+    """Class-level guard, not another instance fix.
+
+    ``format_facts_for_prompt`` converts a hand-maintained whitelist of ratio keys.
+    The bug this whole PR fixes recurs the moment a new ratio fact is added to
+    ``gather_letter_facts`` and left off that whitelist: the judge sees ``0.10`` while
+    the letter writes ``"10.42%"`` and blocks publication — silently, because no test
+    covers a specific-but-undeclared key.
+
+    So: walk a real fact base and require every number to be *declared*. A new numeric
+    fact fails here until someone decides whether it is a ratio (add to ``_PERCENT_KEYS``
+    / a position ``return_pct``) or a dollar/count (add to ``NON_RATIO`` below).
+    """
+    # Dollar amounts and share counts — numbers the judge should read as-is.
+    NON_RATIO = {"start_value", "end_value", "market_value", "shares"}
+    ratio_keys = set(_PERCENT_KEYS) | {"return_pct"}  # return_pct is the per-position ratio
+
+    unclassified: list[str] = []
+
+    def walk(node, path):
+        if isinstance(node, dict):
+            for key, value in node.items():
+                if isinstance(value, bool):  # bools are not quantities
+                    continue
+                if isinstance(value, (int, float)):
+                    if key not in ratio_keys and key not in NON_RATIO:
+                        unclassified.append(f"{path}{key} = {value!r}")
+                else:
+                    walk(value, f"{path}{key}.")
+        elif isinstance(node, list):
+            for item in node:
+                walk(item, path)
+
+    walk(_facts(), "")
+
+    assert not unclassified, (
+        "Unclassified numeric fact(s) in the letter fact base: "
+        f"{unclassified}. Declare each as a ratio (percent-format it in "
+        "format_facts_for_prompt) or a dollar/count (add its key to NON_RATIO), "
+        "or the grounding judge will silently block the letter on a unit mismatch."
+    )
 
 
 def test_format_facts_renders_ratios_as_percent_strings():
