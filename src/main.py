@@ -8,7 +8,7 @@ entrypoint for a run (``scripts/daily_run.py``). This module intentionally has n
 orchestration or ``__main__`` of its own.
 """
 
-from src.config import INITIAL_CAPITAL
+from src.config import ENABLE_DEBATE, INITIAL_CAPITAL
 from src.llm.cost import summarize_run_cost
 from src.storage.run_history_store import RunHistoryStore
 from src.storage.portfolio_store import PortfolioStore
@@ -19,6 +19,7 @@ from src.data_sources.news import NewsClient
 from src.data_sources.benchmarks import BenchmarkClient
 from src.research.market_context import MarketContextBuilder
 from src.agents.debate import run_debate
+from src.agents.portfolio_manager import PortfolioManagerAgent
 from src.agents.research_agent import ResearchAnalyst, build_research_registry
 from src.agents.tweet_generator import TweetGeneratorAgent
 from src.agents.risk_manager import RiskManagerAgent
@@ -160,11 +161,15 @@ def run_research_followup(engine, market_data, news_client, research, memory_con
 
 
 def decide_trades(engine, research, benchmark_client, memory_context):
-    return run_debate(
-        portfolio=engine.get_snapshot(),
-        research=research,
-        benchmark=benchmark_client.get_sp500_performance(),
-        memory=memory_context,
+    portfolio = engine.get_snapshot()
+    benchmark = benchmark_client.get_sp500_performance()
+    if ENABLE_DEBATE:
+        return run_debate(
+            portfolio=portfolio, research=research, benchmark=benchmark, memory=memory_context
+        )
+    # Ablation path: the PM decides directly, no committee.
+    return PortfolioManagerAgent().decide(
+        portfolio=portfolio, research=research, benchmark=benchmark, memory=memory_context
     )
 
 

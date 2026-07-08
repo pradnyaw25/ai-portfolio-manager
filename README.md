@@ -208,12 +208,18 @@ a silent no-op and never affects a run.
 
 ### Analyst Debate
 
-The decision step runs a mini investment committee: `BullAnalyst`, `BearAnalyst`,
-and `RiskAnalyst` (`src/agents/analysts.py`) each produce a structured thesis on the
-cheap model tier, then the portfolio manager (strong tier) synthesizes them into the
-final decision and must fill a `bear_case_response` addressing each major bear point.
-The debate transcript is embedded in the decision, stored in the journal, and
-rendered on the decisions dashboard. See `src/agents/debate.py`.
+The decision step runs a mini investment committee with **information asymmetry** —
+each analyst argues from a *different slice* of the context so their views can
+genuinely diverge instead of clustering: `BullAnalyst` sees momentum + news,
+`BearAnalyst` sees downside signals + cautionary memory, `RiskAnalyst` sees computed
+exposures (position + sector concentration, cash). The bear then gets a **rebuttal
+turn** against the bull (a real second turn, not three parallel monologues), and a
+**conviction-spread** metric (max−min across analysts) records how much they actually
+disagreed. The portfolio manager (strong tier) synthesizes it all and must fill a
+`bear_case_response` addressing each major bear point. The transcript, rebuttal, and
+spread are journaled and rendered on the decisions dashboard. Set `ENABLE_DEBATE=false`
+to ablate the committee (the PM decides directly). See `src/agents/analysts.py` and
+`src/agents/debate.py`.
 
 ### Tool-Calling Research
 

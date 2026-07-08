@@ -94,6 +94,11 @@ RUN_HISTORY_LOG = DATA_DIR / "run_history.jsonl"
 # execution.
 AUTO_APPROVE = os.getenv("AUTO_APPROVE", "true").lower() in {"1", "true", "yes"}
 
+# Run the bull/bear/risk debate before the portfolio manager decides. Set false to
+# ablate the debate (the PM decides directly) — the toggle that lets a fund variant
+# measure debate vs no-debate (roadmap V1-1).
+ENABLE_DEBATE = os.getenv("ENABLE_DEBATE", "true").lower() in {"1", "true", "yes"}
+
 # Trades only execute during regular US market hours (9:30–16:00 America/New_York).
 # The rest of the cycle (research, decision, journal) still runs outside hours; only
 # execution is skipped. Set true to override for testing/backfill.

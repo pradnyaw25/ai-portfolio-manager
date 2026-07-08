@@ -698,8 +698,12 @@
         const debate = decision.debate || {};
         const debateRoles = ["bull", "bear", "risk"].filter(r => debate[r] && debate[r].thesis);
         if (debateRoles.length) {
-          const label = { bull: "🐂 Bull", bear: "🐻 Bear", risk: "⚠️ Risk" };
-          html += `<div class="section"><h3>Analyst Debate</h3>`;
+          const label = { bull: "🐂 Bull", bear: "🐻 Bear", risk: "⚠️ Risk", bear_rebuttal: "🐻 Bear rebuttal" };
+          if (debate.bear_rebuttal && debate.bear_rebuttal.thesis) debateRoles.push("bear_rebuttal");
+          const spread = decision.conviction_spread != null
+            ? ` <span class="muted" style="font-weight:600">· conviction spread ${(decision.conviction_spread * 100).toFixed(0)}%</span>`
+            : "";
+          html += `<div class="section"><h3>Analyst Debate${spread}</h3>`;
           html += debateRoles.map(role => {
             const t = debate[role];
             const points = (t.key_points || []).map(p => `<li>${escapeHtml(p)}</li>`).join("");

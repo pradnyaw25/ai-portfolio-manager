@@ -54,12 +54,19 @@ Ordered by ROI. `∥` = parallelizable. See `docs/ROADMAP-V2.md` §2/§6 for the
 * Acceptance: a keyed `make retrieval-eval` reports real-corpus numbers; the synthetic
   eval is explicitly labeled as mechanism-demonstration.
 
-### V1-5. Debate that earns its keep
+### V1-5. Debate that earns its keep — DONE
 * Output: information asymmetry per analyst (bear ← risk-factor filings, bull ←
   momentum/news, risk ← exposures) + one rebuttal turn (bear sees bull) + a
   disagreement/conviction-spread metric recorded per debate.
 * Acceptance: convictions no longer cluster; the debate feeds a measurable variant in
   V1-1 (debate vs no-debate); a real transcript shows genuine disagreement.
+* Done: each analyst builds its own context slice (`src/agents/analysts.py`) — bull
+  ← momentum/news, bear ← downside signals + cautionary memory, risk ← computed
+  position/sector exposures. Bear gets a `rebut()` turn vs the bull; `run_debate`
+  records `conviction_spread` (max−min). `ENABLE_DEBATE` config toggle enables the
+  debate-vs-no-debate ablation. Surfaced on the decisions page (spread + rebuttal).
+  Live transcript shows divergent evidence-based convictions (0.70/0.80/0.90, spread
+  0.20) with the risk analyst flagging sector concentration.
 
 ## V2 · Next 90 days (depth)
 
