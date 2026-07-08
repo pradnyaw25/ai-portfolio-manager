@@ -144,10 +144,12 @@ class PublicExporter:
             "calibration": compute_calibration(predictions),
             "best_predictions": self._rank_resolved_predictions(resolved, reverse=True)[:10],
             "worst_predictions": self._rank_resolved_predictions(resolved, reverse=False)[:10],
+            # Show every open bet (one per symbol), not a top-10 slice — this is the
+            # full pending list, not a ranking.
             "upcoming_predictions": sorted(
                 [self._serialize_prediction(p) for p in open_predictions],
                 key=lambda p: p.get("due_date") or "",
-            )[:10],
+            ),
         }
 
         (PUBLIC_DIR / "predictions.json").write_text(json.dumps(payload, indent=2))

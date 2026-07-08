@@ -613,7 +613,7 @@
         calibration: computeCalibration(resolved),
         best_predictions: ranked.slice(0, 10),
         worst_predictions: [...ranked].reverse().slice(0, 10),
-        upcoming_predictions: open.map(serialize).sort((a, b) => String(a.due_date).localeCompare(String(b.due_date))).slice(0, 10),
+        upcoming_predictions: open.map(serialize).sort((a, b) => String(a.due_date).localeCompare(String(b.due_date))),
       };
     }
 
