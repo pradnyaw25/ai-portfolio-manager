@@ -479,6 +479,7 @@ def export_public_artifacts_node(state: DailyGraphState) -> DailyGraphState:
         run.run_id,
         run.run_status,
     )
+    steps.export_baseline_comparison(run.market_data)
     return {"run": run}
 
 

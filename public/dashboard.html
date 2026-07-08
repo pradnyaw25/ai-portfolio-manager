@@ -501,6 +501,76 @@
       font-variant-numeric: tabular-nums;
     }
 
+    .baselines-sub {
+      margin: -4px 0 16px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .baselines {
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+    }
+
+    .bl-row {
+      display: grid;
+      grid-template-columns: minmax(120px, 190px) 1fr 66px;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+    }
+
+    .bl-name {
+      font-weight: 700;
+      color: var(--ink);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .bl-row.fund .bl-name {
+      color: var(--positive);
+    }
+
+    .bl-track {
+      position: relative;
+      height: 10px;
+      background: var(--bar-track);
+      border-radius: 5px;
+    }
+
+    .bl-track::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: -3px;
+      bottom: -3px;
+      width: 1px;
+      background: var(--border-strong);
+    }
+
+    .bl-bar {
+      position: absolute;
+      top: 0;
+      height: 100%;
+      border-radius: 5px;
+      min-width: 2px;
+    }
+
+    .bl-return {
+      text-align: right;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .baselines-note {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
     .return-row {
       display: flex;
       flex-wrap: wrap;
@@ -954,6 +1024,13 @@
           </div>
         </section>
 
+        <section class="card" id="baselines-card" style="display:none">
+          <h2>Fund vs. Baselines</h2>
+          <p class="baselines-sub" id="baselines-sub"></p>
+          <div class="baselines" id="baselines"></div>
+          <p class="baselines-note" id="baselines-note"></p>
+        </section>
+
         <section class="card">
           <h2>Holdings</h2>
           <div class="table-wrap">
@@ -1124,6 +1201,49 @@
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
+    }
+
+    async function loadBaselines() {
+      try {
+        const res = await fetch("./baseline_comparison.json");
+        if (!res.ok) return;  // panel stays hidden if there's no data yet
+        renderBaselines(await res.json());
+      } catch (e) { /* leave the panel hidden */ }
+    }
+
+    function renderBaselines(data) {
+      const variants = (data.variants || []).slice().sort((a, b) => b.return_pct - a.return_pct);
+      if (!variants.length) return;
+
+      const isFund = v => /fund|glasshouse/i.test(v.name);
+      const fund = variants.find(isFund);
+      const maxAbs = Math.max(...variants.map(v => Math.abs(v.return_pct)), 0.0001);
+      const signed = x => `${x >= 0 ? "+" : ""}${(x * 100).toFixed(2)}%`;
+
+      document.getElementById("baselines-sub").textContent = "Does the AI beat the index — or a monkey?";
+
+      document.getElementById("baselines").innerHTML = variants.map(v => {
+        const pos = v.return_pct >= 0;
+        const w = (Math.abs(v.return_pct) / maxAbs) * 50;  // % of half the track
+        const bar = pos
+          ? `left:50%; width:${w}%; background:var(--positive)`
+          : `right:50%; width:${w}%; background:var(--negative)`;
+        return `<div class="bl-row${isFund(v) ? " fund" : ""}">
+          <span class="bl-name" title="${escapeHtml(v.detail || "")}">${escapeHtml(v.name)}</span>
+          <span class="bl-track"><span class="bl-bar" style="${bar}"></span></span>
+          <span class="bl-return ${pos ? "pos" : "neg"}">${signed(v.return_pct)}</span>
+        </div>`;
+      }).join("");
+
+      const days = Math.max(1, Math.round((new Date(data.end_date) - new Date(data.start_date)) / 86400000));
+      const alpha = fund && fund.alpha_vs_spy != null
+        ? `The fund is ${signed(fund.alpha_vs_spy)} vs buy-and-hold SPY over this window. `
+        : "";
+      document.getElementById("baselines-note").textContent =
+        `${data.start_date} → ${data.end_date} · ${alpha}${days} days is a small, noisy sample — directional, not proof. `
+        + `Random = mean of many random equal-weight watchlist portfolios.`;
+
+      document.getElementById("baselines-card").style.display = "";
     }
 
     async function fetchCsv(path) {
@@ -1502,6 +1622,7 @@
     setupThemeToggle();
     loadUpdatedAt();
     loadDashboard();
+    loadBaselines();
   </script>
 </body>
 </html>

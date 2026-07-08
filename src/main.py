@@ -422,3 +422,8 @@ def export_public_artifacts(snapshot, trades, tweet, report_markdown, run_id, ru
         run_id=run_id,
         run_status=run_status,
     )
+
+
+def export_baseline_comparison(market_data):
+    """Refresh the dashboard's fund-vs-baselines panel (roadmap V1-1)."""
+    PublicExporter().write_baseline_comparison(market_data)
