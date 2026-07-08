@@ -456,7 +456,49 @@
     }
 
     .mini-chart {
-      height: 300px;
+      height: 210px;
+    }
+
+    .alloc-legend {
+      margin-top: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .alloc-legend .row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+    }
+
+    .alloc-legend .swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      flex: none;
+    }
+
+    .alloc-legend .tk {
+      font-weight: 800;
+      color: var(--ink);
+      min-width: 46px;
+    }
+
+    .alloc-legend .nm {
+      flex: 1;
+      min-width: 0;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .alloc-legend .pct {
+      font-weight: 800;
+      color: var(--ink);
+      font-variant-numeric: tabular-nums;
     }
 
     .return-row {
@@ -939,6 +981,7 @@
           <div class="chart-wrap mini-chart">
             <canvas id="allocation-chart"></canvas>
           </div>
+          <div class="alloc-legend" id="allocation-legend"></div>
         </section>
 
         <section class="card">
@@ -1065,7 +1108,7 @@
       if (!chart) return;
       const theme = getChartTheme();
       chart.data.datasets[0].borderColor = theme.border;
-      chart.options.plugins.legend.labels.color = theme.axis;
+      // Legend is a custom HTML list (#allocation-legend) themed via CSS vars.
       chart.update();
     }
 
@@ -1409,6 +1452,22 @@
         "#8fa4c8", "#9cc9b5", "#e1c16e", "#d69aa0", "#aab4c0",
       ];
 
+      // Rich legend: swatch + ticker + company name + allocation %, sorted by weight,
+      // so names and allocations are readable without hovering the donut.
+      const allocTotal = allocValues.reduce((a, b) => a + b, 0) || 1;
+      const legendItems = allocLabels
+        .map((label, i) => ({ label, value: allocValues[i], color: allocColors[i % allocColors.length] }))
+        .sort((a, b) => b.value - a.value);
+      document.getElementById("allocation-legend").innerHTML = legendItems.map(it => {
+        const name = it.label === "Cash" ? "Available cash" : (symbolNames[it.label] || "");
+        return `<div class="row">
+          <span class="swatch" style="background:${it.color}"></span>
+          <span class="tk">${escapeHtml(it.label)}</span>
+          <span class="nm">${escapeHtml(name)}</span>
+          <span class="pct">${(it.value / allocTotal * 100).toFixed(1)}%</span>
+        </div>`;
+      }).join("");
+
       allocationChart = new Chart(document.getElementById("allocation-chart"), {
         type: "doughnut",
         data: {
@@ -1434,15 +1493,7 @@
                 }
               }
             },
-            legend: {
-              position: "bottom",
-              labels: {
-                boxWidth: 10,
-                boxHeight: 10,
-                usePointStyle: true,
-                color: chartTheme.axis,
-              }
-            }
+            legend: { display: false }  // replaced by the custom #allocation-legend
           }
         }
       });
