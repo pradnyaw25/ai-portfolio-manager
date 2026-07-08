@@ -285,12 +285,25 @@
     }
 
     .tool-trace ul {
-      margin: 8px 0 0;
+      margin: 6px 0 0;
       padding-left: 18px;
     }
 
     .tool-trace code {
       font-size: 12px;
+    }
+
+    .rt-label {
+      margin-top: 12px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .memory-list a {
+      color: var(--accent);
+      text-decoration: underline;
+      text-underline-offset: 2px;
     }
 
     .sym-name {
@@ -555,33 +568,88 @@
       }
     }
 
-    function renderToolTrace(toolCalls) {
-      // One-line summary (e.g. "5 tool calls — 3 prices, 1 history lookup, 1 news
-      // search"), with the full list tucked behind an expander. Every call succeeds
-      // in practice, so only failures are flagged.
+    function toolCallBreakdown(toolCalls) {
       const counts = {};
-      let failed = 0;
-      toolCalls.forEach(tc => {
-        const key = tc.name || "tool";
-        counts[key] = (counts[key] || 0) + 1;
-        if (tc.outcome && tc.outcome.ok === false) failed++;
-      });
-      const parts = Object.entries(counts)
+      toolCalls.forEach(tc => { const k = tc.name || "tool"; counts[k] = (counts[k] || 0) + 1; });
+      return Object.entries(counts)
         .sort((a, b) => b[1] - a[1])
-        .map(([name, n]) => {
-          const label = TOOL_LABELS[name] || [name, name];
-          return `${n} ${n === 1 ? label[0] : label[1]}`;
-        });
-      const total = toolCalls.length;
-      let summary = `${total} tool call${total === 1 ? "" : "s"} — ${parts.join(", ")}`;
-      if (failed) summary += ` · ${failed} failed`;
+        .map(([name, n]) => { const l = TOOL_LABELS[name] || [name, name]; return `${n} ${n === 1 ? l[0] : l[1]}`; })
+        .join(", ");
+    }
 
-      const items = toolCalls.map(tc => {
-        const ok = !tc.outcome || tc.outcome.ok !== false;
+    function toolCallItems(toolCalls) {
+      return toolCalls.map(tc => {
+        const ok = !tc.outcome || tc.outcome.ok !== false;  // only failures are flagged
         return `<li><code>${escapeHtml(tc.name)}(${escapeHtml(toolArgLabel(tc))})</code>${ok ? "" : " ✗"}</li>`;
       }).join("");
+    }
 
-      return `<details class="tool-trace"><summary>${escapeHtml(summary)}</summary><ul>${items}</ul></details>`;
+    function memorySourceInfo(item) {
+      // The useful fields live under item.metadata (the old render read item.metadata.source,
+      // which doesn't exist — hence "Unknown source" for everything).
+      const m = item.metadata || item;
+      const nested = m.metadata || {};
+      const symbol = (m.symbols && m.symbols[0]) || nested.ticker || "";
+      const form = nested.form || "";              // "10-K", "8-K"
+      const itemTitle = nested.item_title || "";    // "Business", "Risk Factors", "Earnings Release"
+      const st = m.source_type || "";
+      const date = m.date || nested.filing_date || "";
+      const url = (typeof m.source_id === "string" && m.source_id.startsWith("http")) ? m.source_id : "";
+      const type = m.type || m.memory_type || item.type || "";
+
+      let label;
+      if (form === "10-K" || st === "sec_10k") label = `${symbol} 10-K${itemTitle ? " · " + itemTitle : ""}`;
+      else if (form === "8-K" || st === "earnings_8k") label = `${symbol} 8-K${itemTitle ? " · " + itemTitle : ""}`;
+      else if (st === "reflection") label = "Reflection";
+      else if (st === "daily_report") label = "Daily report";
+      else if (st === "trade") label = `Past trade${symbol ? " · " + symbol : ""}`;
+      else label = symbol || st || "Memory";
+      return { label: label.trim(), url, date, type };
+    }
+
+    function dedupeMemory(memoryUsed) {
+      // Collapse the many chunks of one filing/report into a single source row.
+      const seen = new Set(), rows = [];
+      (memoryUsed || []).forEach(item => {
+        const info = memorySourceInfo(item);
+        const key = info.url || (info.label + "|" + info.date);
+        if (seen.has(key)) return;
+        seen.add(key);
+        rows.push(info);
+      });
+      return rows;
+    }
+
+    function memoryListItems(rows) {
+      return rows.map(r => {
+        const meta = [r.date, r.type].filter(Boolean).join(" · ");
+        const label = r.url
+          ? `<a href="${escapeHtml(r.url)}" target="_blank" rel="noopener">${escapeHtml(r.label)}</a>`
+          : escapeHtml(r.label);
+        return `<li>${label}${meta ? ` <span class="muted">${escapeHtml(meta)}</span>` : ""}</li>`;
+      }).join("");
+    }
+
+    // One collapsed section per decision holding both the tool-call trace and the
+    // (deduped, linked) memory sources — the "how it researched" plumbing, out of the
+    // way of the decision itself but one click from the receipts.
+    function renderResearchDetails(toolCalls, memoryUsed) {
+      const sources = dedupeMemory(memoryUsed);
+      if (!toolCalls.length && !sources.length) return "";
+      const bits = [];
+      if (toolCalls.length) bits.push(`${toolCalls.length} tool call${toolCalls.length === 1 ? "" : "s"}`);
+      if (sources.length) bits.push(`${sources.length} memory source${sources.length === 1 ? "" : "s"}`);
+
+      let inner = "";
+      if (toolCalls.length) {
+        inner += `<div class="rt-label muted">Tool calls — ${escapeHtml(toolCallBreakdown(toolCalls))}</div>`;
+        inner += `<ul>${toolCallItems(toolCalls)}</ul>`;
+      }
+      if (sources.length) {
+        inner += `<div class="rt-label muted">Memory the AI cited (SEC filings link out)</div>`;
+        inner += `<ul class="memory-list">${memoryListItems(sources)}</ul>`;
+      }
+      return `<details class="tool-trace"><summary>${escapeHtml(bits.join(" · "))}</summary>${inner}</details>`;
     }
 
     function renderTrade(t, rejected) {
@@ -637,31 +705,6 @@
           <span class="muted">@ ${money.format(price)} · ${money.format(total)}</span>
           ${reasoning ? `<br />${escapeHtml(reasoning)}` : ""}
         </div>
-      `;
-    }
-
-    function renderMemorySources(memoryUsed) {
-      const sources = memoryUsed
-        .map(item => item.metadata || {})
-        .map(meta => ({
-          source: meta.source || "Unknown source",
-          date: meta.date || "",
-          type: meta.type || "",
-        }));
-
-      if (sources.length === 0) {
-        return `<p class="muted">No memory sources used.</p>`;
-      }
-
-      return `
-        <ul class="memory-list">
-          ${sources.map(meta => `
-            <li>
-              ${escapeHtml(meta.source)}
-              <span class="muted">${escapeHtml([meta.date, meta.type].filter(Boolean).join(" · "))}</span>
-            </li>
-          `).join("")}
-        </ul>
       `;
     }
 
@@ -749,11 +792,11 @@
 
         const research = entry.research_brief || {};
         const toolCalls = research.tool_calls || [];
-        if (research.brief || toolCalls.length) {
+        if (research.brief || toolCalls.length || memoryUsed.length) {
           html += `<div class="section">
-            <h3>Research Trace</h3>
+            <h3>Research</h3>
             ${research.brief ? `<p>${escapeHtml(research.brief)}</p>` : ""}
-            ${toolCalls.length ? renderToolTrace(toolCalls) : ""}
+            ${renderResearchDetails(toolCalls, memoryUsed)}
           </div>`;
         }
 
@@ -817,10 +860,6 @@
           html += rejected.map(t => renderTrade(t, true)).join("");
           html += `</div>`;
         }
-
-        html += `<div class="section"><h3>Memory Sources Used</h3>`;
-        html += renderMemorySources(memoryUsed);
-        html += `</div>`;
 
         if (approved.length === 0 && rebalance.length === 0 && rejected.length === 0 && executed.length === 0) {
           html += `<p class="muted">No trades proposed.</p>`;
