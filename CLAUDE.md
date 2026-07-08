@@ -118,19 +118,52 @@ opinionated content every single day.** Everything below follows from that.
   be minor (`src/scoring/grounding.py:59-67`). Fix the false positive first; only then build
   `/letters/YYYY-MM-DD.html` + an index, following `decision_pages.py`. Note the original entry
   claimed letters "only reach the dashboard" — they reach nothing.
-- [ ] **Submit the sitemap in Google Search Console** — The file exists and is generated, but
-  nothing crawls it until a verified property points at it. DNS is on Vercel nameservers (the site
-  is served by GitHub Pages), so a Domain-property TXT record goes in the Vercel dashboard.
+### Decision pages — follow-up
+
+Shipped, live, and working. These four came out of reviewing the result. Ordered by
+leverage; the first is a latent bug, not a nicety.
+
+- [ ] **Fix the `created_at` string comparison** *(bug — fails silently)* —
+  `decision_pages.latest_per_date()` picks a day's decision by comparing `created_at`
+  lexicographically. All 38 rows today are fixed-width UTC (`...083605Z`), so it's correct. The
+  moment one row carries an offset (`+05:30`), string ordering picks the *wrong* run and publishes
+  a superseded decision — with no error. Parse to `datetime` before comparing.
+- [ ] **Gate thin pages out of the index** — Of the 12 published pages, **9 are under 2,500 chars**
+  and 5 have neither trades nor a debate (median 1,975 total, 1,649 after 326 chars of nav/footer
+  chrome). The debate transcript only starts on 2026-07-03; everything earlier is backfill from a
+  system that had no debate. Publishing 9 thin pages to gain 3 rich ones is a bad trade at N=12 and
+  a good one at N=250. Keep them as permalinks and audit trail, but exclude from `sitemap.xml` and
+  mark `<meta name="robots" content="noindex,follow">` until a day clears a bar — has a debate, or
+  at least one approved trade. Today that indexes 6 and holds 6; the gate opens on its own as the
+  corpus matures.
+- [ ] **Put the traded symbols in `<title>` and `<h1>`** — Currently `AI fund decision — July 7,
+  2026`. The title is the strongest on-page signal and carries zero entity signal today; nobody
+  searches for a date. `AI fund buys AAPL — July 7, 2026` costs nothing and does not change the URL.
+- [ ] **Symbol hub pages** *(`/symbols/NVDA.html`)* — The entity query we actually care about
+  ("why did an AI fund sell NVDA") is served by neither a date page nor a per-symbol *decision*
+  stub. It wants one page per symbol, aggregating every decision that ever touched it, newest
+  first, cross-linked to the day pages. Entity hub + chronological detail is the standard
+  programmatic-SEO structure, and hubs get *richer* over time where per-day-per-symbol stubs get
+  thinner. ~33 pages total, not 15/day. Gate at ~3 mentions so day-one hubs aren't empty. Data is
+  already in `decisions.jsonl`; reuse the shell/sitemap/index patterns in `decision_pages.py`.
+  **Do not confuse this with per-symbol decision pages, which are correctly rejected above.**
 
 ### Recently Completed
+
+- [x] **Submit the sitemap in Google Search Console** (2026-07-08) — Domain property, verified by
+  TXT record. Note the DNS lives on Vercel nameservers even though GitHub Pages serves the site, so
+  the record goes in the Vercel dashboard, not GitHub. The sitemap grew from 6 URLs to 19 after the
+  decision pages landed; it regenerates every run.
 
 - [x] **Prerender decisions to static URLs** — `src/reporting/decision_pages.py`, wired into
   `PublicExporter.export()` so it runs every daily cycle. One page per *trading day*, not per
   symbol: `decisions.jsonl` holds one row per **run**, and a day can carry many runs (2026-06-13
   has 13). The last run of a date is that day's decision. Per-symbol pages would have sliced one
   portfolio-wide debate into near-duplicate stubs. `decisions.html` stays as the live journal and
-  now links each day to its permalink. Text per page went from 281 chars (JS-rendered, what a
-  crawler sees) to ~7,300.
+  now links each day to its permalink. Crawlable text went from 281 chars (JS-rendered — what a
+  crawler sees) to a **median of 1,975** per page; the three days that have a debate transcript
+  reach ~7,300. Do not quote the 7,300 alone — it is the best page, not the typical one. See the
+  thin-page gate above.
 - [x] **Generate `sitemap.xml` at export time** — `decision_pages.build_sitemap()` emits the static
   pages plus every decision page. Dynamic pages get the latest decision date as `lastmod`; the two
   static pages get none, so the file doesn't churn daily.
