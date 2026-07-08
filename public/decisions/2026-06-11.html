@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <title>AI fund decision — June 11, 2026</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script>
+(function () {
+  try {
+    var stored = localStorage.getItem("ai-portfolio-theme");
+    var theme = (stored === "light" || stored === "dark")
+      ? stored
+      : (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+    document.documentElement.setAttribute("data-theme", theme);
+  } catch (e) {}
+})();
+</script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-MCDDGJ3XEC"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-MCDDGJ3XEC');
+  </script>
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+  <link rel="canonical" href="https://glasshousefund.com/decisions/2026-06-11.html" />
+  <meta name="description" content="BUY AAPL, BUY NVDA, BUY V, BUY MA, BUY MSFT. Given the current market conditions, coupled with a significant cash reserve, I recommend holding the current positions without any immediate trades. This strategy ensures we retain liquidity to quickly respond to market changes." />
+  <meta name="author" content="Pradnya Wakchaure" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://glasshousefund.com/decisions/2026-06-11.html" />
+  <meta property="og:title" content="AI fund decision — June 11, 2026" />
+  <meta property="og:description" content="BUY AAPL, BUY NVDA, BUY V, BUY MA, BUY MSFT. Given the current market conditions, coupled with a significant cash reserve, I recommend holding the current positions without any immediate trades. This strategy ensures we retain liquidity to quickly respond to market changes." />
+  <meta property="og:image" content="https://glasshousefund.com/og-cover.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@GlassHouseFund" />
+  <style>
+:root { color-scheme: light dark;
+  --bg:#e9ecdf; --surface:#f3f5ec; --surface-subtle:#e1e5d4; --border:#cdd4bd;
+  --border-strong:#b4bd9f; --text:#191c11; --muted:#5e6851; --muted-strong:#3f4834;
+  --positive:#4d6a2c; --positive-bg:#dde7ca; --negative:#9c3a30; --negative-bg:#f0dbd6;
+  --accent:#5f6b45; --ink:#12140d; --shadow:0 12px 34px rgba(18,20,13,.10);
+  --row-border:#dde2d0; --panel-subtle:#eef1e6; }
+:root[data-theme="dark"] {
+  --bg:#12140d; --surface:#1b1e14; --surface-subtle:#24281a; --border:#343a28;
+  --border-strong:#4a5138; --text:#e4e8d5; --muted:#99a487; --muted-strong:#c3ccb1;
+  --positive:#a6c07f; --positive-bg:#1b2712; --negative:#e59a90; --negative-bg:#2f1a16;
+  --accent:#aeba90; --ink:#f1f4e7; --shadow:0 16px 42px rgba(0,0,0,.40);
+  --row-border:#2a2f1f; --panel-subtle:#15170f; }
+* { box-sizing:border-box; }
+body { margin:0; min-width:320px; background:var(--bg); color:var(--text);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif; line-height:1.6; }
+a { color:inherit; }
+.shell { width:min(860px, calc(100% - 32px)); margin:0 auto; padding:22px 0 60px; }
+.topbar { display:flex; align-items:center; justify-content:space-between; gap:18px; margin-bottom:34px; }
+.brand { display:flex; align-items:center; gap:10px; font-weight:800; color:var(--ink); text-decoration:none; }
+.brand-mark { display:block; width:30px; height:30px; color:var(--ink); flex:none; }
+.nav { display:flex; gap:4px; flex-wrap:wrap; }
+.nav a { display:inline-flex; align-items:center; min-height:34px; padding:0 12px; border-radius:6px;
+  color:var(--muted-strong); font-size:14px; font-weight:700; text-decoration:none; white-space:nowrap; }
+.nav a.active { background:var(--ink); color:var(--bg); }
+.nav a:hover:not(.active) { background:var(--surface-subtle); }
+.eyebrow { color:var(--accent); font-size:12px; font-weight:800; letter-spacing:.1em;
+  text-transform:uppercase; margin-bottom:12px; }
+h1 { margin:0 0 10px; color:var(--ink); font-size:clamp(26px,4.4vw,40px); line-height:1.08; letter-spacing:-.02em; }
+h2 { color:var(--ink); font-size:19px; margin:34px 0 8px; }
+h3 { color:var(--ink); font-size:15px; margin:0 0 6px; }
+p { margin:0 0 12px; }
+.lede { color:var(--muted-strong); font-size:17px; max-width:64ch; margin:0 0 10px; }
+.facts { display:flex; flex-wrap:wrap; gap:8px; margin:16px 0 8px; }
+.pill { border:1px solid var(--border-strong); border-radius:999px; background:var(--panel-subtle);
+  padding:3px 11px; font-size:12.5px; font-weight:700; color:var(--muted-strong); }
+.card { border:1px solid var(--border); border-radius:12px; background:var(--surface);
+  box-shadow:var(--shadow); padding:18px 20px; margin-bottom:12px; }
+.trade { border:1px solid var(--border); border-left:4px solid var(--positive); border-radius:8px;
+  background:var(--surface); padding:12px 14px; margin-bottom:10px; }
+.trade.sell { border-left-color:var(--negative); }
+.trade.rejected { border-left-color:var(--muted); opacity:.85; }
+.trade .head { color:var(--ink); font-weight:800; font-size:15px; }
+.conf { border-radius:5px; background:var(--positive-bg); color:var(--positive);
+  padding:1px 7px; font-size:12px; font-weight:800; margin-left:6px; }
+.muted { color:var(--muted); }
+ul { margin:6px 0 0; padding-left:20px; }
+li { margin-bottom:4px; }
+.role { font-size:11.5px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--accent); }
+.pager { display:flex; justify-content:space-between; gap:12px; margin-top:40px;
+  border-top:1px solid var(--row-border); padding-top:16px; font-size:14px; font-weight:700; }
+.dlist { list-style:none; margin:0; padding:0; }
+.dlist li { border-bottom:1px solid var(--row-border); padding:12px 0; margin:0; }
+.dlist a { color:var(--ink); font-weight:800; text-decoration:none; font-size:16px; }
+.dlist a:hover { text-decoration:underline; }
+.dlist .sub { color:var(--muted); font-size:13.5px; }
+footer { margin-top:48px; border-top:1px solid var(--row-border); padding-top:16px;
+  color:var(--muted); font-size:13px; }
+@media (max-width:560px) {
+  .topbar { flex-direction:column; align-items:flex-start; gap:12px; }
+  .nav a { padding:0 9px; font-size:13px; }
+}
+</style>
+</head>
+<body>
+  <div class="shell">
+    <div class="topbar">
+      <a class="brand" href="../index.html"><svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-linejoin="round" stroke-linecap="round"><path d="M24 5 L43 21 L43 43 L5 43 L5 21 Z" stroke-width="2.4"/><path d="M5 21 L43 21" stroke-width="2"/><path d="M24 5 L24 21" stroke-width="1.6"/><path d="M16 21 L16 43 M32 21 L32 43" stroke-width="1.6"/><path d="M5 32 L43 32" stroke-width="1.6"/></g></svg><span>Glasshouse Fund</span></a>
+      <nav class="nav" aria-label="Site navigation">
+        <a href="../dashboard.html">Dashboard</a>
+        <a class="active" href="../decisions.html">Decision Journal</a>
+        <a href="../predictions.html">Prediction Accuracy</a>
+        <a href="../engineering.html">Engineering</a>
+        <a href="../about.html">About</a>
+      </nav>
+    </div>
+    <div class="eyebrow">Decision journal</div>
+    <h1>AI fund decision — June 11, 2026</h1>
+    <p class="lede">Given the current market conditions, coupled with a significant cash reserve, I recommend holding the current positions without any immediate trades. This strategy ensures we retain liquidity to quickly respond to market changes.</p>
+    <div class="facts"><span class="pill">Outlook: NEUTRAL</span><span class="pill">Portfolio $1,000,000</span><span class="pill">Cash 87.4%</span></div>
+    <h2>Trades</h2>
+    <p class="muted">No trades this day — the fund held.</p>
+    
+    
+    <h2>Market summary</h2><p>The market is currently mixed, with some significant stocks experiencing declines over the past few weeks. Recent news indicates volatility driven by geopolitical factors and concerns around specific sectors.</p>
+    <h2>Portfolio assessment</h2><p>The portfolio is heavily weighted in cash, with over 88% of the total value held in cash. This limits exposure to market movements and potential upside. The current positions are stable but have not provided significant gains recently, as all holdings are at breakeven. Some equities are showing weak short-term performance.</p>
+    <h2>Risk assessment</h2><p>The portfolio is less exposed to market risk due to high cash reserves. However, there&#x27;s a risk of missing opportunities for growth in a recovering market. The overall risk is mitigated but could lead to lower returns.</p>
+    <h2>Cash thesis</h2><p>The high cash percentage allows for flexibility in seizing opportunities but could also mean missed gains if the market rallies. Maintaining cash is prudent under uncertain market conditions while patiently waiting for better entry points.</p>
+    <div class="pager">
+      <span></span>
+      <span><a href="2026-06-12.html">June 12, 2026 →</a></span>
+    </div>
+
+    <footer>
+      Paper trading — simulated capital, not investment advice.
+      · <a href="../decisions.html">Full decision journal</a>
+      · <a href="./">All decisions by day</a>
+    </footer>
+  </div>
+</body>
+</html>

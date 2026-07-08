@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <title>AI fund decision — July 6, 2026</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script>
+(function () {
+  try {
+    var stored = localStorage.getItem("ai-portfolio-theme");
+    var theme = (stored === "light" || stored === "dark")
+      ? stored
+      : (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+    document.documentElement.setAttribute("data-theme", theme);
+  } catch (e) {}
+})();
+</script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-MCDDGJ3XEC"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-MCDDGJ3XEC');
+  </script>
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+  <link rel="canonical" href="https://glasshousefund.com/decisions/2026-07-06.html" />
+  <meta name="description" content="BUY AAPL. Overall, the portfolio is positioned to benefit from AAPL&#x27;s strong market momentum, and the decision to increase holdings in this stock is supported by current market conditions and bullish sentiment in the tech sector." />
+  <meta name="author" content="Pradnya Wakchaure" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://glasshousefund.com/decisions/2026-07-06.html" />
+  <meta property="og:title" content="AI fund decision — July 6, 2026" />
+  <meta property="og:description" content="BUY AAPL. Overall, the portfolio is positioned to benefit from AAPL&#x27;s strong market momentum, and the decision to increase holdings in this stock is supported by current market conditions and bullish sentiment in the tech sector." />
+  <meta property="og:image" content="https://glasshousefund.com/og-cover.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@GlassHouseFund" />
+  <style>
+:root { color-scheme: light dark;
+  --bg:#e9ecdf; --surface:#f3f5ec; --surface-subtle:#e1e5d4; --border:#cdd4bd;
+  --border-strong:#b4bd9f; --text:#191c11; --muted:#5e6851; --muted-strong:#3f4834;
+  --positive:#4d6a2c; --positive-bg:#dde7ca; --negative:#9c3a30; --negative-bg:#f0dbd6;
+  --accent:#5f6b45; --ink:#12140d; --shadow:0 12px 34px rgba(18,20,13,.10);
+  --row-border:#dde2d0; --panel-subtle:#eef1e6; }
+:root[data-theme="dark"] {
+  --bg:#12140d; --surface:#1b1e14; --surface-subtle:#24281a; --border:#343a28;
+  --border-strong:#4a5138; --text:#e4e8d5; --muted:#99a487; --muted-strong:#c3ccb1;
+  --positive:#a6c07f; --positive-bg:#1b2712; --negative:#e59a90; --negative-bg:#2f1a16;
+  --accent:#aeba90; --ink:#f1f4e7; --shadow:0 16px 42px rgba(0,0,0,.40);
+  --row-border:#2a2f1f; --panel-subtle:#15170f; }
+* { box-sizing:border-box; }
+body { margin:0; min-width:320px; background:var(--bg); color:var(--text);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif; line-height:1.6; }
+a { color:inherit; }
+.shell { width:min(860px, calc(100% - 32px)); margin:0 auto; padding:22px 0 60px; }
+.topbar { display:flex; align-items:center; justify-content:space-between; gap:18px; margin-bottom:34px; }
+.brand { display:flex; align-items:center; gap:10px; font-weight:800; color:var(--ink); text-decoration:none; }
+.brand-mark { display:block; width:30px; height:30px; color:var(--ink); flex:none; }
+.nav { display:flex; gap:4px; flex-wrap:wrap; }
+.nav a { display:inline-flex; align-items:center; min-height:34px; padding:0 12px; border-radius:6px;
+  color:var(--muted-strong); font-size:14px; font-weight:700; text-decoration:none; white-space:nowrap; }
+.nav a.active { background:var(--ink); color:var(--bg); }
+.nav a:hover:not(.active) { background:var(--surface-subtle); }
+.eyebrow { color:var(--accent); font-size:12px; font-weight:800; letter-spacing:.1em;
+  text-transform:uppercase; margin-bottom:12px; }
+h1 { margin:0 0 10px; color:var(--ink); font-size:clamp(26px,4.4vw,40px); line-height:1.08; letter-spacing:-.02em; }
+h2 { color:var(--ink); font-size:19px; margin:34px 0 8px; }
+h3 { color:var(--ink); font-size:15px; margin:0 0 6px; }
+p { margin:0 0 12px; }
+.lede { color:var(--muted-strong); font-size:17px; max-width:64ch; margin:0 0 10px; }
+.facts { display:flex; flex-wrap:wrap; gap:8px; margin:16px 0 8px; }
+.pill { border:1px solid var(--border-strong); border-radius:999px; background:var(--panel-subtle);
+  padding:3px 11px; font-size:12.5px; font-weight:700; color:var(--muted-strong); }
+.card { border:1px solid var(--border); border-radius:12px; background:var(--surface);
+  box-shadow:var(--shadow); padding:18px 20px; margin-bottom:12px; }
+.trade { border:1px solid var(--border); border-left:4px solid var(--positive); border-radius:8px;
+  background:var(--surface); padding:12px 14px; margin-bottom:10px; }
+.trade.sell { border-left-color:var(--negative); }
+.trade.rejected { border-left-color:var(--muted); opacity:.85; }
+.trade .head { color:var(--ink); font-weight:800; font-size:15px; }
+.conf { border-radius:5px; background:var(--positive-bg); color:var(--positive);
+  padding:1px 7px; font-size:12px; font-weight:800; margin-left:6px; }
+.muted { color:var(--muted); }
+ul { margin:6px 0 0; padding-left:20px; }
+li { margin-bottom:4px; }
+.role { font-size:11.5px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--accent); }
+.pager { display:flex; justify-content:space-between; gap:12px; margin-top:40px;
+  border-top:1px solid var(--row-border); padding-top:16px; font-size:14px; font-weight:700; }
+.dlist { list-style:none; margin:0; padding:0; }
+.dlist li { border-bottom:1px solid var(--row-border); padding:12px 0; margin:0; }
+.dlist a { color:var(--ink); font-weight:800; text-decoration:none; font-size:16px; }
+.dlist a:hover { text-decoration:underline; }
+.dlist .sub { color:var(--muted); font-size:13.5px; }
+footer { margin-top:48px; border-top:1px solid var(--row-border); padding-top:16px;
+  color:var(--muted); font-size:13px; }
+@media (max-width:560px) {
+  .topbar { flex-direction:column; align-items:flex-start; gap:12px; }
+  .nav a { padding:0 9px; font-size:13px; }
+}
+</style>
+</head>
+<body>
+  <div class="shell">
+    <div class="topbar">
+      <a class="brand" href="../index.html"><svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-linejoin="round" stroke-linecap="round"><path d="M24 5 L43 21 L43 43 L5 43 L5 21 Z" stroke-width="2.4"/><path d="M5 21 L43 21" stroke-width="2"/><path d="M24 5 L24 21" stroke-width="1.6"/><path d="M16 21 L16 43 M32 21 L32 43" stroke-width="1.6"/><path d="M5 32 L43 32" stroke-width="1.6"/></g></svg><span>Glasshouse Fund</span></a>
+      <nav class="nav" aria-label="Site navigation">
+        <a href="../dashboard.html">Dashboard</a>
+        <a class="active" href="../decisions.html">Decision Journal</a>
+        <a href="../predictions.html">Prediction Accuracy</a>
+        <a href="../engineering.html">Engineering</a>
+        <a href="../about.html">About</a>
+      </nav>
+    </div>
+    <div class="eyebrow">Decision journal</div>
+    <h1>AI fund decision — July 6, 2026</h1>
+    <p class="lede">Overall, the portfolio is positioned to benefit from AAPL&#x27;s strong market momentum, and the decision to increase holdings in this stock is supported by current market conditions and bullish sentiment in the tech sector.</p>
+    <div class="facts"><span class="pill">Outlook: BULLISH</span><span class="pill">Portfolio $1,022,983</span><span class="pill">Cash 26.1%</span><span class="pill">Grounding: flagged</span></div>
+    <h2>Trades</h2>
+    <div class="trade"><div class="head">BUY 20 AAPL<span class="conf">85%</span><span class="muted"> · filled at $312</span></div><p style="margin:6px 0 0">AAPL has shown strong growth momentum amidst a challenging market, indicating potential for continued appreciation. Increasing our position capitalizes on this strength.</p><div class="muted" style="margin-top:6px">Risks the AI named</div><ul><li>Market volatility affecting tech sector</li><li>Possible supply chain issues for new product launches</li></ul></div>
+    <h2>The debate</h2><div class="card"><div class="role">bull case <span class="muted">· conviction 0.85</span></div><p>Despite recent volatility in tech stocks, our analytical focus on Apple Inc. (AAPL) indicates strong momentum and potential for continued growth, making it favorable for either increasing our holdings or maintaining our current position. The company has shown significant price action in the last five days, rising nearly 5%, which highlights strong relative strength in the face of market challenges, particularly in comparison to its peers like Nvidia (NVDA) which has seen a decline. Moreover, upcoming product launches and ongoing market interest in AAPL&#x27;s innovative technologies could serve as positive catalysts for sustained upward movement in its stock price.</p><ul><li>Apple’s shares have increased by approximately 4.84% in the past five days, showcasing significant momentum in an otherwise volatile market.</li><li>Relative strength compared to peers demonstrates resilience; NVDA has dropped 1.39% in the same period, indicating that AAPL&#x27;s recent performance could signify a shift favoring well-established tech firms with strong product lines.</li><li>Current market news reflects positive sentiment around AAPL, with analysts noting strategic updates that could bolster investor confidence despite minor supply chain concerns related to the upcoming foldable iPhone.</li><li>With strong financials and a robust ecosystem, AAPL continues to display characteristics of a stalwart investment, making it an attractive option amidst uncertainty in other tech sectors.</li></ul></div><div class="card"><div class="role">bear case <span class="muted">· conviction 0.85</span></div><p>The current portfolio includes several high-profile technology and healthcare companies that exhibit potential weaknesses in valuation, deteriorating momentum, and macroeconomic headwinds that could adversely affect returns. With a high concentration in market leaders that may face increased competition, supply chain challenges, and overvaluation concerns, significant downside risks warrant careful reevaluation of holdings.</p><ul><li>Valuation concerns are prevalent among high-growth tech stocks like AAPL, NVDA, and TSLA, which may be pricing in excessive growth expectations due to their inflated earnings multiples in a potentially slowing economic environment.</li><li>Deteriorating momentum is evident particularly in NVDA and MSFT, both of which have experienced recent declines and fluctuations, which could signal investor caution despite their strong historical performance.</li><li>Macroeconomic headwinds such as rising interest rates, inflationary pressures, and potential recession fears could dampen consumer spending, directly affecting large-cap stocks like AMZN and HD, which depend on consumer discretionary spending.</li><li>The healthcare and pharmaceutical sectors, represented by JNJ and UNH, are facing regulatory challenges and pricing pressures that could further squeeze profitability; JNJ&#x27;s recent stock surge raises questions about sustainability.</li><li>Overexposure to a handful of sectors increases portfolio risk; diversification into less correlated assets could mitigate this risk while improving long-term stability.</li></ul></div><div class="card"><div class="role">risk case <span class="muted">· conviction 0.60</span></div><p>The portfolio exhibits significant risks stemming from concentrated positions in a few large-cap tech stocks, combined with substantial cash reserves. Notably, the cash level represents over 26% of the total portfolio, which could lead to underperformance in a rising market. Concentration in AAPL and NVDA also poses risks; AAPL shows strong short-term performance, but NVDA is trending downwards. Other holdings such as TSLA and AMZN are also dependent on broader market sentiment and could contribute to volatility, especially if market conditions shift. Sector tilts towards technology and consumer discretionary add to the exposure risk during market corrections, especially in momentum-driven sectors.</p><ul><li>Position concentration in AAPL and NVDA increases risk exposure, particularly with NVDA showing a downward trend.</li><li>The portfolio&#x27;s sector tilt heavily favors technology, which is currently volatile and sensitive to market changes, increasing overall risk.</li><li>Cash levels at 26% could hinder performance in a bullish market, creating opportunity cost, but also provide buffer in downturns.</li><li>Potential drawdown from high volatility of technology stocks and concentration risk could result in significant losses during market corrections.</li></ul></div>
+    <h2>Bear case response</h2><p>1. Valuation concerns with high-growth tech stocks are acknowledged; however, AAPL&#x27;s recent performance demonstrates enduring market strength that mitigates some of these concerns. 2. The deteriorating momentum in NVDA is a valid point, but the focus remains on capitalizing on AAPL&#x27;s resilience and potential for continuous growth. 3. Macro headwinds are certainly a factor, but with AAPL&#x27;s innovation and market positioning, it may withstand such pressures better than other stocks. 4. While overexposure to certain sectors is a concern, the ongoing positive sentiment and robust fundamentals in high-performing stocks like AAPL justify continued investment.</p>
+    <h2>Market summary</h2><p>The market is demonstrating strong momentum, particularly in technology stocks like Apple Inc. (AAPL) which has recently increased in value by approximately 5% over the past five days, contrasting with declines in others like Nvidia (NVDA). Positive news regarding product launches and strong fundamentals support AAPL&#x27;s growth potential, contributing to an overall bullish sentiment in tech despite some volatility in the sector.</p>
+    <h2>Portfolio assessment</h2><p>Current portfolio is diversified with significant positions in high-performing tech stocks, though it also holds cash reserves that exceed 26% of total value. This concentration, especially in AAPL, offers opportunities for growth but necessitates cautious balancing to mitigate risks associated with volatility and overexposure to tech.</p>
+    <h2>Risk assessment</h2><p>The portfolio bears substantial risk due to its concentration in a few large-cap tech stocks, especially with NVDA recently trending downward. Such concentration, combined with macroeconomic uncertainties, raises exposure to potential market corrections or volatility, which could adversely affect overall portfolio performance.</p>
+    <h2>Cash thesis</h2><p>With a cash percentage exceeding 26%, maintaining a portion in cash serves the dual purpose of protecting against potential downturns while providing liquidity for strategic purchases. This cash reserve can be strategically deployed to capitalize on high conviction buys amidst market fluctuations.</p>
+    <div class="pager">
+      <span><a href="2026-07-03.html">← July 3, 2026</a></span>
+      <span><a href="2026-07-07.html">July 7, 2026 →</a></span>
+    </div>
+
+    <footer>
+      Paper trading — simulated capital, not investment advice.
+      · <a href="../decisions.html">Full decision journal</a>
+      · <a href="./">All decisions by day</a>
+    </footer>
+  </div>
+</body>
+</html>

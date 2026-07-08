@@ -34,6 +34,7 @@ class PublicExporter:
             self._write_run_status(run_status)
         self._write_prediction_dashboard()
         self._copy_history_files()
+        self._write_decision_pages()
 
     def write_run_status(self, run_status: dict) -> None:
         PUBLIC_DIR.mkdir(exist_ok=True)
@@ -211,6 +212,16 @@ class PublicExporter:
             src = DATA_DIR / filename
             if src.exists():
                 shutil.copy(src, PUBLIC_DIR / filename)
+
+    def _write_decision_pages(self) -> None:
+        """Prerender the journal to /decisions/*.html and regenerate sitemap.xml.
+        Best-effort — a template error must not fail an otherwise good run."""
+        from src.reporting import decision_pages
+
+        try:
+            decision_pages.export()
+        except Exception as exc:  # noqa: BLE001 — export is not worth failing a run over
+            logger.warning("Decision page prerender skipped: %s", exc)
 
 
 def _utc_now() -> str:

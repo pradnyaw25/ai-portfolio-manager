@@ -38,6 +38,7 @@ An LLM-agent portfolio system with a hardened gateway, a deterministic risk engi
 - **Benchmarking**: Compare portfolio performance against S&P 500 and other indices
 - **Prediction Calibration**: Every BUY spawns a 30-day "beat SPY" prediction; the dashboard scores them and reports a Brier score and confidence-calibration curve (predicted confidence vs. observed win rate)
 - **Public Dashboard**: Static HTML dashboard with portfolio, run status, prediction accuracy, and decision journal views, including last-updated metadata
+- **Prerendered Decision Pages**: Every trading day gets its own static, indexable page at `/decisions/YYYY-MM-DD.html` — the trades, the full bull/bear/risk debate, and the cash thesis as real HTML rather than a client-side fetch. Generated each run by `src/reporting/decision_pages.py`, which also emits `sitemap.xml`
 - **MCP Server**: A read-only [MCP](https://modelcontextprotocol.io) server (`mcp_server/`) exposes the fund to Claude Desktop/Code — holdings, performance history, trades, decision journal, debate transcripts, and memory search — so you can ask "why did the fund sell NVDA in June?" against real data
 
 ## Setup
@@ -91,7 +92,7 @@ src/
   data_sources/    - Market data, news, and benchmark fetchers
   models/          - Data models (portfolio, trade, prediction)
   simulator/       - Portfolio engine and performance tracking
-  reporting/       - Markdown and HTML report generation
+  reporting/       - Markdown reports, public JSON exports, prerendered decision pages
   storage/         - CSV-based persistence layer
   utils/           - Logging and date helpers
 scripts/           - CLI entry points (daily run, backfill, benchmark)
