@@ -1,8 +1,10 @@
 from dataclasses import dataclass, asdict
 from datetime import date
 
-from src.config import WATCHLIST
+from src.config import WATCHLIST, WATCHLIST_NEWS_LIMIT
 from src.models.portfolio import PortfolioSnapshot
+
+_BENCHMARK_SYMBOLS = {"SPY", "QQQ", "^VIX"}
 
 
 @dataclass
@@ -22,7 +24,9 @@ class MarketContext:
     holdings: list[dict]
     symbols: list[SymbolContext]
     market_news: list[dict]
-    holdings_news: dict[str, list[dict]]
+    # Per-symbol news for held positions AND the biggest-moving unheld watchlist
+    # names, so the analysts can build a case to initiate — not just tend incumbents.
+    symbol_news: dict[str, list[dict]]
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -48,9 +52,24 @@ class MarketContextBuilder:
 
         market_news = news_client.get_market_news(limit=5)
 
-        holdings_news = {}
-        for symbol in held_symbols[:8]:
-            holdings_news[symbol] = news_client.get_stock_news(symbol, limit=3)
+        # News follows signal, not just ownership: cover held names, then the
+        # biggest-moving watchlist names we DON'T hold so the analysts get catalysts
+        # for candidates (otherwise unowned universe names never get a case made).
+        held_set = set(held_symbols)
+        movers = sorted(
+            (
+                sc
+                for sc in symbol_contexts
+                if sc.symbol not in held_set and sc.symbol not in _BENCHMARK_SYMBOLS
+            ),
+            key=lambda sc: abs(sc.return_5d or 0) + abs(sc.return_30d or 0),
+            reverse=True,
+        )
+        news_symbols = held_symbols[:8] + [sc.symbol for sc in movers[:WATCHLIST_NEWS_LIMIT]]
+
+        symbol_news = {}
+        for symbol in news_symbols:
+            symbol_news[symbol] = news_client.get_stock_news(symbol, limit=3)
 
         return MarketContext(
             date=date.today().isoformat(),
@@ -77,7 +96,7 @@ class MarketContextBuilder:
                 }
                 for n in market_news
             ],
-            holdings_news={
+            symbol_news={
                 symbol: [
                     {
                         "title": article.get("title", ""),
@@ -86,7 +105,7 @@ class MarketContextBuilder:
                     }
                     for article in articles
                 ]
-                for symbol, articles in holdings_news.items()
+                for symbol, articles in symbol_news.items()
             },
         )
 

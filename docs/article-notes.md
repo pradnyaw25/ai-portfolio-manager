@@ -116,3 +116,46 @@ Entry template:
 - **Feeds.** Article 2 — "Three LLMs Walk Into an Investment Committee" (the roadmap's
   planned agent-layer piece; the conviction-clustering failure IS the article). Code:
   `src/agents/analysts.py`, `src/agents/debate.py`.
+
+---
+
+## 2026-07-07 · "My AI fund had a 33-name universe and only ever traded 19 of them"
+
+- **Hook.** The About page proudly lists a 33-name, AI-compute-thesis universe
+  (semis, neoclouds, data-center power). In months of trading it had touched maybe 19
+  of them — always the boring mega-caps (AAPL, NVDA, MSFT…), never the AI-infra names
+  it was supposedly built around. Someone asked why. The answer was one line of code.
+
+- **The finding.** It wasn't a data or universe bug — the watchlist matched the site
+  exactly, and the market-context builder fed all 33 names to the portfolio manager
+  daily *with live prices and returns*. Two things quietly starved the unowned names:
+  1. **News followed ownership, not signal.** Per-symbol news was fetched only for
+     *held* positions (`held_symbols[:8]`). Watchlist-only names arrived with a price
+     and a return but **no catalyst** — so the bull analyst (which argues from
+     "momentum, relative strength, catalysts") had nothing to build a case on, and no
+     new position ever got initiated.
+  2. **Their momentum was genuinely awful.** The AI-infra names were in 20–34% 30-day
+     drawdowns (CRWV −28%, IREN −34%, APLD −30%). A momentum-tilted committee correctly
+     avoids falling knives — so even the names it *did* see, it (rightly) skipped.
+  Net: an aspirational universe that, in practice, churned the same ~19 stable names.
+
+- **The fix.** Make news follow **signal**: fetch per-symbol news for held names **plus
+  the biggest-moving unheld watchlist names**, so the analysts get catalysts for
+  candidates, not just incumbents. One bounded change to the context builder
+  (`WATCHLIST_NEWS_LIMIT`). It doesn't *force* trades — the drawdown reality still means
+  it won't buy falling knives — it just lets the universe actually be considered.
+
+- **Method worth stealing.**
+  - **Audit what the agent never does, not just what it does.** The bug was invisible in
+    every run's output — it showed up only as an *absence* (names that never appeared).
+  - **Resource allocation encodes bias.** "Fetch news for holdings" quietly made the
+    portfolio self-reinforcing: you can only build a case for a name you already own.
+    Give scarce context (news, tools, tokens) to *candidates*, not just incumbents.
+
+- **Why it's shareable.** The gap between the impressive-looking universe and the timid
+  reality is relatable and a little funny, and the root cause (news = ownership) is a
+  subtle, generalizable agent-design trap. Honest, concrete, one-line fix.
+
+- **Feeds.** Article 3 (ops/behavior retro) or a standalone "your agent's biases hide in
+  its plumbing" post; also a retrospective data point once the AI-infra names actually
+  start getting evaluated. Code: `src/research/market_context.py`.

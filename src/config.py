@@ -20,6 +20,10 @@ NEWS_API_KEY = os.getenv("NEWS_API_KEY", "")
 # ~24h delay and a 100/day cap) is used only as a fallback when RSS returns nothing.
 # Set true to prefer NewsAPI first (worth it on a paid plan).
 PREFER_NEWSAPI = os.getenv("PREFER_NEWSAPI", "false").lower() in {"1", "true", "yes"}
+# Per-symbol news is fetched for held positions AND this many of the biggest-moving
+# watchlist names we don't hold — so the analysts get catalysts for candidates, not
+# just incumbents (otherwise unowned universe names never get a case made for them).
+WATCHLIST_NEWS_LIMIT = int(os.getenv("WATCHLIST_NEWS_LIMIT", "6"))
 QDRANT_URL = os.getenv("QDRANT_URL", "http://localhost:6333")
 QDRANT_API_KEY = os.getenv("QDRANT_API_KEY", "")
 QDRANT_COLLECTION = os.getenv("QDRANT_COLLECTION", "fund_memory")
