@@ -274,6 +274,25 @@
       color: var(--muted);
     }
 
+    .tool-trace {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .tool-trace summary {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .tool-trace ul {
+      margin: 8px 0 0;
+      padding-left: 18px;
+    }
+
+    .tool-trace code {
+      font-size: 12px;
+    }
+
     .sym-name {
       color: var(--muted);
       font-size: 12px;
@@ -518,6 +537,53 @@
         .replace(/'/g, "&#039;");
     }
 
+    const TOOL_LABELS = {
+      get_price: ["price", "prices"],
+      get_prices: ["price", "prices"],
+      get_history: ["history lookup", "history lookups"],
+      search_news: ["news search", "news searches"],
+    };
+
+    function toolArgLabel(tc) {
+      try {
+        const a = JSON.parse(tc.arguments || "{}");
+        if (a.symbol) return a.symbol + (a.days ? `, ${a.days}d` : "");
+        if (a.query) return `"${a.query}"`;
+        return Object.values(a).join(", ");
+      } catch (e) {
+        return tc.arguments || "";
+      }
+    }
+
+    function renderToolTrace(toolCalls) {
+      // One-line summary (e.g. "5 tool calls — 3 prices, 1 history lookup, 1 news
+      // search"), with the full list tucked behind an expander. Every call succeeds
+      // in practice, so only failures are flagged.
+      const counts = {};
+      let failed = 0;
+      toolCalls.forEach(tc => {
+        const key = tc.name || "tool";
+        counts[key] = (counts[key] || 0) + 1;
+        if (tc.outcome && tc.outcome.ok === false) failed++;
+      });
+      const parts = Object.entries(counts)
+        .sort((a, b) => b[1] - a[1])
+        .map(([name, n]) => {
+          const label = TOOL_LABELS[name] || [name, name];
+          return `${n} ${n === 1 ? label[0] : label[1]}`;
+        });
+      const total = toolCalls.length;
+      let summary = `${total} tool call${total === 1 ? "" : "s"} — ${parts.join(", ")}`;
+      if (failed) summary += ` · ${failed} failed`;
+
+      const items = toolCalls.map(tc => {
+        const ok = !tc.outcome || tc.outcome.ok !== false;
+        return `<li><code>${escapeHtml(tc.name)}(${escapeHtml(toolArgLabel(tc))})</code>${ok ? "" : " ✗"}</li>`;
+      }).join("");
+
+      return `<details class="tool-trace"><summary>${escapeHtml(summary)}</summary><ul>${items}</ul></details>`;
+    }
+
     function renderTrade(t, rejected) {
       const symbol = t.symbol || "???";
       const action = t.action || "???";
@@ -682,16 +748,12 @@
         }
 
         const research = entry.research_brief || {};
-        if (research.brief || (research.tool_calls && research.tool_calls.length)) {
-          const toolCalls = research.tool_calls || [];
-          const toolList = toolCalls.map(tc => {
-            const ok = tc.outcome && tc.outcome.ok;
-            return `<li><code>${escapeHtml(tc.name)}(${escapeHtml(tc.arguments || "")})</code> ${ok ? "✓" : "✗"}</li>`;
-          }).join("");
+        const toolCalls = research.tool_calls || [];
+        if (research.brief || toolCalls.length) {
           html += `<div class="section">
             <h3>Research Trace</h3>
             ${research.brief ? `<p>${escapeHtml(research.brief)}</p>` : ""}
-            ${toolList ? `<div class="muted">Tool calls:</div><ul>${toolList}</ul>` : ""}
+            ${toolCalls.length ? renderToolTrace(toolCalls) : ""}
           </div>`;
         }
 
