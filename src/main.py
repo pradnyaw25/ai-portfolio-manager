@@ -233,6 +233,65 @@ def track_buy_predictions(trades, approved_trades, market_data):
             )
 
 
+def record_market_calls(decisions, trades, approved_trades, research, market_data, run_id):
+    """Record one standalone, benchmark-relative prediction per researched name at
+    each configured horizon — decoupled from whether the fund traded it.
+
+    Predictions are the calibration artifact, so they must sample the LLM's full
+    confidence distribution, not just the high-conviction names that cleared every
+    risk guardrail and became BUYs. Runs on HOLD days too. ``became_trade`` preserves
+    the traded-vs-all slice. Falls back to the legacy BUY-only path when the model
+    emits no ``market_calls`` (older prompt), so nothing regresses.
+    """
+    store = PredictionStore()
+    try:
+        spy_price = market_data.get_price("SPY")
+    except Exception:
+        spy_price = 0
+    if spy_price <= 0:
+        logger.warning("No SPY price — skipping market-call predictions")
+        return
+
+    calls = (decisions or {}).get("market_calls") or []
+    if not calls:
+        track_buy_predictions(trades or [], approved_trades or [], market_data)
+        return
+
+    executed_buys = {t.symbol for t in (trades or []) if t.action.value == "BUY"}
+    prices = extract_prices(research or {})
+    recorded = 0
+    for call in calls:
+        symbol = str(call.get("symbol", "")).upper()
+        if not symbol:
+            continue
+        price = prices.get(symbol)
+        if not price:
+            try:
+                price = market_data.get_price(symbol)
+            except Exception:
+                price = 0
+        if not price or price <= 0:
+            continue
+        for horizon in PredictionStore.HORIZONS:
+            created = store.create_call(
+                run_id=run_id,
+                symbol=symbol,
+                direction=call.get("direction", "OUTPERFORM"),
+                confidence=float(call.get("confidence", 0.5) or 0.5),
+                thesis=call.get("thesis", "") or "",
+                start_price=price,
+                spy_price=spy_price,
+                horizon=horizon,
+                became_trade=symbol in executed_buys,
+            )
+            if created is not None:
+                recorded += 1
+    logger.info(
+        "Recorded %d market-call prediction(s) across %d horizon(s) from %d call(s)",
+        recorded, len(PredictionStore.HORIZONS), len(calls),
+    )
+
+
 def run_grounding_check(decisions, research, memory_context, snapshot):
     """Verify the decision's claims are grounded in the context it had."""
     return check_grounding(

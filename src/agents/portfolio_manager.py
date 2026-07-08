@@ -56,6 +56,12 @@ Rules:
 - Only trade symbols present in market_context.symbols.
 - Prefer no trade over weak trades.
 - Every trade must include confidence from 0.0 to 1.0.
+- Populate 'market_calls' with ONE entry for EVERY symbol in market_context.symbols
+  (holdings and watchlist alike), whether or not you trade it. A name you hold, or
+  can't buy, or leave alone still has a view — record it. Each call states whether
+  the name will OUTPERFORM or UNDERPERFORM SPY over the horizon, with a calibrated
+  confidence from 0.0 to 1.0. Do NOT omit low-confidence names; a 0.55 is data.
+  Report genuine confidence — do not round everything to 0.8.
 - If cash_pct is above 0.25, include a cash_thesis.
 - If memory influenced a conclusion, cite memory IDs in sources_used.
 - Treat risk_lessons and recent_trades as higher-priority constraints than old theses.
@@ -78,6 +84,14 @@ Return ONLY valid JSON in this format:
       "reason": "...",
       "risks": ["...", "..."],
       "sources_used": ["5d return", "30d return", "holding news"]
+    }}
+  ],
+  "market_calls": [
+    {{
+      "symbol": "AAPL",
+      "direction": "OUTPERFORM" | "UNDERPERFORM",
+      "confidence": 0.62,
+      "thesis": "one line on why, vs SPY"
     }}
   ],
   "summary": "..."

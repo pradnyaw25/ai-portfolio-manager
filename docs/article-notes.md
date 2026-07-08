@@ -159,3 +159,31 @@ Entry template:
 - **Feeds.** Article 3 (ops/behavior retro) or a standalone "your agent's biases hide in
   its plumbing" post; also a retrospective data point once the AI-infra names actually
   start getting evaluated. Code: `src/research/market_context.py`.
+
+---
+
+## Finding: predictions coupled to trades starve (and bias) the calibration curve
+
+**Date:** 2026-07-08. **Code:** `src/main.py` (`record_market_calls`),
+`src/storage/prediction_store.py` (`create_call`), `src/llm/schemas.py` (`MarketCall`).
+
+- **The trap.** The calibration artifact (Brier score + confidence curve) is the whole
+  pitch, but predictions only spawned from executed BUYs — ~7 in a month. Two failures at
+  once: **volume** (curve is noise at N=7) and **selection bias** (a BUY is a name that
+  cleared every risk guardrail, i.e. the fund's *highest-conviction* 0.8s — precisely the
+  worst sample for measuring calibration, which wants the full 0.55→0.95 range).
+- **The fix.** Decouple. Record a directional "beat/lag SPY" call for every researched
+  name each run, whether or not it trades. Keep `became_trade` so you can still slice
+  "calibration on names we actually bet on" vs "all views" — that comparison is itself a
+  section ("is the model better calibrated when it has skin in the game?").
+- **The non-obvious part — window independence.** Naively opening a fresh 30d prediction
+  per name per day gives hundreds of rows that are **autocorrelated garbage**: a window
+  starting today overlaps tomorrow's by 29/30, so effective N ≪ row count. Guard: one open
+  prediction per (symbol, horizon); a new window opens only after the prior resolves. This
+  is *also* the argument for short horizons — 5d non-overlapping windows accumulate
+  independent samples ~6× faster than 30d, so the curve gets shape in ~2 weeks not months.
+- **Method worth stealing.** When your headline metric is a distribution, audit how the
+  data is *sampled*, not just how it's computed. Here the sampler (trades) silently
+  conditioned on the exact variable being measured (confidence).
+- **Feeds.** The calibration/eval article — this is the "why the first curve was a lie"
+  beat before the real numbers land.
