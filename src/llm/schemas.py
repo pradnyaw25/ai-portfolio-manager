@@ -35,6 +35,23 @@ class TradeProposal(BaseModel):
     sources_used: list[str] = Field(default_factory=list)
 
 
+class MarketCall(BaseModel):
+    """A directional view on one symbol, decoupled from any trade.
+
+    Emitted for every researched name (holdings + watchlist), whether or not the
+    fund trades it, so the calibration set isn't sampled on conviction — the 0.55s
+    matter as much as the 0.85s. Scored the same way as trade-linked predictions:
+    right if the realized direction vs SPY matches ``direction`` at the horizon.
+    """
+
+    model_config = ConfigDict(extra="allow")
+
+    symbol: str
+    direction: str = "OUTPERFORM"  # OUTPERFORM | UNDERPERFORM (vs SPY)
+    confidence: float = 0.5  # 0..1 — the calibration axis
+    thesis: str = ""
+
+
 class AnalystThesis(BaseModel):
     """A single analyst's structured argument (bull / bear / risk)."""
 
@@ -60,6 +77,7 @@ class DecisionResponse(BaseModel):
     risk_assessment: str = ""
     bear_case_response: str = ""
     trades: list[TradeProposal] = Field(default_factory=list)
+    market_calls: list[MarketCall] = Field(default_factory=list)
     summary: str = ""
     sources_used: list[str] = Field(default_factory=list)
 

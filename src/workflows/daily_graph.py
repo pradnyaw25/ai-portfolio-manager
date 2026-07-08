@@ -64,15 +64,15 @@ def build_daily_cycle_graph():
     for (node_name, _), (next_node_name, _) in zip(workflow_nodes, workflow_nodes[1:]):
         # After rebalance, branch on whether there is anything to execute: with no
         # approved trades (empty decision or all rejected), skip the
-        # approval/execute/track nodes and go straight to journaling — still
-        # exporting run status and diagnostics.
+        # approval/execute nodes — but still run track_predictions so directional
+        # market calls are recorded on HOLD days — then journal as usual.
         if node_name == "check_rebalance":
             graph.add_conditional_edges(
                 node_name,
                 route_after_rebalance,
                 {
                     "execute": "human_approval",
-                    "skip_execution": "journal_run",
+                    "skip_execution": "track_predictions",
                     "failed": "finalize_failure",
                 },
             )
@@ -411,7 +411,16 @@ def execute_trades_node(state: DailyGraphState) -> DailyGraphState:
 
 def track_predictions_node(state: DailyGraphState) -> DailyGraphState:
     run = state["run"]
-    steps.track_buy_predictions(run.trades, run.approved_trades, run.market_data)
+    # Runs on both the execute path and the skip-execution (HOLD / all-rejected)
+    # path, so directional calls are recorded even on days the fund does not trade.
+    steps.record_market_calls(
+        run.decisions,
+        run.trades,
+        run.approved_trades,
+        run.research,
+        run.market_data,
+        run.run_id,
+    )
     return {"run": run}
 
 

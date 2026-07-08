@@ -40,7 +40,7 @@ def _mock_cycle(monkeypatch, *, approved, decision_trades=None, memory_status="o
         "review_risk": SimpleNamespace(approved=approved),
         "check_rebalance": (SimpleNamespace(), list(approved)),
         "execute_trades": [SimpleNamespace(symbol="AAPL")],
-        "track_buy_predictions": None,
+        "record_market_calls": None,
         "journal_run": None,
         "save_portfolio_and_performance": None,
         "generate_report_and_tweet": ("# report", "tweet"),
@@ -89,7 +89,9 @@ def test_no_approved_trades_skips_execution_but_still_exports(monkeypatch):
 
     assert not run.errors
     assert "execute_trades" not in calls
-    assert "track_buy_predictions" not in calls
+    # Execution is skipped, but directional market calls are still recorded on a
+    # HOLD / no-approved-trades day — that's the point of decoupling predictions.
+    assert "record_market_calls" in calls
     assert "journal_run" in calls  # rejoined the tail
     assert run.run_status["status"] == "success"
     assert run.diagnostics["execution"].startswith("skipped")
@@ -102,7 +104,7 @@ def test_approved_trades_run_through_execution(monkeypatch):
 
     run = build_daily_cycle_graph().invoke(create_initial_state())["run"]
 
-    assert "execute_trades" in calls and "track_buy_predictions" in calls
+    assert "execute_trades" in calls and "record_market_calls" in calls
     assert "execution" not in run.diagnostics
 
 

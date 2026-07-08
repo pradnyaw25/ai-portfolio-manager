@@ -66,7 +66,7 @@ def test_graph_runs_full_pipeline_in_order(monkeypatch):
         # Non-empty approved trades so the graph routes through the execution path.
         "check_rebalance": (SimpleNamespace(), trades),
         "execute_trades": trades,
-        "track_buy_predictions": None,
+        "record_market_calls": None,
         "journal_run": None,
         "save_portfolio_and_performance": None,
         "generate_report_and_tweet": ("# report", "tweet text"),
@@ -85,7 +85,7 @@ def test_graph_runs_full_pipeline_in_order(monkeypatch):
         "run_research_followup": "research_followup",
         "run_grounding_check": "check_grounding",
         "check_rebalance": "check_rebalance",
-        "track_buy_predictions": "track_predictions",
+        "record_market_calls": "track_predictions",
         "save_portfolio_and_performance": "save_portfolio",
         "generate_report_and_tweet": "generate_outputs",
     }

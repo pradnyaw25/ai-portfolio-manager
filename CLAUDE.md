@@ -179,9 +179,15 @@ leverage; the first is a latent bug, not a nicety.
   the Brier score and confidence-calibration curve are the artifact. Secondary hook: the read-only
   MCP server ("point Claude at a real fund's decision history and interrogate it"), currently
   buried as README bullet 11.
-- [ ] **Wait for resolved predictions before launching** — Each BUY spawns a 30-day prediction and
-  the repo is ~1 month old, so almost nothing has resolved and the calibration curve is still
-  noise. Launch at ~50–100 resolved predictions. An LLM that is *confidently wrong*, with receipts,
-  is a better story than one that wins — but only once N is large enough to mean anything.
+- [ ] **Wait for resolved predictions before launching** — Launch at ~50–100 resolved predictions.
+  An LLM that is *confidently wrong*, with receipts, is a better story than one that wins — but only
+  once N is large enough to mean anything. **Throughput was fixed on 2026-07-08**: predictions used
+  to spawn only from BUYs (~7 in a month, biased toward high conviction). Now every run records a
+  directional call for every researched name at 5d and 30d horizons, decoupled from trading
+  (`record_market_calls` in `main.py`, `PredictionStore.create_call`). Non-overlapping windows per
+  (symbol, horizon) keep samples independent; the 5d horizon means the first curve gets shape within
+  ~2 weeks rather than the ~6–9 months the BUY-only path implied. `became_trade` lets the writeup
+  show two curves (all views vs traded-only). N still accumulates *forward* from the ship date — no
+  live backfill without lookahead.
 - [ ] **Draft the retrospective** — `docs/article-notes.md` and `docs/incidents.md` are already the
   skeleton.

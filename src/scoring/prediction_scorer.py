@@ -38,6 +38,10 @@ class PredictionScorer:
             symbol_return = (current_price / p["start_price"]) - 1
             spy_return = (spy_price / p["spy_start_price"]) - 1
             outperformed = symbol_return > spy_return
+            # A prediction is CORRECT when the realized direction matches the call.
+            # Legacy rows have no `direction` and were all "outperform" bets.
+            predicted_outperform = str(p.get("direction", "OUTPERFORM")).upper() == "OUTPERFORM"
+            correct = outperformed == predicted_outperform
 
             p["status"] = "scored"
             p["result"] = {
@@ -47,10 +51,11 @@ class PredictionScorer:
                 "spy_return": round(spy_return, 4),
                 "alpha": round(symbol_return - spy_return, 4),
                 "outperformed": outperformed,
+                "correct": correct,
                 "scored_date": today,
             }
 
-            outcome = "WIN" if outperformed else "LOSS"
+            outcome = "WIN" if correct else "LOSS"
             logger.info(
                 "Prediction %s: %s %s (%.2f%% vs SPY %.2f%%)",
                 outcome, symbol, p["prediction"],

@@ -104,6 +104,49 @@ def test_page_handles_a_day_with_no_trades_and_no_debate():
     assert "The fund held — no trades." in html  # description fallback
 
 
+def test_market_calls_render_direction_and_traded_tag():
+    entry = _entry(
+        "2026-07-08",
+        created_at="2026-07-08T12:00:00Z",
+        summary="Bought Apple, watching the rest.",
+        executed_trades=[{"symbol": "AAPL", "action": "BUY", "shares": 10, "price": 200.0}],
+    )
+    entry["raw_decision"]["market_calls"] = [
+        {"symbol": "AAPL", "direction": "OUTPERFORM", "confidence": 0.7, "thesis": "buyback momentum"},
+        {"symbol": "NVDA", "direction": "UNDERPERFORM", "confidence": 0.55, "thesis": "stretched multiple"},
+        {"symbol": "JNJ", "direction": "OUTPERFORM", "confidence": 0.6, "thesis": "defensive"},
+    ]
+    html = decision_pages.render_decision_page(entry, prev=None, next_=None)
+
+    assert "<h2>Market calls</h2>" in html
+    assert "Outperform SPY" in html and "Underperform SPY" in html
+    assert "buyback momentum" in html and "stretched multiple" in html
+    # AAPL was bought → tagged; NVDA/JNJ were only called, not traded.
+    aapl_row = html.split(">AAPL<", 1)[1].split("</tr>", 1)[0]
+    nvda_row = html.split(">NVDA<", 1)[1].split("</tr>", 1)[0]
+    assert "traded" in aapl_row
+    assert "traded" not in nvda_row
+    # Highest-confidence call (AAPL 0.70) is listed before the lower ones.
+    assert html.index(">AAPL<") < html.index(">JNJ<") < html.index(">NVDA<")
+    assert "3 calls (2 outperform, 1 underperform); 1 became trades" in html
+
+
+def test_market_calls_section_omitted_when_absent():
+    entry = _entry("2026-06-29", created_at="2026-06-29T12:00:00Z", summary="Held.")
+    html = decision_pages.render_decision_page(entry, prev=None, next_=None)
+    assert "Market calls" not in html  # legacy rows carry no calls — no empty section
+
+
+def test_market_call_thesis_is_escaped():
+    entry = _entry("2026-07-08", created_at="2026-07-08T12:00:00Z")
+    entry["raw_decision"]["market_calls"] = [
+        {"symbol": "AAPL", "direction": "OUTPERFORM", "confidence": 0.7, "thesis": "<b>a & b</b>"}
+    ]
+    html = decision_pages.render_decision_page(entry, prev=None, next_=None)
+    assert "<b>a & b</b>" not in html
+    assert "&lt;b&gt;a &amp; b&lt;/b&gt;" in html
+
+
 def test_pager_links_neighbouring_days():
     a = _entry("2026-07-01", created_at="2026-07-01T00:00:00Z")
     b = _entry("2026-07-02", created_at="2026-07-02T00:00:00Z")
