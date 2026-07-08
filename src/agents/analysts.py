@@ -80,8 +80,12 @@ def _momentum_lens(research) -> str:
             "Price momentum:\n"
             + "\n".join(f"  {s.get('symbol')}: 5d {s.get('return_5d')}, 30d {s.get('return_30d')}" for s in syms)
         )
-    if r.get("holdings_news"):
-        parts.append("Holdings news:\n" + json.dumps(r["holdings_news"], default=str)[:2000])
+    news = r.get("symbol_news") or r.get("holdings_news")  # holdings_news kept for old exports
+    if news:
+        parts.append(
+            "News (holdings + notable movers you could initiate a position in):\n"
+            + json.dumps(news, default=str)[:2200]
+        )
     if r.get("market_news"):
         parts.append("Market news:\n" + json.dumps(r["market_news"], default=str)[:1500])
     if len(parts) == 1:
