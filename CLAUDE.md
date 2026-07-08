@@ -102,26 +102,38 @@ The system uses LLM agents to analyze markets, make trade decisions, and manage 
 
 ## Distribution & SEO
 
-Done (2026-07-07): `public/robots.txt`, `public/sitemap.xml`, and per-page `canonical` /
-`meta description` / `og:url` / page-specific `og:title` + `og:description` on all six pages.
-JSON-LD (`WebSite` + `Person`) on `index.html`.
+Done (2026-07-07): `public/robots.txt`, per-page `canonical` / `meta description` / `og:url` /
+page-specific `og:title` + `og:description` on all six pages, JSON-LD (`WebSite` + `Person`) on
+`index.html`, prerendered per-day decision pages, and a generated `sitemap.xml`.
 
-The remaining work, in leverage order. The framing to hold onto: **this project's rare asset is
-that it generates unique, dated, opinionated content every single day — and currently publishes
-none of it as an indexable page.** Everything below follows from that.
+The framing to hold onto: **this project's rare asset is that it generates unique, dated,
+opinionated content every single day.** Everything below follows from that.
 
 ### High Priority
-- [ ] **Prerender decisions to static URLs** — `decisions.html` client-fetches `decisions.jsonl`,
-  so hundreds of decisions collapse into one URL with no server-rendered text. Emit
-  `/decisions/YYYY-MM-DD-SYMBOL.html` at export time with the real debate text, each with its own
-  title/description/canonical, and add each to the sitemap. This is the actual SEO unlock — it
-  turns one thin page into hundreds of long-tail pages ("why did an AI fund sell NVDA in June")
-  where this site plausibly *is* the best result on the internet.
-- [ ] **Publish weekly investor letters as pages** — `scripts/weekly_letter.py` generates letters
-  that only reach the dashboard. Publish each to `/letters/YYYY-MM-DD.html` plus an index at
-  `/letters/`, add to sitemap. Best long-tail content the system produces; currently discarded.
-- [ ] **Generate `sitemap.xml` at export time** — Once the two items above land, the hand-written
-  sitemap goes stale immediately. Build it from the decision/letter/page set.
+- [ ] **Publish weekly investor letters as pages** — **Blocked, and not by the plumbing.** No letter
+  has ever published: `data/investor_letters.jsonl` does not exist and the only weekly-letter run
+  (2026-07-05) failed. `_window_return` yields decimals (`0.0231`), the model correctly writes
+  "2.31%", and the grounding judge calls that a *material* fabrication — so
+  `investor_letter.py:203` blocks publication. The judge's own prompt says equivalent phrasing must
+  be minor (`src/scoring/grounding.py:59-67`). Fix the false positive first; only then build
+  `/letters/YYYY-MM-DD.html` + an index, following `decision_pages.py`. Note the original entry
+  claimed letters "only reach the dashboard" — they reach nothing.
+- [ ] **Submit the sitemap in Google Search Console** — The file exists and is generated, but
+  nothing crawls it until a verified property points at it. DNS is on Vercel nameservers (the site
+  is served by GitHub Pages), so a Domain-property TXT record goes in the Vercel dashboard.
+
+### Recently Completed
+
+- [x] **Prerender decisions to static URLs** — `src/reporting/decision_pages.py`, wired into
+  `PublicExporter.export()` so it runs every daily cycle. One page per *trading day*, not per
+  symbol: `decisions.jsonl` holds one row per **run**, and a day can carry many runs (2026-06-13
+  has 13). The last run of a date is that day's decision. Per-symbol pages would have sliced one
+  portfolio-wide debate into near-duplicate stubs. `decisions.html` stays as the live journal and
+  now links each day to its permalink. Text per page went from 281 chars (JS-rendered, what a
+  crawler sees) to ~7,300.
+- [x] **Generate `sitemap.xml` at export time** — `decision_pages.build_sitemap()` emits the static
+  pages plus every decision page. Dynamic pages get the latest decision date as `lastmod`; the two
+  static pages get none, so the file doesn't churn daily.
 
 ### Medium Priority
 - [ ] **GitHub repo metadata** *(owner decision — publishes immediately)* — Repo has `topics: null`,

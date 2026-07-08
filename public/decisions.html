@@ -230,6 +230,18 @@
       font-weight: 850;
     }
 
+    /* Links each day to its prerendered, indexable page under /decisions/. */
+    .permalink {
+      margin-left: auto;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .permalink:hover { color: var(--ink); text-decoration: underline; }
+
     .meta {
       color: var(--muted);
       font-size: 14px;
@@ -471,7 +483,7 @@
     <header class="page-header">
       <div>
         <h1>Decision Journal</h1>
-        <p class="subtitle">Full audit trail of AI portfolio decisions, trade reasoning, risk checks, memory sources, and cash justifications.</p>
+        <p class="subtitle">Full audit trail of AI portfolio decisions, trade reasoning, risk checks, memory sources, and cash justifications. Every day also has its own <a href="decisions/">permanent page</a>.</p>
       </div>
       <p class="updated-at" id="updated-at">Updated at: Loading...</p>
     </header>
@@ -766,7 +778,8 @@
         const memoryUsed = entry.memory_used || [];
 
         let html = `<div class="card">`;
-        html += `<div class="date-header">${escapeHtml(entry.date)} <span class="outlook">${escapeHtml(outlook)}</span></div>`;
+        html += `<div class="date-header">${escapeHtml(entry.date)} <span class="outlook">${escapeHtml(outlook)}</span>
+          <a class="permalink" href="decisions/${escapeHtml(entry.date)}.html" title="Permanent page for this day">Permalink →</a></div>`;
         html += `<div class="meta">
           Portfolio: ${money.format(portfolio.total_value)} ·
           Cash: ${money.format(portfolio.cash)} (${(portfolio.cash_pct * 100).toFixed(1)}%) ·
