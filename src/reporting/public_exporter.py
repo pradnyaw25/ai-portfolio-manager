@@ -7,7 +7,9 @@ from src.config import DATA_DIR
 from src.models.portfolio import PortfolioSnapshot
 from src.models.trade import Trade
 from src.scoring.calibration import compute_calibration
+from src.utils.logger import get_logger
 
+logger = get_logger(__name__)
 
 PUBLIC_DIR = Path("public")
 
@@ -36,6 +38,19 @@ class PublicExporter:
     def write_run_status(self, run_status: dict) -> None:
         PUBLIC_DIR.mkdir(exist_ok=True)
         self._write_run_status(run_status)
+
+    def write_baseline_comparison(self, market_data, *, picks: int = 5, trials: int = 500) -> None:
+        """Refresh public/baseline_comparison.json for the dashboard's fund-vs-baselines
+        panel. Best-effort — too little history or a slow price fetch must not fail the run."""
+        from src.experiments.comparison import COMPARISON_FILENAME, build_comparison
+
+        PUBLIC_DIR.mkdir(exist_ok=True)
+        try:
+            payload = build_comparison(market_data, picks=picks, trials=trials)
+        except Exception as exc:
+            logger.warning("Baseline comparison export skipped: %s", exc)
+            return
+        (PUBLIC_DIR / COMPARISON_FILENAME).write_text(json.dumps(payload, indent=2))
 
     def write_run_history(self, limit: int = 200) -> None:
         """Export the durable run history (most recent first) for the dashboard."""
