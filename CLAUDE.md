@@ -43,22 +43,62 @@ The system uses LLM agents to analyze markets, make trade decisions, and manage 
 
 ## Future Tasks
 
+> Reconciled against the code on 2026-07-07. Completed items moved to "Recently Completed"
+> below rather than deleted, so the backlog keeps its history.
+
 ### High Priority
-- [ ] **Sector/correlation diversification** — Risk manager should check sector concentration, not just position size. Avoid loading up on 5 tech stocks.
-- [ ] **Stop-loss / take-profit rules** — Auto-generate SELL trades when a position drops >15% or gains >40% from cost basis.
-- [ ] **Historical performance dashboard** — Build a web UI (`web/` dir) to visualize portfolio history, P&L curves, and trade logs.
+- [ ] **Correlation-aware diversification** — Sector concentration *is* enforced
+  (`risk_manager.py:98-132`, 40% cap). Correlation is not: there is no correlation code anywhere
+  in `src/`. Two names in different GICS sectors that move together still pass every check.
+- [ ] **Unit-test the rebalance checker** — `src/agents/rebalance_checker.py` holds ~200 lines of
+  cash-target logic and has no direct test. It appears in `tests/test_daily_graph_integration.py`
+  only as a stubbed graph node, so the real logic is never exercised.
 
 ### Medium Priority
-- [ ] **Smarter research agent** — Add sentiment scoring, earnings calendar awareness, and technical indicators (RSI, moving averages).
-- [ ] **Multi-day thesis tracking** — Track conviction over time. If the AI was bullish on AAPL 3 days ago, surface that context in the next cycle.
-- [ ] **Backtest framework** — Run the strategy against historical data to validate before live paper trading.
-- [ ] **Configurable watchlist** — Move the hardcoded 15-symbol watchlist to config or a YAML file.
+- [ ] **Smarter research agent** — None of the three parts exist. No sentiment scoring anywhere in
+  `src/`; no upcoming-earnings calendar (only backward-looking 8-K ingestion via
+  `scripts/ingest_sec_filings.py`, which is offline, not in the daily pipeline); no technical
+  indicators — the only price features are raw 5d/30d returns (`src/research/market_context.py:48`).
+- [ ] **Conviction tracking over time** — Prior stance already reaches the next cycle: theses are
+  extracted per run (`src/memory/extractors.py:37`), retrieved symbol-scoped
+  (`src/memory/retriever.py:69`), and rendered into the PM prompt
+  (`src/agents/portfolio_manager.py:12`). What's missing is the *time series* — `conviction` exists
+  only within a single run's debate (`src/agents/debate.py:19`) and is never compared across days.
+- [ ] **Backtest framework** — `scripts/backfill.py:25` is still `# TODO: implement historical
+  simulation` inside an empty date loop. Note `src/experiments/comparison.py` is *not* this: it
+  compares the live fund to baselines over recorded history (post-hoc attribution, not a backtest).
 
 ### Low Priority
-- [ ] **Slack/Discord notifications** — Post daily summaries to a channel.
-- [ ] **HTML report improvements** — Interactive charts, position-level P&L breakdown.
-- [ ] **Rate limit handling** — Graceful retry/backoff for Alpha Vantage and news API limits.
-- [ ] **Tests** — Unit tests for risk manager, rebalance checker, and portfolio engine.
+- [ ] **Slack/Discord notifications** — Post daily summaries to a channel. The only outbound
+  channel today is X/Twitter (`src/social/twitter.py`).
+- [ ] **Rate limit handling** — Graceful retry/backoff for the data sources. Note the original
+  entry named Alpha Vantage, which this codebase has never used. The real gaps are yfinance
+  (`src/data_sources/market_data.py:22`) and the news client (`src/data_sources/news.py:71`), both
+  of which swallow exceptions and silently degrade to empty results on a 429. Exponential backoff
+  already exists for the LLM gateway (`src/llm/gateway.py:299`) and is a reasonable model to copy.
+- [ ] **Delete dead `src/reporting/html_report.py`** — Never imported or called; the pipeline uses
+  `MarkdownReportGenerator` (`src/main.py:31`). Its static P&L table was superseded by the dashboard.
+
+### Recently Completed
+
+- [x] **Stop-loss / take-profit rules** — `src/agents/risk_events.py` emits full-exit SELLs at
+  `STOP_LOSS_PCT` (0.15) and `TAKE_PROFIT_PCT` (0.40), both env-configurable. Wired at
+  `src/main.py:182`; system exits supersede LLM trades for the same symbol and still pass through
+  `RiskManagerAgent`.
+- [x] **Sector concentration limits** — `RiskManagerAgent.review()` seeds a live sector-exposure
+  ledger and rejects or share-caps BUYs that would breach `MAX_SECTOR_CONCENTRATION`
+  (`risk_manager.py:53,98-132`). SELLs are exempt by design. Correlation remains open (above).
+- [x] **Historical performance dashboard** — Ships at `public/dashboard.html`: Chart.js performance
+  and allocation charts, plus a sortable holdings table with position-level P&L, fed by
+  `src/reporting/public_exporter.py`. **The site lives in `public/`, not `web/`** — the `web/`
+  directory was empty scaffolding and has been removed.
+- [x] **Configurable watchlist** — Now `config/watchlist.yaml` (33 symbols), loaded and validated
+  in `src/config.py:127`. No hardcoded list remains.
+- [x] **Tests** — 50 test files under `tests/`, including `test_risk_manager.py`,
+  `test_risk_engine_v2.py`, and `test_portfolio_engine.py`. The rebalance checker is the one gap
+  from the original entry and is tracked as its own item above.
+- [x] **HTML report improvements** — Interactive charts and position-level P&L landed in the
+  dashboard rather than in the report generator.
 
 ## Distribution & SEO
 

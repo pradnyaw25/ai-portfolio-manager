@@ -96,8 +96,7 @@ src/
   utils/           - Logging and date helpers
 scripts/           - CLI entry points (daily run, backfill, benchmark)
 tests/             - Unit tests
-public/            - Static dashboard exports for portfolio, predictions, and decisions
-web/               - Frontend dashboard experiments
+public/            - The published site: dashboard, predictions, decisions, and static exports
 ```
 
 ## Configuration
