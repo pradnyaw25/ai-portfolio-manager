@@ -26,7 +26,9 @@
   </script>
   <script src="analytics.js" defer></script>
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="canonical" href="https://glasshousefund.com/" />
   <meta name="description" content="An autonomous AI fund managing $1M of simulated money — every decision debated, grounded in evidence, scored, and published in the open." />
+  <meta name="author" content="Pradnya Wakchaure" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://glasshousefund.com/" />
   <meta property="og:title" content="Glasshouse Fund — the AI fund that shows its work" />
@@ -34,6 +36,39 @@
   <meta property="og:image" content="https://glasshousefund.com/og-cover.png" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@GlassHouseFund" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://glasshousefund.com/#website",
+        "url": "https://glasshousefund.com/",
+        "name": "Glasshouse Fund",
+        "description": "An autonomous AI fund managing $1M of simulated money — every decision debated, grounded in evidence, scored, and published in the open.",
+        "inLanguage": "en",
+        "creator": { "@id": "https://glasshousefund.com/#creator" },
+        "about": [
+          "LLM agents",
+          "prediction calibration",
+          "paper trading",
+          "AI engineering"
+        ],
+        "disambiguatingDescription": "Paper trading with simulated capital. Not investment advice."
+      },
+      {
+        "@type": "Person",
+        "@id": "https://glasshousefund.com/#creator",
+        "name": "Pradnya Wakchaure",
+        "url": "https://glasshousefund.com/about.html",
+        "sameAs": [
+          "https://github.com/pradnyaw25/ai-portfolio-manager",
+          "https://x.com/GlassHouseFund"
+        ]
+      }
+    ]
+  }
+  </script>
   <style>
     :root {
       color-scheme: light dark;
@@ -137,7 +172,7 @@
           <a href="dashboard.html">Dashboard</a>
           <a href="decisions.html">Journal</a>
           <a href="predictions.html">Predictions</a>
-          <a href="architecture.html">Architecture</a>
+          <a href="engineering.html">Engineering</a>
           <a href="about.html">About</a>
         </nav>
         <div class="theme-toggle" aria-label="Theme">
@@ -187,7 +222,7 @@
     <div class="tiles">
       <a class="tile" href="decisions.html"><h3>Decision journal</h3><p>Every daily decision with the full bull/bear/risk debate, the risk checks, and the memory it cited.</p><div class="go">Read the journal →</div></a>
       <a class="tile" href="predictions.html"><h3>Prediction accuracy</h3><p>Each BUY spawns a 30-day “beat SPY” prediction. We score them and publish the Brier calibration curve.</p><div class="go">See the scoreboard →</div></a>
-      <a class="tile" href="architecture.html"><h3>Architecture</h3><p>An LLM gateway, a deterministic risk engine, evals gating CI, and crash-safe orchestration — diagrammed.</p><div class="go">How it's built →</div></a>
+      <a class="tile" href="engineering.html"><h3>Engineering</h3><p>An LLM gateway, a deterministic risk engine, evals gating CI, and crash-safe orchestration — diagrammed.</p><div class="go">How it's built →</div></a>
     </div>
 
     <p class="sec-title">How it works</p>
