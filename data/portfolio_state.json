@@ -6,79 +6,79 @@
       "symbol": "HD",
       "shares": 100,
       "avg_cost": 326.010009765625,
-      "current_price": 336.1050109863281
+      "current_price": 336.2449951171875
     },
     {
       "symbol": "JNJ",
       "shares": 543,
       "avg_cost": 239.57778686186228,
-      "current_price": 266.260009765625
+      "current_price": 263.4750061035156
     },
     {
       "symbol": "AAPL",
       "shares": 601,
       "avg_cost": 293.76575180632994,
-      "current_price": 313.0201110839844
+      "current_price": 313.7699890136719
     },
     {
       "symbol": "MSFT",
       "shares": 93,
       "avg_cost": 385.1256408691406,
-      "current_price": 382.6549987792969
+      "current_price": 383.2699890136719
     },
     {
       "symbol": "NVDA",
       "shares": 514,
       "avg_cost": 203.29896344360853,
-      "current_price": 200.28500366210938
+      "current_price": 204.44500732421875
     },
     {
       "symbol": "TSLA",
       "shares": 32,
       "avg_cost": 400.355713641281,
-      "current_price": 394.9200134277344
+      "current_price": 394.2200012207031
     },
     {
       "symbol": "UNH",
       "shares": 3,
       "avg_cost": 405.54998779296875,
-      "current_price": 427.9700012207031
+      "current_price": 425.04998779296875
     },
     {
       "symbol": "AMZN",
       "shares": 636,
       "avg_cost": 238.13327095943427,
-      "current_price": 241.99000549316406
+      "current_price": 244.00999450683594
     },
     {
       "symbol": "GOOGL",
       "shares": 122,
       "avg_cost": 356.6263062524014,
-      "current_price": 361.3999938964844
+      "current_price": 362.18499755859375
     },
     {
       "symbol": "JPM",
       "shares": 10,
       "avg_cost": 313.489990234375,
-      "current_price": 333.7200012207031
+      "current_price": 330.260009765625
     },
     {
       "symbol": "V",
       "shares": 22,
       "avg_cost": 319.04998779296875,
-      "current_price": 347.7734069824219
+      "current_price": 347.44500732421875
     },
     {
       "symbol": "MA",
       "shares": 8,
       "avg_cost": 486.510009765625,
-      "current_price": 518.8699951171875
+      "current_price": 520.030029296875
     },
     {
       "symbol": "META",
       "shares": 10,
       "avg_cost": 568.4299926757812,
-      "current_price": 605.02001953125
+      "current_price": 603.9550170898438
     }
   ]
 }
