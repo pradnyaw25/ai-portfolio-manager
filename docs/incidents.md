@@ -68,6 +68,49 @@ Entry template:
 
 ---
 
+## 2026-07-08 · The same judge, the same units — the weekly letter never published once
+
+- **Symptom.** `data/investor_letters.jsonl` did not exist. The weekly investor letter
+  had **never successfully published, not once**, and nobody noticed: the only workflow
+  run (2026-07-05, run `28744889350`) "failed" quietly and the feature looked merely
+  unstarted rather than broken.
+- **Root cause.** `gather_letter_facts()` emits returns as **decimals** (`return_pct:
+  0.0231`). The letter prompt said "Percentages are decimals (0.02 = 2%)", so the model
+  correctly wrote **"2.31%"**. The grounding judge was then handed the *decimal* facts
+  and the *percent* prose and concluded the letter had fabricated a number:
+  > "The claim about a week-over-week return of 2.31% is incorrectly stated as '2.31%'
+  > instead of the correct '0.0231' in decimal form."
+
+  It graded that **material**, which hard-blocks publication. Reproduced live: with the
+  raw facts, the judge read the position fact `0.5` as *"0.5%"* and called the letter's
+  "50.00%" a material fabrication.
+- **Fix.** Rather than argue with the judge, delete the disagreement. `format_facts_for_prompt()`
+  renders every ratio-valued fact as a percent string once, and the **same** formatted
+  view is handed to both the writer and the auditor — they can no longer disagree about
+  units because they read identical numbers. Canonical decimals are still what gets
+  *stored* in the journal, so the letters page stays machine-readable. Two live-judge
+  regression tests: one that "2.31%" vs a `0.0231` fact publishes, one that an invented
+  `$999` NVDA print still blocks `material`.
+- **Detection gap.** This is **PR #40's incident, recurring.** That fix added the
+  `severity` ladder *and* put "equivalent phrasing or units (0.12 vs \"12%\")" in the v2
+  judge prompt as an explicit MINOR example — and the judge ignored its own prompt
+  anyway. The lesson from #40 ("verify against the real judge") was learned for the
+  *tweet* path only; the letter's grounding gate had **zero** tests, real or faked, and
+  every letter test used a stub judge that returned `grounded=True`. Worse, the failure
+  is silent by construction: `blocked_grounding` is a *status*, not an exception, so
+  the script exits non-zero but the pipeline reads as "no letter this week."
+- **Article angle.** *You cannot fix a prompt-following failure with more prompt.* #40
+  told the judge, in writing, that `0.12` and `"12%"` are the same thing. It kept
+  flagging them. The durable fix wasn't clearer instructions — it was removing the
+  ambiguity from the input so there was nothing left to misjudge. Corollary for
+  LLM-as-judge design: **give the judge and the generator the same view of the world.**
+  A judge comparing prose against raw data is doing two jobs — unit conversion and
+  fact-checking — and it will silently fail the one you didn't ask it to do. Also, twice
+  now, an assurance feature has silently suppressed the artifact it was protecting; a
+  gate that blocks should be at least as loud as a crash.
+
+---
+
 ## Earlier incidents (from ROADMAP-V2 — expand with detail before writing)
 
 > Stubs for the four incidents the audit already names. Fill in symptom/root-cause/

@@ -1,9 +1,13 @@
 """P5-3: weekly investor letter — facts, grounding gate, publish, idempotency."""
 
 import json
+import os
 from datetime import date
 
+import pytest
+
 from src.agents.investor_letter import (
+    format_facts_for_prompt,
     gather_letter_facts,
     generate_weekly_letter,
     letter_to_thread,
@@ -181,3 +185,133 @@ def test_x_thread_off_by_default_on_when_enabled(tmp_path):
     pub_on = FakePublisher()
     r2 = _run(judge, tmp_path, tweet_publisher=pub_on, post_letter=True)
     assert r2["tweeted"] is True and len(pub_on.posts) >= 1
+
+
+# -- percent/decimal unit alignment ------------------------------------------
+#
+# The letter writes prose ("2.31%"); the facts are decimals (0.0231). The grounding
+# judge, seeing both, called the difference a *material* fabrication and blocked
+# every letter the system ever produced. The fix hands writer and judge the same
+# formatted numbers. These tests pin that down.
+
+# Window returns +2.31%; SPY +0.62%; alpha +1.69% — the real 2026-07-05 numbers.
+PERF_231 = [
+    {"date": "2026-06-29", "total_value": "1000000"},
+    {"date": "2026-07-05", "total_value": "1023100"},
+]
+BENCH_062 = [
+    {"date": "2026-06-29", "symbol": "SPY", "price": "500"},
+    {"date": "2026-07-05", "symbol": "SPY", "price": "503.10"},
+]
+
+
+def test_format_facts_renders_ratios_as_percent_strings():
+    display = format_facts_for_prompt(_facts())
+    assert display["return_pct"] == "3.00%"
+    assert display["benchmark_return_pct"] == "2.00%"
+    assert display["alpha"] == "1.00%"
+    assert display["winners"][0]["return_pct"] == "50.00%"
+    assert display["losers"][0]["return_pct"] == "-20.00%"
+    # Non-ratio fields are untouched — a price stays a number.
+    assert display["end_value"] == 1030000.0
+    assert display["winners"][0]["market_value"] == 15000.0
+
+
+def test_format_facts_passes_through_none_and_leaves_source_untouched():
+    facts = _facts(performance_rows=[], benchmark_rows=[])
+    display = format_facts_for_prompt(facts)
+    assert display["return_pct"] is None and display["alpha"] is None
+    # The canonical decimals are what get stored; formatting must not mutate them.
+    facts = _facts()
+    format_facts_for_prompt(facts)
+    assert facts["return_pct"] == 0.03
+    assert facts["winners"][0]["return_pct"] == 0.5
+
+
+def test_agent_and_judge_receive_the_same_percent_formatted_facts(tmp_path):
+    """The bug in one assertion: writer and auditor must not disagree on units."""
+    seen = {}
+
+    class CapturingAgent(FakeAgent):
+        def write(self, facts):
+            seen["agent"] = facts
+            return super().write(facts)
+
+    def capturing_judge(decision, context):
+        seen["judge"] = context["market_context"]
+        seen["judge_portfolio"] = context["portfolio"]
+        return GroundingVerdict(grounded=True)
+
+    _run(capturing_judge, tmp_path, agent=CapturingAgent(_letter()))
+
+    assert seen["agent"]["return_pct"] == "3.00%"
+    assert seen["judge"] == seen["agent"]  # identical view, no unit gap
+    assert seen["judge_portfolio"][0]["return_pct"] == "50.00%"
+
+
+def test_stored_facts_remain_canonical_decimals(tmp_path):
+    """Prompt formatting is presentation-only; the journal keeps machine-readable numbers."""
+    _run(lambda d, c: GroundingVerdict(grounded=True), tmp_path)
+    stored = InvestorLetterStore(path=tmp_path / "letters.jsonl").load()[0]
+    assert stored["facts"]["return_pct"] == 0.03
+    assert stored["facts"]["alpha"] == 0.01
+
+
+# -- live regression: the real judge on the real failure ----------------------
+
+
+def _live_run(letter, tmp_path):
+    return generate_weekly_letter(
+        week_end="2026-07-05",
+        agent=FakeAgent(letter),
+        judge=None,  # the REAL grounding judge
+        portfolio_store=FakeStore(snapshot=_portfolio()),
+        trade_store=FakeStore(rows=[]),
+        performance_rows=PERF_231,
+        benchmark_rows=BENCH_062,
+        letter_store=InvestorLetterStore(path=tmp_path / "letters.jsonl"),
+        public_dir=tmp_path / "public",
+    )
+
+
+@pytest.mark.skipif(not os.getenv("OPENAI_API_KEY"), reason="needs a live model for the judge")
+def test_live_judge_accepts_percent_prose_against_decimal_facts(tmp_path):
+    """Reproduces the letter-never-published bug: a letter stating "2.31%" against a
+    fact of 0.0231 must pass grounding, not be flagged as a fabricated number."""
+    letter = InvestorLetterResponse(
+        headline="A quiet week of compounding",
+        performance="The fund returned 2.31% this week versus 0.62% for the S&P 500, "
+        "for 1.69% of alpha. Ending value was $1,023,100.",
+        winners=["NVDA is up 50.00% on the position."],
+        losers=["MSFT is down 20.00% on the position."],
+        outlook="Constructive.",
+    )
+    result = _live_run(letter, tmp_path)
+
+    # "unavailable" means the judge threw and check_grounding degraded open — the
+    # letter would publish for the wrong reason and this test would pass vacuously.
+    assert result["grounding"]["status"] == "ok", result["grounding"]
+    assert result["grounding"]["severity"] != "material", result["grounding"]["issues"]
+    assert result["status"] == "published", result["grounding"]["issues"]
+    assert (tmp_path / "public" / "investor_letter.md").exists()
+
+
+@pytest.mark.skipif(not os.getenv("OPENAI_API_KEY"), reason="needs a live model for the judge")
+def test_live_judge_still_blocks_a_fabricated_price(tmp_path):
+    """Guard against over-correcting: the gate must still catch a genuine invention.
+    Nothing in the facts mentions a $999 print, a Broadcom position, or an earnings beat."""
+    letter = InvestorLetterResponse(
+        headline="Blowout week",
+        performance="The fund returned 47.00% this week after NVDA closed at $999.00 "
+        "on a blowout earnings beat, and our AVGO stake doubled.",
+        winners=["AVGO gained 112.00% after its acquisition was announced."],
+        losers=[],
+        outlook="Euphoric.",
+    )
+    result = _live_run(letter, tmp_path)
+
+    assert result["status"] == "blocked_grounding", result["grounding"]
+    assert result["grounding"]["severity"] == "material"
+    # And nothing leaked out to the dashboard or the journal.
+    assert not (tmp_path / "public" / "investor_letter.md").exists()
+    assert InvestorLetterStore(path=tmp_path / "letters.jsonl").load() == []

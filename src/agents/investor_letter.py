@@ -118,13 +118,49 @@ def has_letter_material(facts: dict) -> bool:
     return bool(facts.get("positions") or facts.get("trades") or facts.get("end_value"))
 
 
+# Ratio-valued fact keys. Stored as decimals (0.0231) but shown to the model — and to
+# the grounding judge — as percent strings ("2.31%").
+_PERCENT_KEYS = ("return_pct", "benchmark_return_pct", "alpha")
+_POSITION_LISTS = ("winners", "losers", "positions")
+
+
+def _as_percent(value: Any) -> Any:
+    """0.0231 -> "2.31%". Non-numerics (incl. None) pass through untouched."""
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return value
+    return f"{value * 100:.2f}%"
+
+
+def format_facts_for_prompt(facts: dict) -> dict:
+    """Present the fact base in the same units the letter's prose will use.
+
+    The letter is written in percent ("2.31%") while the facts are decimals
+    (0.0231). The grounding judge sees both and, despite being told that units are
+    equivalent phrasing, has classified the difference as a *material* fabrication —
+    blocking every letter ever generated. Rather than argue with the judge, we remove
+    the discrepancy: agent and judge are handed identical, already-formatted numbers,
+    so there is nothing left to reconcile.
+
+    The canonical decimal facts are what get *stored*; this view is prompt-only.
+    """
+    display = dict(facts)
+    for key in _PERCENT_KEYS:
+        display[key] = _as_percent(display.get(key))
+    for key in _POSITION_LISTS:
+        display[key] = [
+            {**p, "return_pct": _as_percent(p.get("return_pct"))} for p in (display.get(key) or [])
+        ]
+    return display
+
+
 class InvestorLetterAgent:
     def write(self, facts: dict) -> InvestorLetterResponse:
         prompt = (
             "You are the portfolio manager of an AI-run paper fund writing this week's "
             "investor letter. Write in a candid, professional voice. Use ONLY the facts "
             "below — every number you state must come from them; do not invent prices, "
-            "returns, or events. Percentages are decimals (0.02 = 2%).\n\n"
+            "returns, or events. Percentages are already formatted (e.g. \"2.31%\"); quote "
+            "them as given, do not convert or recompute them.\n\n"
             f"WEEK FACTS:\n{json.dumps(facts, default=str)}\n\n"
             'Return JSON: {"headline": "...", "performance": "...", '
             '"winners": ["..."], "losers": ["..."], "portfolio_changes": "...", '
@@ -193,12 +229,19 @@ def generate_weekly_letter(
         logger.info("No portfolio activity for week ending %s — skipping letter", week_end)
         return {"status": "skipped", "week_end": week_end}
 
-    letter = agent.write(facts)
+    # One formatted view, shared by writer and auditor: whatever units the letter is
+    # written against are the units it is judged against.
+    display_facts = format_facts_for_prompt(facts)
+    letter = agent.write(display_facts)
 
     # Grounding gate: the letter's claims are checked against the week's facts
     # BEFORE anything is published. A flagged letter is blocked, never published.
     grounding = check_grounding(
-        letter.model_dump(), research=facts, memory=[], portfolio=facts["positions"], judge=judge
+        letter.model_dump(),
+        research=display_facts,
+        memory=[],
+        portfolio=display_facts["positions"],
+        judge=judge,
     )
     if grounding.status == "flagged":
         logger.warning("Investor letter blocked by grounding: %s", grounding.issues)
