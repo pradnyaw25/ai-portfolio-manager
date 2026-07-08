@@ -18,7 +18,7 @@ Ordered by ROI. `∥` = parallelizable. See `docs/ROADMAP-V2.md` §2/§6 for the
 
 ## V2 · Next 30 days (highest ROI)
 
-### V1-1. Baseline + ablation harness
+### V1-1. Baseline + ablation harness — IN PROGRESS
 * Input: the daily cycle + stores; a config knob for fund variants (fund-as-config).
 * Output: a runner that executes, over the same days, the live fund plus baselines
   (buy-and-hold SPY, random-from-watchlist) and ablated variants (no-memory,
@@ -26,6 +26,14 @@ Ordered by ROI. `∥` = parallelizable. See `docs/ROADMAP-V2.md` §2/§6 for the
   decision-quality proxy). Results persisted and rendered on the dashboard.
 * Acceptance: a single command produces a comparison table across ≥4 variants; the
   dashboard shows fund-vs-SPY-vs-random; the numbers are reproducible.
+* PR 1 (DONE): `make baselines` (`scripts/compare_baselines.py` + `src/experiments/`)
+  — the fund-as-config seam (`VariantResult`) + non-AI baselines: buy-and-hold
+  SPY/QQQ and a Monte-Carlo random-from-watchlist (mean of N random portfolios),
+  scored over the fund's real window from portfolio/benchmark history. First result:
+  fund +2.91% beats SPY +1.51%, QQQ -0.62%, random -0.18% (26 days — noisy).
+* TODO: AI ablations (no-debate/no-memory/no-tools — need live forward-runs or the
+  V1-6 replay harness); Brier once predictions resolve (first cohort 2026-07-12);
+  dashboard panel (fund-vs-SPY-vs-random).
 
 ### V1-2 ∥. Strong-tier PM model + measured delta — DONE
 * Output: PM/judges on a frontier model (analysts stay cheap), selected by measuring
