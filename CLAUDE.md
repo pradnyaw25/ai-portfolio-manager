@@ -59,3 +59,44 @@ The system uses LLM agents to analyze markets, make trade decisions, and manage 
 - [ ] **HTML report improvements** — Interactive charts, position-level P&L breakdown.
 - [ ] **Rate limit handling** — Graceful retry/backoff for Alpha Vantage and news API limits.
 - [ ] **Tests** — Unit tests for risk manager, rebalance checker, and portfolio engine.
+
+## Distribution & SEO
+
+Done (2026-07-07): `public/robots.txt`, `public/sitemap.xml`, and per-page `canonical` /
+`meta description` / `og:url` / page-specific `og:title` + `og:description` on all six pages.
+JSON-LD (`WebSite` + `Person`) on `index.html`.
+
+The remaining work, in leverage order. The framing to hold onto: **this project's rare asset is
+that it generates unique, dated, opinionated content every single day — and currently publishes
+none of it as an indexable page.** Everything below follows from that.
+
+### High Priority
+- [ ] **Prerender decisions to static URLs** — `decisions.html` client-fetches `decisions.jsonl`,
+  so hundreds of decisions collapse into one URL with no server-rendered text. Emit
+  `/decisions/YYYY-MM-DD-SYMBOL.html` at export time with the real debate text, each with its own
+  title/description/canonical, and add each to the sitemap. This is the actual SEO unlock — it
+  turns one thin page into hundreds of long-tail pages ("why did an AI fund sell NVDA in June")
+  where this site plausibly *is* the best result on the internet.
+- [ ] **Publish weekly investor letters as pages** — `scripts/weekly_letter.py` generates letters
+  that only reach the dashboard. Publish each to `/letters/YYYY-MM-DD.html` plus an index at
+  `/letters/`, add to sitemap. Best long-tail content the system produces; currently discarded.
+- [ ] **Generate `sitemap.xml` at export time** — Once the two items above land, the hand-written
+  sitemap goes stale immediately. Build it from the decision/letter/page set.
+
+### Medium Priority
+- [ ] **GitHub repo metadata** *(owner decision — publishes immediately)* — Repo has `topics: null`,
+  empty `homepageUrl`, and a stale generic description that never names Glasshouse Fund. Set the
+  homepage to `https://glasshousefund.com`, rewrite the description to lead with evals + MCP, and
+  add topics (`llm-agents`, `mcp`, `evals`, `ai-engineering`, `paper-trading`, …).
+- [ ] **Reposition the launch around calibration** — Do *not* launch as "an AI portfolio manager":
+  it's a crowded, low-credibility genre whose implicit claim ("I beat the market") nobody believes.
+  Lead instead with *"I made an LLM make N stock predictions and then actually scored them"* —
+  the Brier score and confidence-calibration curve are the artifact. Secondary hook: the read-only
+  MCP server ("point Claude at a real fund's decision history and interrogate it"), currently
+  buried as README bullet 11.
+- [ ] **Wait for resolved predictions before launching** — Each BUY spawns a 30-day prediction and
+  the repo is ~1 month old, so almost nothing has resolved and the calibration curve is still
+  noise. Launch at ~50–100 resolved predictions. An LLM that is *confidently wrong*, with receipts,
+  is a better story than one that wins — but only once N is large enough to mean anything.
+- [ ] **Draft the retrospective** — `docs/article-notes.md` and `docs/incidents.md` are already the
+  skeleton.
