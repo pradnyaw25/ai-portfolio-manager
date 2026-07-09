@@ -5,6 +5,7 @@ from typing import Any
 import openai
 from openai import OpenAI
 
+from src.config import LLM_REQUEST_TIMEOUT
 from src.llm.providers import LLMProvider, ProviderError, ProviderResponse, ToolCall
 
 
@@ -12,7 +13,9 @@ class OpenAIProvider(LLMProvider):
     name = "openai"
 
     def __init__(self, client: OpenAI | None = None):
-        self._client = client or OpenAI()
+        # Cap the per-request timeout so a stalled connection fails fast and lets the
+        # gateway's retry/backoff recover, instead of hanging on the SDK's 600s default.
+        self._client = client or OpenAI(timeout=LLM_REQUEST_TIMEOUT)
 
     def chat(
         self,

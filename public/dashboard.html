@@ -575,6 +575,51 @@
       line-height: 1.5;
     }
 
+    .abl-row {
+      display: grid;
+      grid-template-columns: minmax(110px, 180px) 1fr 44px 70px;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+    }
+
+    .abl-row.full .abl-name { color: var(--positive); }
+
+    .abl-track {
+      position: relative;
+      height: 10px;
+      background: var(--bar-track);
+      border-radius: 5px;
+    }
+
+    .abl-bar {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      border-radius: 5px;
+      min-width: 2px;
+      background: var(--positive);
+    }
+
+    .abl-score {
+      text-align: right;
+      font-weight: 800;
+      color: var(--ink);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .abl-delta {
+      text-align: right;
+      font-weight: 800;
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .abl-delta.hurt { color: var(--negative); }
+    .abl-delta.help { color: var(--positive); }
+    .abl-delta.flat { color: var(--muted); }
+
     .return-row {
       display: flex;
       flex-wrap: wrap;
@@ -1035,6 +1080,13 @@
           <p class="baselines-note" id="baselines-note"></p>
         </section>
 
+        <section class="card" id="ablations-card" style="display:none">
+          <h2>Does the machinery earn its keep?</h2>
+          <p class="baselines-sub" id="ablations-sub"></p>
+          <div class="baselines" id="ablations"></div>
+          <p class="baselines-note" id="ablations-note"></p>
+        </section>
+
         <section class="card">
           <h2>Holdings</h2>
           <div class="table-wrap">
@@ -1248,6 +1300,49 @@
         + `Random = mean of many random equal-weight watchlist portfolios.`;
 
       document.getElementById("baselines-card").style.display = "";
+    }
+
+    async function loadAblations() {
+      try {
+        const res = await fetch("./ablation_comparison.json");
+        if (!res.ok) return;  // panel stays hidden until the harness has run
+        renderAblations(await res.json());
+      } catch (e) { /* leave the panel hidden */ }
+    }
+
+    function renderAblations(data) {
+      const variants = (data.variants || []).slice();
+      if (!variants.length) return;
+
+      // full first, then the ablations by descending quality
+      variants.sort((a, b) =>
+        a.key === "full" ? -1 : b.key === "full" ? 1 : b.quality_mean - a.quality_mean);
+
+      document.getElementById("ablations-sub").textContent =
+        "Same scenarios, same judge — with one piece switched off. Does memory or the debate actually improve the call?";
+
+      document.getElementById("ablations").innerHTML = variants.map(v => {
+        const w = (Math.max(0, Math.min(5, v.quality_mean)) / 5) * 100;
+        let deltaHtml = `<span class="abl-delta flat">—</span>`;
+        if (v.quality_delta != null) {
+          const d = v.quality_delta;
+          const cls = d < -0.05 ? "hurt" : d > 0.05 ? "help" : "flat";
+          deltaHtml = `<span class="abl-delta ${cls}">${d >= 0 ? "+" : "−"}${Math.abs(d).toFixed(2)}</span>`;
+        }
+        return `<div class="abl-row${v.key === "full" ? " full" : ""}">
+          <span class="abl-name bl-name" title="${escapeHtml(v.detail || "")}">${escapeHtml(v.name)}</span>
+          <span class="abl-track"><span class="abl-bar" style="width:${w}%"></span></span>
+          <span class="abl-score">${v.quality_mean.toFixed(2)}</span>
+          ${deltaHtml}
+        </div>`;
+      }).join("");
+
+      document.getElementById("ablations-note").innerHTML =
+        `Decision-quality rubric (1–5), graded by a fixed ${escapeHtml(data.judge_model)} judge over ${data.scenarios} scenarios. `
+        + `Δ is each variant's quality minus the full system's — <b>negative means removing that piece lowered quality</b> (it earns its keep). `
+        + `This scores reasoning quality on an eval set, not live P&L; the tools ablation isn't measurable here (research is a fixed input).`;
+
+      document.getElementById("ablations-card").style.display = "";
     }
 
     async function fetchCsv(path) {
@@ -1627,6 +1722,7 @@
     loadUpdatedAt();
     loadDashboard();
     loadBaselines();
+    loadAblations();
   </script>
 </body>
 </html>

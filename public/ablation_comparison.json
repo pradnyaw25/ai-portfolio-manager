@@ -1,0 +1,70 @@
+{
+  "generated_at": "2026-07-09T02:23:27.825312Z",
+  "judge_model": "gpt-4o",
+  "scenarios": 8,
+  "variants": [
+    {
+      "key": "full",
+      "name": "Full system",
+      "detail": "retrieved memory + bull/bear/risk debate \u2014 the live fund",
+      "scenarios": 8,
+      "pass_rate": 1.0,
+      "quality_mean": 4.125,
+      "cost_usd": 0.018407,
+      "cost_per_scenario": 0.002301,
+      "per_scenario": {
+        "stale_memory": 4.0,
+        "earnings_context": 3.667,
+        "loss_lesson": 4.0,
+        "prior_conviction": 4.0,
+        "risk_flag_memory": 4.333,
+        "debate": 4.333,
+        "valuation_split": 4.333,
+        "mixed_macro": 4.333
+      },
+      "quality_delta": null
+    },
+    {
+      "key": "no_memory",
+      "name": "No memory",
+      "detail": "retrieval disabled \u2014 the PM cannot cite prior theses or filings",
+      "scenarios": 8,
+      "pass_rate": 1.0,
+      "quality_mean": 3.583,
+      "cost_usd": 0.017459,
+      "cost_per_scenario": 0.002182,
+      "per_scenario": {
+        "stale_memory": 3.333,
+        "earnings_context": 3.667,
+        "loss_lesson": 3.0,
+        "prior_conviction": 3.0,
+        "risk_flag_memory": 2.667,
+        "debate": 4.333,
+        "valuation_split": 4.333,
+        "mixed_macro": 4.333
+      },
+      "quality_delta": -0.542
+    },
+    {
+      "key": "no_debate",
+      "name": "No debate",
+      "detail": "single-shot PM \u2014 no bull/bear/risk argument before the call",
+      "scenarios": 8,
+      "pass_rate": 0.625,
+      "quality_mean": 3.875,
+      "cost_usd": 0.013419,
+      "cost_per_scenario": 0.001677,
+      "per_scenario": {
+        "stale_memory": 4.0,
+        "earnings_context": 3.667,
+        "loss_lesson": 4.0,
+        "prior_conviction": 3.667,
+        "risk_flag_memory": 4.333,
+        "debate": 4.0,
+        "valuation_split": 4.0,
+        "mixed_macro": 3.333
+      },
+      "quality_delta": -0.25
+    }
+  ]
+}

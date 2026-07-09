@@ -79,6 +79,10 @@ LLM_FALLBACK_PROVIDER = os.getenv("LLM_FALLBACK_PROVIDER", "")  # empty = no fal
 LLM_FALLBACK_MODEL = os.getenv("LLM_FALLBACK_MODEL", "")
 LLM_TEMPERATURE = float(os.getenv("LLM_TEMPERATURE", "1.0"))
 LLM_MAX_RETRIES = int(os.getenv("LLM_MAX_RETRIES", "2"))
+# Per-request timeout (seconds). The OpenAI SDK defaults to 600s, so a stalled
+# connection can hang a whole run; cap it low enough that the gateway's backoff
+# retry kicks in instead. Normal PM/debate calls finish in 10–15s.
+LLM_REQUEST_TIMEOUT = float(os.getenv("LLM_REQUEST_TIMEOUT", "60"))
 LLM_CALL_LOG = DATA_DIR / "llm_calls.jsonl"
 
 SUPPORTED_LLM_PROVIDERS = {"openai"}
