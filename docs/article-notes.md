@@ -187,3 +187,58 @@ Entry template:
   conditioned on the exact variable being measured (confidence).
 - **Feeds.** The calibration/eval article — this is the "why the first curve was a lie"
   beat before the real numbers land.
+
+## Finding: I ablated my own agent to see if the machinery was theater — it wasn't
+
+**Date:** 2026-07-08. **Code:** `scripts/compare_ablations.py`,
+`src/experiments/ablations.py`, `evals/ablation_scenarios.py`; dashboard panel
+"Does the machinery earn its keep?".
+
+- **Hook.** Every "AI fund" implies the AI does something. Almost none prove it. So I
+  ran my own system three ways — full, memory switched off, debate switched off — over
+  the same scenarios, with the same fixed `gpt-4o` judge grading every decision, and
+  measured the delta.
+- **The numbers (decision-quality rubric, 1–5, N=8).** Full **4.13**. No memory
+  **3.58 (−0.54)**. No debate **3.88 (−0.25)**. Both components measurably improve the
+  decision; removing retrieval hurts most.
+- **Why it's not circular (the part that makes it credible).** The per-scenario
+  breakdown shows the effect is *localized to exactly the scenarios each component
+  touches*. Killing memory dropped all five memory-dependent scenarios
+  (risk_flag 4.33→2.67, loss_lesson 4.0→3.0) while the three debate scenarios — which
+  carry no memory — stayed **identical at 4.333**. If the ablation were leaking a
+  general "less context = lower score" bias, the debate scenarios would have moved too.
+  They didn't. Killing debate, separately, also dropped structural `pass_rate` 1.0→0.625
+  (single-shot PM fails the debate-completeness scorers).
+- **Honest scope (state it before a reader does).** This grades *reasoning quality on an
+  eval set*, not live P&L, at small N; and the *tools* ablation isn't measurable this way
+  because the eval scenarios carry research as a fixed input — that one needs the live
+  pipeline / a replay harness. Say so on the dashboard and in the writeup.
+- **Method worth stealing.** To test whether a component of an agent earns its keep,
+  ablate it against a **fixed** grader and read the *per-item* deltas, not just the mean.
+  The mean tells you *whether* it helped; the per-item pattern tells you *whether you're
+  measuring the component or an artifact*. Reuse the existing eval harness — same
+  scenarios, same judge, toggle one wire.
+- **Feeds.** The "does the AI machinery actually help?" article (baselines + ablations);
+  pairs with the fund-vs-SPY/random-monkey baseline panel.
+
+## Finding: no HTTP timeout on the LLM client can hang a whole run for 10 minutes
+
+**Date:** 2026-07-08. **Code:** `src/llm/providers/openai_provider.py`,
+`src/config.py` (`LLM_REQUEST_TIMEOUT`). Also logged in `docs/incidents.md`.
+
+- **Hook.** Building the ablation harness, a run "hung." I killed it twice assuming my
+  code was stuck. It wasn't — the OpenAI SDK client was created as `OpenAI()` with **no
+  timeout**, and the SDK default is **600s**. One stalled connection = a ten-minute
+  freeze with the process alive and no log line, which reads exactly like a deadlock.
+- **The tell.** The gateway writes `llm_calls.jsonl` on every *completed* call, unbuffered.
+  A live process with zero new rows for minutes isn't slow — it's blocked on I/O. That
+  file was the difference between "diagnose" and "guess."
+- **The fix.** `OpenAI(timeout=LLM_REQUEST_TIMEOUT)`, default 60s (normal PM/debate calls
+  finish in 10–15s), so a stall fails fast and the gateway's existing exponential backoff
+  retries. Also made the harness skip a failed scenario instead of dropping the whole
+  variant.
+- **Method worth stealing.** Any external client needs an explicit, aggressive timeout —
+  the library default is tuned for "don't give up," not "don't hang my batch job." And a
+  per-call append-only log is the cheapest possible liveness probe; buffered stdout is not.
+- **Feeds.** The ops-retrospective article (silent-failure modes); a footnote in the
+  ablation piece on why the harness needed hardening.

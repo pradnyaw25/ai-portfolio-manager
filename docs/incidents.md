@@ -15,6 +15,28 @@ Entry template:
 
 ---
 
+## 2026-07-08 · No LLM client timeout — one stalled call froze a whole batch for minutes
+
+- **Symptom.** The new ablation harness "hung." The process was alive, CPU idle, and
+  no new log lines for many minutes — indistinguishable from a deadlock. I killed and
+  re-ran it twice, wrongly assuming my own code was stuck.
+- **Root cause.** The OpenAI client was constructed as `OpenAI()` with **no `timeout`**.
+  The SDK default is **600 seconds**, so a single stalled connection blocks the calling
+  thread for up to ten minutes with no output. In a sequential batch (the harness, but
+  equally the daily production run) one bad socket freezes everything behind it.
+- **Fix.** Set `OpenAI(timeout=LLM_REQUEST_TIMEOUT)` with a 60s default
+  (`src/config.py`); normal PM/debate calls finish in 10–15s, so 60s fails a genuine
+  stall fast and lets the gateway's existing exponential-backoff retry recover. Also
+  hardened the harness to skip a failed scenario rather than drop the whole variant.
+- **Detection gap.** No test exercises a *stalled* (vs errored) connection — mocks
+  return instantly, so the missing timeout was invisible. The liveness signal that
+  finally diagnosed it was operational, not a test: `data/llm_calls.jsonl` is appended
+  per completed call and unbuffered, so "process alive, zero new rows" = blocked on I/O.
+- **Article angle.** Library defaults optimize for *don't give up*, not *don't hang my
+  job* — every external client needs an explicit, aggressive timeout. And a per-call
+  append-only log is the cheapest liveness probe you can have; buffered stdout hides
+  exactly the failure you most need to see.
+
 ## 2026-07-06 · The grounding gate muzzled the fund over a rounding error
 
 - **Symptom.** No daily tweet went out. The daily run had executed and Pages had

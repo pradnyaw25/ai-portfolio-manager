@@ -64,6 +64,8 @@ Common local workflows are available through `make`:
 ```bash
 make test
 make eval
+make baselines
+make eval-ablate
 make run
 make dashboard PORT=8001
 make ingest-memory
@@ -83,6 +85,31 @@ validity) plus an optional LLM-as-judge grounding check. Results are persisted t
 touch prompts, schemas, or the agent — so a change that breaks the prompt fails CI.
 Running live needs `OPENAI_API_KEY`; the scorers and runner are fully unit-tested
 without one.
+
+### Does the machinery actually help? (baselines + ablations)
+
+The obvious question about any AI fund is "does the AI part do anything?" Two
+harnesses answer it, both surfaced on the dashboard:
+
+- **`make baselines`** — scores the live fund against buy-and-hold **SPY**,
+  buy-and-hold **QQQ**, and a **random-from-watchlist** portfolio (the mean of 500
+  random equal-weight draws — the "beat a monkey?" test). Pure price math, no LLM;
+  runs on every daily cycle and writes `public/baseline_comparison.json`
+  (`src/experiments/baselines.py`, `comparison.py`).
+- **`make eval-ablate`** — the deeper question: does the *machinery* improve the
+  decision? It runs the same scenarios through the same decision code three ways —
+  **full** (memory + debate), **no-memory**, and **no-debate** — holding the model,
+  prompt, and temperature constant, then grades every decision with a single fixed
+  judge so the score reflects the ablated component, not the grader. Reports a
+  quality-vs-full delta table and writes `public/ablation_comparison.json`
+  (`scripts/compare_ablations.py`, `src/experiments/ablations.py`,
+  `evals/ablation_scenarios.py`). A negative delta means removing that piece lowered
+  decision quality — i.e. it earns its keep.
+
+  Honest scope: this measures *reasoning quality on an eval set*, not live P&L, and
+  the *tools* ablation isn't measurable this way (the eval scenarios carry research
+  as a fixed input) — that needs the live pipeline / a replay harness. Needs
+  `OPENAI_API_KEY`; the wiring and aggregation are unit-tested without one.
 
 ## Project Structure
 
