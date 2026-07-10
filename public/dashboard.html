@@ -1472,13 +1472,15 @@
       const best = [...holdingsData].sort((a, b) => b.return_pct - a.return_pct)[0];
 
       if (largest) {
-        setText("largest-holding", largest.symbol);
-        setText("largest-holding-sub", `${pct(largest.allocation_pct, 1)} / ${money.format(largest.market_value)}`);
+        document.getElementById("largest-holding").innerHTML = symbolLink(largest.symbol);
+        const name = symbolNames[largest.symbol] || largest.symbol;
+        setText("largest-holding-sub", `${name} · ${pct(largest.allocation_pct, 1)} / ${money.format(largest.market_value)}`);
       }
 
       if (best) {
-        setText("best-position", best.symbol);
-        setText("best-position-sub", `${signedPct(best.return_pct, 1)} unrealized`);
+        document.getElementById("best-position").innerHTML = symbolLink(best.symbol);
+        const name = symbolNames[best.symbol] || best.symbol;
+        setText("best-position-sub", `${name} · ${signedPct(best.return_pct, 1)} unrealized`);
         document.getElementById("best-position").className =
           `kpi-value ${best.return_pct >= 0 ? "pos" : "neg"}`;
       }
