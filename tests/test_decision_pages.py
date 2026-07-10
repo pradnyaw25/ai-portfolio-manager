@@ -76,7 +76,7 @@ def test_page_renders_debate_and_trades_as_server_side_text():
     # SEO surface
     assert '<link rel="canonical" href="https://glasshousefund.com/decisions/2026-07-07.html" />' in html
     assert 'property="og:url" content="https://glasshousefund.com/decisions/2026-07-07.html"' in html
-    assert "<title>AI fund decision — July 7, 2026</title>" in html
+    assert "<title>AI fund buys AAPL — July 7, 2026</title>" in html
     assert 'name="description" content="BUY AAPL.' in html
 
 
@@ -173,8 +173,8 @@ def test_rejected_trades_are_shown_with_their_reason():
 
 def test_sitemap_is_valid_xml_and_covers_every_page():
     entries = [
-        _entry("2026-07-06", created_at="2026-07-06T00:00:00Z"),
-        _entry("2026-07-07", created_at="2026-07-07T00:00:00Z"),
+        _entry("2026-07-06", created_at="2026-07-06T00:00:00Z", debate={"bull": {"thesis": "x"}}),
+        _entry("2026-07-07", created_at="2026-07-07T00:00:00Z", debate={"bull": {"thesis": "x"}}),
     ]
     xml = decision_pages.build_sitemap(entries)
     root = ET.fromstring(xml)
@@ -191,7 +191,10 @@ def test_sitemap_is_valid_xml_and_covers_every_page():
 
 
 def test_sitemap_lastmod_uses_each_decision_date():
-    entries = [_entry("2026-07-06", created_at="x"), _entry("2026-07-07", created_at="y")]
+    entries = [
+        _entry("2026-07-06", created_at="x", debate={"bull": {"thesis": "x"}}),
+        _entry("2026-07-07", created_at="y", debate={"bull": {"thesis": "x"}}),
+    ]
     root = ET.fromstring(decision_pages.build_sitemap(entries))
 
     for url in root.findall("s:url", SITEMAP_NS):
@@ -236,3 +239,53 @@ def test_export_with_empty_journal_does_not_crash(tmp_path):
     assert decision_pages.export([], public_dir=tmp_path) == []
     assert (tmp_path / "decisions" / "index.html").exists()
     ET.fromstring((tmp_path / "sitemap.xml").read_text())
+
+
+def test_latest_per_date_parses_offset_timestamps_not_strings():
+    # run_late is 20:00Z; run_early is 01:00+05:30 == 19:30Z, so run_late is truly
+    # the last run. Lexically "2026-07-08..." > "2026-07-07...", so a string compare
+    # would wrongly pick run_early; parsing to real instants picks run_late.
+    rows = [
+        _entry("2026-07-07", created_at="2026-07-08T01:00:00+05:30", summary="earlier run"),
+        _entry("2026-07-07", created_at="2026-07-07T20:00:00Z", summary="correct latest"),
+    ]
+    entries = decision_pages.latest_per_date(rows)
+    assert len(entries) == 1
+    assert entries[0]["raw_decision"]["summary"] == "correct latest"
+
+
+def test_title_and_h1_carry_the_traded_symbols():
+    entry = _entry(
+        "2026-07-07",
+        created_at="2026-07-07T12:00:00Z",
+        approved_trades=[
+            {"symbol": "AAPL", "action": "BUY", "shares": 10, "confidence": 0.8},
+            {"symbol": "NVDA", "action": "SELL", "shares": 5, "confidence": 0.7},
+        ],
+    )
+    html = decision_pages.render_decision_page(entry, prev=None, next_=None)
+    assert "<title>AI fund buys AAPL, sells NVDA — July 7, 2026</title>" in html
+    assert "<h1>AI fund buys AAPL, sells NVDA — July 7, 2026</h1>" in html
+
+
+def test_hold_day_title_falls_back_to_plain_decision():
+    entry = _entry("2026-06-29", created_at="2026-06-29T12:00:00Z", summary="Held.")
+    html = decision_pages.render_decision_page(entry, prev=None, next_=None)
+    assert "<title>AI fund decision — June 29, 2026</title>" in html
+
+
+def test_thin_page_is_noindexed_and_excluded_from_sitemap():
+    thin = _entry("2026-06-12", created_at="2026-06-12T12:00:00Z", summary="Held, no debate.")
+    rich = _entry(
+        "2026-07-07",
+        created_at="2026-07-07T12:00:00Z",
+        approved_trades=[{"symbol": "AAPL", "action": "BUY", "shares": 10, "confidence": 0.8}],
+    )
+    thin_html = decision_pages.render_decision_page(thin, prev=None, next_=None)
+    rich_html = decision_pages.render_decision_page(rich, prev=None, next_=None)
+    assert '<meta name="robots" content="noindex,follow" />' in thin_html
+    assert 'name="robots"' not in rich_html  # substantial pages are indexable
+
+    xml = decision_pages.build_sitemap([thin, rich])
+    assert "https://glasshousefund.com/decisions/2026-07-07.html" in xml
+    assert "2026-06-12.html" not in xml  # thin day stays out of the sitemap

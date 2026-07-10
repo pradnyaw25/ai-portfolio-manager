@@ -14,7 +14,7 @@ decision; earlier rows are superseded and are not published.
 """
 
 import json
-from datetime import date
+from datetime import date, datetime, timezone
 from html import escape
 from pathlib import Path
 
@@ -150,7 +150,26 @@ def _money(value) -> str:
         return "—"
 
 
-def _shell(*, title: str, description: str, canonical: str, body: str, active: str = "") -> str:
+def _is_substantial(entry: dict) -> bool:
+    """Whether a day's page clears the bar to be indexed: it has a real debate, at
+    least one trade, or a market-calls table. Thin backfill days (no debate, no
+    trades, no calls) are kept as permalinks for the audit trail but marked
+    noindex and left out of the sitemap, so a handful of near-empty stubs don't
+    dilute the crawlable corpus."""
+    rd = entry.get("raw_decision") or {}
+    debate = rd.get("debate") or {}
+    has_debate = any(
+        isinstance(debate.get(role), dict) and debate[role].get("thesis")
+        for role in ("bull", "bear", "risk")
+    )
+    has_trade = bool(entry.get("approved_trades") or entry.get("executed_trades"))
+    has_calls = bool(rd.get("market_calls"))
+    return has_debate or has_trade or has_calls
+
+
+def _shell(
+    *, title: str, description: str, canonical: str, body: str, active: str = "", robots: str = ""
+) -> str:
     """Wrap page content in the site chrome. All decision pages sit one level deep,
     so sibling links are prefixed with ``../``."""
 
@@ -173,7 +192,8 @@ def _shell(*, title: str, description: str, canonical: str, body: str, active: s
     gtag('config', 'G-MCDDGJ3XEC');
   </script>
   <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
-  <link rel="canonical" href="{escape(canonical)}" />
+  <link rel="canonical" href="{escape(canonical)}" />{f'''
+  <meta name="robots" content="{escape(robots)}" />''' if robots else ""}
   <meta name="description" content="{escape(description)}" />
   <meta name="author" content="Pradnya Wakchaure" />
   <meta property="og:type" content="article" />
@@ -210,10 +230,35 @@ def _shell(*, title: str, description: str, canonical: str, body: str, active: s
 
 
 def _trade_summary(entry: dict) -> str:
-    """'BUY AAPL, SELL NVDA' — used in titles and descriptions."""
+    """'BUY AAPL, SELL NVDA' — used in descriptions."""
     trades = entry.get("executed_trades") or entry.get("approved_trades") or []
     parts = [f"{t.get('action', '?')} {t.get('symbol', '?')}" for t in trades]
     return ", ".join(dict.fromkeys(parts))
+
+
+def _title_phrase(entry: dict) -> str:
+    """The entity-rich part of the title: 'buys AAPL', 'buys AAPL, sells NVDA'.
+
+    A date beats nobody's search; the traded symbols are the strongest on-page
+    signal. Empty on hold days (the title falls back to a plain 'decision')."""
+    trades = entry.get("executed_trades") or entry.get("approved_trades") or []
+    buys: list[str] = []
+    sells: list[str] = []
+    for t in trades:
+        action = str(t.get("action", "")).upper()
+        symbol = str(t.get("symbol", "")).upper()
+        if not symbol:
+            continue
+        if action == "BUY" and symbol not in buys:
+            buys.append(symbol)
+        elif action == "SELL" and symbol not in sells:
+            sells.append(symbol)
+    parts = []
+    if buys:
+        parts.append("buys " + ", ".join(buys[:3]))
+    if sells:
+        parts.append("sells " + ", ".join(sells[:3]))
+    return ", ".join(parts)
 
 
 def _render_trades(entry: dict) -> str:
@@ -364,7 +409,8 @@ def render_decision_page(entry: dict, *, prev: dict | None, next_: dict | None) 
     summary = rd.get("summary") or ""
     trades = _trade_summary(entry)
 
-    title = f"AI fund decision — {pretty}"
+    phrase = _title_phrase(entry)
+    title = f"AI fund {phrase} — {pretty}" if phrase else f"AI fund decision — {pretty}"
     desc = (
         f"{trades}. {summary}"[:300]
         if trades
@@ -404,6 +450,7 @@ def render_decision_page(entry: dict, *, prev: dict | None, next_: dict | None) 
         canonical=f"{SITE}/decisions/{iso}.html",
         body=body,
         active="decisions.html",
+        robots="" if _is_substantial(entry) else "noindex,follow",
     )
 
 
@@ -434,6 +481,21 @@ def render_index(entries: list[dict]) -> str:
     )
 
 
+def _created_at(row: dict) -> datetime:
+    """Parse a row's ``created_at`` to an aware UTC datetime for comparison.
+
+    Comparing the raw strings lexicographically is correct only while every row is
+    fixed-width UTC (``...Z``); the moment one carries an offset (``+05:30``) string
+    ordering picks the wrong run. Parse to a real instant so the last run always
+    wins. Unparseable/missing timestamps sort first (treated as oldest)."""
+    raw = str(row.get("created_at") or "")
+    try:
+        dt = datetime.fromisoformat(raw.replace("Z", "+00:00"))
+    except ValueError:
+        return datetime.min.replace(tzinfo=timezone.utc)
+    return dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)
+
+
 def latest_per_date(rows: list[dict]) -> list[dict]:
     """One entry per date — the last run of that date — sorted oldest to newest.
 
@@ -446,7 +508,7 @@ def latest_per_date(rows: list[dict]) -> list[dict]:
         if not iso or not row.get("raw_decision"):
             continue
         current = by_date.get(iso)
-        if current is None or str(row.get("created_at") or "") >= str(current.get("created_at") or ""):
+        if current is None or _created_at(row) >= _created_at(current):
             by_date[iso] = row
     return [by_date[d] for d in sorted(by_date)]
 
@@ -469,8 +531,11 @@ def build_sitemap(entries: list[dict]) -> str:
         for path, freq, pri, dynamic in STATIC_PAGES
     ]
     parts.append(url(f"{SITE}/decisions/", "daily", "0.8", latest))
+    # Only index substantial days; thin backfill stubs are noindexed permalinks and
+    # stay out of the sitemap until they clear the bar (see _is_substantial).
     for e in reversed(entries):
-        parts.append(url(f"{SITE}/decisions/{e['date']}.html", "yearly", "0.6", e["date"]))
+        if _is_substantial(e):
+            parts.append(url(f"{SITE}/decisions/{e['date']}.html", "yearly", "0.6", e["date"]))
 
     body = "\n".join(parts)
     return (
