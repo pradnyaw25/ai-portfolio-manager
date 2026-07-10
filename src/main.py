@@ -360,7 +360,7 @@ def generate_report_and_tweet(snapshot, trades, research, decisions, approved_tr
         portfolio_decision,
         run_id=run_id,
     )
-    tweet = TweetGeneratorAgent().generate(snapshot, trades)
+    tweet = TweetGeneratorAgent().generate(snapshot, trades, decisions)
     logger.info("Generated tweet: %s", tweet)
     return report_markdown, tweet
 
