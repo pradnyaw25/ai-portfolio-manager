@@ -15,6 +15,36 @@ Entry template:
 
 ---
 
+## 2026-07-09 · The risk engine logged 22 "rejected trades" that were never trades
+
+- **Symptom.** Today's decision journal showed **22 rejected trades** — every one a
+  `HOLD` of 0 shares, "rejected" for `confidence 0.55 below minimum 0.60`. It read as if
+  the risk engine had blocked 22 trade attempts; in reality the fund proposed **one**
+  trade (BUY AAPL, approved) and held everything else. Across all history, **31 of 32**
+  recorded "rejected trades" were these phantom HOLDs.
+- **Root cause.** The portfolio manager emits a decision for *every* researched symbol,
+  mostly `HOLD`. In `risk_manager.review()`, the minimum-**trade**-confidence gate ran
+  inside `_base_rejection_reason` *before* the `if action == "HOLD": continue` skip — and
+  unlike the sibling checks (`shares <= 0`, `symbol not in prices`), the confidence check
+  had no `action != "HOLD"` guard. So every low-conviction HOLD was caught by the gate
+  and appended to `rejected` before it could be skipped. A HOLD trades nothing, so it
+  should be neither approved nor rejected.
+- **Fix.** One guard — `if action != "HOLD" and confidence < MIN_TRADE_CONFIDENCE` — so a
+  low-confidence HOLD passes through and is skipped as the no-op it is. Because the bad
+  rows are already written into `decisions.jsonl` (history isn't rewritten), also filtered
+  HOLDs out of every surface that renders rejected trades: the live journal
+  (`decisions.html`), the prerendered decision pages (`decision_pages.py`), and the
+  read-only MCP endpoint (`fund_data.py`). Regression test added.
+- **Detection gap.** No test asserted what happens to a HOLD in review — tests covered
+  low-confidence *BUYs* (correctly rejected) but never a HOLD, so the missing guard was
+  invisible. And "rejected trades" was never sanity-checked against "trades actually
+  proposed," so a list that was 96% phantom looked normal on the dashboard.
+- **Article angle.** *A guardrail that's technically firing but semantically wrong.* The
+  confidence gate worked; it just applied to the wrong set. The audit trail's credibility
+  depends on it meaning what it says — "rejected trade" has to mean a trade that was
+  actually going to happen, or the transparency is theater. Also: no-op actions leaking
+  into an action log is a classic way audit trails quietly lie.
+
 ## 2026-07-08 · No LLM client timeout — one stalled call froze a whole batch for minutes
 
 - **Symptom.** The new ablation harness "hung." The process was alive, CPU idle, and

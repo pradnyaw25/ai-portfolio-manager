@@ -170,7 +170,12 @@ def get_decision(*, run_id: str | None = None, date: str | None = None, store: A
         "bear_case_response": raw.get("bear_case_response"),
         "cash_thesis": entry.get("cash_thesis"),
         "executed_trades": entry.get("executed_trades") or [],
-        "rejected_trades": entry.get("rejected_trades") or [],
+        # HOLDs are no-ops, not trades; older entries wrongly logged low-confidence
+        # HOLDs as "rejected", so exclude them from what the MCP reports as rejected.
+        "rejected_trades": [
+            t for t in (entry.get("rejected_trades") or [])
+            if str(t.get("action", "")).upper() != "HOLD"
+        ],
         "rebalance_trades": entry.get("rebalance_trades") or [],
         "risk_events": entry.get("risk_events") or [],
         "sources_used": raw.get("sources_used") or [],

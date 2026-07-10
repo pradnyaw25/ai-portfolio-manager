@@ -249,6 +249,10 @@ def _render_trades(entry: dict) -> str:
         )
 
     for t in entry.get("rejected_trades") or []:
+        # HOLDs are no-ops, not trades; older entries wrongly logged low-confidence
+        # HOLDs as "rejected" — skip them so the page shows only real blocked trades.
+        if str(t.get("action", "")).upper() == "HOLD":
+            continue
         head = f"{escape(t.get('action', '?'))} {escape(str(t.get('shares', 0)))} {escape(t.get('symbol', '?'))}"
         out.append(
             f'<div class="trade rejected"><div class="head">{head}</div>'

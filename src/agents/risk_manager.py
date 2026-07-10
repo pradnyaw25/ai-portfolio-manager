@@ -165,7 +165,10 @@ class RiskManagerAgent:
             return f"invalid action: {action}"
         if action != "HOLD" and shares <= 0:
             return "non-HOLD trade must have positive shares"
-        if confidence < MIN_TRADE_CONFIDENCE:
+        # A HOLD is a no-op (trades nothing), so the minimum-trade-confidence gate
+        # doesn't apply — otherwise every low-conviction HOLD is logged as a
+        # "rejected trade" that was never a trade. HOLDs are skipped in review().
+        if action != "HOLD" and confidence < MIN_TRADE_CONFIDENCE:
             return f"confidence {confidence:.2f} below minimum {MIN_TRADE_CONFIDENCE:.2f}"
         if action != "HOLD" and symbol not in prices:
             return "missing market price"

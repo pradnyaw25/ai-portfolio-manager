@@ -770,7 +770,11 @@
         const decision = entry.raw_decision || {};
         const portfolio = entry.portfolio || {};
         const approved = entry.approved_trades || [];
-        const rejected = entry.rejected_trades || [];
+        // HOLDs are no-ops, never real trades; older journal entries wrongly logged
+        // low-confidence HOLDs as "rejected", so filter them out of the display.
+        const rejected = (entry.rejected_trades || []).filter(
+          t => String(t.action || "").toUpperCase() !== "HOLD"
+        );
         const executed = entry.executed_trades || [];
         const rebalance = entry.rebalance_trades || [];
         const cashThesis = entry.cash_thesis || decision.cash_thesis || null;
