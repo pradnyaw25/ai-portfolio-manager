@@ -50,9 +50,10 @@ The system uses LLM agents to analyze markets, make trade decisions, and manage 
 - [ ] **Correlation-aware diversification** — Sector concentration *is* enforced
   (`risk_manager.py:98-132`, 40% cap). Correlation is not: there is no correlation code anywhere
   in `src/`. Two names in different GICS sectors that move together still pass every check.
-- [ ] **Unit-test the rebalance checker** — `src/agents/rebalance_checker.py` holds ~200 lines of
-  cash-target logic and has no direct test. It appears in `tests/test_daily_graph_integration.py`
-  only as a stubbed graph node, so the real logic is never exercised.
+- [ ] **Unit-test the rebalance checker** *(started 2026-07-09)* — `tests/test_rebalance_checker.py`
+  now exists (added with the same-day-rebuy fix, #74) and covers the just-sold exclusion + prompt,
+  but the ~200 lines of cash-target/deployment-sizing logic (`_project_cash`, min-deploy floor,
+  "too small" rejection, hold-cash thesis path) still have no direct coverage. Extend that file.
 
 ### Medium Priority
 - [ ] **Smarter research agent** — None of the three parts exist. No sentiment scoring anywhere in
@@ -67,6 +68,19 @@ The system uses LLM agents to analyze markets, make trade decisions, and manage 
 - [ ] **Backtest framework** — `scripts/backfill.py:25` is still `# TODO: implement historical
   simulation` inside an empty date loop. Note `src/experiments/comparison.py` is *not* this: it
   compares the live fund to baselines over recorded history (post-hoc attribution, not a backtest).
+- [ ] **Multi-model live calibration** *(high leverage for the launch; owner has Groq credits, will
+  plug in providers)* — Run the same `market_calls` prompt through several providers each cycle
+  (Claude, Groq/Llama, the current gpt-4.1-mini), tag each prediction with the model that made it,
+  and publish one calibration curve per model. Turns the launch artifact from "I scored an LLM's
+  predictions" into "**Claude vs Llama vs GPT — whose stated confidence is actually honest**," with
+  live dated receipts. Directly amplifies [Reposition the launch around calibration]. Build is
+  modest: the gateway already routes by `(provider, model)` tier (`src/config.py:74`, fallback slot
+  at `:79`), so add a per-model call in `record_market_calls` and a `model` field on the prediction;
+  the scorer (`prediction_scorer.py`) and the decision-page Market-calls table already generalize.
+  Cost is trivial (~$1–2/mo even on Sonnet; cents on Haiku/Groq). **Scope guard:** spend on the
+  *comparison across models*, NOT on making the single fund smarter — `make eval-compare` already
+  measured that bigger models don't move decision quality on this eval set (`src/config.py:69-72`),
+  so extra reasoning calls for one fund are low-ROI.
 
 ### Low Priority
 - [ ] **Slack/Discord notifications** — Post daily summaries to a channel. The only outbound
@@ -76,11 +90,28 @@ The system uses LLM agents to analyze markets, make trade decisions, and manage 
   (`src/data_sources/market_data.py:22`) and the news client (`src/data_sources/news.py:71`), both
   of which swallow exceptions and silently degrade to empty results on a 429. Exponential backoff
   already exists for the LLM gateway (`src/llm/gateway.py:299`) and is a reasonable model to copy.
+  *Partly addressed 2026-07-09 (#66):* the OpenAI client now sets `LLM_REQUEST_TIMEOUT` (60s) so a
+  stalled LLM call fails fast instead of hanging a run — but the yfinance/news 429 degradation is
+  still open.
 - [ ] **Delete dead `src/reporting/html_report.py`** — Never imported or called; the pipeline uses
   `MarkdownReportGenerator` (`src/main.py:31`). Its static P&L table was superseded by the dashboard.
 
 ### Recently Completed
 
+- [x] **No same-day rebuy of a just-sold name** *(2026-07-09, #74)* — the rebalancer was blind to the
+  PM's sells and could redeploy cash straight back into a name just trimmed (self-contradictory
+  "SELL 50 · BUY 58", seen on 2 of 14 days). `RebalanceChecker.check()` now excludes symbols sold
+  this cycle from the deployment prompt AND drops any such BUY after risk review.
+- [x] **HOLDs no longer logged as "rejected trades"** *(2026-07-09, #68)* — the min-trade-confidence
+  gate fired on HOLDs (no-ops) before the HOLD skip, so 31 of 32 historical "rejected trades" were
+  phantom HOLDs. Added the `action != "HOLD"` guard in `risk_manager.py`; filtered HOLDs from every
+  surface that renders rejected trades (journal, decision pages, MCP).
+- [x] **Better daily tweets** *(2026-07-09, #75)* — dropped the cash%/position-count status-report
+  filler; tweets now lead with the trade thesis, cite the news catalyst behind it, and surface the
+  fund's sharpest scored call. `tweet_generator.py` + `prompts/tweet_writer.txt` (v2).
+- [x] **Ablation harness (V1-1 machinery half)** *(2026-07-08, #66)* — `make eval-ablate` scores
+  full vs no-memory vs no-debate on the eval set with a fixed judge; result panel on the dashboard.
+  See `docs/ROADMAP-V2.md` V1-1. Also fixed a latent no-timeout hang on the LLM client.
 - [x] **Stop-loss / take-profit rules** — `src/agents/risk_events.py` emits full-exit SELLs at
   `STOP_LOSS_PCT` (0.15) and `TAKE_PROFIT_PCT` (0.40), both env-configurable. Wired at
   `src/main.py:182`; system exits supersede LLM trades for the same symbol and still pass through
@@ -120,33 +151,23 @@ opinionated content every single day.** Everything below follows from that.
   claimed letters "only reach the dashboard" — they reach nothing.
 ### Decision pages — follow-up
 
-Shipped, live, and working. These four came out of reviewing the result. Ordered by
-leverage; the first is a latent bug, not a nicety.
+All four shipped 2026-07-09 (PRs #69, #70, #71). Kept as a record.
 
-- [ ] **Fix the `created_at` string comparison** *(bug — fails silently)* —
-  `decision_pages.latest_per_date()` picks a day's decision by comparing `created_at`
-  lexicographically. All 38 rows today are fixed-width UTC (`...083605Z`), so it's correct. The
-  moment one row carries an offset (`+05:30`), string ordering picks the *wrong* run and publishes
-  a superseded decision — with no error. Parse to `datetime` before comparing.
-- [ ] **Gate thin pages out of the index** — Of the 12 published pages, **9 are under 2,500 chars**
-  and 5 have neither trades nor a debate (median 1,975 total, 1,649 after 326 chars of nav/footer
-  chrome). The debate transcript only starts on 2026-07-03; everything earlier is backfill from a
-  system that had no debate. Publishing 9 thin pages to gain 3 rich ones is a bad trade at N=12 and
-  a good one at N=250. Keep them as permalinks and audit trail, but exclude from `sitemap.xml` and
-  mark `<meta name="robots" content="noindex,follow">` until a day clears a bar — has a debate, or
-  at least one approved trade. Today that indexes 6 and holds 6; the gate opens on its own as the
-  corpus matures.
-- [ ] **Put the traded symbols in `<title>` and `<h1>`** — Currently `AI fund decision — July 7,
-  2026`. The title is the strongest on-page signal and carries zero entity signal today; nobody
-  searches for a date. `AI fund buys AAPL — July 7, 2026` costs nothing and does not change the URL.
-- [ ] **Symbol hub pages** *(`/symbols/NVDA.html`)* — The entity query we actually care about
-  ("why did an AI fund sell NVDA") is served by neither a date page nor a per-symbol *decision*
-  stub. It wants one page per symbol, aggregating every decision that ever touched it, newest
-  first, cross-linked to the day pages. Entity hub + chronological detail is the standard
-  programmatic-SEO structure, and hubs get *richer* over time where per-day-per-symbol stubs get
-  thinner. ~33 pages total, not 15/day. Gate at ~3 mentions so day-one hubs aren't empty. Data is
-  already in `decisions.jsonl`; reuse the shell/sitemap/index patterns in `decision_pages.py`.
-  **Do not confuse this with per-symbol decision pages, which are correctly rejected above.**
+- [x] **Fixed the `created_at` string comparison** *(latent bug)* (#69) —
+  `decision_pages.latest_per_date()` now parses `created_at` to an aware UTC datetime
+  (`_created_at()`) before comparing, so an offset timestamp (`+05:30`) can't silently publish a
+  superseded run. Regression test covers it.
+- [x] **Gated thin pages out of the index** (#69) — days with no debate, no trade, and no market
+  calls get `<meta name="robots" content="noindex,follow">` and are excluded from `sitemap.xml`,
+  kept as permalinks (`_is_substantial()`). 5 of 14 days are held today; the gate opens on its own.
+- [x] **Traded symbols in `<title>`/`<h1>`** (#69) — `AI fund buys AAPL — July 7, 2026`
+  (buys/sells + tickers), falling back to the plain title on hold days. URL unchanged.
+- [x] **Symbol hub pages** *(`/symbols/<TICKER>.html`)* (#70, extended #71) — one page per ticker
+  aggregating every decision that touched it, newest first, each card linked to its day page, plus
+  a `/symbols/` index and sitemap entries. #71 then generates a hub for **every** universe ticker
+  (noindexed placeholder when empty) so a symbol link never 404s, and links every ticker mention
+  across the site (decision pages, live journal, dashboard holdings/KPIs, predictions) to its hub.
+  `_symbol_touches()` / `render_symbol_page()` / `_symbol_link()` in `decision_pages.py`.
 
 ### Recently Completed
 
