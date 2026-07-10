@@ -72,14 +72,22 @@ that is the brand.**
 Effort in focused hours. IDs (`V1-*`) are the working task list; specs in
 `.claude/TODO.md`.
 
+> **Shipped as of 2026-07-09:** the 30-day tier is largely cleared — **V1-1** (baselines
+> were already live; ablations shipped #66, minus the *no-tools* ablation which needs the
+> V1-6 replay harness), **V1-2** (strong tier is `gpt-4.1-mini`, chosen via `make eval-compare`,
+> `docs/model-selection.md`), **V1-5** (asymmetry + rebuttal + `conviction_spread`). **V1-3** is
+> ~90% done (About page, performance-led hero, README) — the 90s demo GIF is the remainder.
+> Still open in this tier: **V1-4** (real-query retrieval eval). The whole `Next 90 days` and
+> `6–12 months` tiers below are untouched.
+
 ### Next 30 days — highest ROI
 | ID | Item | Why | Effort |
 |----|------|-----|--------|
-| V1-1 | **Baseline + ablation harness** — fund vs SPY, random-from-watchlist, no-memory, no-debate, no-tools; results on the dashboard | Converts artifact → experiment; answers the only question everyone asks | 20–30h |
-| V1-2 | **Strong-tier PM model + measured delta** — frontier model on PM/judges, cheap analysts; measure eval + quality delta vs cost | Kills "it's just 4o-mini" with data | 4–6h |
-| V1-3 | **Presentation pass** — README hero + arch image + 90s demo GIF + MCP clip; landing page explains itself + GitHub link; hide empty calibration until populated | Distribution is the bottleneck | 8–10h |
+| V1-1 ✅ | **Baseline + ablation harness** — fund vs SPY, random-from-watchlist, no-memory, no-debate, no-tools; results on the dashboard | Converts artifact → experiment; answers the only question everyone asks | 20–30h |
+| V1-2 ✅ | **Strong-tier PM model + measured delta** — frontier model on PM/judges, cheap analysts; measure eval + quality delta vs cost | Kills "it's just 4o-mini" with data | 4–6h |
+| V1-3 ~ | **Presentation pass** — README hero + arch image + 90s demo GIF + MCP clip; landing page explains itself + GitHub link; hide empty calibration until populated | Distribution is the bottleneck | 8–10h |
 | V1-4 | **Real-query retrieval eval** — 25–30 hand-labeled queries on the live corpus with real embeddings | Makes the RAG claim honest | 8–12h |
-| V1-5 | **Debate that earns its keep** — information asymmetry per analyst + one rebuttal turn + disagreement metrics | Turns theater into an agent system; feeds V1-1 | 10–15h |
+| V1-5 ✅ | **Debate that earns its keep** — information asymmetry per analyst + one rebuttal turn + disagreement metrics | Turns theater into an agent system; feeds V1-1 | 10–15h |
 
 ### Next 90 days — technical depth
 | ID | Item | Why | Effort |
