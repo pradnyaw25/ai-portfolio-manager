@@ -17,6 +17,20 @@ def test_rejects_low_confidence_trade():
     assert "below minimum" in review.rejected[0].reason
 
 
+def test_low_confidence_hold_is_not_rejected():
+    # A HOLD is a no-op, so the min-trade-confidence gate must not apply to it:
+    # a low-confidence HOLD should be neither approved nor listed as a rejected trade.
+    portfolio = PortfolioSnapshot(date=date.today(), cash=100000, positions=[])
+    review = RiskManagerAgent().review(
+        raw_trades=[{"symbol": "AAPL", "action": "HOLD", "shares": 0, "confidence": 0.50}],
+        portfolio=portfolio,
+        prices={"AAPL": 100.0},
+    )
+
+    assert review.approved == []
+    assert review.rejected == []
+
+
 def test_caps_trade_to_daily_turnover_limit():
     portfolio = PortfolioSnapshot(date=date.today(), cash=100000, positions=[])
     review = RiskManagerAgent().review(
