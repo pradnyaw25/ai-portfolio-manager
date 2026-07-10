@@ -289,3 +289,56 @@ def test_thin_page_is_noindexed_and_excluded_from_sitemap():
     xml = decision_pages.build_sitemap([thin, rich])
     assert "https://glasshousefund.com/decisions/2026-07-07.html" in xml
     assert "2026-06-12.html" not in xml  # thin day stays out of the sitemap
+
+
+def test_symbol_touches_orders_newest_first_across_trades_and_calls():
+    e1 = _entry(
+        "2026-07-01",
+        created_at="2026-07-01T12:00:00Z",
+        approved_trades=[{"symbol": "AAPL", "action": "BUY", "shares": 10, "confidence": 0.8}],
+    )
+    e2 = _entry("2026-07-02", created_at="2026-07-02T12:00:00Z")
+    e2["raw_decision"]["market_calls"] = [
+        {"symbol": "AAPL", "direction": "OUTPERFORM", "confidence": 0.6, "thesis": "buybacks"}
+    ]
+    touches = decision_pages._symbol_touches([e1, e2])  # oldest-first input
+    assert [t["date"] for t in touches["AAPL"]] == ["2026-07-02", "2026-07-01"]  # newest first
+    assert touches["AAPL"][0]["call"]["thesis"] == "buybacks"
+    assert touches["AAPL"][1]["trades"][0]["action"] == "BUY"
+
+
+def test_benchmarks_do_not_get_a_symbol_hub():
+    e = _entry("2026-07-01", created_at="2026-07-01T12:00:00Z")
+    e["raw_decision"]["market_calls"] = [
+        {"symbol": "SPY", "direction": "OUTPERFORM", "confidence": 0.5, "thesis": "x"}
+    ]
+    assert "SPY" not in decision_pages._symbol_touches([e])
+
+
+def test_export_writes_symbol_hubs_gated_by_min_days(tmp_path):
+    rows = [
+        _entry(
+            d,
+            created_at=f"{d}T12:00:00Z",
+            approved_trades=[{"symbol": "AAPL", "action": "BUY", "shares": 10, "confidence": 0.8}],
+        )
+        for d in ("2026-07-01", "2026-07-02", "2026-07-03")
+    ]
+    # NVDA appears on only one day → below the 3-day hub gate.
+    rows[0]["approved_trades"].append(
+        {"symbol": "NVDA", "action": "SELL", "shares": 5, "confidence": 0.7}
+    )
+    decision_pages.export(rows, public_dir=tmp_path)
+
+    assert (tmp_path / "symbols" / "AAPL.html").exists()
+    assert not (tmp_path / "symbols" / "NVDA.html").exists()
+    assert (tmp_path / "symbols" / "index.html").exists()
+
+    hub = (tmp_path / "symbols" / "AAPL.html").read_text()
+    assert "../decisions/2026-07-03.html" in hub  # links to each day
+    assert "BUY 10" in hub
+
+    sitemap = (tmp_path / "sitemap.xml").read_text()
+    assert "https://glasshousefund.com/symbols/AAPL.html" in sitemap
+    assert "https://glasshousefund.com/symbols/" in sitemap
+    assert "/symbols/NVDA.html" not in sitemap

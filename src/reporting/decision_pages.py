@@ -107,6 +107,9 @@ p { margin:0 0 12px; }
 ul { margin:6px 0 0; padding-left:20px; }
 li { margin-bottom:4px; }
 .role { font-size:11.5px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--accent); }
+.shead { display:flex; flex-wrap:wrap; align-items:center; gap:8px; color:var(--ink); font-weight:800; font-size:14px; }
+.shead a { text-decoration:none; }
+.shead a:hover { text-decoration:underline; }
 .pager { display:flex; justify-content:space-between; gap:12px; margin-top:40px;
   border-top:1px solid var(--row-border); padding-top:16px; font-size:14px; font-weight:700; }
 .dlist { list-style:none; margin:0; padding:0; }
@@ -220,8 +223,9 @@ def _shell(
 {body}
     <footer>
       Paper trading — simulated capital, not investment advice.
-      · <a href="../decisions.html">Full decision journal</a>
-      · <a href="./">All decisions by day</a>
+      · <a href="../decisions.html">Decision journal</a>
+      · <a href="../decisions/">By day</a>
+      · <a href="../symbols/">By symbol</a>
     </footer>
   </div>
 </body>
@@ -481,6 +485,130 @@ def render_index(entries: list[dict]) -> str:
     )
 
 
+# --- Symbol hub pages -----------------------------------------------------------
+# One page per ticker aggregating every decision that touched it, newest first. The
+# entity query we care about ("why did an AI fund sell NVDA") is served by neither a
+# date page nor the journal; a hub gets *richer* as the corpus grows where a per-day
+# stub would get thinner. Benchmarks aren't tradable theses, so they get no hub.
+
+SYMBOL_HUB_MIN_DAYS = 3  # a symbol needs this many decision-days before it earns a hub
+_HUB_SKIP = {"SPY", "QQQ", "^VIX"}
+
+
+def _symbol_touches(entries: list[dict]) -> dict[str, list[dict]]:
+    """symbol -> per-day touches (newest first). Each touch records the day's trades
+    of that symbol and/or the day's directional market call on it. ``entries`` is
+    oldest-to-newest (as ``latest_per_date`` returns)."""
+    touches: dict[str, list[dict]] = {}
+    for entry in entries:
+        rd = entry.get("raw_decision") or {}
+        iso = entry["date"]
+        day_trades: dict[str, list[dict]] = {}
+        for t in (entry.get("executed_trades") or entry.get("approved_trades") or []):
+            sym = str(t.get("symbol", "")).upper()
+            if sym:
+                day_trades.setdefault(sym, []).append(t)
+        day_calls: dict[str, dict] = {}
+        for call in rd.get("market_calls") or []:
+            sym = str(call.get("symbol", "")).upper()
+            if sym:
+                day_calls[sym] = call
+        for sym in set(day_trades) | set(day_calls):
+            if sym in _HUB_SKIP:
+                continue
+            touches.setdefault(sym, []).append(
+                {"date": iso, "trades": day_trades.get(sym, []), "call": day_calls.get(sym)}
+            )
+    for sym in touches:
+        touches[sym].reverse()  # newest first
+    return touches
+
+
+def _conf_suffix(value) -> str:
+    try:
+        pct = float(value)
+    except (TypeError, ValueError):
+        return ""
+    return f" · {pct * 100:.0f}%" if pct else ""
+
+
+def render_symbol_page(symbol: str, touches: list[dict]) -> str:
+    n_days = len(touches)
+    n_trades = sum(1 for t in touches if t["trades"])
+    title = f"{symbol}: every AI fund decision — Glasshouse Fund"
+    desc = (
+        f"Every trade and directional call an autonomous AI fund made on {symbol}, "
+        f"newest first — {n_days} decision days, {n_trades} with a trade — each with its reasoning."
+    )[:300]
+
+    cards = []
+    for t in touches:
+        iso = t["date"]
+        bits = []
+        for tr in t["trades"]:
+            action = str(tr.get("action", "?")).upper()
+            shares = tr.get("shares", 0)
+            cls = "down" if action == "SELL" else "up"
+            bits.append(
+                f'<span class="dir {cls}">{escape(action)} {escape(str(shares))}'
+                f'{_conf_suffix(tr.get("confidence"))}</span>'
+            )
+        thesis = ""
+        call = t["call"]
+        if call:
+            outperform = str(call.get("direction") or "OUTPERFORM").upper() != "UNDERPERFORM"
+            bits.append(
+                f'<span class="dir {"up" if outperform else "down"}">'
+                f'Call: {"Outperform" if outperform else "Underperform"} SPY'
+                f'{_conf_suffix(call.get("confidence"))}</span>'
+            )
+            thesis = str(call.get("thesis") or "")
+        thesis_html = f'<p style="margin:6px 0 0">{escape(thesis)}</p>' if thesis else ""
+        cards.append(
+            f'<div class="card"><div class="shead">'
+            f'<a href="../decisions/{iso}.html">{escape(_fmt_date(iso))}</a> '
+            f'{" ".join(bits)}</div>{thesis_html}</div>'
+        )
+
+    body = f"""    <div class="eyebrow">Symbol history</div>
+    <h1>{escape(symbol)} — every decision the fund made</h1>
+    <p class="lede">Every trade and directional call the AI fund has made on {escape(symbol)},
+    newest first, each linked to that day's full decision.</p>
+    <div class="facts"><span class="pill">{n_days} decision days</span>
+    <span class="pill">{n_trades} with a trade</span></div>
+    {"".join(cards)}
+    <div class="pager">
+      <span><a href="./">← All symbols</a></span>
+      <span><a href="../decisions/">Decisions by day →</a></span>
+    </div>
+"""
+    return _shell(title=title, description=desc, canonical=f"{SITE}/symbols/{symbol}.html", body=body)
+
+
+def render_symbol_index(rows: list[tuple[str, int, int]]) -> str:
+    """rows: (symbol, n_days, n_trades), already sorted for display."""
+    items = "".join(
+        f'<li><a href="{escape(sym)}.html">{escape(sym)}</a>'
+        f'<div class="sub">{n_days} decision days · {n_trades} with a trade</div></li>'
+        for sym, n_days, n_trades in rows
+    )
+    body = f"""    <div class="eyebrow">By symbol</div>
+    <h1>Every stock the fund has weighed in on</h1>
+    <p class="lede">One page per ticker, aggregating every decision the AI fund made on it —
+    trades and directional calls — newest first. {len(rows)} symbols.</p>
+    <ul class="dlist">{items}</ul>
+"""
+    return _shell(
+        title="Symbols — Glasshouse Fund",
+        description=(
+            "Every stock an autonomous AI fund has traded or made a directional call on, "
+            "one page each, aggregating its full decision history."
+        ),
+        canonical=f"{SITE}/symbols/",
+        body=body,
+    )
+
+
 def _created_at(row: dict) -> datetime:
     """Parse a row's ``created_at`` to an aware UTC datetime for comparison.
 
@@ -513,9 +641,11 @@ def latest_per_date(rows: list[dict]) -> list[dict]:
     return [by_date[d] for d in sorted(by_date)]
 
 
-def build_sitemap(entries: list[dict]) -> str:
+def build_sitemap(entries: list[dict], symbols: list[str] | None = None) -> str:
     """Generate sitemap.xml from the real page set. Replaces the hand-written file,
-    which went stale the moment decision pages started being emitted."""
+    which went stale the moment decision pages started being emitted.
+
+    ``symbols`` is the set of tickers that earned a hub page (see export)."""
     latest = entries[-1]["date"] if entries else None
 
     def url(loc: str, changefreq: str, priority: str, lastmod: str | None) -> str:
@@ -536,6 +666,11 @@ def build_sitemap(entries: list[dict]) -> str:
     for e in reversed(entries):
         if _is_substantial(e):
             parts.append(url(f"{SITE}/decisions/{e['date']}.html", "yearly", "0.6", e["date"]))
+
+    if symbols:
+        parts.append(url(f"{SITE}/symbols/", "weekly", "0.6", latest))
+        for sym in sorted(symbols):
+            parts.append(url(f"{SITE}/symbols/{sym}.html", "weekly", "0.5", latest))
 
     body = "\n".join(parts)
     return (
@@ -562,8 +697,8 @@ def load_decisions(path: Path | None = None) -> list[dict]:
 
 
 def export(rows: list[dict] | None = None, public_dir: Path | None = None) -> list[str]:
-    """Write /decisions/*.html, /decisions/index.html and sitemap.xml. Returns the
-    decision dates published."""
+    """Write /decisions/*.html, /decisions/index.html, /symbols/*.html and sitemap.xml.
+    Returns the decision dates published."""
     public_dir = public_dir or PUBLIC_DIR
     entries = latest_per_date(rows if rows is not None else load_decisions())
 
@@ -577,7 +712,21 @@ def export(rows: list[dict] | None = None, public_dir: Path | None = None) -> li
         (out_dir / f"{entry['date']}.html").write_text(page)
 
     (out_dir / "index.html").write_text(render_index(entries))
-    (public_dir / "sitemap.xml").write_text(build_sitemap(entries))
 
-    logger.info("Prerendered %d decision pages", len(entries))
+    # Symbol hubs: one page per ticker with at least SYMBOL_HUB_MIN_DAYS decision-days,
+    # so day-one hubs aren't near-empty. The gate opens on its own as the corpus grows.
+    hubs = {s: t for s, t in _symbol_touches(entries).items() if len(t) >= SYMBOL_HUB_MIN_DAYS}
+    sym_dir = public_dir / "symbols"
+    sym_dir.mkdir(parents=True, exist_ok=True)
+    for sym, touches in hubs.items():
+        (sym_dir / f"{sym}.html").write_text(render_symbol_page(sym, touches))
+    index_rows = sorted(
+        ((s, len(t), sum(1 for x in t if x["trades"])) for s, t in hubs.items()),
+        key=lambda r: (-r[1], -r[2], r[0]),
+    )
+    (sym_dir / "index.html").write_text(render_symbol_index(index_rows))
+
+    (public_dir / "sitemap.xml").write_text(build_sitemap(entries, symbols=list(hubs)))
+
+    logger.info("Prerendered %d decision pages, %d symbol hubs", len(entries), len(hubs))
     return [e["date"] for e in entries]
