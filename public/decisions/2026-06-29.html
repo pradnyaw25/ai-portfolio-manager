@@ -96,6 +96,8 @@ li { margin-bottom:4px; }
 .shead { display:flex; flex-wrap:wrap; align-items:center; gap:8px; color:var(--ink); font-weight:800; font-size:14px; }
 .shead a { text-decoration:none; }
 .shead a:hover { text-decoration:underline; }
+.sym-link { color:inherit; text-decoration:none; border-bottom:1px dotted var(--border-strong); }
+.sym-link:hover { border-bottom-color:currentColor; }
 .pager { display:flex; justify-content:space-between; gap:12px; margin-top:40px;
   border-top:1px solid var(--row-border); padding-top:16px; font-size:14px; font-weight:700; }
 .dlist { list-style:none; margin:0; padding:0; }
@@ -128,7 +130,7 @@ footer { margin-top:48px; border-top:1px solid var(--row-border); padding-top:16
     <p class="lede">Overall, while the portfolio has a solid strategy with some strong holdings, the current cash level is high. Engaging in a strategic selling of underperforming stocks like AAPL and NVDA can release capital to either reinvest in stronger positions or maintain for future opportunities. Careful monitoring of the tech sector is essential as it is currently volatile.</p>
     <div class="facts"><span class="pill">Outlook: NEUTRAL</span><span class="pill">Portfolio $997,455</span><span class="pill">Cash 29.8%</span></div>
     <h2>Trades</h2>
-    <div class="trade sell"><div class="head">SELL 50 AAPL<span class="conf">65%</span><span class="muted"> · filled at $281</span></div><p style="margin:6px 0 0">AAPL&#x27;s recent underperformance over 30 days (-7.96%) suggests it may be wise to divest a portion before further declines.</p><div class="muted" style="margin-top:6px">Risks the AI named</div><ul><li>Potential rebound in price post-selling</li><li>Opportunity cost if AAPL recovers</li></ul></div><div class="trade sell"><div class="head">SELL 100 NVDA<span class="conf">73%</span><span class="muted"> · filled at $195</span></div><p style="margin:6px 0 0">The stock has experienced a significant decline and remains below cost basis, and cash can be better utilized in more stable holdings.</p><div class="muted" style="margin-top:6px">Risks the AI named</div><ul><li>Future market recovery in chips</li><li>Realizing a loss on selling</li></ul></div>
+    <div class="trade sell"><div class="head">SELL 50 <a class="sym-link" href="../symbols/AAPL.html">AAPL</a><span class="conf">65%</span><span class="muted"> · filled at $281</span></div><p style="margin:6px 0 0">AAPL&#x27;s recent underperformance over 30 days (-7.96%) suggests it may be wise to divest a portion before further declines.</p><div class="muted" style="margin-top:6px">Risks the AI named</div><ul><li>Potential rebound in price post-selling</li><li>Opportunity cost if AAPL recovers</li></ul></div><div class="trade sell"><div class="head">SELL 100 <a class="sym-link" href="../symbols/NVDA.html">NVDA</a><span class="conf">73%</span><span class="muted"> · filled at $195</span></div><p style="margin:6px 0 0">The stock has experienced a significant decline and remains below cost basis, and cash can be better utilized in more stable holdings.</p><div class="muted" style="margin-top:6px">Risks the AI named</div><ul><li>Future market recovery in chips</li><li>Realizing a loss on selling</li></ul></div>
     
     
     

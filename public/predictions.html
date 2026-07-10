@@ -92,6 +92,16 @@
       color: inherit;
     }
 
+    .sym-link {
+      color: inherit;
+      text-decoration: none;
+      border-bottom: 1px dotted var(--border-strong);
+    }
+
+    .sym-link:hover {
+      border-bottom-color: currentColor;
+    }
+
     .app-shell {
       width: min(1180px, calc(100% - 32px));
       margin: 0 auto;
@@ -514,6 +524,14 @@
         .replace(/'/g, "&#039;");
     }
 
+    // Link a ticker to its per-symbol hub page (every universe ticker has one).
+    function symbolLink(sym) {
+      const s = String(sym || "").toUpperCase();
+      return /^[A-Z]{1,5}$/.test(s)
+        ? `<a class="sym-link" href="symbols/${s}.html">${escapeHtml(s)}</a>`
+        : escapeHtml(String(sym || ""));
+    }
+
     function formatUpdatedAt(value) {
       if (!value) return "Unknown";
       const date = new Date(value);
@@ -556,7 +574,7 @@
 
       return rows.map(p => `
         <tr>
-          <td><strong>${escapeHtml(p.symbol)}</strong></td>
+          <td><strong>${symbolLink(p.symbol)}</strong></td>
           <td>${escapeHtml(p.prediction)}</td>
           <td class="num ${Number(p.alpha_pct) >= 0 ? "pos" : "neg"}">${pct(p.alpha_pct, 2)}</td>
           <td class="num">${pct(Number(p.symbol_return) * 100, 2)}</td>
@@ -573,7 +591,7 @@
 
       return rows.map(p => `
         <tr>
-          <td><strong>${escapeHtml(p.symbol)}</strong></td>
+          <td><strong>${symbolLink(p.symbol)}</strong></td>
           <td>${escapeHtml(p.prediction)}</td>
           <td>${escapeHtml(p.date)}</td>
           <td>${escapeHtml(p.due_date)}</td>
