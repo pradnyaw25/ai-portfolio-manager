@@ -1472,12 +1472,12 @@
       const best = [...holdingsData].sort((a, b) => b.return_pct - a.return_pct)[0];
 
       if (largest) {
-        setText("largest-holding", largest.symbol);
+        document.getElementById("largest-holding").innerHTML = symbolLink(largest.symbol);
         setText("largest-holding-sub", `${pct(largest.allocation_pct, 1)} / ${money.format(largest.market_value)}`);
       }
 
       if (best) {
-        setText("best-position", best.symbol);
+        document.getElementById("best-position").innerHTML = symbolLink(best.symbol);
         setText("best-position-sub", `${signedPct(best.return_pct, 1)} unrealized`);
         document.getElementById("best-position").className =
           `kpi-value ${best.return_pct >= 0 ? "pos" : "neg"}`;
