@@ -54,7 +54,13 @@ class RebalanceChecker:
             logger.info("Excess cash $%.2f below minimum deployment $%.2f — skipping", excess_cash, min_deploy)
             return RebalanceResult(extra_trades=[], cash_thesis=None)
 
-        return self._request_deployment(portfolio, projected_cash_pct, excess_cash, prices, research)
+        # Names the PM (or a risk event) sold or trimmed this cycle must not be
+        # rebought by the rebalancer — that's same-day churn that undoes the decision,
+        # wastes turnover, and produces a self-contradictory "SELL 50 · BUY 58" record.
+        sold_symbols = {t.symbol for t in approved_trades if t.action == "SELL"}
+        return self._request_deployment(
+            portfolio, projected_cash_pct, excess_cash, prices, research, sold_symbols
+        )
 
     def _project_cash(
         self,
@@ -78,6 +84,7 @@ class RebalanceChecker:
         excess_cash: float,
         prices: dict[str, float],
         research: dict,
+        sold_symbols: set[str],
     ) -> RebalanceResult:
         holdings_summary = ", ".join(
             f"{p.symbol} ({p.shares} shares @ ${p.current_price:.2f})"
@@ -88,6 +95,15 @@ class RebalanceChecker:
         movers = research.get("top_movers", [])
 
         per_position_budget = excess_cash / 5
+
+        # Keep just-sold names out of the candidate menu and say so explicitly, so the
+        # model doesn't redeploy cash straight back into a position just trimmed.
+        exclusion = (
+            f"\nEXCLUSION — do NOT buy any of these; they were sold or trimmed this "
+            f"cycle and rebuying them is churn: {sorted(sold_symbols)}.\n"
+            if sold_symbols
+            else ""
+        )
 
         prompt = f"""
 You are a portfolio rebalance assistant. The portfolio has too much cash and needs to deploy it.
@@ -110,9 +126,9 @@ CRITICAL SIZING RULES:
 - Example: If AAPL is $200, buy {int(per_position_budget / 200)} shares (${per_position_budget:,.0f} / $200).
 - Example: If NVDA is $140, buy {int(per_position_budget / 140)} shares (${per_position_budget:,.0f} / $140).
 - DO NOT propose single-digit share counts for stocks under $500. That deploys too little cash.
-
+{exclusion}
 Available prices:
-{json.dumps({s: p for s, p in prices.items() if s in (watchlist if watchlist else list(prices.keys())[:20])}, indent=2)}
+{json.dumps({s: p for s, p in prices.items() if s in (watchlist if watchlist else list(prices.keys())[:20]) and s not in sold_symbols}, indent=2)}
 
 You MUST do exactly one of these:
 
@@ -168,18 +184,25 @@ Return ONLY valid JSON:
                 [(r.symbol, r.reason) for r in review.rejected],
             )
 
-        logger.info("Rebalance: %d additional trades approved for cash deployment", len(review.approved))
+        # Deterministic guardrail: even if the model ignored the exclusion, never let a
+        # rebalance buy land on a name sold this cycle.
+        approved = [t for t in review.approved if t.symbol not in sold_symbols]
+        dropped = [t.symbol for t in review.approved if t.symbol in sold_symbols]
+        if dropped:
+            logger.info("Rebalance: dropped same-day rebuys of just-sold names: %s", dropped)
+
+        logger.info("Rebalance: %d additional trades approved for cash deployment", len(approved))
 
         estimated_deploy = sum(
             trade.shares * prices[trade.symbol]
-            for trade in review.approved
+            for trade in approved
             if trade.symbol in prices
         )
 
         logger.info(
             "Rebalance proposed deployment: $%.2f across %d trades",
             estimated_deploy,
-            len(review.approved),
+            len(approved),
         )
 
         required_deploy = portfolio.total_value * (cash_pct - TARGET_CASH_PCT)
@@ -198,4 +221,4 @@ Return ONLY valid JSON:
                 cash_thesis="[AUTO] Rebalance trades were too small to meaningfully reduce cash position.",
             )
 
-        return RebalanceResult(extra_trades=review.approved, cash_thesis=cash_thesis)
+        return RebalanceResult(extra_trades=approved, cash_thesis=cash_thesis)
