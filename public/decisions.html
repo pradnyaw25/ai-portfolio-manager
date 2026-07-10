@@ -328,6 +328,16 @@
       font-weight: 600;
     }
 
+    .sym-link {
+      color: inherit;
+      text-decoration: none;
+      border-bottom: 1px dotted var(--border-strong);
+    }
+
+    .sym-link:hover {
+      border-bottom-color: currentColor;
+    }
+
     .logo {
       flex: none;
       display: inline-flex;
@@ -557,6 +567,15 @@
       return "conf-low";
     }
 
+    // Link a ticker to its per-symbol hub page. Every universe ticker has a hub, so
+    // these resolve; non-tickers (e.g. ^VIX) fall back to plain text.
+    function symbolLink(sym) {
+      const s = String(sym || "").toUpperCase();
+      return /^[A-Z]{1,5}$/.test(s)
+        ? `<a class="sym-link" href="symbols/${s}.html">${escapeHtml(s)}</a>`
+        : escapeHtml(String(sym || ""));
+    }
+
     function escapeHtml(value) {
       return String(value ?? "")
         .replace(/&/g, "&amp;")
@@ -681,7 +700,7 @@
       if (rejected) {
         return `
           <div class="trade rejected">
-            ${logoHtml(symbol)}<strong>${escapeHtml(action)} ${escapeHtml(shares)} ${escapeHtml(symbol)}</strong> <span class="sym-name">${escapeHtml(symbolNames[symbol] || symbol)}</span>
+            ${logoHtml(symbol)}<strong>${escapeHtml(action)} ${escapeHtml(shares)} ${symbolLink(symbol)}</strong> <span class="sym-name">${escapeHtml(symbolNames[symbol] || symbol)}</span>
             <span class="confidence conf-low">${(confidence * 100).toFixed(0)}%</span>
             <br /><span class="muted">Rejected: ${escapeHtml(rejectReason)}</span>
           </div>
@@ -690,7 +709,7 @@
 
       let html = `
         <div class="trade">
-          ${logoHtml(symbol)}<strong>${escapeHtml(action)} ${escapeHtml(shares)} ${escapeHtml(symbol)}</strong> <span class="sym-name">${escapeHtml(symbolNames[symbol] || symbol)}</span>
+          ${logoHtml(symbol)}<strong>${escapeHtml(action)} ${escapeHtml(shares)} ${symbolLink(symbol)}</strong> <span class="sym-name">${escapeHtml(symbolNames[symbol] || symbol)}</span>
           <span class="confidence ${confClass(confidence)}">${(confidence * 100).toFixed(0)}%</span>
           <br />${escapeHtml(reason)}
       `;
@@ -717,7 +736,7 @@
 
       return `
         <div class="trade">
-          ${logoHtml(symbol)}<strong>${escapeHtml(action)} ${escapeHtml(shares)} ${escapeHtml(symbol)}</strong> <span class="sym-name">${escapeHtml(symbolNames[symbol] || symbol)}</span>
+          ${logoHtml(symbol)}<strong>${escapeHtml(action)} ${escapeHtml(shares)} ${symbolLink(symbol)}</strong> <span class="sym-name">${escapeHtml(symbolNames[symbol] || symbol)}</span>
           <span class="muted">@ ${money.format(price)} · ${money.format(total)}</span>
           ${reasoning ? `<br />${escapeHtml(reasoning)}` : ""}
         </div>

@@ -69,7 +69,7 @@ def test_page_renders_debate_and_trades_as_server_side_text():
     assert "Valuation is stretched" in html
     assert "Buyback program" in html
     assert "Volatility" in html
-    assert "BUY 10 AAPL" in html
+    assert 'BUY 10 <a class="sym-link" href="../symbols/AAPL.html">AAPL</a>' in html  # ticker links to its hub
     assert "filled at $313" in html
     assert "conviction 0.80" in html
 
@@ -167,7 +167,7 @@ def test_rejected_trades_are_shown_with_their_reason():
         rejected_trades=[{"symbol": "PG", "action": "BUY", "shares": 20, "reason": "missing market price"}],
     )
     html = decision_pages.render_decision_page(entry, prev=None, next_=None)
-    assert "BUY 20 PG" in html
+    assert 'BUY 20 <a class="sym-link" href="../symbols/PG.html">PG</a>' in html
     assert "Rejected by the risk engine: missing market price" in html
 
 
@@ -307,38 +307,46 @@ def test_symbol_touches_orders_newest_first_across_trades_and_calls():
     assert touches["AAPL"][1]["trades"][0]["action"] == "BUY"
 
 
-def test_benchmarks_do_not_get_a_symbol_hub():
+def test_non_ticker_symbols_get_no_hub_page(tmp_path):
+    # ^VIX can't be a filename/URL and isn't tradable — it must not spawn a hub.
     e = _entry("2026-07-01", created_at="2026-07-01T12:00:00Z")
     e["raw_decision"]["market_calls"] = [
-        {"symbol": "SPY", "direction": "OUTPERFORM", "confidence": 0.5, "thesis": "x"}
+        {"symbol": "^VIX", "direction": "OUTPERFORM", "confidence": 0.5, "thesis": "x"}
     ]
-    assert "SPY" not in decision_pages._symbol_touches([e])
+    decision_pages.export([e], public_dir=tmp_path)
+    assert not (tmp_path / "symbols" / "^VIX.html").exists()
 
 
-def test_export_writes_symbol_hubs_gated_by_min_days(tmp_path):
+def test_export_generates_a_hub_for_every_symbol_and_links_them(tmp_path):
+    from src.config import WATCHLIST
+
     rows = [
         _entry(
             d,
             created_at=f"{d}T12:00:00Z",
             approved_trades=[{"symbol": "AAPL", "action": "BUY", "shares": 10, "confidence": 0.8}],
         )
-        for d in ("2026-07-01", "2026-07-02", "2026-07-03")
+        for d in ("2026-07-01", "2026-07-02")
     ]
-    # NVDA appears on only one day → below the 3-day hub gate.
-    rows[0]["approved_trades"].append(
-        {"symbol": "NVDA", "action": "SELL", "shares": 5, "confidence": 0.7}
-    )
     decision_pages.export(rows, public_dir=tmp_path)
+    sym_dir = tmp_path / "symbols"
 
-    assert (tmp_path / "symbols" / "AAPL.html").exists()
-    assert not (tmp_path / "symbols" / "NVDA.html").exists()
-    assert (tmp_path / "symbols" / "index.html").exists()
+    # A touched symbol → real hub, indexable, in the sitemap.
+    aapl = (sym_dir / "AAPL.html").read_text()
+    assert "../decisions/2026-07-02.html" in aapl
+    assert 'name="robots"' not in aapl
 
-    hub = (tmp_path / "symbols" / "AAPL.html").read_text()
-    assert "../decisions/2026-07-03.html" in hub  # links to each day
-    assert "BUY 10" in hub
+    # A universe symbol never touched → placeholder hub that still exists (no 404),
+    # noindexed and kept out of the sitemap until it has content.
+    untouched = next(s for s in WATCHLIST if s not in {"AAPL"})
+    placeholder = (sym_dir / f"{untouched}.html").read_text()
+    assert "hasn't traded or made a directional call" in placeholder
+    assert '<meta name="robots" content="noindex,follow" />' in placeholder
+
+    # Decision pages link each traded ticker to its hub.
+    day = (tmp_path / "decisions" / "2026-07-01.html").read_text()
+    assert 'href="../symbols/AAPL.html"' in day
 
     sitemap = (tmp_path / "sitemap.xml").read_text()
     assert "https://glasshousefund.com/symbols/AAPL.html" in sitemap
-    assert "https://glasshousefund.com/symbols/" in sitemap
-    assert "/symbols/NVDA.html" not in sitemap
+    assert f"/symbols/{untouched}.html" not in sitemap  # empty placeholder excluded

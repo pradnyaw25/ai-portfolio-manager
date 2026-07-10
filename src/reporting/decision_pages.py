@@ -14,11 +14,12 @@ decision; earlier rows are superseded and are not published.
 """
 
 import json
+import re
 from datetime import date, datetime, timezone
 from html import escape
 from pathlib import Path
 
-from src.config import DATA_DIR
+from src.config import DATA_DIR, WATCHLIST
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -110,6 +111,8 @@ li { margin-bottom:4px; }
 .shead { display:flex; flex-wrap:wrap; align-items:center; gap:8px; color:var(--ink); font-weight:800; font-size:14px; }
 .shead a { text-decoration:none; }
 .shead a:hover { text-decoration:underline; }
+.sym-link { color:inherit; text-decoration:none; border-bottom:1px dotted var(--border-strong); }
+.sym-link:hover { border-bottom-color:currentColor; }
 .pager { display:flex; justify-content:space-between; gap:12px; margin-top:40px;
   border-top:1px solid var(--row-border); padding-top:16px; font-size:14px; font-weight:700; }
 .dlist { list-style:none; margin:0; padding:0; }
@@ -233,6 +236,19 @@ def _shell(
 """
 
 
+# A plain equity ticker (1–5 caps). Excludes things like ^VIX that can't be a page.
+_TICKER_RE = re.compile(r"^[A-Z]{1,5}$")
+
+
+def _symbol_link(symbol, *, prefix: str = "../symbols/") -> str:
+    """Wrap a ticker in a link to its hub page. Every symbol that ever renders also
+    gets a hub (see export), so these never 404. Non-tickers pass through as text."""
+    sym = str(symbol or "").upper()
+    if _TICKER_RE.match(sym):
+        return f'<a class="sym-link" href="{prefix}{sym}.html">{escape(sym)}</a>'
+    return escape(str(symbol or "?"))
+
+
 def _trade_summary(entry: dict) -> str:
     """'BUY AAPL, SELL NVDA' — used in descriptions."""
     trades = entry.get("executed_trades") or entry.get("approved_trades") or []
@@ -284,7 +300,7 @@ def _render_trades(entry: dict) -> str:
         fill = executed.get(key, {}).get("price")
 
         cls = "trade sell" if action == "SELL" else "trade"
-        head = f"{escape(action)} {escape(str(shares))} {escape(symbol)}"
+        head = f"{escape(action)} {escape(str(shares))} {_symbol_link(symbol)}"
         bits = [f'<span class="conf">{conf * 100:.0f}%</span>'] if conf else []
         if fill is not None:
             bits.append(f'<span class="muted"> · filled at {_money(fill)}</span>')
@@ -302,7 +318,7 @@ def _render_trades(entry: dict) -> str:
         # HOLDs as "rejected" — skip them so the page shows only real blocked trades.
         if str(t.get("action", "")).upper() == "HOLD":
             continue
-        head = f"{escape(t.get('action', '?'))} {escape(str(t.get('shares', 0)))} {escape(t.get('symbol', '?'))}"
+        head = f"{escape(t.get('action', '?'))} {escape(str(t.get('shares', 0)))} {_symbol_link(t.get('symbol'))}"
         out.append(
             f'<div class="trade rejected"><div class="head">{head}</div>'
             f'<p class="muted" style="margin:6px 0 0">Rejected by the risk engine: '
@@ -350,7 +366,7 @@ def _render_market_calls(entry: dict) -> str:
             else ""
         )
         rows.append(
-            f'<tr><td class="sym">{escape(symbol)}</td>'
+            f'<tr><td class="sym">{_symbol_link(symbol)}</td>'
             f'<td><span class="dir {"up" if outperform else "down"}">'
             f'{"Outperform" if outperform else "Underperform"} SPY</span></td>'
             f"<td>{conf_html}</td><td>{traded}</td>"
@@ -489,11 +505,9 @@ def render_index(entries: list[dict]) -> str:
 # One page per ticker aggregating every decision that touched it, newest first. The
 # entity query we care about ("why did an AI fund sell NVDA") is served by neither a
 # date page nor the journal; a hub gets *richer* as the corpus grows where a per-day
-# stub would get thinner. Benchmarks aren't tradable theses, so they get no hub.
-
-SYMBOL_HUB_MIN_DAYS = 3  # a symbol needs this many decision-days before it earns a hub
-_HUB_SKIP = {"SPY", "QQQ", "^VIX"}
-
+# stub would get thinner. A hub is generated for every universe ticker (and any ever
+# touched) so a symbol link never 404s; ones with no decisions yet are noindexed
+# placeholders that the daily pipeline fills over time.
 
 def _symbol_touches(entries: list[dict]) -> dict[str, list[dict]]:
     """symbol -> per-day touches (newest first). Each touch records the day's trades
@@ -514,8 +528,6 @@ def _symbol_touches(entries: list[dict]) -> dict[str, list[dict]]:
             if sym:
                 day_calls[sym] = call
         for sym in set(day_trades) | set(day_calls):
-            if sym in _HUB_SKIP:
-                continue
             touches.setdefault(sym, []).append(
                 {"date": iso, "trades": day_trades.get(sym, []), "call": day_calls.get(sym)}
             )
@@ -570,30 +582,61 @@ def render_symbol_page(symbol: str, touches: list[dict]) -> str:
             f'{" ".join(bits)}</div>{thesis_html}</div>'
         )
 
+    if cards:
+        lede = (
+            f"Every trade and directional call the AI fund has made on {escape(symbol)}, "
+            "newest first, each linked to that day's full decision."
+        )
+        facts = (
+            f'<div class="facts"><span class="pill">{n_days} decision days</span>'
+            f'<span class="pill">{n_trades} with a trade</span></div>'
+        )
+        content = "".join(cards)
+    else:
+        # A hub with no decisions yet — kept as a stable link target (never 404s) and
+        # noindexed until it has content. Filled by the daily pipeline as the fund
+        # acts on this name; more content can be added here later.
+        lede = (
+            f"The AI fund hasn't traded or made a directional call on {escape(symbol)} yet. "
+            "When it does, every decision will appear here — newest first."
+        )
+        facts = '<div class="facts"><span class="pill">No decisions yet</span></div>'
+        content = '<p class="muted">Nothing to show for this ticker yet.</p>'
+
     body = f"""    <div class="eyebrow">Symbol history</div>
     <h1>{escape(symbol)} — every decision the fund made</h1>
-    <p class="lede">Every trade and directional call the AI fund has made on {escape(symbol)},
-    newest first, each linked to that day's full decision.</p>
-    <div class="facts"><span class="pill">{n_days} decision days</span>
-    <span class="pill">{n_trades} with a trade</span></div>
-    {"".join(cards)}
+    <p class="lede">{lede}</p>
+    {facts}
+    {content}
     <div class="pager">
       <span><a href="./">← All symbols</a></span>
       <span><a href="../decisions/">Decisions by day →</a></span>
     </div>
 """
-    return _shell(title=title, description=desc, canonical=f"{SITE}/symbols/{symbol}.html", body=body)
+    return _shell(
+        title=title,
+        description=desc,
+        canonical=f"{SITE}/symbols/{symbol}.html",
+        body=body,
+        robots="" if cards else "noindex,follow",
+    )
 
 
 def render_symbol_index(rows: list[tuple[str, int, int]]) -> str:
     """rows: (symbol, n_days, n_trades), already sorted for display."""
+
+    def sub(n_days: int, n_trades: int) -> str:
+        if not n_days:
+            return "No decisions yet"
+        return f"{n_days} decision days · {n_trades} with a trade"
+
     items = "".join(
         f'<li><a href="{escape(sym)}.html">{escape(sym)}</a>'
-        f'<div class="sub">{n_days} decision days · {n_trades} with a trade</div></li>'
+        f'<div class="sub">{sub(n_days, n_trades)}</div></li>'
         for sym, n_days, n_trades in rows
     )
     body = f"""    <div class="eyebrow">By symbol</div>
-    <h1>Every stock the fund has weighed in on</h1>
+    <h1>Every stock in the fund's universe</h1>
     <p class="lede">One page per ticker, aggregating every decision the AI fund made on it —
     trades and directional calls — newest first. {len(rows)} symbols.</p>
     <ul class="dlist">{items}</ul>
@@ -713,20 +756,27 @@ def export(rows: list[dict] | None = None, public_dir: Path | None = None) -> li
 
     (out_dir / "index.html").write_text(render_index(entries))
 
-    # Symbol hubs: one page per ticker with at least SYMBOL_HUB_MIN_DAYS decision-days,
-    # so day-one hubs aren't near-empty. The gate opens on its own as the corpus grows.
-    hubs = {s: t for s, t in _symbol_touches(entries).items() if len(t) >= SYMBOL_HUB_MIN_DAYS}
+    # Symbol hubs: one page per ticker in the universe OR ever touched, so a link on
+    # any symbol mention always resolves (never 404s). Symbols with no decisions yet
+    # get a noindexed placeholder page; the daily pipeline fills them as the fund acts.
+    touches = _symbol_touches(entries)
+    hub_symbols = sorted(s for s in set(WATCHLIST) | set(touches) if _TICKER_RE.match(s))
     sym_dir = public_dir / "symbols"
     sym_dir.mkdir(parents=True, exist_ok=True)
-    for sym, touches in hubs.items():
-        (sym_dir / f"{sym}.html").write_text(render_symbol_page(sym, touches))
+    for sym in hub_symbols:
+        (sym_dir / f"{sym}.html").write_text(render_symbol_page(sym, touches.get(sym, [])))
     index_rows = sorted(
-        ((s, len(t), sum(1 for x in t if x["trades"])) for s, t in hubs.items()),
+        ((s, len(touches.get(s, [])), sum(1 for x in touches.get(s, []) if x["trades"])) for s in hub_symbols),
         key=lambda r: (-r[1], -r[2], r[0]),
     )
     (sym_dir / "index.html").write_text(render_symbol_index(index_rows))
 
-    (public_dir / "sitemap.xml").write_text(build_sitemap(entries, symbols=list(hubs)))
+    # Only non-empty hubs go in the sitemap; empty placeholders stay noindexed.
+    indexable = [s for s in hub_symbols if touches.get(s)]
+    (public_dir / "sitemap.xml").write_text(build_sitemap(entries, symbols=indexable))
 
-    logger.info("Prerendered %d decision pages, %d symbol hubs", len(entries), len(hubs))
+    logger.info(
+        "Prerendered %d decision pages, %d symbol hubs (%d with content)",
+        len(entries), len(hub_symbols), len(indexable),
+    )
     return [e["date"] for e in entries]

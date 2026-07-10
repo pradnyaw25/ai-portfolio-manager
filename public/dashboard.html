@@ -725,6 +725,16 @@
       white-space: nowrap;
     }
 
+    .sym-link {
+      color: inherit;
+      text-decoration: none;
+      border-bottom: 1px dotted var(--border-strong);
+    }
+
+    .sym-link:hover {
+      border-bottom-color: currentColor;
+    }
+
     .ticker {
       position: relative;
       cursor: default;
@@ -1259,6 +1269,14 @@
         .replace(/'/g, "&#039;");
     }
 
+    // Link a ticker to its per-symbol hub page (every universe ticker has one).
+    function symbolLink(sym) {
+      const s = String(sym || "").toUpperCase();
+      return /^[A-Z]{1,5}$/.test(s)
+        ? `<a class="sym-link" href="symbols/${s}.html">${escapeHtml(s)}</a>`
+        : escapeHtml(String(sym || ""));
+    }
+
     async function loadBaselines() {
       try {
         const res = await fetch("./baseline_comparison.json");
@@ -1406,7 +1424,7 @@
 
       tradesDiv.innerHTML = trades.map(t => `
         <div class="trade-item">
-          <div class="trade-head">${logoHtml(t.symbol)}<span><strong>${escapeHtml(t.action)} ${escapeHtml(t.shares)} <span class="ticker">${escapeHtml(t.symbol)}</span></strong> <span class="sym-name">${escapeHtml(symbolNames[t.symbol] || t.symbol)}</span></span></div>
+          <div class="trade-head">${logoHtml(t.symbol)}<span><strong>${escapeHtml(t.action)} ${escapeHtml(t.shares)} <span class="ticker">${symbolLink(t.symbol)}</span></strong> <span class="sym-name">${escapeHtml(symbolNames[t.symbol] || t.symbol)}</span></span></div>
           <div class="trade-meta">at ${money.format(t.price)} / ${money.format(t.total)}</div>
           <div class="trade-meta">${escapeHtml(t.reasoning)}</div>
         </div>
@@ -1472,7 +1490,7 @@
         holdingsData.forEach((p) => {
           const row = document.createElement("tr");
           row.innerHTML = `
-            <td><span class="sym-cell">${logoHtml(p.symbol)}<span class="sym"><span class="ticker">${escapeHtml(p.symbol)}</span><span class="sym-name">${escapeHtml(symbolNames[p.symbol] || p.symbol)}</span></span></span></td>
+            <td><span class="sym-cell">${logoHtml(p.symbol)}<span class="sym"><span class="ticker">${symbolLink(p.symbol)}</span><span class="sym-name">${escapeHtml(symbolNames[p.symbol] || p.symbol)}</span></span></span></td>
             <td class="num">
               <span class="allocation-bar">
                 <span>${pct(p.allocation_pct, 1)}</span>
