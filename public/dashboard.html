@@ -1473,12 +1473,14 @@
 
       if (largest) {
         document.getElementById("largest-holding").innerHTML = symbolLink(largest.symbol);
-        setText("largest-holding-sub", `${pct(largest.allocation_pct, 1)} / ${money.format(largest.market_value)}`);
+        const name = symbolNames[largest.symbol] || largest.symbol;
+        setText("largest-holding-sub", `${name} · ${pct(largest.allocation_pct, 1)} / ${money.format(largest.market_value)}`);
       }
 
       if (best) {
         document.getElementById("best-position").innerHTML = symbolLink(best.symbol);
-        setText("best-position-sub", `${signedPct(best.return_pct, 1)} unrealized`);
+        const name = symbolNames[best.symbol] || best.symbol;
+        setText("best-position-sub", `${name} · ${signedPct(best.return_pct, 1)} unrealized`);
         document.getElementById("best-position").className =
           `kpi-value ${best.return_pct >= 0 ? "pos" : "neg"}`;
       }
