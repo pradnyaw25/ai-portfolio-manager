@@ -1,10 +1,10 @@
 <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Glasshouse">
-  <!-- Self-contained icon: a dark tile keeps the mark legible on any browser tab
-       background (light or dark), instead of relying on prefers-color-scheme, which
+  <!-- Self-contained icon: a light tile with a black mark stays legible on any browser
+       tab background (light or dark), instead of relying on prefers-color-scheme, which
        browsers apply unreliably to favicons. -->
-  <rect width="48" height="48" rx="10.5" fill="#12140d"/>
+  <rect width="48" height="48" rx="10.5" fill="#e9ecdf"/>
   <g transform="translate(24 24) scale(0.8) translate(-24 -24)"
-     stroke="#e4e8d5" fill="none" stroke-linejoin="round" stroke-linecap="round">
+     stroke="#12140d" fill="none" stroke-linejoin="round" stroke-linecap="round">
     <!-- glasshouse outline -->
     <path d="M24 5 L43 21 L43 43 L5 43 L5 21 Z" stroke-width="2.6"/>
     <!-- eave where the roof meets the walls -->
