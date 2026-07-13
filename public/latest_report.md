@@ -1,10 +1,10 @@
 # Portfolio Report — 2026-07-13
 
 ## Summary
-- **Run ID:** `run_20260713T172500Z_09fc0699`
-- **Total Value:** $1,029,184.80
-- **Cash:** $287,515.20 (27.9%)
-- **Invested:** $741,669.60
+- **Run ID:** `run_20260713T195309Z_56eedc94`
+- **Total Value:** $1,028,504.31
+- **Cash:** $291,454.60 (28.3%)
+- **Invested:** $737,049.71
 - **Positions:** 13
 - **Outlook:** NEUTRAL
 
@@ -12,28 +12,28 @@
 
 | Symbol | Shares | Avg Cost | Current | P&L % |
 |--------|--------|----------|---------|-------|
-| AAPL | 611 | $294.11 | $316.18 | 7.5% |
-| AMZN | 636 | $238.13 | $248.19 | 4.2% |
-| JNJ | 543 | $239.58 | $257.61 | 7.5% |
-| NVDA | 514 | $203.30 | $204.20 | 0.4% |
-| GOOGL | 122 | $356.63 | $356.16 | -0.1% |
-| MSFT | 93 | $385.13 | $392.57 | 1.9% |
-| HD | 100 | $326.01 | $337.61 | 3.6% |
-| TSLA | 22 | $400.36 | $393.30 | -1.8% |
-| V | 22 | $319.05 | $358.03 | 12.2% |
-| META | 10 | $568.43 | $660.30 | 16.2% |
-| MA | 8 | $486.51 | $538.52 | 10.7% |
-| JPM | 10 | $313.49 | $334.40 | 6.7% |
-| UNH | 3 | $405.55 | $429.33 | 5.9% |
+| AAPL | 611 | $294.11 | $317.17 | 7.8% |
+| AMZN | 636 | $238.13 | $246.72 | 3.6% |
+| JNJ | 543 | $239.58 | $258.38 | 7.8% |
+| NVDA | 514 | $203.30 | $204.26 | 0.5% |
+| GOOGL | 122 | $356.63 | $352.31 | -1.2% |
+| MSFT | 93 | $385.13 | $390.47 | 1.4% |
+| HD | 100 | $326.01 | $336.63 | 3.3% |
+| V | 22 | $319.05 | $357.01 | 11.9% |
+| META | 10 | $568.43 | $658.42 | 15.8% |
+| TSLA | 12 | $400.36 | $393.94 | -1.6% |
+| MA | 8 | $486.51 | $536.75 | 10.3% |
+| JPM | 10 | $313.49 | $335.14 | 6.9% |
+| UNH | 3 | $405.55 | $428.51 | 5.7% |
 
 ## Today's Trades
 
-- **SELL** 10 TSLA @ $393.30 — TSLA shows negative momentum and an ongoing decline in value reflecting sector and company-specific pressures. Trimming reduces exposure to a weakening position consistent with previous risk lessons.
+- **SELL** 10 TSLA @ $393.94 — TSLA exhibits weakening momentum and negative recent returns. Risk lessons advocate reducing exposure during early signs of deterioration to reduce downside in volatile sectors.
 
 ## Analysis
 
-The portfolio adopts a neutral stance amid mixed market signals and sector rotation. While core holdings like AAPL, JNJ, and META continue to show positive momentum and justify holding, concerns about fading momentum in stocks like TSLA, GOOGL, and MSFT warrant trimming or cautious monitoring. Elevated cash supports risk management and optionality in an uncertain geopolitical environment. Trades focus on reducing risk in the weakest momentum stock (TSLA) while holding strong positions without overtrading. Overall, the portfolio balances growth potential with prudence against market volatility.
+The portfolio remains in a neutral stance balancing cautious risk management with selective concentration in high conviction names like AAPL and JNJ. Elevated cash provides flexibility amid mixed market signals and sector headwinds, particularly in tech and semiconductor areas. Weakness in TSLA and GOOGL justifies modest trimming for risk control. Market calls reflect calibrated expectations based on momentum, sector trends, and fundamentals. The portfolio aims to preserve capital without compromising on growth opportunities, embracing discipline over reactive trading.
 
 ## Risk Assessment
 
-Key risks stem from concentration in a few large-cap tech and consumer discretionary stocks (AAPL, AMZN, JNJ ~66%), with over 44% tech exposure increasing vulnerability to sector-specific pullbacks. Weak momentum in TSLA, GOOGL, and MSFT alongside geopolitical uncertainties increases downside risk. The large cash position cushions risk but also limits upside capture if markets rally.
+Concentration risk in large tech holdings (AAPL, AMZN, JNJ) and sector bias toward Information Technology expose the portfolio to volatility and potential drawdowns from adverse sector events. TSLA and GOOGL carry increased downside risks due to deteriorating momentum. Elevated cash reduces immediate downside risk but limits upside participation. The portfolio risks missing opportunities if the market rallies distinctly.
