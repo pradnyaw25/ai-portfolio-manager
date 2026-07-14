@@ -1,12 +1,1 @@
-[
-  {
-    "run_id": "run_20260714T164052Z_57df18fd",
-    "date": "2026-07-14",
-    "symbol": "TSLA",
-    "action": "SELL",
-    "shares": 5,
-    "price": 397.3699951171875,
-    "total": 1986.8499755859375,
-    "reasoning": "TSLA shows negative 5- and 30-day momentum and deteriorating risk profile. Partial trimming reduces exposure consistent with previous risk lessons to avoid larger drawdowns."
-  }
-]
+[]

@@ -1,10 +1,10 @@
 # Portfolio Report — 2026-07-14
 
 ## Summary
-- **Run ID:** `run_20260714T164052Z_57df18fd`
-- **Total Value:** $1,025,885.84
-- **Cash:** $293,441.45 (28.6%)
-- **Invested:** $732,444.39
+- **Run ID:** `run_20260714T194644Z_e2ad2fc0`
+- **Total Value:** $1,030,358.55
+- **Cash:** $293,441.45 (28.5%)
+- **Invested:** $736,917.10
 - **Positions:** 13
 - **Outlook:** NEUTRAL
 
@@ -12,28 +12,28 @@
 
 | Symbol | Shares | Avg Cost | Current | P&L % |
 |--------|--------|----------|---------|-------|
-| AAPL | 611 | $294.11 | $313.51 | 6.6% |
-| AMZN | 636 | $238.13 | $245.80 | 3.2% |
-| JNJ | 543 | $239.58 | $252.76 | 5.5% |
-| NVDA | 514 | $203.30 | $209.77 | 3.2% |
-| GOOGL | 122 | $356.63 | $356.10 | -0.1% |
-| MSFT | 93 | $385.13 | $387.07 | 0.5% |
-| HD | 100 | $326.01 | $337.24 | 3.4% |
-| V | 22 | $319.05 | $358.39 | 12.3% |
-| META | 10 | $568.43 | $664.63 | 16.9% |
-| MA | 8 | $486.51 | $541.17 | 11.2% |
-| JPM | 10 | $313.49 | $340.90 | 8.7% |
-| TSLA | 7 | $400.36 | $397.37 | -0.7% |
-| UNH | 3 | $405.55 | $425.27 | 4.9% |
+| AAPL | 611 | $294.11 | $315.36 | 7.2% |
+| AMZN | 636 | $238.13 | $248.16 | 4.2% |
+| JNJ | 543 | $239.58 | $253.69 | 5.9% |
+| NVDA | 514 | $203.30 | $211.76 | 4.2% |
+| GOOGL | 122 | $356.63 | $359.72 | 0.9% |
+| MSFT | 93 | $385.13 | $385.43 | 0.1% |
+| HD | 100 | $326.01 | $338.71 | 3.9% |
+| V | 22 | $319.05 | $356.22 | 11.7% |
+| META | 10 | $568.43 | $658.73 | 15.9% |
+| MA | 8 | $486.51 | $538.15 | 10.6% |
+| JPM | 10 | $313.49 | $342.45 | 9.2% |
+| TSLA | 7 | $400.36 | $396.14 | -1.1% |
+| UNH | 3 | $405.55 | $425.01 | 4.8% |
 
 ## Today's Trades
 
-- **SELL** 5 TSLA @ $397.37 — TSLA shows negative 5- and 30-day momentum and deteriorating risk profile. Partial trimming reduces exposure consistent with previous risk lessons to avoid larger drawdowns.
+No trades executed today.
 
 ## Analysis
 
-The portfolio adopts a neutral outlook given mixed market signals, fading momentum in key tech names, and significant concentration risks. Elevated cash is retained to manage risk and provide flexibility. We trim TSLA modestly due to persistent weakness but hold core positions such as AAPL, JNJ, and AMZN, balancing risk management with growth potential. Market calls reflect cautious optimism in leading tech and financial holdings tempered by concerns about fading momentum and sector vulnerability. We embrace discipline over overtrading to navigate current uncertainties while preserving upside participation.
+The portfolio adopts a neutral outlook reflecting mixed momentum signals, elevated concentration, and a cautious market environment. Elevated cash balances provide risk mitigation and flexibility. Trades focus on maintaining core positions, especially in AAPL and JNJ, while limiting overtrading amid fading momentum in select tech stocks and sector headwinds. The bear case is acknowledged but balanced with risks managed through disciplined holding and selective trimming. Market calls reflect a spectrum of expected performance outcomes, supporting measured portfolio positioning.
 
 ## Risk Assessment
 
-Concentration risk is significant with substantial weighting in Information Technology and Consumer Discretionary sectors, particularly in AAPL, AMZN, and JNJ. These sector and individual stock biases increase potential volatility and downside risk in case of adverse sector-specific or regulatory events. The modest trimming of TSLA and monitoring of momentum weak spots like GOOGL and MSFT aim to mitigate downside risks. Elevated cash helps dampen portfolio volatility but restricts upside capture in a potential market rally.
+High position concentration in AAPL (26.1%) and AMZN (21.4%) exposes the portfolio to single-stock and sector-specific risks, particularly in Information Technology (45.8%). These risks persist despite elevated cash, as a market or sector downturn would significantly impact performance. Recent trades to trim TSLA and observations on MSFT and GOOGL reflect efforts to contain downside. Maintaining balance without excessive turnover is critical to managing these risks.
