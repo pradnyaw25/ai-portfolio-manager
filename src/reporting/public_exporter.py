@@ -214,12 +214,21 @@ class PublicExporter:
                 shutil.copy(src, PUBLIC_DIR / filename)
 
     def _write_decision_pages(self) -> None:
-        """Prerender the journal to /decisions/*.html and regenerate sitemap.xml.
+        """Prerender the journal to /decisions/*.html, the weekly investor letters to
+        /letters/*.html, and regenerate sitemap.xml (which folds in both).
         Best-effort — a template error must not fail an otherwise good run."""
-        from src.reporting import decision_pages
+        from src.reporting import decision_pages, letter_pages
+
+        # Letters first: their week_ends go into the sitemap that decision_pages owns.
+        # Guard independently so a letter-render failure can't sink the decision pages.
+        try:
+            letter_weeks = letter_pages.export()
+        except Exception as exc:  # noqa: BLE001 — a bad letter must not fail the run
+            logger.warning("Investor-letter prerender skipped: %s", exc)
+            letter_weeks = None
 
         try:
-            decision_pages.export()
+            decision_pages.export(letters=letter_weeks)
         except Exception as exc:  # noqa: BLE001 — export is not worth failing a run over
             logger.warning("Decision page prerender skipped: %s", exc)
 
