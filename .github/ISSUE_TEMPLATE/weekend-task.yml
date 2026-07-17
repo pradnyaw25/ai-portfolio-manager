@@ -1,0 +1,111 @@
+name: Weekend task
+description: Plan one bounded Glasshouse Fund implementation weekend
+title: "[Weekend] "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Keep this task small enough for one 6–10 hour weekend. If the acceptance
+        criteria cannot fit, split it before starting.
+
+  - type: input
+    id: roadmap_id
+    attributes:
+      label: Roadmap ID
+      description: Link this issue to docs/PRODUCT-ROADMAP.md.
+      placeholder: W01
+    validations:
+      required: true
+
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Outcome
+      description: Describe the observable result, not the implementation activity.
+      placeholder: Visitors always see complete, current performance data.
+    validations:
+      required: true
+
+  - type: textarea
+    id: why
+    attributes:
+      label: Why this matters
+      description: Explain the user, engineering, learning, or credibility payoff.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: effort
+    attributes:
+      label: Expected effort
+      options:
+        - 2–4 focused hours
+        - 4–6 focused hours
+        - 6–10 focused hours
+        - Must be split before starting
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: List the concrete changes included in this task.
+      placeholder: |
+        - Define the public artifact schema
+        - Validate exports before deployment
+        - Render an explicit stale-data state
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Use checkboxes and make every item independently verifiable.
+      placeholder: |
+        - [ ] Homepage shows fund, SPY, QQQ, and alpha returns
+        - [ ] CI rejects an incomplete public artifact
+        - [ ] README is current
+    validations:
+      required: true
+
+  - type: textarea
+    id: starting_points
+    attributes:
+      label: Starting points
+      description: List relevant files, commands, prior decisions, and documentation.
+      placeholder: |
+        - src/reporting/public_exporter.py
+        - public/index.html
+        - docs/PRODUCT-ROADMAP.md
+    validations:
+      required: true
+
+  - type: textarea
+    id: verification
+    attributes:
+      label: Verification plan
+      description: State the exact tests, commands, and manual checks to run.
+      placeholder: |
+        .venv/bin/python -m pytest
+        make dashboard
+    validations:
+      required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Session notes and handoff
+      description: Record discoveries, tradeoffs, blockers, commands run, and the next step.
+
+  - type: checkboxes
+    id: finish
+    attributes:
+      label: Before closing
+      options:
+        - label: Acceptance criteria are checked and test results are recorded.
+        - label: README and architecture documentation were updated if behavior changed.
+        - label: PRODUCT-ROADMAP.md status and next-session handoff were updated.
