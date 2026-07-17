@@ -1,90 +1,90 @@
 {
-  "date": "2026-07-16",
+  "date": "2026-07-17",
   "cash": 222495.7784729004,
   "positions": [
     {
       "symbol": "HD",
       "shares": 100,
       "avg_cost": 326.010009765625,
-      "current_price": 345.43499755859375
+      "current_price": 343.239990234375
     },
     {
       "symbol": "JNJ",
       "shares": 543,
       "avg_cost": 239.57778686186228,
-      "current_price": 250.1649932861328
+      "current_price": 253.05999755859375
     },
     {
       "symbol": "AAPL",
       "shares": 611,
       "avg_cost": 294.10935668291415,
-      "current_price": 332.5899963378906
+      "current_price": 331.7850036621094
     },
     {
       "symbol": "MSFT",
       "shares": 93,
       "avg_cost": 385.1256408691406,
-      "current_price": 400.114990234375
+      "current_price": 393.2300109863281
     },
     {
       "symbol": "NVDA",
       "shares": 514,
       "avg_cost": 203.29896344360853,
-      "current_price": 206.2100067138672
+      "current_price": 205.17999267578125
     },
     {
       "symbol": "TSLA",
       "shares": 7,
       "avg_cost": 400.355713641281,
-      "current_price": 390.6300048828125
+      "current_price": 383.3074951171875
     },
     {
       "symbol": "UNH",
       "shares": 3,
       "avg_cost": 405.54998779296875,
-      "current_price": 425.2900085449219
+      "current_price": 432.0
     },
     {
       "symbol": "AMZN",
       "shares": 636,
       "avg_cost": 238.13327095943427,
-      "current_price": 251.97000122070312
+      "current_price": 248.0800018310547
     },
     {
       "symbol": "GOOGL",
       "shares": 122,
       "avg_cost": 356.6263062524014,
-      "current_price": 354.4049987792969
+      "current_price": 346.125
     },
     {
       "symbol": "JPM",
       "shares": 10,
       "avg_cost": 313.489990234375,
-      "current_price": 342.04998779296875
+      "current_price": 343.7049865722656
     },
     {
       "symbol": "V",
       "shares": 22,
       "avg_cost": 319.04998779296875,
-      "current_price": 362.8550109863281
+      "current_price": 358.29998779296875
     },
     {
       "symbol": "MA",
       "shares": 8,
       "avg_cost": 486.510009765625,
-      "current_price": 548.8699951171875
+      "current_price": 542.1300048828125
     },
     {
       "symbol": "META",
       "shares": 10,
       "avg_cost": 568.4299926757812,
-      "current_price": 662.97998046875
+      "current_price": 641.9600219726562
     },
     {
       "symbol": "AMD",
       "shares": 134,
       "avg_cost": 529.4453125,
-      "current_price": 496.2149963378906
+      "current_price": 499.2650146484375
     }
   ]
 }
