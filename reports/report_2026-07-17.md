@@ -1,10 +1,10 @@
 # Portfolio Report — 2026-07-17
 
 ## Summary
-- **Run ID:** `run_20260717T163628Z_876761ec`
-- **Total Value:** $1,031,947.99
+- **Run ID:** `run_20260717T193547Z_8410d91a`
+- **Total Value:** $1,029,456.06
 - **Cash:** $222,495.78 (21.6%)
-- **Invested:** $809,452.21
+- **Invested:** $806,960.28
 - **Positions:** 14
 - **Outlook:** NEUTRAL
 
@@ -12,20 +12,20 @@
 
 | Symbol | Shares | Avg Cost | Current | P&L % |
 |--------|--------|----------|---------|-------|
-| AAPL | 611 | $294.11 | $331.79 | 12.8% |
-| AMZN | 636 | $238.13 | $248.08 | 4.2% |
-| JNJ | 543 | $239.58 | $253.06 | 5.6% |
-| NVDA | 514 | $203.30 | $205.18 | 0.9% |
-| AMD | 134 | $529.45 | $499.27 | -5.7% |
-| GOOGL | 122 | $356.63 | $346.12 | -2.9% |
-| MSFT | 93 | $385.13 | $393.23 | 2.1% |
-| HD | 100 | $326.01 | $343.24 | 5.3% |
-| V | 22 | $319.05 | $358.30 | 12.3% |
-| META | 10 | $568.43 | $641.96 | 12.9% |
-| MA | 8 | $486.51 | $542.13 | 11.4% |
-| JPM | 10 | $313.49 | $343.70 | 9.6% |
-| TSLA | 7 | $400.36 | $383.31 | -4.3% |
-| UNH | 3 | $405.55 | $432.00 | 6.5% |
+| AAPL | 611 | $294.11 | $332.46 | 13.0% |
+| AMZN | 636 | $238.13 | $246.82 | 3.6% |
+| JNJ | 543 | $239.58 | $253.20 | 5.7% |
+| NVDA | 514 | $203.30 | $202.79 | -0.3% |
+| AMD | 134 | $529.45 | $495.83 | -6.3% |
+| GOOGL | 122 | $356.63 | $344.79 | -3.3% |
+| MSFT | 93 | $385.13 | $395.23 | 2.6% |
+| HD | 100 | $326.01 | $338.62 | 3.9% |
+| V | 22 | $319.05 | $357.52 | 12.1% |
+| META | 10 | $568.43 | $643.91 | 13.3% |
+| MA | 8 | $486.51 | $541.36 | 11.3% |
+| JPM | 10 | $313.49 | $340.73 | 8.7% |
+| TSLA | 7 | $400.36 | $382.13 | -4.6% |
+| UNH | 3 | $405.55 | $427.19 | 5.3% |
 
 ## Today's Trades
 
@@ -33,8 +33,8 @@ No trades executed today.
 
 ## Analysis
 
-The portfolio retains a neutral outlook balancing strong momentum and favorable news in key holdings such as AAPL, META, and financial/infrastructure names with the risk presented by weakening semiconductor and selected technology exposures like AMD, TSLA, and GOOGL. Elevated cash is justified as prudent risk management against concentration and sector uncertainties. No new trades are initiated to avoid overtrading; instead, disciplined holding and selective risk mitigation previously executed (e.g., TSLA trim) are favored. Market calls reflect this balanced stance, recognizing both growth potential and downside risks across holdings.
+The portfolio retains a neutral outlook balancing potential upside in high-conviction names like AAPL and HD with caution warranted by fading momentum in select semiconductor and tech stocks (NVDA, AMD, TSLA, GOOGL). Elevated cash cushions concentration risks and preserves flexibility for future opportunities. The bear case is acknowledged but mitigated through recent partial trims and disciplined holding. No new trades are recommended currently to avoid overtrading amid mixed signals. Market calls reflect this balance, with clear distinctions between expected outperformers and underperformers relative to the S&P 500 benchmark.
 
 ## Risk Assessment
 
-Risks remain elevated due to concentration in AAPL (25% of portfolio) and heavy exposure to Information Technology (~51%). Concentration in a few large-cap names increases vulnerability to idiosyncratic shocks or regulatory pressures. Momentum fading in TSLA, AMD and weakening signs in GOOGL add to risk. The portfolio’s cash cushion moderates volatility but constrains upside participation during market rallies. Vigilant monitoring and selective trimming remain essential to avoid larger drawdowns and preserve capital.
+Significant concentration in AAPL (~25%) and the Information Technology sector (>50%) introduces notable downside risk should adverse events affect these areas. Momentum decay in key names like TSLA, AMD, and a mild softness in GOOGL amplify vulnerability. Elevated cash cushions volatility but does not fully offset sectoral and stock-specific exposures. Consistent application of risk lessons advocating measured trims and disciplined holding remains prudent to preserve capital.
