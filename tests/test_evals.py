@@ -5,7 +5,7 @@ import json
 from evals import runner
 from evals.runner import run_evals
 from evals.grounding import GroundingVerdict, score_grounding
-from evals.scenarios import DEBATE, SCENARIOS, HIGH_CASH, MISSING_DATA, STALE_MEMORY, Scenario
+from evals.scenarios import DEBATE, SCENARIOS, HIGH_CASH, MISSING_DATA, STALE_MEMORY
 from evals.scorers import (
     score_citation_validity,
     score_debate_completeness,

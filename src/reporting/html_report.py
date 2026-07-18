@@ -3,7 +3,6 @@ from jinja2 import Template
 from src.config import REPORTS_DIR
 from src.models.portfolio import PortfolioSnapshot
 from src.models.trade import Trade
-from src.simulator.performance import PerformanceTracker
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
