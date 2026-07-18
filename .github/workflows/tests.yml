@@ -6,6 +6,10 @@ name: Tests
 #
 # No secrets: the suite mocks the LLM and network, so it passes on a bare checkout.
 # The three credential-dependent tests skip themselves rather than fail.
+#
+# Also runs `ruff check`. Lint was left out when this workflow landed because the
+# tree had 7 pre-existing errors; those were cleaned up in the same PR that added
+# this step, so the gate starts green.
 on:
   pull_request:
   push:
@@ -36,3 +40,7 @@ jobs:
 
       - name: Run tests
         run: python -m pytest -q
+
+      # Lint runs after the tests so a formatting nit never masks a real failure.
+      - name: Lint
+        run: python -m ruff check .

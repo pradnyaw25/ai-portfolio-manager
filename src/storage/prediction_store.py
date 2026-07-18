@@ -1,7 +1,6 @@
 import json
 import uuid
 from datetime import date, timedelta
-from pathlib import Path
 
 from src.config import DATA_DIR
 from src.utils.logger import get_logger

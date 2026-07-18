@@ -1,6 +1,5 @@
 """P5-3: weekly investor letter — facts, grounding gate, publish, idempotency."""
 
-import json
 import os
 from datetime import date
 
@@ -149,7 +148,9 @@ def test_flagged_letter_is_blocked_before_publish(tmp_path):
 
 
 def test_publish_is_idempotent_per_week(tmp_path):
-    judge = lambda decision, context: GroundingVerdict(grounded=True)
+    def judge(decision, context):
+        return GroundingVerdict(grounded=True)
+
     _run(judge, tmp_path)
     _run(judge, tmp_path)  # same week again
     stored = InvestorLetterStore(path=tmp_path / "letters.jsonl").load()
@@ -177,7 +178,8 @@ def test_x_thread_off_by_default_on_when_enabled(tmp_path):
             self.posts.append(text)
             return type("R", (), {"posted": True})()
 
-    judge = lambda decision, context: GroundingVerdict(grounded=True)
+    def judge(decision, context):
+        return GroundingVerdict(grounded=True)
 
     pub_off = FakePublisher()
     r1 = _run(judge, tmp_path, tweet_publisher=pub_off, post_letter=False)
