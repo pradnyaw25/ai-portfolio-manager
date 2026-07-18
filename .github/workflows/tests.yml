@@ -1,0 +1,38 @@
+name: Tests
+
+# The unit suite is the only gate that runs on every PR. `evals.yml` is
+# path-filtered to prompt/agent/LLM changes, so until now a PR touching anything
+# else (reporting, storage, risk, the pipeline) merged with nothing run against it.
+#
+# No secrets: the suite mocks the LLM and network, so it passes on a bare checkout.
+# The three credential-dependent tests skip themselves rather than fail.
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+          cache: pip
+
+      - name: Install dependencies
+        # pytest lives in the `dev` extra, not the base dependencies.
+        run: |
+          pip install -U pip
+          pip install -e ".[dev]"
+
+      - name: Run tests
+        run: python -m pytest -q
