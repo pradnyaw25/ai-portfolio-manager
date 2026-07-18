@@ -2,8 +2,8 @@
 
 A clean-slate re-evaluation after the v1 roadmap (`docs/ROADMAP.md`) was fully
 executed: 32 merged PRs, ~7.7k src + ~4.6k test LOC, 256 tests, 23 days of live
-data. This document supersedes v1 as the working plan. The actionable task list is
-in [`.claude/TODO.md`](../.claude/TODO.md).
+data. This document supersedes v1 as the strategic plan. The weekend-sized,
+actionable task list is in [`PRODUCT-ROADMAP.md`](PRODUCT-ROADMAP.md).
 
 **Project goals (restated):** an impressive engineering-portfolio piece that
 demonstrates modern AI-engineering skill and is credible in senior/staff interviews,
@@ -69,8 +69,8 @@ that is the brand.**
 
 ## 2. Roadmap
 
-Effort in focused hours. IDs (`V1-*`) are the working task list; specs in
-`.claude/TODO.md`.
+Effort in focused hours. IDs (`V1-*`) describe the strategic initiatives; executable
+task specifications and current status live in [`PRODUCT-ROADMAP.md`](PRODUCT-ROADMAP.md).
 
 > **Shipped as of 2026-07-09:** the 30-day tier is largely cleared — **V1-1** (baselines
 > were already live; ablations shipped #66, minus the *no-tools* ablation which needs the

@@ -43,8 +43,9 @@ The system uses LLM agents to analyze markets, make trade decisions, and manage 
 
 ## Future Tasks
 
-> Reconciled against the code on 2026-07-07. Completed items moved to "Recently Completed"
-> below rather than deleted, so the backlog keeps its history.
+> Reconciled against the code on 2026-07-07; SEO section + prediction/letter status re-reconciled
+> 2026-07-17. Completed items moved to "Recently Completed" below rather than deleted, so the
+> backlog keeps its history.
 
 ### High Priority
 - [ ] **Correlation-aware diversification** — Sector concentration *is* enforced
@@ -141,14 +142,20 @@ The framing to hold onto: **this project's rare asset is that it generates uniqu
 opinionated content every single day.** Everything below follows from that.
 
 ### High Priority
-- [ ] **Publish weekly investor letters as pages** — **Blocked, and not by the plumbing.** No letter
-  has ever published: `data/investor_letters.jsonl` does not exist and the only weekly-letter run
-  (2026-07-05) failed. `_window_return` yields decimals (`0.0231`), the model correctly writes
-  "2.31%", and the grounding judge calls that a *material* fabrication — so
-  `investor_letter.py:203` blocks publication. The judge's own prompt says equivalent phrasing must
-  be minor (`src/scoring/grounding.py:59-67`). Fix the false positive first; only then build
-  `/letters/YYYY-MM-DD.html` + an index, following `decision_pages.py`. Note the original entry
-  claimed letters "only reach the dashboard" — they reach nothing.
+- [ ] **Publish weekly investor letters as pages** — *Unblocked 2026-07-08 (PR #63); reconciled
+  2026-07-17.* The grounding false positive that hard-blocked every letter is **fixed**: the fix
+  (`464b801`) stopped arguing with the judge and removed the ambiguity —
+  `format_facts_for_prompt()` now renders every ratio-valued fact as a percent string *once* and
+  hands the identical view to both the writer and the auditor, so they can't disagree about
+  decimal-vs-percent units. A real, grounded letter has since published (2026-07-12, +0.71% week).
+  **But it only reaches `public/investor_letter.{json,md}` — a single file overwritten each week.**
+  The actual remaining work is the durable surface: build `/letters/YYYY-MM-DD.html` + an index +
+  sitemap entries, following `decision_pages.py`, so each weekly letter becomes a dated permalink
+  instead of vanishing on the next run. **Watch out:** no per-week history actually accumulates
+  yet — `InvestorLetterStore` writes `data/investor_letters.jsonl`, but `weekly-letter.yml` only
+  commits `public/investor_letter.{json,md}` (`git add -f`), so the jsonl is never persisted and
+  each run sees only the current week. The page builder must therefore either also commit the
+  jsonl (let history accumulate) or emit + commit the dated `/letters/*.html` at letter-time.
 ### Decision pages — follow-up
 
 All four shipped 2026-07-09 (PRs #69, #70, #71). Kept as a record.
@@ -201,6 +208,9 @@ All four shipped 2026-07-09 (PRs #69, #70, #71). Kept as a record.
   MCP server ("point Claude at a real fund's decision history and interrogate it"), currently
   buried as README bullet 11.
 - [ ] **Wait for resolved predictions before launching** — Launch at ~50–100 resolved predictions.
+  *Progress (2026-07-17): 41 resolved / 109 total, 24 correct (~59% hit rate); 68 still open.* On
+  the current ~2/day accrual the 50-mark is days away and 100 is ~2–3 weeks out — the first
+  calibration curve is nearly launch-ready.
   An LLM that is *confidently wrong*, with receipts, is a better story than one that wins — but only
   once N is large enough to mean anything. **Throughput was fixed on 2026-07-08**: predictions used
   to spawn only from BUYs (~7 in a month, biased toward high conviction). Now every run records a

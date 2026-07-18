@@ -229,6 +229,7 @@ def _shell(
       · <a href="../decisions.html">Decision journal</a>
       · <a href="../decisions/">By day</a>
       · <a href="../symbols/">By symbol</a>
+      · <a href="../letters/">Letters</a>
     </footer>
   </div>
 </body>
@@ -684,11 +685,16 @@ def latest_per_date(rows: list[dict]) -> list[dict]:
     return [by_date[d] for d in sorted(by_date)]
 
 
-def build_sitemap(entries: list[dict], symbols: list[str] | None = None) -> str:
+def build_sitemap(
+    entries: list[dict],
+    symbols: list[str] | None = None,
+    letters: list[str] | None = None,
+) -> str:
     """Generate sitemap.xml from the real page set. Replaces the hand-written file,
     which went stale the moment decision pages started being emitted.
 
-    ``symbols`` is the set of tickers that earned a hub page (see export)."""
+    ``symbols`` is the set of tickers that earned a hub page (see export);
+    ``letters`` is the set of ``week_end`` dates that have a published letter page."""
     latest = entries[-1]["date"] if entries else None
 
     def url(loc: str, changefreq: str, priority: str, lastmod: str | None) -> str:
@@ -715,6 +721,12 @@ def build_sitemap(entries: list[dict], symbols: list[str] | None = None) -> str:
         for sym in sorted(symbols):
             parts.append(url(f"{SITE}/symbols/{sym}.html", "weekly", "0.5", latest))
 
+    if letters:
+        newest_letter = max(letters)
+        parts.append(url(f"{SITE}/letters/", "weekly", "0.7", newest_letter))
+        for week_end in sorted(letters, reverse=True):
+            parts.append(url(f"{SITE}/letters/{week_end}.html", "monthly", "0.6", week_end))
+
     body = "\n".join(parts)
     return (
         '<?xml version="1.0" encoding="UTF-8"?>\n'
@@ -739,9 +751,17 @@ def load_decisions(path: Path | None = None) -> list[dict]:
     return rows
 
 
-def export(rows: list[dict] | None = None, public_dir: Path | None = None) -> list[str]:
+def export(
+    rows: list[dict] | None = None,
+    public_dir: Path | None = None,
+    letters: list[str] | None = None,
+) -> list[str]:
     """Write /decisions/*.html, /decisions/index.html, /symbols/*.html and sitemap.xml.
-    Returns the decision dates published."""
+    Returns the decision dates published.
+
+    ``letters`` is the set of published investor-letter ``week_end`` dates, folded into
+    the sitemap here (this module owns sitemap.xml, so letters must be passed in rather
+    than written by a second writer that would race this one)."""
     public_dir = public_dir or PUBLIC_DIR
     entries = latest_per_date(rows if rows is not None else load_decisions())
 
@@ -773,7 +793,9 @@ def export(rows: list[dict] | None = None, public_dir: Path | None = None) -> li
 
     # Only non-empty hubs go in the sitemap; empty placeholders stay noindexed.
     indexable = [s for s in hub_symbols if touches.get(s)]
-    (public_dir / "sitemap.xml").write_text(build_sitemap(entries, symbols=indexable))
+    (public_dir / "sitemap.xml").write_text(
+        build_sitemap(entries, symbols=indexable, letters=letters)
+    )
 
     logger.info(
         "Prerendered %d decision pages, %d symbol hubs (%d with content)",

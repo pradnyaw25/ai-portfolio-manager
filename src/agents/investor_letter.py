@@ -262,6 +262,7 @@ def generate_weekly_letter(
     }
     (letter_store or InvestorLetterStore()).record(record)
     _export_to_dashboard(record, public_dir)
+    _export_letter_pages(letter_store, public_dir)
 
     tweeted = _maybe_post_thread(letter, facts, post_letter, tweet_publisher)
     return {
@@ -276,6 +277,22 @@ def _export_to_dashboard(record: dict, public_dir: Path) -> None:
     public_dir.mkdir(exist_ok=True)
     (public_dir / "investor_letter.json").write_text(json.dumps(record, indent=2, default=str))
     (public_dir / "investor_letter.md").write_text(record["markdown"])
+
+
+def _export_letter_pages(letter_store: InvestorLetterStore | None, public_dir: Path) -> None:
+    """Prerender the dated /letters/*.html + index so a new letter is live the same
+    run. The daily PublicExporter also regenerates these (and the sitemap) from the
+    committed store; this just avoids a weekday's lag. Best-effort — the letter is
+    already recorded, so a page-render failure must not fail the letter."""
+    from src.reporting import letter_pages
+
+    try:
+        letter_pages.export(
+            letters=letter_pages.load_letters(letter_store or InvestorLetterStore()),
+            public_dir=public_dir,
+        )
+    except Exception as exc:  # noqa: BLE001 — page render must not fail a good letter
+        logger.warning("Investor-letter page prerender skipped: %s", exc)
 
 
 def _maybe_post_thread(letter, facts, post_letter, tweet_publisher) -> bool:
