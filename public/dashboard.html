@@ -1585,7 +1585,15 @@
           .map(line => JSON.parse(line));
 
         const scored = predictions.filter(p => p.status === "scored" && p.result);
-        const wins = scored.filter(p => p.result.outperformed).length;
+        // A win is a correct directional *call*, not a symbol that beat SPY: an
+        // underperform call is right when the symbol lags. Legacy rows lacking
+        // `correct` were all outperform bets. Mirrors was_correct() in
+        // src/scoring/calibration.py.
+        const wins = scored.filter(p =>
+          p.result.correct !== undefined && p.result.correct !== null
+            ? p.result.correct
+            : p.result.outperformed
+        ).length;
         const winEl = document.getElementById("winrate-value");
 
         if (scored.length === 0) {
@@ -1595,7 +1603,7 @@
           const rate = wins / scored.length;
           winEl.textContent = `${(rate * 100).toFixed(0)}%`;
           winEl.className = `hero-value ${rate >= 0.5 ? "pos" : "neg"}`;
-          setText("winrate-sub", `${wins} of ${scored.length} calls beat SPY`);
+          setText("winrate-sub", `${wins} of ${scored.length} calls were right`);
         }
       } catch (e) {
         setText("winrate-value", "-");

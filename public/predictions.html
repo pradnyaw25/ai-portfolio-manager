@@ -396,7 +396,7 @@
     <header class="page-header">
       <div>
         <h1>Prediction Accuracy</h1>
-        <p class="subtitle">Tracks whether BUY-generated predictions outperformed SPY over their evaluation window.</p>
+        <p class="subtitle">Tracks whether the fund's directional calls — outperform or underperform SPY — were right over their evaluation window.</p>
       </div>
       <p class="updated-at" id="updated-at">Updated at: Loading...</p>
     </header>
@@ -557,11 +557,22 @@
       }
     }
 
+    // Mirror of was_correct() in src/scoring/calibration.py. A win is a correct
+    // directional *call*, not a symbol that beat SPY — an underperform call is right
+    // precisely when the symbol lags. Accepts raw or serialized predictions; legacy
+    // rows without `correct` were all outperform bets, so they fall back.
+    function wasCorrect(p) {
+      if (!p) return null;
+      const r = p.result || p;
+      const v = (r.correct !== undefined && r.correct !== null) ? r.correct : r.outperformed;
+      return (v === undefined || v === null) ? null : Boolean(v);
+    }
+
     function badge(prediction) {
       if (prediction.status === "open") {
         return `<span class="badge badge-open">Open</span>`;
       }
-      if (prediction.outperformed) {
+      if (wasCorrect(prediction)) {
         return `<span class="badge badge-win">Win</span>`;
       }
       return `<span class="badge badge-loss">Loss</span>`;
@@ -609,6 +620,16 @@
         const spyReturn = result.spy_return;
         const alphaPct = symbolReturn !== undefined && spyReturn !== undefined
           ? Number(((symbolReturn - spyReturn) * 100).toFixed(2)) : null;
+        // Alpha signed by the call's direction: how much the prediction was right by.
+        // Direction is recovered from the two stored flags, so legacy rows work too.
+        let edgePct = alphaPct;
+        if (alphaPct !== null) {
+          const correct = wasCorrect(p);
+          const outperformed = result.outperformed;
+          if (correct !== null && outperformed !== undefined && outperformed !== null) {
+            edgePct = (Boolean(correct) === Boolean(outperformed)) ? alphaPct : -alphaPct;
+          }
+        }
         return {
           id: p.id,
           date: p.date,
@@ -620,11 +641,15 @@
           symbol_return: symbolReturn,
           spy_return: spyReturn,
           outperformed: result.outperformed,
+          correct: wasCorrect(p),
           alpha_pct: alphaPct,
+          edge_pct: edgePct,
         };
       };
-      const ranked = resolved.map(serialize).sort((a, b) => b.alpha_pct - a.alpha_pct);
-      const wins = resolved.filter(p => p.result && p.result.outperformed);
+      // Rank by edge (how much the CALL was right by), not raw alpha — see
+      // _rank_resolved_predictions in src/reporting/public_exporter.py.
+      const ranked = resolved.map(serialize).sort((a, b) => (b.edge_pct ?? 0) - (a.edge_pct ?? 0));
+      const wins = resolved.filter(p => wasCorrect(p));
       return {
         metrics: {
           total: predictions.length,
@@ -641,7 +666,7 @@
 
     // Mirror of src/scoring/calibration.py, for the JSONL fallback path.
     function computeCalibration(resolved, bucketSize = 0.1) {
-      const usable = resolved.filter(p => p.result && p.result.outperformed !== undefined && p.result.outperformed !== null);
+      const usable = resolved.filter(p => wasCorrect(p) !== null);
       const n = usable.length;
       if (n === 0) return { sample_size: 0, brier_score: null, mean_confidence: null, win_rate: null, buckets: [] };
 
@@ -653,7 +678,7 @@
 
       for (const p of usable) {
         const c = Number(p.confidence) || 0;
-        const outcome = p.result.outperformed ? 1 : 0;
+        const outcome = wasCorrect(p) ? 1 : 0;
         brier += (c - outcome) ** 2;
         totalConf += c;
         totalWins += outcome;

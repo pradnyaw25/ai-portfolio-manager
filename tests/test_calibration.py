@@ -1,4 +1,4 @@
-from src.scoring.calibration import compute_calibration, empty_calibration
+from src.scoring.calibration import compute_calibration, empty_calibration, was_correct
 
 
 def _resolved(confidence, outperformed):
@@ -55,3 +55,50 @@ def test_confidence_of_one_lands_in_last_bucket():
     result = compute_calibration([_resolved(1.0, True)])
     assert result["buckets"][0]["lower"] == 0.9
     assert result["buckets"][0]["upper"] == 1.0
+
+
+# --- Correct call vs. "beat SPY" -------------------------------------------------
+# The fund predicts in BOTH directions. Reading `outperformed` as correctness
+# inverted the outcome for every underperform call (75 of the first 109
+# predictions), which understated published accuracy and flipped the Brier score.
+
+
+def _directional(confidence, *, outperformed, correct):
+    return {
+        "status": "scored",
+        "confidence": confidence,
+        "result": {"outperformed": outperformed, "correct": correct},
+    }
+
+
+def test_correct_underperform_call_is_a_win_even_though_it_lagged_spy():
+    # "X will underperform SPY" at 0.9 confidence; X duly lagged. The call was
+    # RIGHT, so the outcome is 1 and Brier is (0.9 - 1)^2 = 0.01 — not (0.9 - 0)^2.
+    result = compute_calibration([_directional(0.9, outperformed=False, correct=True)])
+
+    assert result["win_rate"] == 1.0
+    assert result["brier_score"] == 0.01
+    assert result["buckets"][0]["actual"] == 1.0
+
+
+def test_wrong_underperform_call_is_a_loss_even_though_it_beat_spy():
+    result = compute_calibration([_directional(0.9, outperformed=True, correct=False)])
+
+    assert result["win_rate"] == 0.0
+    assert result["brier_score"] == 0.81
+
+
+def test_legacy_rows_without_correct_fall_back_to_outperformed():
+    # Pre-`correct` rows were all outperform bets, so the two fields agree.
+    assert was_correct({"result": {"outperformed": True}}) is True
+    assert was_correct({"result": {"outperformed": False}}) is False
+
+
+def test_was_correct_prefers_correct_over_outperformed():
+    assert was_correct({"result": {"outperformed": False, "correct": True}}) is True
+    assert was_correct({"result": {"outperformed": True, "correct": False}}) is False
+
+
+def test_was_correct_is_none_when_unresolved():
+    assert was_correct({"result": None}) is None
+    assert was_correct({}) is None
