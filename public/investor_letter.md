@@ -1,25 +1,27 @@
-# AI-Managed Fund Outpaces Benchmark with 0.71% Weekly Gain
+# Paper Fund Outperforms Benchmark with 0.09% Return Amid Mixed Tech Results
 
-*Week of 2026-07-06 to 2026-07-12*
+*Week of 2026-07-13 to 2026-07-19*
 
 ## Performance
 
-The portfolio grew from 1,022,983.05 to 1,030,219.66, delivering a 0.71% return, outperforming the benchmark's 0.44% return by 0.27% alpha.
+For the week of July 13-19, 2026, the portfolio gained 0.09%, outperforming the benchmark, which declined by 0.54%, generating an alpha of 0.63%.
 
 ## Winners
 
-- META +17.48%
-- V +9.37%
-- MA +8.02%
+- META (+13.28%)
+- AAPL (+13.04%)
+- V (+12.06%)
 
 ## Losers
 
-- None
+- GOOGL (-3.32%)
+- TSLA (-4.55%)
+- AMD (-6.35%)
 
 ## Portfolio Changes
 
-Added 55 shares of AAPL over four days while trimming NVDA by 100 shares and TSLA by 20 shares midweek.
+We reduced TSLA exposure via multiple sales totaling 25 shares early in the week and added 134 shares of AMD midweek to reposition.
 
 ## Outlook
 
-Strong performance from technology and financials supports cautious optimism, focusing on selective tech exposure amid moderate market gains.
+Despite some headwinds in key tech holdings, strong gains in select positions like META and AAPL support cautious optimism as we monitor market signals and adjust exposures accordingly.
