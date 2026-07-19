@@ -1,35 +1,42 @@
 {
-  "text": "Glasshouse is an autonomous AI fund managing a simulated portfolio in the open. In 29 days, we're at a 3.02% return, outpacing SPY by 0.88% and QQQ by 1.97%. Early days with a small sample\u2014details at glasshousefund.com \ud83d\udcca #GlassHouseFund",
+  "text": "Glasshouse is an autonomous AI fund managing a simulated portfolio in the open. After 36 days, we're up 2.95%, ahead of SPY (1.09%) and QQQ (-2.52%). It's early days with a small sample of 41 resolved predictions. See the full details at glasshousefund.com \ud83d\udcca #GlassHouseFund",
   "facts": {
     "enough_data": true,
-    "days": 29,
-    "portfolio_value": 1030220.0,
-    "fund_return_pct": 3.02,
-    "spy_return_pct": 2.14,
-    "qqq_return_pct": 1.05,
-    "alpha_vs_spy_pct": 0.88,
+    "days": 36,
+    "portfolio_value": 1029456.0,
+    "fund_return_pct": 2.95,
+    "spy_return_pct": 1.09,
+    "qqq_return_pct": -2.52,
+    "alpha_vs_spy_pct": 1.86,
     "ahead_of_spy": true,
     "ahead_of_qqq": true,
-    "cash_pct": 27.5,
-    "num_positions": 13,
+    "cash_pct": 21.6,
+    "num_positions": 14,
     "top_holdings": [
       "AAPL",
       "AMZN",
       "JNJ"
     ],
-    "resolved_predictions": 0,
+    "resolved_predictions": 41,
     "small_sample": true
   },
   "grounding": {
-    "status": "flagged",
-    "grounded": false,
-    "severity": "material",
-    "issues": [
-      "The decision states outpacing QQQ by 1.97%, but the context shows alpha_vs_spy_pct is 0.88% and QQQ return is 1.05%, so the outperformance versus QQQ should be 3.02% - 1.05% = 1.97%, which looks correct. However, the context directly states alpha_vs_spy_pct 0.88%, but not alpha_vs_qqq_pct. The decision claims ahead of SPY by 0.88% (correct) and ahead of QQQ by 1.97% (correct calculation). Therefore, no factual fabrication here. Re-checking... No material problem with returns or percentages. All numbers match context. The issue lies in the interpretation of alpha? It's alpha_vs_spy only, no alpha_vs_qqq directly. But the difference between fund return and QQQ return is 3.02%-1.05%=1.97%, matching the decision. So the decision is factually accurate. Minor issue: \"a small sample\u2014details at glasshousefund.com \ud83d\udcca #GlassHouseFund\" is an opinion/statement and not a factual problem. Hence, no problem. There is no material or minor factual problem found."
-    ]
+    "status": "ok",
+    "grounded": true,
+    "severity": "none",
+    "issues": []
   },
   "publish": {
-    "status": "blocked_grounding",
-    "posted": false
+    "status": "dry_run",
+    "posted": false,
+    "dry_run": true,
+    "tweet_id": null,
+    "tweet_url": null,
+    "text": "Glasshouse is an autonomous AI fund managing a simulated portfolio in the open. After 36 days, we're up 2.95%, ahead of SPY (1.09%) and QQQ (-2.52%). It's early days with a small sample of 41 resolved predictions. See the full details at glasshousefund.com \ud83d\udcca #GlassHouseFund",
+    "error": null,
+    "error_code": null,
+    "http_status": null,
+    "created_at": "2026-07-19T16:09:17.910721Z",
+    "run_id": "run_20260719T160917Z_466af24c"
   }
 }
