@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <title>AI fund decision — July 20, 2026</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script>
+(function () {
+  try {
+    var stored = localStorage.getItem("ai-portfolio-theme");
+    var theme = (stored === "light" || stored === "dark")
+      ? stored
+      : (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+    document.documentElement.setAttribute("data-theme", theme);
+  } catch (e) {}
+})();
+</script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-MCDDGJ3XEC"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-MCDDGJ3XEC');
+  </script>
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+  <link rel="canonical" href="https://glasshousefund.com/decisions/2026-07-20.html" />
+  <meta name="description" content="The fund held — no trades. The portfolio stance is NEUTRAL, balancing positive momentum and fundamentals in core holdings like AAPL, JNJ, and AMZN against weakening momentum and risks in names such as TSLA, AMD, and GOOGL. Elevated cash is maintained purposefully to hedge concentration and sector ri" />
+  <meta name="author" content="Pradnya Wakchaure" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://glasshousefund.com/decisions/2026-07-20.html" />
+  <meta property="og:title" content="AI fund decision — July 20, 2026" />
+  <meta property="og:description" content="The fund held — no trades. The portfolio stance is NEUTRAL, balancing positive momentum and fundamentals in core holdings like AAPL, JNJ, and AMZN against weakening momentum and risks in names such as TSLA, AMD, and GOOGL. Elevated cash is maintained purposefully to hedge concentration and sector ri" />
+  <meta property="og:image" content="https://glasshousefund.com/og-cover.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@GlassHouseFund" />
+  <style>
+:root { color-scheme: light dark;
+  --bg:#e9ecdf; --surface:#f3f5ec; --surface-subtle:#e1e5d4; --border:#cdd4bd;
+  --border-strong:#b4bd9f; --text:#191c11; --muted:#5e6851; --muted-strong:#3f4834;
+  --positive:#4d6a2c; --positive-bg:#dde7ca; --negative:#9c3a30; --negative-bg:#f0dbd6;
+  --accent:#5f6b45; --ink:#12140d; --shadow:0 12px 34px rgba(18,20,13,.10);
+  --row-border:#dde2d0; --panel-subtle:#eef1e6; }
+:root[data-theme="dark"] {
+  --bg:#12140d; --surface:#1b1e14; --surface-subtle:#24281a; --border:#343a28;
+  --border-strong:#4a5138; --text:#e4e8d5; --muted:#99a487; --muted-strong:#c3ccb1;
+  --positive:#a6c07f; --positive-bg:#1b2712; --negative:#e59a90; --negative-bg:#2f1a16;
+  --accent:#aeba90; --ink:#f1f4e7; --shadow:0 16px 42px rgba(0,0,0,.40);
+  --row-border:#2a2f1f; --panel-subtle:#15170f; }
+* { box-sizing:border-box; }
+body { margin:0; min-width:320px; background:var(--bg); color:var(--text);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif; line-height:1.6; }
+a { color:inherit; }
+.shell { width:min(860px, calc(100% - 32px)); margin:0 auto; padding:22px 0 60px; }
+.topbar { display:flex; align-items:center; justify-content:space-between; gap:18px; margin-bottom:34px; }
+.brand { display:flex; align-items:center; gap:10px; font-weight:800; color:var(--ink); text-decoration:none; }
+.brand-mark { display:block; width:30px; height:30px; color:var(--ink); flex:none; }
+.nav { display:flex; gap:4px; flex-wrap:wrap; }
+.nav a { display:inline-flex; align-items:center; min-height:34px; padding:0 12px; border-radius:6px;
+  color:var(--muted-strong); font-size:14px; font-weight:700; text-decoration:none; white-space:nowrap; }
+.nav a.active { background:var(--ink); color:var(--bg); }
+.nav a:hover:not(.active) { background:var(--surface-subtle); }
+.eyebrow { color:var(--accent); font-size:12px; font-weight:800; letter-spacing:.1em;
+  text-transform:uppercase; margin-bottom:12px; }
+h1 { margin:0 0 10px; color:var(--ink); font-size:clamp(26px,4.4vw,40px); line-height:1.08; letter-spacing:-.02em; }
+h2 { color:var(--ink); font-size:19px; margin:34px 0 8px; }
+h3 { color:var(--ink); font-size:15px; margin:0 0 6px; }
+p { margin:0 0 12px; }
+.lede { color:var(--muted-strong); font-size:17px; max-width:64ch; margin:0 0 10px; }
+.facts { display:flex; flex-wrap:wrap; gap:8px; margin:16px 0 8px; }
+.pill { border:1px solid var(--border-strong); border-radius:999px; background:var(--panel-subtle);
+  padding:3px 11px; font-size:12.5px; font-weight:700; color:var(--muted-strong); }
+.card { border:1px solid var(--border); border-radius:12px; background:var(--surface);
+  box-shadow:var(--shadow); padding:18px 20px; margin-bottom:12px; }
+.trade { border:1px solid var(--border); border-left:4px solid var(--positive); border-radius:8px;
+  background:var(--surface); padding:12px 14px; margin-bottom:10px; }
+.trade.sell { border-left-color:var(--negative); }
+.trade.rejected { border-left-color:var(--muted); opacity:.85; }
+.trade .head { color:var(--ink); font-weight:800; font-size:15px; }
+.conf { border-radius:5px; background:var(--positive-bg); color:var(--positive);
+  padding:1px 7px; font-size:12px; font-weight:800; margin-left:6px; }
+.calls-wrap { overflow-x:auto; margin:6px 0 12px; }
+.calls { width:100%; border-collapse:collapse; font-size:13.5px; }
+.calls th { text-align:left; font-size:11.5px; text-transform:uppercase; letter-spacing:.05em;
+  color:var(--muted); font-weight:800; padding:6px 12px 6px 0; border-bottom:1px solid var(--border); white-space:nowrap; }
+.calls td { padding:7px 12px 7px 0; border-bottom:1px solid var(--row-border); vertical-align:top; }
+.calls td.sym { font-weight:800; color:var(--ink); white-space:nowrap; }
+.dir { display:inline-block; border-radius:5px; padding:1px 7px; font-size:12px; font-weight:800; white-space:nowrap; }
+.dir.up { background:var(--positive-bg); color:var(--positive); }
+.dir.down { background:var(--negative-bg); color:var(--negative); }
+.tag { display:inline-block; border:1px solid var(--border-strong); border-radius:999px;
+  padding:0 8px; font-size:11px; font-weight:800; color:var(--muted-strong); white-space:nowrap; }
+.muted { color:var(--muted); }
+ul { margin:6px 0 0; padding-left:20px; }
+li { margin-bottom:4px; }
+.role { font-size:11.5px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--accent); }
+.shead { display:flex; flex-wrap:wrap; align-items:center; gap:8px; color:var(--ink); font-weight:800; font-size:14px; }
+.shead a { text-decoration:none; }
+.shead a:hover { text-decoration:underline; }
+.sym-link { color:inherit; text-decoration:none; border-bottom:1px dotted var(--border-strong); }
+.sym-link:hover { border-bottom-color:currentColor; }
+.pager { display:flex; justify-content:space-between; gap:12px; margin-top:40px;
+  border-top:1px solid var(--row-border); padding-top:16px; font-size:14px; font-weight:700; }
+.dlist { list-style:none; margin:0; padding:0; }
+.dlist li { border-bottom:1px solid var(--row-border); padding:12px 0; margin:0; }
+.dlist a { color:var(--ink); font-weight:800; text-decoration:none; font-size:16px; }
+.dlist a:hover { text-decoration:underline; }
+.dlist .sub { color:var(--muted); font-size:13.5px; }
+footer { margin-top:48px; border-top:1px solid var(--row-border); padding-top:16px;
+  color:var(--muted); font-size:13px; }
+@media (max-width:560px) {
+  .topbar { flex-direction:column; align-items:flex-start; gap:12px; }
+  .nav a { padding:0 9px; font-size:13px; }
+}
+</style>
+</head>
+<body>
+  <div class="shell">
+    <div class="topbar">
+      <a class="brand" href="../index.html"><svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-linejoin="round" stroke-linecap="round"><path d="M24 5 L43 21 L43 43 L5 43 L5 21 Z" stroke-width="2.4"/><path d="M5 21 L43 21" stroke-width="2"/><path d="M24 5 L24 21" stroke-width="1.6"/><path d="M16 21 L16 43 M32 21 L32 43" stroke-width="1.6"/><path d="M5 32 L43 32" stroke-width="1.6"/></g></svg><span>Glasshouse Fund</span></a>
+      <nav class="nav" aria-label="Site navigation">
+        <a href="../dashboard.html">Dashboard</a>
+        <a class="active" href="../decisions.html">Decision Journal</a>
+        <a href="../predictions.html">Prediction Accuracy</a>
+        <a href="../engineering.html">Engineering</a>
+        <a href="../about.html">About</a>
+      </nav>
+    </div>
+    <div class="eyebrow">Decision journal</div>
+    <h1>AI fund decision — July 20, 2026</h1>
+    <p class="lede">The portfolio stance is NEUTRAL, balancing positive momentum and fundamentals in core holdings like AAPL, JNJ, and AMZN against weakening momentum and risks in names such as TSLA, AMD, and GOOGL. Elevated cash is maintained purposefully to hedge concentration and sector risks while retaining flexibility. No new trades are recommended to avoid overtrading; partial trims on TSLA were appropriate earlier. Market conditions remain mixed with cautious optimism balanced by sector-specific vulnerabilities and fading tech momentum, prompting a disciplined hold approach across all positions.</p>
+    <div class="facts"><span class="pill">Outlook: NEUTRAL</span><span class="pill">Portfolio $1,031,376</span><span class="pill">Cash 21.6%</span><span class="pill">Grounding: ok</span></div>
+    <h2>Trades</h2>
+    <p class="muted">No trades this day — the fund held.</p>
+    <h2>Market calls</h2><p class="muted">A directional call — beat or lag the S&amp;P 500 over the horizon — on every researched name, whether or not the fund traded it. 34 calls (15 outperform, 19 underperform); 0 became trades. These are the fund's calibration record.</p><div class="calls-wrap"><table class="calls"><thead><tr><th>Symbol</th><th>Call</th><th>Conf.</th><th></th><th>Why</th></tr></thead><tbody><tr><td class="sym"><a class="sym-link" href="../symbols/AAPL.html">AAPL</a></td><td><span class="dir up">Outperform SPY</span></td><td>78%</td><td></td><td class="muted">Strong 30-day momentum and favorable analyst views support potential to outperform SPY.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/TSLA.html">TSLA</a></td><td><span class="dir down">Underperform SPY</span></td><td>78%</td><td></td><td class="muted">Negative momentum and recent losses suggest underperformance likelihood.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/JNJ.html">JNJ</a></td><td><span class="dir up">Outperform SPY</span></td><td>75%</td><td></td><td class="muted">Strong earnings and stable fundamentals support potential to outperform.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/ORCL.html">ORCL</a></td><td><span class="dir down">Underperform SPY</span></td><td>75%</td><td></td><td class="muted">Sharp declines and poor momentum forecast significant underperformance risk.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/GOOGL.html">GOOGL</a></td><td><span class="dir down">Underperform SPY</span></td><td>72%</td><td></td><td class="muted">Negative momentum and fading investor confidence indicate underperformance risk.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/AMD.html">AMD</a></td><td><span class="dir down">Underperform SPY</span></td><td>70%</td><td></td><td class="muted">Negative momentum and recent price declines suggest underperformance risk versus SPY.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/BE.html">BE</a></td><td><span class="dir down">Underperform SPY</span></td><td>70%</td><td></td><td class="muted">Steep declines and weak momentum forecast underperformance risk.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/CRWV.html">CRWV</a></td><td><span class="dir down">Underperform SPY</span></td><td>70%</td><td></td><td class="muted">Weak recent performance and steep declines imply underperformance risk.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/INTC.html">INTC</a></td><td><span class="dir down">Underperform SPY</span></td><td>70%</td><td></td><td class="muted">Strong negative momentum and sector challenges forecast underperformance.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/MU.html">MU</a></td><td><span class="dir down">Underperform SPY</span></td><td>70%</td><td></td><td class="muted">Weak momentum and sector challenges imply underperformance.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/SNDK.html">SNDK</a></td><td><span class="dir down">Underperform SPY</span></td><td>70%</td><td></td><td class="muted">Price corrections and weak momentum indicate downside risks versus SPY.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/TSM.html">TSM</a></td><td><span class="dir down">Underperform SPY</span></td><td>70%</td><td></td><td class="muted">Fading momentum and sector pressures forecast underperformance risk.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/HD.html">HD</a></td><td><span class="dir up">Outperform SPY</span></td><td>68%</td><td></td><td class="muted">Positive analyst reaffirmations and stable price momentum support outperformance.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/MA.html">MA</a></td><td><span class="dir up">Outperform SPY</span></td><td>68%</td><td></td><td class="muted">Good momentum and analyst optimism support outperformance.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/V.html">V</a></td><td><span class="dir up">Outperform SPY</span></td><td>68%</td><td></td><td class="muted">Positive momentum and strong sector position support outperformance.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/META.html">META</a></td><td><span class="dir up">Outperform SPY</span></td><td>67%</td><td></td><td class="muted">Strong fundamentals and reasonable momentum favor outperformance.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/AMZN.html">AMZN</a></td><td><span class="dir up">Outperform SPY</span></td><td>65%</td><td></td><td class="muted">Positive AWS growth outlook and moderate momentum indicate likely outperformance.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/CORZ.html">CORZ</a></td><td><span class="dir down">Underperform SPY</span></td><td>65%</td><td></td><td class="muted">Ongoing negative momentum suggests struggles against SPY.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/GLW.html">GLW</a></td><td><span class="dir down">Underperform SPY</span></td><td>65%</td><td></td><td class="muted">Operational challenges and fading momentum point to underperformance.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/JPM.html">JPM</a></td><td><span class="dir up">Outperform SPY</span></td><td>65%</td><td></td><td class="muted">Positive momentum and sector strength underlie likely outperformance.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/APLD.html">APLD</a></td><td><span class="dir down">Underperform SPY</span></td><td>60%</td><td></td><td class="muted">Sharp recent declines and negative momentum imply outperformance unlikely versus SPY.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/AVGO.html">AVGO</a></td><td><span class="dir down">Underperform SPY</span></td><td>60%</td><td></td><td class="muted">Declining momentum and sector pressures suggest potential underperformance.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/CAT.html">CAT</a></td><td><span class="dir down">Underperform SPY</span></td><td>60%</td><td></td><td class="muted">Negative momentum amid sector weakness indicates potential underperformance.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/IREN.html">IREN</a></td><td><span class="dir up">Outperform SPY</span></td><td>60%</td><td></td><td class="muted">Recent contract wins and positive news drive an optimistic outlook.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/MSFT.html">MSFT</a></td><td><span class="dir up">Outperform SPY</span></td><td>60%</td><td></td><td class="muted">Mixed momentum and news suggest neutral performance versus SPY.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/QQQ.html">QQQ</a></td><td><span class="dir down">Underperform SPY</span></td><td>60%</td><td></td><td class="muted">Negative momentum over 5 and 30 days signals potential for underperformance.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/UNH.html">UNH</a></td><td><span class="dir up">Outperform SPY</span></td><td>60%</td><td></td><td class="muted">Stable but limited momentum suggests neutral outlook versus SPY.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/WMT.html">WMT</a></td><td><span class="dir down">Underperform SPY</span></td><td>60%</td><td></td><td class="muted">Negative momentum and sector headwinds imply underperformance.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/XOM.html">XOM</a></td><td><span class="dir up">Outperform SPY</span></td><td>60%</td><td></td><td class="muted">Positive recent returns and favorable energy sector outlook support outperformance.</td></tr><tr><td class="sym">^VIX</td><td><span class="dir down">Underperform SPY</span></td><td>60%</td><td></td><td class="muted">Rising VIX reflects increasing volatility, unlikely to outperform stable equities.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/ASML.html">ASML</a></td><td><span class="dir down">Underperform SPY</span></td><td>55%</td><td></td><td class="muted">Negative 30-day momentum and market conditions signal a trend toward underperformance.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/NVDA.html">NVDA</a></td><td><span class="dir up">Outperform SPY</span></td><td>55%</td><td></td><td class="muted">Mixed signals and weak short-term momentum indicate neutral short-term outlook.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/PG.html">PG</a></td><td><span class="dir up">Outperform SPY</span></td><td>55%</td><td></td><td class="muted">Stable but weak momentum suggest neutral performance.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/SPY.html">SPY</a></td><td><span class="dir up">Outperform SPY</span></td><td>55%</td><td></td><td class="muted">Slightly negative 30-day return reflects modestly challenging market conditions.</td></tr></tbody></table></div>
+    <h2>The debate</h2><div class="card"><div class="role">bull case <span class="muted">· conviction 0.80</span></div><p>Given the strong momentum and favorable news surrounding key holdings like Apple (AAPL) and others, as well as overall market conditions, it is a prudent strategy to hold and potentially buy more of these stocks in the portfolio.</p><ul><li>AAPL shows robust momentum with a 30-day price increase of 12.59%, indicating strong investor interest and potential for further growth.</li><li>Johnson &amp; Johnson (JNJ) recently reported quarterly earnings that beat Wall Street estimates, suggesting strength in its core pharmaceutical business and investor confidence.</li><li>Home Depot (HD) has received reaffirmations from financial analysts regarding continued market growth potential, with predictions of significant upside in share price, which supports a bullish perspective.</li><li>Overall market sentiment appears positive, as evidenced by rising indices like the S&amp;P 500 and Nasdaq, hinting at a conducive environment for investments to flourish.</li></ul></div><div class="card"><div class="role">bear case <span class="muted">· conviction 0.90</span></div><p>The current portfolio holdings are exposed to significant downside risks, particularly due to deteriorating momentum and negative performance signals from key assets. This could lead to potential losses if the market conditions persist or worsen.</p><ul><li>TSLA, GOOGL, and AMD are currently in the red, suggesting a lack of short-term performance. TSLA is particularly concerning with a significant decline of -6.74%.</li><li>The fading 30-day momentum for several holdings, including MSFT (-1.49%) and NVDA (-4.54%), indicates a trend of declining interest and could signal further decreases in price.</li><li>GOOGL has a troubling 30-day momentum of -6.11%, reflecting a concerning trend that may suggest ongoing struggles and potential volatility.</li><li>AMD has a particularly steep negative momentum of -9.41%, indicating substantial bearish sentiment and potential for continued price erosion.</li><li>Given the recent performance of the S&amp;P 500, which has shown a decline, this may indicate broader market challenges that could adversely impact the portfolio.</li></ul></div><div class="card"><div class="role">risk case <span class="muted">· conviction 0.80</span></div><p>The portfolio exhibits significant concentration risks in terms of both position weights and sector allocations, which may lead to heightened vulnerability across various adverse market conditions. The cash level provides some buffer, but is not enough to mitigate the underlying concentration risks inherent in the equity positions.</p><ul><li>AAPL comprises 24.5% of the portfolio, indicating a heavy reliance on a single stock. If AAPL underperforms, it could disproportionately impact overall portfolio performance.</li><li>AMZN and JNJ also hold large weights at 19.9% and 16.8% respectively, further exacerbating position concentration and potential losses in case of adverse developments or market corrections.</li><li>The portfolio&#x27;s exposure to Information Technology is substantial at 50.6%, creating vulnerability to sector-specific downturns, especially given current trends in tech valuations.</li><li>The high cash level of 21.6% suggests a cautious stance but does not offset the concentrated equity holdings, as the bulk of the portfolio remains exposed to concentrated risks in just a few stocks.</li><li>There is minimal diversification across other sectors, with only 1.9% allocated to Financials and negligible allocations to others. This lack of diversification leaves the portfolio susceptible to sector-wide shocks.</li></ul></div>
+    <h2>Bear case response</h2><p>We accept that TSLA, AMD, and GOOGL show weakening momentum and negative returns, presenting short-term downside risks, which supports prior risk lessons and recent partial trimming of TSLA. We also acknowledge the fading 30-day momentum in MSFT and NVDA, highlighting a potential slowdown in growth stocks. However, we partially reject the bearish implication that the entire portfolio is at risk since AAPL, JNJ, and AMZN demonstrate strong momentum and positive news flows, supporting a hold stance. The slight decline in the S&amp;P 500 is noted but contradicted by intra-day positive movement in key indices and chipmakers. Thus, caution is warranted but not a sell-off; maintaining current positions with discipline and avoiding overtrading is prudent to balance risk and opportunity.</p>
+    <h2>Market summary</h2><p>The market shows mixed signals with a moderate gain in major indices like the S&amp;P 500 and Nasdaq trending slightly higher, supported by oil price stability and chipmaker strength. However, there is a cautious sentiment driven by fading momentum in key tech stocks and sector-specific risks, especially in semiconductors.</p>
+    <h2>Portfolio assessment</h2><p>The portfolio is heavily concentrated in Information Technology and Consumer Discretionary sectors, with significant allocations to AAPL, AMZN, and JNJ comprising over 60% of invested capital. While large positions in AAPL and JNJ show positive momentum and recent favorable news, weakening signals from AMD, TSLA, and GOOGL warrant caution. Elevated cash at 21.5% acts as a buffer for downside risk but limits upside participation. Recent partial trims in TSLA align with risk mitigation on deteriorating momentum.</p>
+    <h2>Risk assessment</h2><p>Notable concentration risk exists with large weights in AAPL (24.5%), AMZN (19.9%), and JNJ (16.8%), coupled with a sector tilt of 50.6% in Information Technology. This exposes the portfolio to idiosyncratic and sector-specific shocks. Momentum fading in TSLA, AMD, MSFT, and GOOGL increases downside risk. Elevated cash mitigates some risk but does not fully offset concentrated exposure. Diversification is limited outside a few large names and sectors, amplifying vulnerability to adverse developments.</p>
+    <h2>Cash thesis</h2><p>Cash remains at 21.5%, which is a deliberate strategic buffer to manage elevated concentration risks and sector volatility. It provides flexibility to act on eventual opportunities while tempering portfolio volatility amid mixed signals. The current cash level is appropriate given the concentration risks and fading momentum in some key holdings, balancing downside protection without excessive sidelining of capital.</p>
+    <div class="pager">
+      <span><a href="2026-07-17.html">← July 17, 2026</a></span>
+      <span></span>
+    </div>
+
+    <footer>
+      Paper trading — simulated capital, not investment advice.
+      · <a href="../decisions.html">Decision journal</a>
+      · <a href="../decisions/">By day</a>
+      · <a href="../symbols/">By symbol</a>
+      · <a href="../letters/">Letters</a>
+    </footer>
+  </div>
+</body>
+</html>
