@@ -15,6 +15,11 @@ PROMPT_VERSION = "tweet_writer/v2"
 # earn a cashtag and don't count toward the "only one symbol" test.
 _BENCHMARKS = {s.upper() for s in BENCHMARK_SYMBOLS}
 
+_SITE = "glasshousefund.com"
+_TWEET_LIMIT = 280
+# A plain equity ticker, eligible for a symbol-hub link.
+_TICKER_RE = re.compile(r"^[A-Z]{1,5}$")
+
 
 class TweetGeneratorAgent:
     def __init__(self):
@@ -39,8 +44,13 @@ class TweetGeneratorAgent:
             prompt_version=PROMPT_VERSION,
         )
 
+        cleaned = self._clean_tweet(text)
         known = self._known_symbols(portfolio, trades, decisions or {})
-        return self._apply_cashtag(self._clean_tweet(text), known)[:280]
+        # Compute mentions on the pre-cashtag text (a $ prefix would hide the ticker
+        # from the matcher); the same set drives both the cashtag and the link target.
+        mentioned = self._mentioned_symbols(cleaned, known)
+        tagged = self._apply_cashtag(cleaned, known)
+        return self._append_link(tagged, mentioned)
 
     def _build_context(
         self, portfolio: PortfolioSnapshot, trades: list[Trade], decisions: dict, research: dict
@@ -147,20 +157,41 @@ Write the one tweet now — lead with the most interesting thing and say why. If
             syms.add(str(t.get("symbol", "")).upper())
         return {s for s in syms if s} - _BENCHMARKS
 
+    def _mentioned_symbols(self, text: str, known_symbols: set[str]) -> list[str]:
+        """Which known tickers appear as bare uppercase words in ``text``."""
+        return [
+            sym
+            for sym in known_symbols
+            if re.search(rf"(?<![\w$]){re.escape(sym)}(?![\w])", text)
+        ]
+
     def _apply_cashtag(self, text: str, known_symbols: set[str]) -> str:
         """If exactly one known symbol is named, turn its first mention into a cashtag
         ($AAPL). A lone cashtag surfaces a single-name tweet in that ticker's feed;
         several cashtags read as spam (and X throttles them), so multi-name tweets stay
         plain. The model is told to write plain tickers — this owns the cashtag rule so
         it stays deterministic rather than trusting the model to count."""
-        mentioned = [
-            sym
-            for sym in known_symbols
-            if re.search(rf"(?<![\w$]){re.escape(sym)}(?![\w])", text)
-        ]
+        mentioned = self._mentioned_symbols(text, known_symbols)
         if len(mentioned) != 1:
             return text
         sym = mentioned[0]
         if re.search(rf"\${re.escape(sym)}(?![\w])", text):
             return text  # already a cashtag
         return re.sub(rf"(?<![\w$]){re.escape(sym)}(?![\w])", f"${sym}", text, count=1)
+
+    def _link_for(self, mentioned: list[str]) -> str:
+        """The 'read more' target. A single-name tweet points at that ticker's hub —
+        the stock's full decision history, and a page that already exists from prior
+        runs (no deploy-lag 404). Otherwise the dashboard."""
+        if len(mentioned) == 1 and _TICKER_RE.match(mentioned[0]):
+            return f"{_SITE}/symbols/{mentioned[0]}.html"
+        return f"{_SITE}/dashboard.html"
+
+    def _append_link(self, text: str, mentioned: list[str]) -> str:
+        """Append the link on its own line, trimming the body (never the URL) to stay
+        within the tweet limit."""
+        url = self._link_for(mentioned)
+        if url in text:
+            return text[:_TWEET_LIMIT]
+        room = _TWEET_LIMIT - len(url) - 1  # newline
+        return f"{text[:room].rstrip()}\n{url}"
