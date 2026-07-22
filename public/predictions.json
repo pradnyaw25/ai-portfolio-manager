@@ -3,13 +3,13 @@
     "total": 143,
     "resolved": 75,
     "open": 68,
-    "accuracy_pct": 42.7
+    "accuracy_pct": 56.0
   },
   "calibration": {
     "sample_size": 75,
-    "brier_score": 0.301,
+    "brier_score": 0.2517,
     "mean_confidence": 0.6373,
-    "win_rate": 0.4267,
+    "win_rate": 0.56,
     "buckets": [
       {
         "lower": 0.5,
@@ -22,208 +22,26 @@
         "lower": 0.6,
         "upper": 0.7,
         "predicted": 0.6729,
-        "actual": 0.25,
+        "actual": 0.6667,
         "count": 24
       },
       {
         "lower": 0.7,
         "upper": 0.8,
         "predicted": 0.75,
-        "actual": 0.5,
+        "actual": 0.6,
         "count": 10
       },
       {
         "lower": 0.8,
         "upper": 0.9,
         "predicted": 0.8167,
-        "actual": 0.6667,
+        "actual": 0.3333,
         "count": 3
       }
     ]
   },
   "best_predictions": [
-    {
-      "id": "42a686bc",
-      "date": "2026-07-08",
-      "symbol": "META",
-      "prediction": "META will underperform SPY over 5 days",
-      "thesis": "Small positive short-term momentum but weak longer-term signals implies neutral performance.",
-      "horizon_days": 5,
-      "confidence": 0.55,
-      "start_price": 605.02001953125,
-      "spy_start_price": 744.5499877929688,
-      "due_date": "2026-07-13",
-      "status": "scored",
-      "scored_date": "2026-07-13",
-      "symbol_return": 0.0914,
-      "spy_return": 0.0069,
-      "outperformed": true,
-      "alpha_pct": 8.45
-    },
-    {
-      "id": "051739fd",
-      "date": "2026-06-12",
-      "symbol": "AAPL",
-      "prediction": "AAPL will outperform SPY over 30 days",
-      "thesis": null,
-      "horizon_days": null,
-      "confidence": 0.8,
-      "start_price": 292.8299865722656,
-      "spy_start_price": 743.6699829101562,
-      "due_date": "2026-07-12",
-      "status": "scored",
-      "scored_date": "2026-07-13",
-      "symbol_return": 0.0798,
-      "spy_return": 0.0081,
-      "outperformed": true,
-      "alpha_pct": 7.17
-    },
-    {
-      "id": "e3fbc040",
-      "date": "2026-06-12",
-      "symbol": "JNJ",
-      "prediction": "JNJ will outperform SPY over 30 days",
-      "thesis": null,
-      "horizon_days": null,
-      "confidence": 0.75,
-      "start_price": 239.25999450683594,
-      "spy_start_price": 743.6699829101562,
-      "due_date": "2026-07-12",
-      "status": "scored",
-      "scored_date": "2026-07-13",
-      "symbol_return": 0.0767,
-      "spy_return": 0.0081,
-      "outperformed": true,
-      "alpha_pct": 6.86
-    },
-    {
-      "id": "af877ef2",
-      "date": "2026-07-13",
-      "symbol": "^VIX",
-      "prediction": "^VIX will underperform SPY over 5 days",
-      "thesis": "Decreasing volatility trend usually coincides with market strength; VIX expected to underperform.",
-      "horizon_days": 5,
-      "confidence": 0.6,
-      "start_price": 16.59000015258789,
-      "spy_start_price": 749.7999877929688,
-      "due_date": "2026-07-18",
-      "status": "scored",
-      "scored_date": "2026-07-20",
-      "symbol_return": 0.0585,
-      "spy_return": -0.0056,
-      "outperformed": true,
-      "alpha_pct": 6.41
-    },
-    {
-      "id": "10d98427",
-      "date": "2026-07-13",
-      "symbol": "IREN",
-      "prediction": "IREN will underperform SPY over 5 days",
-      "thesis": "Long negative momentum and valuation pressures forecast ongoing underperformance.",
-      "horizon_days": 5,
-      "confidence": 0.75,
-      "start_price": 38.54999923706055,
-      "spy_start_price": 749.7999877929688,
-      "due_date": "2026-07-18",
-      "status": "scored",
-      "scored_date": "2026-07-20",
-      "symbol_return": 0.0405,
-      "spy_return": -0.0056,
-      "outperformed": true,
-      "alpha_pct": 4.61
-    },
-    {
-      "id": "7d44038c",
-      "date": "2026-07-08",
-      "symbol": "AMD",
-      "prediction": "AMD will underperform SPY over 5 days",
-      "thesis": "Declining 5-day and 30-day returns reflect weakening demand and competitive pressures in semiconductors relative to broader market.",
-      "horizon_days": 5,
-      "confidence": 0.65,
-      "start_price": 512.280029296875,
-      "spy_start_price": 744.5499877929688,
-      "due_date": "2026-07-13",
-      "status": "scored",
-      "scored_date": "2026-07-13",
-      "symbol_return": 0.0501,
-      "spy_return": 0.0069,
-      "outperformed": true,
-      "alpha_pct": 4.32
-    },
-    {
-      "id": "63f5040c",
-      "date": "2026-07-13",
-      "symbol": "XOM",
-      "prediction": "XOM will underperform SPY over 5 days",
-      "thesis": "Negative 30-day momentum and uncertain energy market fundamentals forecast underperformance.",
-      "horizon_days": 5,
-      "confidence": 0.6,
-      "start_price": 144.1699981689453,
-      "spy_start_price": 749.7999877929688,
-      "due_date": "2026-07-18",
-      "status": "scored",
-      "scored_date": "2026-07-20",
-      "symbol_return": 0.03,
-      "spy_return": -0.0056,
-      "outperformed": true,
-      "alpha_pct": 3.56
-    },
-    {
-      "id": "3b5b92ab",
-      "date": "2026-06-12",
-      "symbol": "AMZN",
-      "prediction": "AMZN will outperform SPY over 30 days",
-      "thesis": null,
-      "horizon_days": null,
-      "confidence": 0.7,
-      "start_price": 238.22000122070312,
-      "spy_start_price": 743.6699829101562,
-      "due_date": "2026-07-12",
-      "status": "scored",
-      "scored_date": "2026-07-13",
-      "symbol_return": 0.0419,
-      "spy_return": 0.0081,
-      "outperformed": true,
-      "alpha_pct": 3.38
-    },
-    {
-      "id": "2985dee6",
-      "date": "2026-07-13",
-      "symbol": "AAPL",
-      "prediction": "AAPL will outperform SPY over 5 days",
-      "thesis": "Strong momentum and positive analyst upgrades favor growth exceeding SPY performance.",
-      "horizon_days": 5,
-      "confidence": 0.75,
-      "start_price": 316.18499755859375,
-      "spy_start_price": 749.7999877929688,
-      "due_date": "2026-07-18",
-      "status": "scored",
-      "scored_date": "2026-07-20",
-      "symbol_return": 0.0266,
-      "spy_return": -0.0056,
-      "outperformed": true,
-      "alpha_pct": 3.22
-    },
-    {
-      "id": "7cffbde1",
-      "date": "2026-07-08",
-      "symbol": "MA",
-      "prediction": "MA will outperform SPY over 5 days",
-      "thesis": "Positive momentum and growth prospects in payments likely to exceed market performance.",
-      "horizon_days": 5,
-      "confidence": 0.6,
-      "start_price": 518.8699951171875,
-      "spy_start_price": 744.5499877929688,
-      "due_date": "2026-07-13",
-      "status": "scored",
-      "scored_date": "2026-07-13",
-      "symbol_return": 0.0379,
-      "spy_return": 0.0069,
-      "outperformed": true,
-      "alpha_pct": 3.1
-    }
-  ],
-  "worst_predictions": [
     {
       "id": "90e3bcb4",
       "date": "2026-07-13",
@@ -240,25 +58,9 @@
       "symbol_return": -0.16,
       "spy_return": -0.0056,
       "outperformed": false,
-      "alpha_pct": -15.44
-    },
-    {
-      "id": "a6c25d69",
-      "date": "2026-07-13",
-      "symbol": "SNDK",
-      "prediction": "SNDK will outperform SPY over 5 days",
-      "thesis": "Strong 5- and 30-day momentum driven by positive sector dynamics support outperformance.",
-      "horizon_days": 5,
-      "confidence": 0.65,
-      "start_price": 1688.6600341796875,
-      "spy_start_price": 749.7999877929688,
-      "due_date": "2026-07-18",
-      "status": "scored",
-      "scored_date": "2026-07-20",
-      "symbol_return": -0.1521,
-      "spy_return": -0.0056,
-      "outperformed": false,
-      "alpha_pct": -14.65
+      "correct": true,
+      "alpha_pct": -15.44,
+      "edge_pct": 15.44
     },
     {
       "id": "3187a17f",
@@ -276,7 +78,9 @@
       "symbol_return": -0.1257,
       "spy_return": -0.0056,
       "outperformed": false,
-      "alpha_pct": -12.01
+      "correct": true,
+      "alpha_pct": -12.01,
+      "edge_pct": 12.01
     },
     {
       "id": "4ad74d66",
@@ -294,7 +98,9 @@
       "symbol_return": -0.1061,
       "spy_return": -0.0056,
       "outperformed": false,
-      "alpha_pct": -10.05
+      "correct": true,
+      "alpha_pct": -10.05,
+      "edge_pct": 10.05
     },
     {
       "id": "1691c66a",
@@ -312,7 +118,9 @@
       "symbol_return": -0.0849,
       "spy_return": -0.0056,
       "outperformed": false,
-      "alpha_pct": -7.93
+      "correct": true,
+      "alpha_pct": -7.93,
+      "edge_pct": 7.93
     },
     {
       "id": "250dcd69",
@@ -330,7 +138,49 @@
       "symbol_return": -0.0657,
       "spy_return": 0.0069,
       "outperformed": false,
-      "alpha_pct": -7.26
+      "correct": true,
+      "alpha_pct": -7.26,
+      "edge_pct": 7.26
+    },
+    {
+      "id": "051739fd",
+      "date": "2026-06-12",
+      "symbol": "AAPL",
+      "prediction": "AAPL will outperform SPY over 30 days",
+      "thesis": null,
+      "horizon_days": null,
+      "confidence": 0.8,
+      "start_price": 292.8299865722656,
+      "spy_start_price": 743.6699829101562,
+      "due_date": "2026-07-12",
+      "status": "scored",
+      "scored_date": "2026-07-13",
+      "symbol_return": 0.0798,
+      "spy_return": 0.0081,
+      "outperformed": true,
+      "correct": true,
+      "alpha_pct": 7.17,
+      "edge_pct": 7.17
+    },
+    {
+      "id": "e3fbc040",
+      "date": "2026-06-12",
+      "symbol": "JNJ",
+      "prediction": "JNJ will outperform SPY over 30 days",
+      "thesis": null,
+      "horizon_days": null,
+      "confidence": 0.75,
+      "start_price": 239.25999450683594,
+      "spy_start_price": 743.6699829101562,
+      "due_date": "2026-07-12",
+      "status": "scored",
+      "scored_date": "2026-07-13",
+      "symbol_return": 0.0767,
+      "spy_return": 0.0081,
+      "outperformed": true,
+      "correct": true,
+      "alpha_pct": 6.86,
+      "edge_pct": 6.86
     },
     {
       "id": "63bd5446",
@@ -348,7 +198,9 @@
       "symbol_return": -0.0556,
       "spy_return": 0.0069,
       "outperformed": false,
-      "alpha_pct": -6.25
+      "correct": true,
+      "alpha_pct": -6.25,
+      "edge_pct": 6.25
     },
     {
       "id": "b35cc8cf",
@@ -366,7 +218,9 @@
       "symbol_return": -0.0548,
       "spy_return": 0.0069,
       "outperformed": false,
-      "alpha_pct": -6.17
+      "correct": true,
+      "alpha_pct": -6.17,
+      "edge_pct": 6.17
     },
     {
       "id": "60f2c361",
@@ -384,7 +238,71 @@
       "symbol_return": -0.0673,
       "spy_return": -0.0056,
       "outperformed": false,
-      "alpha_pct": -6.17
+      "correct": true,
+      "alpha_pct": -6.17,
+      "edge_pct": 6.17
+    }
+  ],
+  "worst_predictions": [
+    {
+      "id": "a6c25d69",
+      "date": "2026-07-13",
+      "symbol": "SNDK",
+      "prediction": "SNDK will outperform SPY over 5 days",
+      "thesis": "Strong 5- and 30-day momentum driven by positive sector dynamics support outperformance.",
+      "horizon_days": 5,
+      "confidence": 0.65,
+      "start_price": 1688.6600341796875,
+      "spy_start_price": 749.7999877929688,
+      "due_date": "2026-07-18",
+      "status": "scored",
+      "scored_date": "2026-07-20",
+      "symbol_return": -0.1521,
+      "spy_return": -0.0056,
+      "outperformed": false,
+      "correct": false,
+      "alpha_pct": -14.65,
+      "edge_pct": -14.65
+    },
+    {
+      "id": "42a686bc",
+      "date": "2026-07-08",
+      "symbol": "META",
+      "prediction": "META will underperform SPY over 5 days",
+      "thesis": "Small positive short-term momentum but weak longer-term signals implies neutral performance.",
+      "horizon_days": 5,
+      "confidence": 0.55,
+      "start_price": 605.02001953125,
+      "spy_start_price": 744.5499877929688,
+      "due_date": "2026-07-13",
+      "status": "scored",
+      "scored_date": "2026-07-13",
+      "symbol_return": 0.0914,
+      "spy_return": 0.0069,
+      "outperformed": true,
+      "correct": false,
+      "alpha_pct": 8.45,
+      "edge_pct": -8.45
+    },
+    {
+      "id": "af877ef2",
+      "date": "2026-07-13",
+      "symbol": "^VIX",
+      "prediction": "^VIX will underperform SPY over 5 days",
+      "thesis": "Decreasing volatility trend usually coincides with market strength; VIX expected to underperform.",
+      "horizon_days": 5,
+      "confidence": 0.6,
+      "start_price": 16.59000015258789,
+      "spy_start_price": 749.7999877929688,
+      "due_date": "2026-07-18",
+      "status": "scored",
+      "scored_date": "2026-07-20",
+      "symbol_return": 0.0585,
+      "spy_return": -0.0056,
+      "outperformed": true,
+      "correct": false,
+      "alpha_pct": 6.41,
+      "edge_pct": -6.41
     },
     {
       "id": "d0c95e0e",
@@ -402,7 +320,129 @@
       "symbol_return": -0.0522,
       "spy_return": -0.0056,
       "outperformed": false,
-      "alpha_pct": -4.66
+      "correct": false,
+      "alpha_pct": -4.66,
+      "edge_pct": -4.66
+    },
+    {
+      "id": "10d98427",
+      "date": "2026-07-13",
+      "symbol": "IREN",
+      "prediction": "IREN will underperform SPY over 5 days",
+      "thesis": "Long negative momentum and valuation pressures forecast ongoing underperformance.",
+      "horizon_days": 5,
+      "confidence": 0.75,
+      "start_price": 38.54999923706055,
+      "spy_start_price": 749.7999877929688,
+      "due_date": "2026-07-18",
+      "status": "scored",
+      "scored_date": "2026-07-20",
+      "symbol_return": 0.0405,
+      "spy_return": -0.0056,
+      "outperformed": true,
+      "correct": false,
+      "alpha_pct": 4.61,
+      "edge_pct": -4.61
+    },
+    {
+      "id": "7d44038c",
+      "date": "2026-07-08",
+      "symbol": "AMD",
+      "prediction": "AMD will underperform SPY over 5 days",
+      "thesis": "Declining 5-day and 30-day returns reflect weakening demand and competitive pressures in semiconductors relative to broader market.",
+      "horizon_days": 5,
+      "confidence": 0.65,
+      "start_price": 512.280029296875,
+      "spy_start_price": 744.5499877929688,
+      "due_date": "2026-07-13",
+      "status": "scored",
+      "scored_date": "2026-07-13",
+      "symbol_return": 0.0501,
+      "spy_return": 0.0069,
+      "outperformed": true,
+      "correct": false,
+      "alpha_pct": 4.32,
+      "edge_pct": -4.32
+    },
+    {
+      "id": "64a42ca3",
+      "date": "2026-06-13",
+      "symbol": "TSLA",
+      "prediction": "TSLA will outperform SPY over 30 days",
+      "thesis": null,
+      "horizon_days": null,
+      "confidence": 0.65,
+      "start_price": 406.42999267578125,
+      "spy_start_price": 741.75,
+      "due_date": "2026-07-13",
+      "status": "scored",
+      "scored_date": "2026-07-13",
+      "symbol_return": -0.0312,
+      "spy_return": 0.0107,
+      "outperformed": false,
+      "correct": false,
+      "alpha_pct": -4.19,
+      "edge_pct": -4.19
+    },
+    {
+      "id": "f4aa68c4",
+      "date": "2026-07-08",
+      "symbol": "JNJ",
+      "prediction": "JNJ will outperform SPY over 5 days",
+      "thesis": "Robust medium-term momentum and positive analyst coverage signal outperformance.",
+      "horizon_days": 5,
+      "confidence": 0.7,
+      "start_price": 266.260009765625,
+      "spy_start_price": 744.5499877929688,
+      "due_date": "2026-07-13",
+      "status": "scored",
+      "scored_date": "2026-07-13",
+      "symbol_return": -0.0325,
+      "spy_return": 0.0069,
+      "outperformed": false,
+      "correct": false,
+      "alpha_pct": -3.94,
+      "edge_pct": -3.94
+    },
+    {
+      "id": "63f5040c",
+      "date": "2026-07-13",
+      "symbol": "XOM",
+      "prediction": "XOM will underperform SPY over 5 days",
+      "thesis": "Negative 30-day momentum and uncertain energy market fundamentals forecast underperformance.",
+      "horizon_days": 5,
+      "confidence": 0.6,
+      "start_price": 144.1699981689453,
+      "spy_start_price": 749.7999877929688,
+      "due_date": "2026-07-18",
+      "status": "scored",
+      "scored_date": "2026-07-20",
+      "symbol_return": 0.03,
+      "spy_return": -0.0056,
+      "outperformed": true,
+      "correct": false,
+      "alpha_pct": 3.56,
+      "edge_pct": -3.56
+    },
+    {
+      "id": "4aeed87f",
+      "date": "2026-07-13",
+      "symbol": "MSFT",
+      "prediction": "MSFT will underperform SPY over 5 days",
+      "thesis": "Fading 30-day momentum balanced by defensive qualities suggest performance near SPY.",
+      "horizon_days": 5,
+      "confidence": 0.55,
+      "start_price": 392.57000732421875,
+      "spy_start_price": 749.7999877929688,
+      "due_date": "2026-07-18",
+      "status": "scored",
+      "scored_date": "2026-07-20",
+      "symbol_return": 0.024,
+      "spy_return": -0.0056,
+      "outperformed": true,
+      "correct": false,
+      "alpha_pct": 2.96,
+      "edge_pct": -2.96
     }
   ],
   "upcoming_predictions": [
@@ -422,7 +462,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "f8805e24",
@@ -440,7 +482,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "135f6f44",
@@ -458,7 +502,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "52107558",
@@ -476,7 +522,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "69370d21",
@@ -494,7 +542,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "29db8082",
@@ -512,7 +562,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "2c94ad95",
@@ -530,7 +582,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "2ad9d12a",
@@ -548,7 +602,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "7b2ccac8",
@@ -566,7 +622,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "4f8921cf",
@@ -584,7 +642,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "36264ead",
@@ -602,7 +662,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "b35c9ce7",
@@ -620,7 +682,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "f69c0b99",
@@ -638,7 +702,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "fb383b54",
@@ -656,7 +722,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "3a6a8c4d",
@@ -674,7 +742,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "3176b2d7",
@@ -692,7 +762,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "6a8502e7",
@@ -710,7 +782,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "b39b3c25",
@@ -728,7 +802,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "9a02bc92",
@@ -746,7 +822,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "264e54b1",
@@ -764,7 +842,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "0e836f83",
@@ -782,7 +862,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "b1694aca",
@@ -800,7 +882,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "979a831e",
@@ -818,7 +902,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "3bc3a586",
@@ -836,7 +922,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "b8339ba7",
@@ -854,7 +942,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "75adf92d",
@@ -872,7 +962,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "07b25b7a",
@@ -890,7 +982,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "9302bc39",
@@ -908,7 +1002,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "3df11c9f",
@@ -926,7 +1022,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "47245f24",
@@ -944,7 +1042,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "d886402d",
@@ -962,7 +1062,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "57b91cc2",
@@ -980,7 +1082,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "e1f27059",
@@ -998,7 +1102,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "c1cc7c62",
@@ -1016,7 +1122,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "7996d7d1",
@@ -1034,7 +1142,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "e5089eb0",
@@ -1052,7 +1162,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "a77b365a",
@@ -1070,7 +1182,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "28c47e26",
@@ -1088,7 +1202,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "f4752b07",
@@ -1106,7 +1222,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "31528694",
@@ -1124,7 +1242,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "4ebcb64c",
@@ -1142,7 +1262,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "805cdc6f",
@@ -1160,7 +1282,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "47bfbee9",
@@ -1178,7 +1302,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "8b65810b",
@@ -1196,7 +1322,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "a0bb826f",
@@ -1214,7 +1342,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "cdf68298",
@@ -1232,7 +1362,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "b5c9cffd",
@@ -1250,7 +1382,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "b7b1be6b",
@@ -1268,7 +1402,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "058ef231",
@@ -1286,7 +1422,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "bd3a85ff",
@@ -1304,7 +1442,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "d49533ec",
@@ -1322,7 +1462,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "668425c0",
@@ -1340,7 +1482,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "a351bf18",
@@ -1358,7 +1502,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "021de8ab",
@@ -1376,7 +1522,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "2ca289a9",
@@ -1394,7 +1542,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "e5a2d56b",
@@ -1412,7 +1562,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "d562b325",
@@ -1430,7 +1582,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "f34453b8",
@@ -1448,7 +1602,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "21c957c5",
@@ -1466,7 +1622,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "19b8d139",
@@ -1484,7 +1642,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "78c95d3b",
@@ -1502,7 +1662,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "a727c2e2",
@@ -1520,7 +1682,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "478eaeb5",
@@ -1538,7 +1702,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "35122b74",
@@ -1556,7 +1722,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "aff4ac79",
@@ -1574,7 +1742,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "6b918c80",
@@ -1592,7 +1762,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "ab684eb7",
@@ -1610,7 +1782,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     },
     {
       "id": "be51bf9d",
@@ -1628,7 +1802,9 @@
       "symbol_return": null,
       "spy_return": null,
       "outperformed": null,
-      "alpha_pct": null
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
     }
   ]
 }

@@ -18,6 +18,7 @@ from src.llm import complete_structured
 from src.llm.schemas import ReflectionResponse
 from src.memory.memory_store import FundMemoryStore
 from src.memory.schemas import MemoryIngestionResult, MemoryRecord
+from src.scoring.calibration import was_correct
 from src.storage.prediction_store import PredictionStore
 from src.storage.trade_store import TradeStore
 from src.utils.logger import get_logger
@@ -72,7 +73,7 @@ def gather_week(
             "symbol": p.get("symbol"),
             "thesis": p.get("thesis") or p.get("prediction"),
             "confidence": p.get("confidence"),
-            "outcome": "WIN" if (p.get("result") or {}).get("outperformed") else "LOSS",
+            "outcome": "WIN" if was_correct(p) else "LOSS",
             "alpha": (p.get("result") or {}).get("alpha"),
         }
         for p in prediction_store.load_all()

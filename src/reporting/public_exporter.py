@@ -6,7 +6,7 @@ from pathlib import Path
 from src.config import DATA_DIR
 from src.models.portfolio import PortfolioSnapshot
 from src.models.trade import Trade
-from src.scoring.calibration import compute_calibration
+from src.scoring.calibration import compute_calibration, was_correct
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -148,7 +148,9 @@ class PublicExporter:
         predictions = self._load_predictions()
         resolved = [p for p in predictions if p.get("status") == "scored" and p.get("result")]
         open_predictions = [p for p in predictions if p.get("status") == "open"]
-        wins = [p for p in resolved if p["result"].get("outperformed")]
+        # A "win" is a correct *call*, not a symbol that beat SPY — the fund predicts
+        # in both directions (see was_correct).
+        wins = [p for p in resolved if was_correct(p)]
 
         payload = {
             "metrics": {
@@ -177,8 +179,11 @@ class PublicExporter:
         return [json.loads(line) for line in path.read_text().splitlines() if line.strip()]
 
     def _rank_resolved_predictions(self, predictions: list[dict], *, reverse: bool) -> list[dict]:
+        # Rank by edge (how much the CALL was right by), not raw alpha. Ranking by
+        # alpha assumes every call is an outperform bet, so "Best Predictions" filled
+        # up with underperform calls that were wrong — every row badged Loss.
         ranked = [self._serialize_prediction(p) for p in predictions]
-        return sorted(ranked, key=lambda p: p.get("alpha_pct", 0), reverse=reverse)
+        return sorted(ranked, key=lambda p: p.get("edge_pct") or 0, reverse=reverse)
 
     def _serialize_prediction(self, prediction: dict) -> dict:
         result = prediction.get("result") or {}
@@ -187,6 +192,21 @@ class PublicExporter:
         alpha_pct = None
         if symbol_return is not None and spy_return is not None:
             alpha_pct = round((symbol_return - spy_return) * 100, 2)
+
+        # Edge = alpha signed by the call's direction: how much the prediction was
+        # right by. An underperform call on a stock that fell 7% behind SPY has
+        # alpha -7 but an edge of +7. Direction is recovered from the two stored
+        # flags (correct == outperformed iff the call was "outperform"), so this
+        # works for legacy rows that predate the `direction` field.
+        edge_pct = None
+        if alpha_pct is not None:
+            correct = was_correct(prediction)
+            outperformed = result.get("outperformed")
+            if correct is None or outperformed is None:
+                edge_pct = alpha_pct
+            else:
+                predicted_outperform = bool(correct) == bool(outperformed)
+                edge_pct = alpha_pct if predicted_outperform else -alpha_pct
 
         return {
             "id": prediction.get("id"),
@@ -204,7 +224,11 @@ class PublicExporter:
             "symbol_return": symbol_return,
             "spy_return": spy_return,
             "outperformed": result.get("outperformed"),
+            # Whether the call was right. `outperformed` alone can't say, since an
+            # underperform call is correct precisely when the symbol lags.
+            "correct": was_correct(prediction),
             "alpha_pct": alpha_pct,
+            "edge_pct": edge_pct,
         }
 
     def _copy_history_files(self) -> None:

@@ -1,7 +1,7 @@
 """Confidence calibration metrics for resolved predictions.
 
 Given the prediction history (each with a stated ``confidence`` and, once
-resolved, a binary ``outperformed`` outcome), compute:
+resolved, a binary ``correct`` outcome), compute:
 
 * **Brier score** — mean squared error between confidence and outcome (0 is
   perfect, 0.25 is a coin flip at 0.5 confidence, 1 is confidently wrong).
@@ -16,13 +16,32 @@ Pure and deterministic: same history in → same metrics out.
 from collections import defaultdict
 
 
+def was_correct(prediction: dict) -> bool | None:
+    """Whether the fund's *directional call* was right. ``None`` if unresolved.
+
+    This is deliberately NOT ``result.outperformed``, which only says the symbol
+    beat SPY. The fund predicts in both directions: an "underperform" call on a
+    stock that duly lagged has ``outperformed=False`` but ``correct=True``. Reading
+    ``outperformed`` as correctness inverts the outcome for every underperform
+    call — 75 of the first 109 predictions — which understated published accuracy
+    (41.5% vs a true 59%) and inverted the Brier score and calibration curve.
+
+    Legacy rows predate the ``correct`` field and were all outperform bets, so they
+    fall back to ``outperformed`` (matching ``PredictionScorer``'s own default).
+    """
+    result = prediction.get("result") or {}
+    value = result.get("correct")
+    if value is None:
+        value = result.get("outperformed")
+    return None if value is None else bool(value)
+
+
 def _resolved(predictions: list[dict]) -> list[dict]:
     resolved = []
     for p in predictions:
         if p.get("status") != "scored":
             continue
-        result = p.get("result") or {}
-        if result.get("outperformed") is None:
+        if was_correct(p) is None:
             continue
         resolved.append(p)
     return resolved
@@ -61,7 +80,7 @@ def compute_calibration(predictions: list[dict], *, bucket_size: float = 0.1) ->
 
     for p in resolved:
         confidence = float(p.get("confidence", 0.0))
-        outcome = 1 if p["result"]["outperformed"] else 0
+        outcome = 1 if was_correct(p) else 0
 
         total_brier += (confidence - outcome) ** 2
         total_conf += confidence

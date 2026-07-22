@@ -165,3 +165,79 @@ def test_public_exporter_writes_prediction_dashboard(tmp_path, monkeypatch):
     assert calibration["win_rate"] == 0.5
     # Brier: (0.8-1)^2 + (0.7-0)^2 = 0.04 + 0.49 → mean 0.265
     assert calibration["brier_score"] == 0.265
+
+
+def test_accuracy_counts_correct_underperform_calls_as_wins(tmp_path, monkeypatch):
+    """A correct "will underperform" call lags SPY by design — counting it by
+    `outperformed` scored it as a loss and published 41.5% when the fund was at 59%."""
+    data_dir = tmp_path / "data"
+    public_dir = tmp_path / "public"
+    data_dir.mkdir()
+    public_dir.mkdir()
+    predictions = [
+        {
+            "id": "right-underperform",
+            "symbol": "AMD",
+            "prediction": "AMD will underperform SPY over 5 days",
+            "direction": "UNDERPERFORM",
+            "confidence": 0.8,
+            "status": "scored",
+            # Lagged SPY, exactly as called.
+            "result": {
+                "symbol_return": -0.02,
+                "spy_return": 0.03,
+                "outperformed": False,
+                "correct": True,
+                "scored_date": "2024-02-01",
+            },
+        },
+        {
+            "id": "wrong-underperform",
+            "symbol": "NVDA",
+            "prediction": "NVDA will underperform SPY over 5 days",
+            "direction": "UNDERPERFORM",
+            "confidence": 0.6,
+            "status": "scored",
+            # Beat SPY, so the underperform call was wrong.
+            "result": {
+                "symbol_return": 0.09,
+                "spy_return": 0.01,
+                "outperformed": True,
+                "correct": False,
+                "scored_date": "2024-02-02",
+            },
+        },
+    ]
+    (data_dir / "predictions.jsonl").write_text(
+        "\n".join(json.dumps(p) for p in predictions) + "\n"
+    )
+    monkeypatch.setattr("src.reporting.public_exporter.DATA_DIR", data_dir)
+    monkeypatch.setattr("src.reporting.public_exporter.PUBLIC_DIR", public_dir)
+
+    PublicExporter()._write_prediction_dashboard()
+    payload = json.loads((public_dir / "predictions.json").read_text())
+
+    # 1 of 2 calls right. Reading `outperformed` would also give 50% here by
+    # coincidence, so assert the per-prediction flag that actually drives it.
+    assert payload["metrics"]["accuracy_pct"] == 50.0
+    by_id = {
+        p["id"]: p
+        for p in payload["best_predictions"] + payload["worst_predictions"]
+    }
+    assert by_id["right-underperform"]["correct"] is True
+    assert by_id["right-underperform"]["outperformed"] is False
+    assert by_id["wrong-underperform"]["correct"] is False
+    assert payload["calibration"]["win_rate"] == 0.5
+
+    # Edge = alpha signed by the call's direction. The right underperform call lagged
+    # SPY by 5pp (alpha -5.0) but that is a +5.0 edge; the wrong one beat SPY by 8pp
+    # (alpha +8.0) for a -8.0 edge.
+    assert by_id["right-underperform"]["alpha_pct"] == -5.0
+    assert by_id["right-underperform"]["edge_pct"] == 5.0
+    assert by_id["wrong-underperform"]["alpha_pct"] == 8.0
+    assert by_id["wrong-underperform"]["edge_pct"] == -8.0
+
+    # Ranking by edge, not alpha: the correct call is the BEST prediction. Ranking by
+    # raw alpha would invert this and fill "Best Predictions" with losing calls.
+    assert payload["best_predictions"][0]["id"] == "right-underperform"
+    assert payload["worst_predictions"][0]["id"] == "wrong-underperform"
