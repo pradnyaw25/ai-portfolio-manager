@@ -1,4 +1,5 @@
 from collections.abc import Callable
+from datetime import UTC, datetime
 from typing import TypedDict
 
 from langgraph.graph import END, START, StateGraph
@@ -533,6 +534,20 @@ def publish_tweet_node(state: DailyGraphState) -> DailyGraphState:
     return {"run": run}
 
 
+def _is_morning_run(started_at: str) -> bool:
+    """Whether a run that started at ``started_at`` (ISO-8601 UTC) is the day's
+    morning run — i.e. it started before RECEIPTS_MORNING_CUTOFF_HOUR_UTC. The daily
+    cycle runs at 15:17 and 18:17 UTC; the cutoff (17) puts the earlier run in the
+    morning. Unparseable timestamps default to True so receipts are never silently
+    lost to a formatting quirk (a duplicate is prevented anyway by scored_predictions
+    only holding this run's resolutions)."""
+    try:
+        hour = datetime.fromisoformat(str(started_at).replace("Z", "+00:00")).astimezone(UTC).hour
+    except (ValueError, TypeError):
+        return True
+    return hour < config.RECEIPTS_MORNING_CUTOFF_HOUR_UTC
+
+
 def publish_receipts_tweet_node(state: DailyGraphState) -> DailyGraphState:
     run = state["run"]
 
@@ -545,6 +560,14 @@ def publish_receipts_tweet_node(state: DailyGraphState) -> DailyGraphState:
         and run.progress.phase_done(run.run_id, "publish_receipts")
     ):
         run.diagnostics["receipts"] = "skipped on resume (already published)"
+        run.run_status["diagnostics"] = dict(run.diagnostics)
+        return {"run": run}
+
+    # Receipts post once a day, on the morning run only — the afternoon run skips them
+    # so the fund never posts two scorecards in a day (the forward tweet still posts
+    # on both runs).
+    if not _is_morning_run(run.started_at):
+        run.diagnostics["receipts"] = "skipped (afternoon run — receipts post on the morning run only)"
         run.run_status["diagnostics"] = dict(run.diagnostics)
         return {"run": run}
 

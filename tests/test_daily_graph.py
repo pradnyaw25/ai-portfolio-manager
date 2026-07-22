@@ -40,20 +40,38 @@ def test_daily_cycle_graph_routes_failures_to_run_status(monkeypatch):
     assert exported == [run.run_status]
 
 
-def test_publish_receipts_node_publishes_when_predictions_resolved(monkeypatch):
+def test_publish_receipts_node_publishes_on_the_morning_run(monkeypatch):
     calls = []
     monkeypatch.setattr(
         daily_graph.steps,
         "publish_receipts_tweet",
         lambda scored, run_id, run_status: calls.append((scored, run_id)),
     )
-    run = PortfolioRunState(run_id="run_x", started_at="2026-07-22T00:00:00Z")
+    # 15:17 UTC — the morning run.
+    run = PortfolioRunState(run_id="run_x", started_at="2026-07-22T15:17:00Z")
     run.scored_predictions = [{"symbol": "AAPL", "result": {"correct": True}}]
 
     daily_graph.publish_receipts_tweet_node({"run": run})
 
     assert len(calls) == 1
     assert calls[0][1] == "run_x"
+
+
+def test_publish_receipts_node_skips_on_the_afternoon_run(monkeypatch):
+    calls = []
+    monkeypatch.setattr(
+        daily_graph.steps,
+        "publish_receipts_tweet",
+        lambda *a, **k: calls.append(a),
+    )
+    # 18:17 UTC — the afternoon run; receipts post on the morning run only.
+    run = PortfolioRunState(run_id="run_pm", started_at="2026-07-22T18:17:00Z")
+    run.scored_predictions = [{"symbol": "AAPL", "result": {"correct": True}}]
+
+    daily_graph.publish_receipts_tweet_node({"run": run})
+
+    assert calls == []
+    assert "morning run only" in run.diagnostics["receipts"]
 
 
 def test_publish_receipts_node_still_calls_step_with_empty_list(monkeypatch):
@@ -92,3 +110,11 @@ def test_publish_receipts_node_skips_on_resume_when_already_published(monkeypatc
 
     assert calls == []  # skipped, no repost
     assert "skipped on resume" in run.diagnostics["receipts"]
+
+
+def test_is_morning_run_splits_the_two_daily_runs():
+    # Daily cycle runs at 15:17 and 18:17 UTC; cutoff hour 17 separates them.
+    assert daily_graph._is_morning_run("2026-07-22T15:17:00Z") is True
+    assert daily_graph._is_morning_run("2026-07-22T18:17:00Z") is False
+    # Unparseable timestamps default to morning (never silently drop receipts).
+    assert daily_graph._is_morning_run("not-a-date") is True
