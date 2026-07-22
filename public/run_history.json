@@ -1,7 +1,18 @@
 {
-  "updated_at": "2026-07-21T19:56:58.404871Z",
-  "count": 23,
+  "updated_at": "2026-07-22T16:11:13.892404Z",
+  "count": 24,
   "runs": [
+    {
+      "run_id": "run_20260722T160902Z_610c1a77",
+      "status": "success",
+      "completed_at": "2026-07-22T16:11:05.859575Z",
+      "trades_executed": 0,
+      "warnings": 0,
+      "portfolio_value": 1036741.9563293457,
+      "llm_cost_usd": 0.021339,
+      "llm_calls": 9,
+      "llm_latency_ms": 81438.6
+    },
     {
       "run_id": "run_20260721T195515Z_847d5e3a",
       "status": "success",
