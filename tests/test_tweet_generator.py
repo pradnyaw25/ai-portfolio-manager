@@ -82,7 +82,38 @@ def test_generate_cashtags_the_single_traded_symbol(monkeypatch):
     tweet = agent.generate(_portfolio(), trades, {"trades": [{"symbol": "AAPL"}]}, {})
 
     assert "$AAPL" in tweet
+    assert tweet.endswith("glasshousefund.com/symbols/AAPL.html")  # single name → its hub
     assert len(tweet) <= 280
+
+
+# --- Read-more link --------------------------------------------------------------
+
+
+def test_link_points_to_symbol_hub_for_a_single_name():
+    agent = _agent()
+    text = "Added AAPL on services strength."
+    linked = agent._append_link(text, agent._mentioned_symbols(text, _KNOWN))
+    assert linked.endswith("\nglasshousefund.com/symbols/AAPL.html")
+
+
+def test_link_falls_back_to_dashboard_for_multiple_or_no_names():
+    agent = _agent()
+    two = "Trimmed NVDA, added AAPL."
+    none = "Quiet tape, nothing stands out."
+    assert agent._append_link(two, agent._mentioned_symbols(two, _KNOWN)).endswith(
+        "glasshousefund.com/dashboard.html"
+    )
+    assert agent._append_link(none, agent._mentioned_symbols(none, _KNOWN)).endswith(
+        "glasshousefund.com/dashboard.html"
+    )
+
+
+def test_link_survives_truncation_of_a_long_tweet():
+    agent = _agent()
+    long = "word " * 80 + "AAPL"
+    linked = agent._append_link(long, agent._mentioned_symbols(long, _KNOWN))
+    assert len(linked) <= 280
+    assert linked.endswith("glasshousefund.com/symbols/AAPL.html")  # URL never trimmed
 
 
 def _portfolio():
