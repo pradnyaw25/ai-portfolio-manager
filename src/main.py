@@ -97,6 +97,8 @@ def mark_to_market_and_score_predictions(engine, market_data):
             position.market_value,
         )
 
+    return scored
+
 
 def build_research_context(engine, market_data, news_client):
     context_builder = MarketContextBuilder()
@@ -452,6 +454,37 @@ def publish_tweet(tweet, run_id, run_status, grounding=None):
         run_status.setdefault("warnings", []).append(
             f"Tweet publish status={result.status}: {result.error}"
         )
+    return result
+
+
+def publish_receipts_tweet(scored_predictions, run_id, run_status):
+    """Post a scorecard tweet for the predictions that resolved this run — the fund
+    grading its own past calls. No-op when nothing resolved. The receipts are factual
+    (straight from the scorer), so unlike the daily tweet they carry no grounding gate."""
+    if not scored_predictions:
+        return None
+
+    from src.agents.receipts_tweet import build_receipts_tweet
+    from src.scoring.calibration import was_correct
+    from src.storage.prediction_store import PredictionStore
+
+    all_scored = [p for p in PredictionStore().load_all() if p.get("status") == "scored"]
+    record = {
+        "total": len(all_scored),
+        "correct": sum(1 for p in all_scored if was_correct(p)),
+    }
+
+    text = build_receipts_tweet(scored_predictions, record)
+    if not text:
+        return None
+
+    result = publish_tweet_service(text, run_id=run_id)
+    run_status["receipts_publish"] = result.to_dict()
+    if result.status not in {"posted", "dry_run", "skipped"}:
+        run_status.setdefault("warnings", []).append(
+            f"Receipts tweet status={result.status}: {result.error}"
+        )
+    logger.info("Receipts tweet (%d resolved): %s", len(scored_predictions), text)
     return result
 
 

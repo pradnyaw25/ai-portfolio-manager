@@ -1,4 +1,5 @@
 from collections.abc import Callable
+from datetime import UTC, datetime
 from typing import TypedDict
 
 from langgraph.graph import END, START, StateGraph
@@ -53,6 +54,7 @@ def build_daily_cycle_graph():
         ("build_run_status", build_run_status_node),
         ("export_public_artifacts", export_public_artifacts_node),
         ("publish_tweet", publish_tweet_node),
+        ("publish_receipts", publish_receipts_tweet_node),
         ("ingest_run_memory", ingest_run_memory_node),
     ]
 
@@ -242,7 +244,9 @@ def create_clients_node(state: DailyGraphState) -> DailyGraphState:
 
 def mark_to_market_node(state: DailyGraphState) -> DailyGraphState:
     run = state["run"]
-    steps.mark_to_market_and_score_predictions(run.engine, run.market_data)
+    run.scored_predictions = steps.mark_to_market_and_score_predictions(
+        run.engine, run.market_data
+    )
     return {"run": run}
 
 
@@ -527,6 +531,58 @@ def publish_tweet_node(state: DailyGraphState) -> DailyGraphState:
             "run_id": run.run_id,
         }
         steps.export_run_status(run.run_status)
+    return {"run": run}
+
+
+def _is_morning_run(started_at: str) -> bool:
+    """Whether a run that started at ``started_at`` (ISO-8601 UTC) is the day's
+    morning run — i.e. it started before RECEIPTS_MORNING_CUTOFF_HOUR_UTC. The daily
+    cycle runs at 15:17 and 18:17 UTC; the cutoff (17) puts the earlier run in the
+    morning. Unparseable timestamps default to True so receipts are never silently
+    lost to a formatting quirk (a duplicate is prevented anyway by scored_predictions
+    only holding this run's resolutions)."""
+    try:
+        hour = datetime.fromisoformat(str(started_at).replace("Z", "+00:00")).astimezone(UTC).hour
+    except (ValueError, TypeError):
+        return True
+    return hour < config.RECEIPTS_MORNING_CUTOFF_HOUR_UTC
+
+
+def publish_receipts_tweet_node(state: DailyGraphState) -> DailyGraphState:
+    run = state["run"]
+
+    # Non-idempotent side effect, like publish_tweet: a resumed run that already
+    # posted its receipts must not repost. (Cross-run duplicates are already avoided
+    # because scored_predictions holds only what THIS run resolved.)
+    if (
+        run.resumed
+        and run.progress is not None
+        and run.progress.phase_done(run.run_id, "publish_receipts")
+    ):
+        run.diagnostics["receipts"] = "skipped on resume (already published)"
+        run.run_status["diagnostics"] = dict(run.diagnostics)
+        return {"run": run}
+
+    # Receipts post once a day, on the morning run only — the afternoon run skips them
+    # so the fund never posts two scorecards in a day (the forward tweet still posts
+    # on both runs).
+    if not _is_morning_run(run.started_at):
+        run.diagnostics["receipts"] = "skipped (afternoon run — receipts post on the morning run only)"
+        run.run_status["diagnostics"] = dict(run.diagnostics)
+        return {"run": run}
+
+    try:
+        run.receipts_publish_result = steps.publish_receipts_tweet(
+            run.scored_predictions,
+            run.run_id,
+            run.run_status,
+        )
+        run.warnings = list(run.run_status.get("warnings", []))
+    except Exception as exc:
+        # Best-effort: a receipts failure must never sink an otherwise good run.
+        logger.warning("Receipts tweet failed unexpectedly run_id=%s error=%s", run.run_id, exc)
+        run.warnings.append(f"Receipts tweet failed: {exc}")
+        run.run_status["warnings"] = run.warnings
     return {"run": run}
 
 
