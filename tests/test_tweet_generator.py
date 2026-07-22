@@ -19,6 +19,72 @@ Simulated portfolio. Not investment advice."""
     assert tweet == "Trimmed tech and kept cash near 30%."
 
 
+# --- Single-symbol cashtag -------------------------------------------------------
+
+_KNOWN = {"AAPL", "NVDA", "PG", "MA", "BE", "V"}
+
+
+def test_cashtag_added_when_exactly_one_symbol_mentioned():
+    out = _agent()._apply_cashtag("Added AAPL on services strength.", _KNOWN)
+    assert out == "Added $AAPL on services strength."
+
+
+def test_no_cashtag_when_two_symbols_mentioned():
+    # Multiple cashtags read as spam, so a multi-name tweet stays plain.
+    text = "Trimmed NVDA, added AAPL as the AI trade broadens."
+    assert _agent()._apply_cashtag(text, _KNOWN) == text
+
+
+def test_cashtag_only_the_first_mention_of_the_lone_symbol():
+    out = _agent()._apply_cashtag("AAPL into earnings; AAPL guidance is the swing.", _KNOWN)
+    assert out == "$AAPL into earnings; AAPL guidance is the swing."
+
+
+def test_cashtag_is_a_noop_when_already_present():
+    text = "Still constructive on $AAPL here."
+    assert _agent()._apply_cashtag(text, _KNOWN) == text
+
+
+def test_cashtag_ignores_a_benchmark_only_reference():
+    # SPY/QQQ are excluded from the vocabulary upstream, so "beat SPY" alone earns none.
+    known_no_bench = _KNOWN  # already excludes benchmarks
+    text = "The book leaned defensive but still beat the tape."
+    assert _agent()._apply_cashtag(text, known_no_bench) == text
+
+
+def test_cashtag_does_not_match_inside_a_longer_word():
+    # "V" must not tag the V in "AVGO" or a stray substring.
+    text = "AVGO strength carried the week."
+    assert _agent()._apply_cashtag(text, {"V"}) == text
+
+
+def test_known_symbols_excludes_benchmarks_and_includes_context():
+    agent = _agent()
+    trades = [Trade(datetime(2026, 7, 9), "AAPL", TradeAction.BUY, 10, 312.0)]
+    decisions = {"market_calls": [{"symbol": "nvda"}], "trades": [{"symbol": "PG"}]}
+    known = agent._known_symbols(_portfolio(), trades, decisions)
+
+    assert {"AAPL", "NVDA", "PG", "MSFT"} <= known  # MSFT is the held position
+    assert "SPY" not in known and "QQQ" not in known
+    assert "" not in known
+
+
+def test_generate_cashtags_the_single_traded_symbol(monkeypatch):
+    # generate() wires vocabulary + cashtag + truncation together; drive it end-to-end
+    # with a stubbed model that returns a plain-ticker tweet (as the prompt instructs).
+    agent = _agent()
+    agent.system_prompt = "system"
+    monkeypatch.setattr(
+        "src.agents.tweet_generator.complete_text",
+        lambda *a, **k: "Added AAPL as buyback pace and services margin do the work.",
+    )
+    trades = [Trade(datetime(2026, 7, 9), "AAPL", TradeAction.BUY, 10, 312.0)]
+    tweet = agent.generate(_portfolio(), trades, {"trades": [{"symbol": "AAPL"}]}, {})
+
+    assert "$AAPL" in tweet
+    assert len(tweet) <= 280
+
+
 def _portfolio():
     return PortfolioSnapshot(
         date=date.today(), cash=270_000, positions=[Position("MSFT", 1750, 400, 400)]

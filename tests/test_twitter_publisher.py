@@ -96,11 +96,19 @@ def test_twitter_publisher_removes_all_cashtags_before_posting():
     assert session.requests[0]["json"] == {"text": "Trades: SELL AAPL, SELL NVDA, BUY PG"}
 
 
-def test_sanitize_tweet_for_x_removes_all_cashtags():
+def test_sanitize_tweet_for_x_strips_cashtags_when_several_symbols_tagged():
+    # Two or more distinct cashtags read as spam — strip them all.
     assert (
         sanitize_tweet_for_x("SELL $AAPL, SELL $NVDA, BUY $PG")
         == "SELL AAPL, SELL NVDA, BUY PG"
     )
+
+
+def test_sanitize_tweet_for_x_keeps_a_lone_cashtag():
+    text = "Added to Apple on services strength — $AAPL."
+    assert sanitize_tweet_for_x(text) == text
+    # Same symbol repeated is still one distinct cashtag, so it survives.
+    assert sanitize_tweet_for_x("$AAPL up; $AAPL still cheap") == "$AAPL up; $AAPL still cheap"
 
 
 def test_append_social_post_writes_jsonl(tmp_path):

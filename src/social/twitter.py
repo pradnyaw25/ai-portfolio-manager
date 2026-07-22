@@ -247,9 +247,19 @@ def publish_tweet(
     return result
 
 
+_CASHTAG_RE = re.compile(r"\$([A-Za-z]{1,6}(?:\.[A-Za-z]{1,2})?)\b")
+
+
 def sanitize_tweet_for_x(text: str) -> str:
-    """Remove cashtag markers so all symbols are treated consistently."""
-    return re.sub(r"\$([A-Za-z]{1,6}(?:\.[A-Za-z]{1,2})?)\b", r"\1", text)
+    """Keep a single cashtag, but strip cashtags when two or more distinct symbols are
+    tagged. One ``$TICKER`` surfaces a single-name tweet in that symbol's feed; several
+    cashtags read as spam and X throttles them. The generator adds at most one cashtag
+    (``TweetGeneratorAgent._apply_cashtag``); this is the defensive backstop for any
+    other source of tweet text."""
+    distinct = {m.group(1).upper() for m in _CASHTAG_RE.finditer(text)}
+    if len(distinct) <= 1:
+        return text
+    return _CASHTAG_RE.sub(r"\1", text)
 
 
 def append_social_post(result: TweetPublishResult, path: Path = SOCIAL_POSTS_FILE) -> None:
