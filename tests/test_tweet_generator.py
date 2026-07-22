@@ -181,3 +181,47 @@ def test_context_handles_no_decisions_gracefully():
     ctx = _agent()._build_context(_portfolio(), [], {}, {})
     assert "the fund held" in ctx
     assert "positions" not in ctx.lower()
+
+
+# --- Cooldown / variety ----------------------------------------------------------
+
+
+def _calls_lead(ctx):
+    import re
+    block = ctx.split("sharpest directional calls")[1]
+    return re.search(r"- (\w+):", block).group(1)
+
+
+def test_quiet_day_leads_with_a_fresh_name_when_top_call_is_on_cooldown():
+    decisions = {
+        "market_calls": [
+            {"symbol": "AAPL", "confidence": 0.85, "direction": "OUTPERFORM", "thesis": "momentum"},
+            {"symbol": "MU", "confidence": 0.70, "direction": "OUTPERFORM", "thesis": "memory cycle"},
+        ]
+    }
+    ctx = _agent()._build_context(_portfolio(), [], decisions, {}, cooldown_symbols={"AAPL"})
+    # AAPL has higher conviction but was tweeted recently, so the fresh name leads.
+    assert _calls_lead(ctx) == "MU"
+
+
+def test_highest_conviction_leads_when_nothing_is_on_cooldown():
+    decisions = {
+        "market_calls": [
+            {"symbol": "AAPL", "confidence": 0.85, "direction": "OUTPERFORM", "thesis": "momentum"},
+            {"symbol": "MU", "confidence": 0.70, "direction": "OUTPERFORM", "thesis": "memory cycle"},
+        ]
+    }
+    ctx = _agent()._build_context(_portfolio(), [], decisions, {}, cooldown_symbols=set())
+    assert _calls_lead(ctx) == "AAPL"
+
+
+def test_all_on_cooldown_falls_back_to_conviction_order():
+    decisions = {
+        "market_calls": [
+            {"symbol": "AAPL", "confidence": 0.85, "direction": "OUTPERFORM", "thesis": "momentum"},
+            {"symbol": "MU", "confidence": 0.70, "direction": "OUTPERFORM", "thesis": "cycle"},
+        ]
+    }
+    ctx = _agent()._build_context(_portfolio(), [], decisions, {}, cooldown_symbols={"AAPL", "MU"})
+    # Better a repeat than nothing — highest conviction still leads.
+    assert _calls_lead(ctx) == "AAPL"
