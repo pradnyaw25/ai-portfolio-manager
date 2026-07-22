@@ -51,6 +51,12 @@ def _symbols_in(text: str, universe: set[str]) -> set[str]:
     return found
 
 
+def symbols_in_text(text: str, universe: set[str] | None = None) -> set[str]:
+    """The fund's tickers named in ``text`` (defaults to the watchlist universe).
+    Used to keep a second tweet off the name the first one already covered."""
+    return _symbols_in(str(text or ""), universe if universe is not None else _COOLDOWN_UNIVERSE)
+
+
 def recent_tweet_symbols(
     posts: list[dict],
     *,

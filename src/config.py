@@ -43,6 +43,10 @@ RECEIPTS_MORNING_CUTOFF_HOUR_UTC = int(os.getenv("RECEIPTS_MORNING_CUTOFF_HOUR_U
 # daily tweet picks which name to lead with, so the feed doesn't repeat the same call
 # day after day (variety engine — roadmap W02).
 TWEET_SYMBOL_COOLDOWN_DAYS = int(os.getenv("TWEET_SYMBOL_COOLDOWN_DAYS", "3"))
+# The afternoon run posts a second "call spotlight" tweet on a high-conviction
+# directional call. A call must clear this confidence to be worth spotlighting;
+# below it, the run posts no spotlight rather than hype a weak view.
+SPOTLIGHT_MIN_CONFIDENCE = float(os.getenv("SPOTLIGHT_MIN_CONFIDENCE", "0.60"))
 X_API_KEY = os.getenv("X_API_KEY", "")
 X_API_SECRET = os.getenv("X_API_SECRET", "")
 X_ACCESS_TOKEN = os.getenv("X_ACCESS_TOKEN", "")

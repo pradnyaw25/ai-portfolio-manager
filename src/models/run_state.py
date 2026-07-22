@@ -35,6 +35,7 @@ class PortfolioRunState:
     # nothing new — posts no duplicate.
     scored_predictions: list = field(default_factory=list)
     receipts_publish_result: Any | None = None
+    spotlight_publish_result: Any | None = None
     memory_ingestion_result: Any | None = None
     warnings: list[str] = field(default_factory=list)
     errors: list[str] = field(default_factory=list)

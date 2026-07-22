@@ -118,3 +118,32 @@ def test_is_morning_run_splits_the_two_daily_runs():
     assert daily_graph._is_morning_run("2026-07-22T19:47:00Z") is False
     # Unparseable timestamps default to morning (never silently drop receipts).
     assert daily_graph._is_morning_run("not-a-date") is True
+
+
+def test_publish_spotlight_node_publishes_on_the_afternoon_run(monkeypatch):
+    calls = []
+    monkeypatch.setattr(
+        daily_graph.steps,
+        "publish_spotlight_tweet",
+        lambda decisions, research, forward, run_id, run_status: calls.append(run_id),
+    )
+    run = PortfolioRunState(run_id="run_pm", started_at="2026-07-22T19:47:00Z")
+    run.decisions = {"market_calls": [{"symbol": "MU", "confidence": 0.7}]}
+
+    daily_graph.publish_spotlight_tweet_node({"run": run})
+
+    assert calls == ["run_pm"]
+
+
+def test_publish_spotlight_node_skips_on_the_morning_run(monkeypatch):
+    calls = []
+    monkeypatch.setattr(
+        daily_graph.steps, "publish_spotlight_tweet", lambda *a, **k: calls.append(a)
+    )
+    run = PortfolioRunState(run_id="run_am", started_at="2026-07-22T14:47:00Z")
+    run.decisions = {"market_calls": [{"symbol": "MU", "confidence": 0.7}]}
+
+    daily_graph.publish_spotlight_tweet_node({"run": run})
+
+    assert calls == []
+    assert "afternoon run" in run.diagnostics["spotlight"]
