@@ -30,6 +30,11 @@ class PortfolioRunState:
     tweet: str = ""
     run_status: dict = field(default_factory=dict)
     tweet_publish_result: Any | None = None
+    # Predictions that resolved during THIS run (from the scorer), used to post a
+    # receipts tweet. Freshly-scored-this-run, so the day's second run — which scores
+    # nothing new — posts no duplicate.
+    scored_predictions: list = field(default_factory=list)
+    receipts_publish_result: Any | None = None
     memory_ingestion_result: Any | None = None
     warnings: list[str] = field(default_factory=list)
     errors: list[str] = field(default_factory=list)

@@ -81,3 +81,49 @@ def test_build_failure_run_status_records_failed_step_and_errors():
     assert status["errors"] == ["decide_trades: model unavailable"]
     assert status["warnings"] == ["memory degraded"]
     assert status["portfolio_value"] == 25000
+
+
+def test_publish_receipts_tweet_noops_without_resolutions():
+    import src.main as main
+
+    run_status = {}
+    assert main.publish_receipts_tweet([], "run_1", run_status) is None
+    assert "receipts_publish" not in run_status
+
+
+def test_publish_receipts_tweet_computes_record_and_publishes(monkeypatch):
+    import src.main as main
+    from src.social.twitter import TweetPublishResult
+
+    scored = [{"symbol": "APLD", "prediction": "APLD will underperform SPY over 5 days",
+               "direction": "UNDERPERFORM", "confidence": 0.7,
+               "result": {"symbol_return": -0.055, "spy_return": 0.007,
+                          "correct": True, "outperformed": False}}]
+
+    # Store has 3 scored calls, 2 correct — the running record the tweet should cite.
+    class FakeStore:
+        def load_all(self):
+            return [
+                {"status": "scored", "result": {"correct": True}},
+                {"status": "scored", "result": {"correct": True}},
+                {"status": "scored", "result": {"correct": False}},
+                {"status": "open", "result": None},
+            ]
+
+    monkeypatch.setattr("src.storage.prediction_store.PredictionStore", FakeStore)
+    published = {}
+
+    def fake_publish(text, run_id=None):
+        published["text"] = text
+        return TweetPublishResult(status="dry_run", posted=False, dry_run=True,
+                                  text=text, run_id=run_id)
+
+    monkeypatch.setattr(main, "publish_tweet_service", fake_publish)
+
+    run_status = {}
+    result = main.publish_receipts_tweet(scored, "run_1", run_status)
+
+    assert result.status == "dry_run"
+    assert "2/3 calls right" in published["text"]  # record computed via was_correct
+    assert "$APLD" in published["text"]
+    assert run_status["receipts_publish"]["text"] == published["text"]
