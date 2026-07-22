@@ -39,6 +39,10 @@ POST_INVESTOR_LETTER = os.getenv("POST_INVESTOR_LETTER", "false").lower() in {"1
 # after this UTC hour is the afternoon run and skips them, so the fund posts at most
 # one receipts tweet a day. Keep this between the two run hours (see daily-run.yml).
 RECEIPTS_MORNING_CUTOFF_HOUR_UTC = int(os.getenv("RECEIPTS_MORNING_CUTOFF_HOUR_UTC", "17"))
+# A symbol tweeted within this many days is "on cooldown" and deprioritized when the
+# daily tweet picks which name to lead with, so the feed doesn't repeat the same call
+# day after day (variety engine — roadmap W02).
+TWEET_SYMBOL_COOLDOWN_DAYS = int(os.getenv("TWEET_SYMBOL_COOLDOWN_DAYS", "3"))
 X_API_KEY = os.getenv("X_API_KEY", "")
 X_API_SECRET = os.getenv("X_API_SECRET", "")
 X_ACCESS_TOKEN = os.getenv("X_ACCESS_TOKEN", "")

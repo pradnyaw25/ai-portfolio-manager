@@ -1,5 +1,5 @@
 import re
-from datetime import date
+from datetime import UTC, date, datetime
 
 from src.config import BENCHMARK_SYMBOLS, PROMPTS_DIR, WATCHLIST
 from src.llm import complete_text
@@ -32,7 +32,9 @@ class TweetGeneratorAgent:
         decisions: dict | None = None,
         research: dict | None = None,
     ) -> str:
-        context = self._build_context(portfolio, trades, decisions or {}, research or {})
+        context = self._build_context(
+            portfolio, trades, decisions or {}, research or {}, self._cooldown_symbols()
+        )
 
         text = complete_text(
             [
@@ -52,9 +54,26 @@ class TweetGeneratorAgent:
         tagged = self._apply_cashtag(cleaned, known)
         return self._append_link(tagged, mentioned)
 
+    def _cooldown_symbols(self) -> set[str]:
+        """Symbols the fund has tweeted about within the cooldown window. Best-effort:
+        if the post log can't be read, no name is suppressed and tweeting proceeds."""
+        try:
+            from src.social.cooldown import load_recent_posts, recent_tweet_symbols
+
+            return recent_tweet_symbols(load_recent_posts(), now=datetime.now(UTC))
+        except Exception as exc:  # noqa: BLE001 — variety is a nicety, never fail a tweet
+            logger.warning("Tweet cooldown lookup skipped: %s", exc)
+            return set()
+
     def _build_context(
-        self, portfolio: PortfolioSnapshot, trades: list[Trade], decisions: dict, research: dict
+        self,
+        portfolio: PortfolioSnapshot,
+        trades: list[Trade],
+        decisions: dict,
+        research: dict,
+        cooldown_symbols: set[str] | None = None,
     ) -> str:
+        cooldown_symbols = cooldown_symbols or set()
         today = date.today().strftime("%b %d")
 
         # Headlines per symbol, so a trade can be tied to its actual news catalyst.
@@ -86,12 +105,16 @@ class TweetGeneratorAgent:
             trades_block = "Today's trades: none — the fund held."
 
         # The sharpest scored calls (beat/lag the S&P). These carry a real view and give
-        # the tweet something to say on quiet days. Show the top few by conviction.
-        calls = sorted(
-            decisions.get("market_calls", []),
-            key=lambda c: c.get("confidence") or 0,
-            reverse=True,
-        )[:3]
+        # the tweet something to say on quiet days. Rank fresh names (not tweeted inside
+        # the cooldown) ahead of recently-featured ones, then by conviction — so a quiet
+        # day doesn't lead with the same name three days running. Confidence still breaks
+        # ties, and if every call is on cooldown they simply sort by conviction as before.
+        def _call_rank(call: dict) -> tuple[bool, float]:
+            symbol = str(call.get("symbol", "")).upper()
+            confidence = call.get("confidence") or 0
+            return (symbol in cooldown_symbols, -confidence)
+
+        calls = sorted(decisions.get("market_calls", []), key=_call_rank)[:3]
         if calls:
             call_lines = []
             for c in calls:
