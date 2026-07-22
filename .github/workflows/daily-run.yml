@@ -2,12 +2,18 @@ name: Daily Portfolio Run
 
 on:
   schedule:
-    # Twice on weekdays during regular US market hours.
-    # 15:17 UTC is 10:17am ET in standard time and 11:17am ET in daylight time.
-    # 18:17 UTC is 1:17pm ET in standard time and 2:17pm ET in daylight time.
-    # These avoid the crowded top of the hour and leave buffer for scheduler delays.
-    # scripts/market_hours_guard.py still enforces 9:30am-4:00pm America/New_York.
-    - cron: "17 15,18 * * 1-5"
+    # Twice on weekdays, timed toward the market open and the close for engagement.
+    # Cron is UTC (no DST), but the market-hours guard drops any run outside
+    # 9:30am-4:00pm America/New_York AND aborts the whole run (tweet included). The
+    # only times in-hours BOTH seasons are the intersection of daylight (13:30-20:00
+    # UTC) and standard (14:30-21:00 UTC) hours = 14:30-20:00 UTC, so both runs live
+    # there, as near open/close as that allows:
+    #   14:47 UTC -> 10:47am ET (daylight) / 9:47am ET (standard, just after the open)
+    #   19:47 UTC ->  3:47pm ET (daylight, just before the close) / 2:47pm ET (standard)
+    # The :47 offset dodges the crowded top of the hour. Keep the morning run before
+    # and the afternoon run after 17:00 UTC — RECEIPTS_MORNING_CUTOFF_HOUR_UTC uses
+    # that boundary to post the receipts tweet on the morning run only.
+    - cron: "47 14,19 * * 1-5"
 
   workflow_dispatch:
 
