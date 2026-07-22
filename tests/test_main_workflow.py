@@ -127,3 +127,38 @@ def test_publish_receipts_tweet_computes_record_and_publishes(monkeypatch):
     assert "2/3 calls right" in published["text"]  # record computed via was_correct
     assert "$APLD" in published["text"]
     assert run_status["receipts_publish"]["text"] == published["text"]
+
+
+def test_publish_spotlight_tweet_excludes_forward_symbol_and_publishes(monkeypatch):
+    import src.main as main
+    from src.social.twitter import TweetPublishResult
+
+    decisions = {"market_calls": [
+        {"symbol": "AAPL", "direction": "OUTPERFORM", "confidence": 0.8, "thesis": "momentum"},
+        {"symbol": "MU", "direction": "OUTPERFORM", "confidence": 0.7, "thesis": "memory cycle"},
+    ]}
+    # No recent posts → nothing on cooldown.
+    monkeypatch.setattr("src.social.cooldown.load_recent_posts", lambda *a, **k: [])
+    published = {}
+
+    def fake_publish(text, run_id=None):
+        published["text"] = text
+        return TweetPublishResult(status="dry_run", posted=False, dry_run=True,
+                                  text=text, run_id=run_id)
+
+    monkeypatch.setattr(main, "publish_tweet_service", fake_publish)
+
+    run_status = {}
+    # The forward tweet already led with AAPL, so the spotlight must pick MU.
+    result = main.publish_spotlight_tweet(decisions, {}, "Bought AAPL today.", "run_1", run_status)
+
+    assert result.status == "dry_run"
+    assert "$MU" in published["text"] and "AAPL" not in published["text"]
+    assert run_status["spotlight_publish"]["text"] == published["text"]
+
+
+def test_publish_spotlight_tweet_noops_without_calls():
+    import src.main as main
+    run_status = {}
+    assert main.publish_spotlight_tweet({"market_calls": []}, {}, "", "run_1", run_status) is None
+    assert "spotlight_publish" not in run_status

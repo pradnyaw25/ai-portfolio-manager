@@ -488,6 +488,37 @@ def publish_receipts_tweet(scored_predictions, run_id, run_status):
     return result
 
 
+def publish_spotlight_tweet(decisions, research, forward_tweet, run_id, run_status):
+    """Post a second daily tweet spotlighting one high-conviction directional call.
+    Avoids the name the forward tweet already led with, prefers a fresh name via the
+    cooldown, and no-ops when no call clears the confidence floor. Factual (the fund's
+    own recorded call + thesis), so no grounding gate."""
+    from datetime import UTC, datetime
+
+    from src.agents.spotlight_tweet import build_spotlight_tweet
+    from src.social.cooldown import load_recent_posts, recent_tweet_symbols, symbols_in_text
+
+    calls = (decisions or {}).get("market_calls") or []
+    if not calls:
+        return None
+
+    cooldown = recent_tweet_symbols(load_recent_posts(), now=datetime.now(UTC))
+    exclude = symbols_in_text(forward_tweet or "")  # don't repeat the forward tweet's name
+
+    text = build_spotlight_tweet(calls, research or {}, exclude=exclude, cooldown=cooldown)
+    if not text:
+        return None
+
+    result = publish_tweet_service(text, run_id=run_id)
+    run_status["spotlight_publish"] = result.to_dict()
+    if result.status not in {"posted", "dry_run", "skipped"}:
+        run_status.setdefault("warnings", []).append(
+            f"Spotlight tweet status={result.status}: {result.error}"
+        )
+    logger.info("Spotlight tweet: %s", text)
+    return result
+
+
 def update_tweet_publish_status(tweet_publish_result, run_status):
     # Refresh the public run status (headline portfolio value). Tweet publish
     # details are no longer exported to the public site — see public_exporter.

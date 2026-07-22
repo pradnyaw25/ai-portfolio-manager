@@ -55,6 +55,7 @@ def build_daily_cycle_graph():
         ("export_public_artifacts", export_public_artifacts_node),
         ("publish_tweet", publish_tweet_node),
         ("publish_receipts", publish_receipts_tweet_node),
+        ("publish_spotlight", publish_spotlight_tweet_node),
         ("ingest_run_memory", ingest_run_memory_node),
     ]
 
@@ -582,6 +583,44 @@ def publish_receipts_tweet_node(state: DailyGraphState) -> DailyGraphState:
         # Best-effort: a receipts failure must never sink an otherwise good run.
         logger.warning("Receipts tweet failed unexpectedly run_id=%s error=%s", run.run_id, exc)
         run.warnings.append(f"Receipts tweet failed: {exc}")
+        run.run_status["warnings"] = run.warnings
+    return {"run": run}
+
+
+def publish_spotlight_tweet_node(state: DailyGraphState) -> DailyGraphState:
+    run = state["run"]
+
+    # Non-idempotent side effect: a resumed run that already posted its spotlight
+    # must not repost.
+    if (
+        run.resumed
+        and run.progress is not None
+        and run.progress.phase_done(run.run_id, "publish_spotlight")
+    ):
+        run.diagnostics["spotlight"] = "skipped on resume (already published)"
+        run.run_status["diagnostics"] = dict(run.diagnostics)
+        return {"run": run}
+
+    # The spotlight is the afternoon run's second tweet — the mirror of receipts on the
+    # morning run — so the day's extra posts are spread out rather than clustered.
+    if _is_morning_run(run.started_at):
+        run.diagnostics["spotlight"] = "skipped (morning run — spotlight posts on the afternoon run)"
+        run.run_status["diagnostics"] = dict(run.diagnostics)
+        return {"run": run}
+
+    try:
+        run.spotlight_publish_result = steps.publish_spotlight_tweet(
+            run.decisions,
+            run.research,
+            run.tweet,
+            run.run_id,
+            run.run_status,
+        )
+        run.warnings = list(run.run_status.get("warnings", []))
+    except Exception as exc:
+        # Best-effort: a spotlight failure must never sink an otherwise good run.
+        logger.warning("Spotlight tweet failed unexpectedly run_id=%s error=%s", run.run_id, exc)
+        run.warnings.append(f"Spotlight tweet failed: {exc}")
         run.run_status["warnings"] = run.warnings
     return {"run": run}
 
