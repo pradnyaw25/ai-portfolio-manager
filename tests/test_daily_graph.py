@@ -47,8 +47,8 @@ def test_publish_receipts_node_publishes_on_the_morning_run(monkeypatch):
         "publish_receipts_tweet",
         lambda scored, run_id, run_status: calls.append((scored, run_id)),
     )
-    # 15:17 UTC — the morning run.
-    run = PortfolioRunState(run_id="run_x", started_at="2026-07-22T15:17:00Z")
+    # 14:47 UTC — the morning run.
+    run = PortfolioRunState(run_id="run_x", started_at="2026-07-22T14:47:00Z")
     run.scored_predictions = [{"symbol": "AAPL", "result": {"correct": True}}]
 
     daily_graph.publish_receipts_tweet_node({"run": run})
@@ -64,8 +64,8 @@ def test_publish_receipts_node_skips_on_the_afternoon_run(monkeypatch):
         "publish_receipts_tweet",
         lambda *a, **k: calls.append(a),
     )
-    # 18:17 UTC — the afternoon run; receipts post on the morning run only.
-    run = PortfolioRunState(run_id="run_pm", started_at="2026-07-22T18:17:00Z")
+    # 19:47 UTC — the afternoon run; receipts post on the morning run only.
+    run = PortfolioRunState(run_id="run_pm", started_at="2026-07-22T19:47:00Z")
     run.scored_predictions = [{"symbol": "AAPL", "result": {"correct": True}}]
 
     daily_graph.publish_receipts_tweet_node({"run": run})
@@ -113,8 +113,8 @@ def test_publish_receipts_node_skips_on_resume_when_already_published(monkeypatc
 
 
 def test_is_morning_run_splits_the_two_daily_runs():
-    # Daily cycle runs at 15:17 and 18:17 UTC; cutoff hour 17 separates them.
-    assert daily_graph._is_morning_run("2026-07-22T15:17:00Z") is True
-    assert daily_graph._is_morning_run("2026-07-22T18:17:00Z") is False
+    # Daily cycle runs at 14:47 and 19:47 UTC; cutoff hour 17 separates them.
+    assert daily_graph._is_morning_run("2026-07-22T14:47:00Z") is True
+    assert daily_graph._is_morning_run("2026-07-22T19:47:00Z") is False
     # Unparseable timestamps default to morning (never silently drop receipts).
     assert daily_graph._is_morning_run("not-a-date") is True

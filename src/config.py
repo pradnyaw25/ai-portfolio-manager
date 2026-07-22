@@ -34,10 +34,10 @@ SEC_USER_AGENT = os.getenv(
 POST_TWEET = os.getenv("POST_TWEET", "false").lower() in {"1", "true", "yes"}
 # Optional: post the weekly investor letter as an X thread. Off by default.
 POST_INVESTOR_LETTER = os.getenv("POST_INVESTOR_LETTER", "false").lower() in {"1", "true", "yes"}
-# The daily cycle runs twice on weekdays (15:17 and 18:17 UTC). Receipts tweets
+# The daily cycle runs twice on weekdays (14:47 and 19:47 UTC). Receipts tweets
 # (prediction scorecards) post only on the morning run — a run that starts at or
 # after this UTC hour is the afternoon run and skips them, so the fund posts at most
-# one receipts tweet a day.
+# one receipts tweet a day. Keep this between the two run hours (see daily-run.yml).
 RECEIPTS_MORNING_CUTOFF_HOUR_UTC = int(os.getenv("RECEIPTS_MORNING_CUTOFF_HOUR_UTC", "17"))
 X_API_KEY = os.getenv("X_API_KEY", "")
 X_API_SECRET = os.getenv("X_API_SECRET", "")
