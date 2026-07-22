@@ -1,6 +1,7 @@
+import re
 from datetime import date
 
-from src.config import PROMPTS_DIR
+from src.config import BENCHMARK_SYMBOLS, PROMPTS_DIR, WATCHLIST
 from src.llm import complete_text
 from src.models.portfolio import PortfolioSnapshot
 from src.models.trade import Trade
@@ -9,6 +10,10 @@ from src.utils.logger import get_logger
 logger = get_logger(__name__)
 
 PROMPT_VERSION = "tweet_writer/v2"
+
+# Indices are references ("beat the S&P 500"), not the tweet's subject, so they never
+# earn a cashtag and don't count toward the "only one symbol" test.
+_BENCHMARKS = {s.upper() for s in BENCHMARK_SYMBOLS}
 
 
 class TweetGeneratorAgent:
@@ -34,7 +39,8 @@ class TweetGeneratorAgent:
             prompt_version=PROMPT_VERSION,
         )
 
-        return self._clean_tweet(text)
+        known = self._known_symbols(portfolio, trades, decisions or {})
+        return self._apply_cashtag(self._clean_tweet(text), known)[:280]
 
     def _build_context(
         self, portfolio: PortfolioSnapshot, trades: list[Trade], decisions: dict, research: dict
@@ -125,3 +131,36 @@ Write the one tweet now — lead with the most interesting thing and say why. If
                 continue
             lines.append(line.rstrip())
         return "\n".join(lines).strip()[:280]
+
+    def _known_symbols(
+        self, portfolio: PortfolioSnapshot, trades: list[Trade], decisions: dict
+    ) -> set[str]:
+        """The fund's ticker vocabulary for this tweet — everything it could plausibly
+        name — used to detect symbol mentions reliably (matching bare uppercase words
+        against a known set, not guessing which words are tickers). Benchmarks excluded."""
+        syms = set(WATCHLIST)
+        syms |= {t.symbol.upper() for t in trades}
+        syms |= {p.symbol.upper() for p in portfolio.positions}
+        for c in decisions.get("market_calls", []):
+            syms.add(str(c.get("symbol", "")).upper())
+        for t in decisions.get("trades", []):
+            syms.add(str(t.get("symbol", "")).upper())
+        return {s for s in syms if s} - _BENCHMARKS
+
+    def _apply_cashtag(self, text: str, known_symbols: set[str]) -> str:
+        """If exactly one known symbol is named, turn its first mention into a cashtag
+        ($AAPL). A lone cashtag surfaces a single-name tweet in that ticker's feed;
+        several cashtags read as spam (and X throttles them), so multi-name tweets stay
+        plain. The model is told to write plain tickers — this owns the cashtag rule so
+        it stays deterministic rather than trusting the model to count."""
+        mentioned = [
+            sym
+            for sym in known_symbols
+            if re.search(rf"(?<![\w$]){re.escape(sym)}(?![\w])", text)
+        ]
+        if len(mentioned) != 1:
+            return text
+        sym = mentioned[0]
+        if re.search(rf"\${re.escape(sym)}(?![\w])", text):
+            return text  # already a cashtag
+        return re.sub(rf"(?<![\w$]){re.escape(sym)}(?![\w])", f"${sym}", text, count=1)
