@@ -47,8 +47,8 @@ def test_publish_receipts_node_publishes_on_the_morning_run(monkeypatch):
         "publish_receipts_tweet",
         lambda scored, run_id, run_status: calls.append((scored, run_id)),
     )
-    # 14:47 UTC — the morning run.
-    run = PortfolioRunState(run_id="run_x", started_at="2026-07-22T14:47:00Z")
+    # 15:40 UTC — a morning run (cron 14:40 plus the usual scheduler delay).
+    run = PortfolioRunState(run_id="run_x", started_at="2026-07-22T15:40:00Z")
     run.scored_predictions = [{"symbol": "AAPL", "result": {"correct": True}}]
 
     daily_graph.publish_receipts_tweet_node({"run": run})
@@ -64,8 +64,8 @@ def test_publish_receipts_node_skips_on_the_afternoon_run(monkeypatch):
         "publish_receipts_tweet",
         lambda *a, **k: calls.append(a),
     )
-    # 19:47 UTC — the afternoon run; receipts post on the morning run only.
-    run = PortfolioRunState(run_id="run_pm", started_at="2026-07-22T19:47:00Z")
+    # 18:50 UTC — an afternoon run; receipts post on the morning run only.
+    run = PortfolioRunState(run_id="run_pm", started_at="2026-07-22T18:50:00Z")
     run.scored_predictions = [{"symbol": "AAPL", "result": {"correct": True}}]
 
     daily_graph.publish_receipts_tweet_node({"run": run})
@@ -113,9 +113,12 @@ def test_publish_receipts_node_skips_on_resume_when_already_published(monkeypatc
 
 
 def test_is_morning_run_splits_the_two_daily_runs():
-    # Daily cycle runs at 14:47 and 19:47 UTC; cutoff hour 17 separates them.
-    assert daily_graph._is_morning_run("2026-07-22T14:47:00Z") is True
-    assert daily_graph._is_morning_run("2026-07-22T19:47:00Z") is False
+    # Runs start ~15:40-16:20 (morning) and ~18:50-19:30 (afternoon) after the
+    # scheduler delay; cutoff hour 17 separates them across that whole spread.
+    assert daily_graph._is_morning_run("2026-07-22T15:40:00Z") is True
+    assert daily_graph._is_morning_run("2026-07-22T16:20:00Z") is True
+    assert daily_graph._is_morning_run("2026-07-22T18:50:00Z") is False
+    assert daily_graph._is_morning_run("2026-07-22T19:30:00Z") is False
     # Unparseable timestamps default to morning (never silently drop receipts).
     assert daily_graph._is_morning_run("not-a-date") is True
 
@@ -127,7 +130,7 @@ def test_publish_spotlight_node_publishes_on_the_afternoon_run(monkeypatch):
         "publish_spotlight_tweet",
         lambda decisions, research, forward, run_id, run_status: calls.append(run_id),
     )
-    run = PortfolioRunState(run_id="run_pm", started_at="2026-07-22T19:47:00Z")
+    run = PortfolioRunState(run_id="run_pm", started_at="2026-07-22T18:50:00Z")
     run.decisions = {"market_calls": [{"symbol": "MU", "confidence": 0.7}]}
 
     daily_graph.publish_spotlight_tweet_node({"run": run})
@@ -140,7 +143,7 @@ def test_publish_spotlight_node_skips_on_the_morning_run(monkeypatch):
     monkeypatch.setattr(
         daily_graph.steps, "publish_spotlight_tweet", lambda *a, **k: calls.append(a)
     )
-    run = PortfolioRunState(run_id="run_am", started_at="2026-07-22T14:47:00Z")
+    run = PortfolioRunState(run_id="run_am", started_at="2026-07-22T15:40:00Z")
     run.decisions = {"market_calls": [{"symbol": "MU", "confidence": 0.7}]}
 
     daily_graph.publish_spotlight_tweet_node({"run": run})

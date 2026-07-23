@@ -2,18 +2,28 @@ name: Daily Portfolio Run
 
 on:
   schedule:
-    # Twice on weekdays, timed toward the market open and the close for engagement.
-    # Cron is UTC (no DST), but the market-hours guard drops any run outside
-    # 9:30am-4:00pm America/New_York AND aborts the whole run (tweet included). The
-    # only times in-hours BOTH seasons are the intersection of daylight (13:30-20:00
-    # UTC) and standard (14:30-21:00 UTC) hours = 14:30-20:00 UTC, so both runs live
-    # there, as near open/close as that allows:
-    #   14:47 UTC -> 10:47am ET (daylight) / 9:47am ET (standard, just after the open)
-    #   19:47 UTC ->  3:47pm ET (daylight, just before the close) / 2:47pm ET (standard)
-    # The :47 offset dodges the crowded top of the hour. Keep the morning run before
-    # and the afternoon run after 17:00 UTC — RECEIPTS_MORNING_CUTOFF_HOUR_UTC uses
-    # that boundary to post the receipts tweet on the morning run only.
-    - cron: "47 14,19 * * 1-5"
+    # Twice on weekdays. These times budget for GitHub's scheduler delay, which is the
+    # binding constraint here — NOT the nominal clock time.
+    #
+    # Scheduled runs on this repo have started 59-101 minutes late, every single run,
+    # with no exceptions. The market-hours guard aborts the WHOLE run (tweet, journal,
+    # and site update included) outside 9:30am-4:00pm America/New_York, so a cron time
+    # without room for that delay silently kills the run. An earlier attempt to post
+    # "just before the close" (19:47 UTC = 3:47pm ET, 13 minutes of margin) meant every
+    # afternoon run landed past 4:00pm and was skipped.
+    #
+    # So: pick times where the run lands in-hours whether it fires on time OR ~1.5h
+    # late, in BOTH DST seasons (in-hours for both = 14:30-20:00 UTC).
+    #   14:40 UTC -> fires 14:40-16:20 UTC = 9:40am-12:20pm ET. Always in hours.
+    #   17:50 UTC -> fires 17:50-19:30 UTC = 1:50pm-3:30pm ET. Always in hours, and
+    #                the usual delay puts it near the close, which was the intent.
+    # Tolerates a delay up to ~2h before the afternoon run risks the close.
+    #
+    # Keep the morning run before and the afternoon run after 17:00 UTC even when
+    # delayed — RECEIPTS_MORNING_CUTOFF_HOUR_UTC uses that boundary to post receipts on
+    # the morning run and the spotlight on the afternoon one.
+    - cron: "40 14 * * 1-5"
+    - cron: "50 17 * * 1-5"
 
   workflow_dispatch:
 
