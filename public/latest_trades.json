@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "run_id": "run_20260723T185202Z_a49b643e",
+    "date": "2026-07-23",
+    "symbol": "TSLA",
+    "action": "SELL",
+    "shares": 7,
+    "price": 321.19500732421875,
+    "total": 2248.3650512695312,
+    "reasoning": "stop-loss: TSLA down -20% from cost basis"
+  }
+]

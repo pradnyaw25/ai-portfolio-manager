@@ -101,3 +101,4 @@ run_20260713T172500Z_09fc0699,2026-07-13,TSLA,SELL,10,393.30,3933.00,TSLA shows 
 run_20260713T195309Z_56eedc94,2026-07-13,TSLA,SELL,10,393.94,3939.40,TSLA exhibits weakening momentum and negative recent returns. Risk lessons advocate reducing exposure during early signs of deterioration to reduce downside in volatile sectors.
 run_20260714T164052Z_57df18fd,2026-07-14,TSLA,SELL,5,397.37,1986.85,TSLA shows negative 5- and 30-day momentum and deteriorating risk profile. Partial trimming reduces exposure consistent with previous risk lessons to avoid larger drawdowns.
 run_20260715T193913Z_83493e56,2026-07-15,AMD,BUY,134,529.45,70945.67,"AMD shows strong 30-day momentum at over 21% return and recent positive news, presenting a good opportunity to diversify tech exposure and capture growth outside concentrated names like AAPL and AMZN."
+run_20260723T185202Z_a49b643e,2026-07-23,TSLA,SELL,7,321.20,2248.37,stop-loss: TSLA down -20% from cost basis
