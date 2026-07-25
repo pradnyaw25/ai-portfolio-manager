@@ -1,0 +1,83 @@
+# Curated engineering "build-in-public" notes, posted on the weekend content run
+# (scripts/weekend_content.py) when markets are closed. One post per weekend day,
+# rotated least-recently-used so the pool cycles before anything repeats.
+#
+# EVERY note must be TRUE and traceable to real work in this repo — the source is
+# noted per entry (docs/article-notes.md, docs/incidents.md, or a merged PR). These
+# are hand-curated on purpose: the fund's other tweets are grounded in data, and an
+# LLM freestyling about the codebase would invent things. Keep each `text` under ~235
+# chars so the site link fits within X's 280 limit. `chart: performance` attaches the
+# fund-vs-benchmark chart.
+notes:
+  - id: model-ab-test
+    topic: model-selection
+    # docs/article-notes.md 2026-07-07 (model comparison); docs/model-selection.md
+    text: >-
+      We A/B-tested 4 models on our AI fund's actual trade decisions, fixed eval set,
+      one fixed judge. The flagship cost ~11x more than the cheap model for no reliable
+      quality gain. The new-gen "mini" won. Measure, don't guess.
+
+  - id: debate-theater
+    topic: multi-agent
+    # docs/article-notes.md 2026-07-07 (debate); src/agents/debate.py
+    text: >-
+      Our bull/bear/risk "debate" was theater: 3 copies of one model fed identical
+      context, always agreeing at 0.75-0.90 conviction. The fix wasn't a bigger model —
+      it was giving each agent a different slice of evidence. Asymmetry beats scale.
+
+  - id: universe-plumbing-bias
+    topic: agent-design
+    # docs/article-notes.md 2026-07-07 (33-name universe); src/research/market_context.py
+    text: >-
+      Our fund had a 33-name universe but only ever traded ~19, always the mega-caps.
+      The cause was one line: it fetched news only for names it already held, so
+      candidates arrived with no catalyst. An agent's bias hides in its plumbing.
+
+  - id: calibration-sampling
+    topic: calibration
+    # docs/article-notes.md (predictions coupled to trades)
+    text: >-
+      The calibration curve is our whole pitch, and the first one was a lie:
+      predictions only spawned from executed BUYs — ~7 in a month, all high-conviction.
+      You can't measure calibration by sampling only your most confident bets.
+
+  - id: ablation-earns-keep
+    topic: evals
+    # docs/article-notes.md (ablation harness)
+    text: >-
+      Does the "AI" in an AI fund do anything? We ablated ours on a fixed judge: full
+      4.13/5, no-memory 3.58, no-debate 3.88. The tell it's real — killing memory only
+      hurt memory-dependent scenarios; the rest held. Ablate, don't assert.
+
+  - id: llm-timeout-hang
+    topic: incidents
+    # docs/article-notes.md + docs/incidents.md (no HTTP timeout)
+    text: >-
+      A run "hung" for 10 minutes. I killed it twice blaming my code. Real cause: the
+      OpenAI SDK defaults to a 600s timeout, so one stalled connection froze the whole
+      batch with no log line. Every external client needs an aggressive timeout.
+
+  - id: metric-more-wrong-than-model
+    topic: calibration
+    # This session, PR #82
+    text: >-
+      Our fund's accuracy dashboard was inverted: it scored every "underperform" call
+      as if we'd predicted "outperform", so correct calls read as misses. Fixing it
+      moved published accuracy 43% -> 56%. Your metric can be more wrong than your model.
+
+  - id: cron-scheduler-delay
+    topic: incidents
+    # This session, PR #89
+    text: >-
+      Our fund tweets on a GitHub Actions cron. We timed a post for "just before the
+      close" with 13 min of margin. But GitHub delays scheduled jobs an hour+, so it
+      fired after close daily and a guard skipped the whole run. Budget for the delay.
+
+  - id: baselines-vs-luck
+    topic: baselines
+    # src/experiments/comparison.py; perf chart attached
+    chart: performance
+    text: >-
+      An "AI fund beats the market" claim means nothing without a baseline. We run ours
+      against SPY, QQQ, and a random stock-picker. The honest question isn't "did it go
+      up" — it's "did the AI beat luck?" Cumulative return since inception below.

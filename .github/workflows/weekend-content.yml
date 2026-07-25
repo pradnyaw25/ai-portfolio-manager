@@ -1,0 +1,55 @@
+name: Weekend Engineering Content
+
+on:
+  schedule:
+    # Saturday and Sunday (cron day-of-week 6 and 0). Markets are closed, so there's
+    # no market-hours guard — this fills the weekend gap with a curated build-in-public
+    # engineering note. 16:30 UTC ~= 12:30pm ET; on Sunday it lands after the investor
+    # letter (13:40) and the state-of-fund tweet (15:15), so the day's posts spread out.
+    - cron: "30 16 * * 6,0"
+
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: weekend-content
+  cancel-in-progress: false
+
+jobs:
+  content:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      - name: Install dependencies
+        run: |
+          pip install -U pip
+          pip install -e .
+
+      - name: Post engineering note
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          # Separate toggle from the daily/state tweets: set the POST_WEEKEND_CONTENT
+          # repo variable to "true" to publish; unset/false runs it as a dry run.
+          POST_TWEET: ${{ vars.POST_WEEKEND_CONTENT }}
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_SECRET: ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
+        run: python scripts/weekend_content.py
+
+      - name: Commit social post log
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          # Persist the post log (gitignored) so LRU rotation survives across runs.
+          git add -f data/social_posts.jsonl public/perf_chart.png 2>/dev/null || true
+          git diff --staged --quiet || git commit -m "Weekend engineering content"
+          git push
