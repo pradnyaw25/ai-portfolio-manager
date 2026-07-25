@@ -30,7 +30,10 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "pytest>=8.0.0",
-    "ruff>=0.4.0",
+    # Pin ruff: it was unbounded, so CI silently jumped to 0.16.0 (new default rules)
+    # and every PR started failing lint on 177 pre-existing findings. Pin to a known-
+    # good version for reproducible CI; bump deliberately and fix findings in one PR.
+    "ruff==0.15.22",
 ]
 
 [tool.setuptools.packages.find]
