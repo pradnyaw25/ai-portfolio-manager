@@ -1,27 +1,23 @@
-# Paper Fund Outperforms Benchmark with 0.09% Return Amid Mixed Tech Results
+# Navigating a Volatile Week with Resilience and Positive Alpha
 
-*Week of 2026-07-13 to 2026-07-19*
+*Week of 2026-07-20 to 2026-07-26*
 
 ## Performance
 
-For the week of July 13-19, 2026, the portfolio gained 0.09%, outperforming the benchmark, which declined by 0.54%, generating an alpha of 0.63%.
+The fund saw a modest decline of -0.18% from July 20 to July 26, outperforming the benchmark which fell -1.06%. This generated a positive alpha of 0.88%.
 
 ## Winners
 
-- META (+13.28%)
-- AAPL (+13.04%)
-- V (+12.06%)
+- AAPL led gains with a 13.25% return, followed by JPM at 12.38% and V at 11.12%.
 
 ## Losers
 
-- GOOGL (-3.32%)
-- TSLA (-4.55%)
-- AMD (-6.35%)
+- GOOGL was the biggest detractor with a -10.33% return, alongside AMZN at -2.68% and AMD at -0.83%.
 
 ## Portfolio Changes
 
-We reduced TSLA exposure via multiple sales totaling 25 shares early in the week and added 134 shares of AMD midweek to reposition.
+We executed a sale of 7 shares of TSLA on July 23, trimming exposure amid market volatility. Key positions such as AAPL, JNJ, and NVDA remain significant contributors to portfolio stability.
 
 ## Outlook
 
-Despite some headwinds in key tech holdings, strong gains in select positions like META and AAPL support cautious optimism as we monitor market signals and adjust exposures accordingly.
+Despite near-term pressure, the fund’s ability to generate alpha in a down market provides confidence. We will continue to monitor risks closely while seeking selective opportunities in high-conviction holdings.
