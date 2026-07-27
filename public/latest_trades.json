@@ -1,1 +1,22 @@
-[]
+[
+  {
+    "run_id": "run_20260727T164034Z_587ecc74",
+    "date": "2026-07-27",
+    "symbol": "NVDA",
+    "action": "SELL",
+    "shares": 50,
+    "price": 197.30999755859375,
+    "total": 9865.499877929688,
+    "reasoning": "Negative momentum, recent price underperformance, and sector headwinds suggest partial trimming to reduce downside risk and reallocate capital."
+  },
+  {
+    "run_id": "run_20260727T164034Z_587ecc74",
+    "date": "2026-07-27",
+    "symbol": "AMD",
+    "action": "SELL",
+    "shares": 30,
+    "price": 486.17999267578125,
+    "total": 14585.399780273438,
+    "reasoning": "Weak momentum, negative returns, and chip sector challenges justify a partial sell to reduce risk exposure."
+  }
+]
