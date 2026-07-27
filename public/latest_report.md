@@ -1,10 +1,10 @@
 # Portfolio Report — 2026-07-27
 
 ## Summary
-- **Run ID:** `run_20260727T164034Z_587ecc74`
-- **Total Value:** $1,023,129.60
-- **Cash:** $249,195.04 (24.4%)
-- **Invested:** $773,934.56
+- **Run ID:** `run_20260727T190303Z_ae8072e1`
+- **Total Value:** $1,023,174.67
+- **Cash:** $259,065.04 (25.3%)
+- **Invested:** $764,109.63
 - **Positions:** 13
 - **Outlook:** NEUTRAL
 
@@ -12,29 +12,28 @@
 
 | Symbol | Shares | Avg Cost | Current | P&L % |
 |--------|--------|----------|---------|-------|
-| AAPL | 611 | $294.11 | $337.33 | 14.7% |
-| AMZN | 636 | $238.13 | $231.77 | -2.7% |
-| JNJ | 543 | $239.58 | $266.96 | 11.4% |
-| NVDA | 464 | $203.30 | $197.31 | -2.9% |
-| AMD | 104 | $529.45 | $486.18 | -8.2% |
-| GOOGL | 122 | $356.63 | $327.71 | -8.1% |
-| MSFT | 93 | $385.13 | $391.75 | 1.7% |
-| HD | 100 | $326.01 | $337.56 | 3.5% |
-| V | 22 | $319.05 | $362.48 | 13.6% |
-| META | 10 | $568.43 | $599.03 | 5.4% |
-| MA | 8 | $486.51 | $552.55 | 13.6% |
-| JPM | 10 | $313.49 | $353.46 | 12.8% |
-| UNH | 3 | $405.55 | $418.80 | 3.3% |
+| AAPL | 611 | $294.11 | $335.56 | 14.1% |
+| AMZN | 636 | $238.13 | $232.37 | -2.4% |
+| JNJ | 543 | $239.58 | $267.55 | 11.7% |
+| NVDA | 414 | $203.30 | $197.40 | -2.9% |
+| AMD | 104 | $529.45 | $490.35 | -7.4% |
+| GOOGL | 122 | $356.63 | $327.15 | -8.3% |
+| MSFT | 93 | $385.13 | $392.92 | 2.0% |
+| HD | 100 | $326.01 | $336.79 | 3.3% |
+| V | 22 | $319.05 | $362.93 | 13.8% |
+| META | 10 | $568.43 | $596.02 | 4.9% |
+| MA | 8 | $486.51 | $551.42 | 13.3% |
+| JPM | 10 | $313.49 | $355.19 | 13.3% |
+| UNH | 3 | $405.55 | $418.23 | 3.1% |
 
 ## Today's Trades
 
-- **SELL** 50 NVDA @ $197.31 — Negative momentum, recent price underperformance, and sector headwinds suggest partial trimming to reduce downside risk and reallocate capital.
-- **SELL** 30 AMD @ $486.18 — Weak momentum, negative returns, and chip sector challenges justify a partial sell to reduce risk exposure.
+- **SELL** 50 NVDA @ $197.40 — Recent partial trim taken due to negative momentum, price underperformance (-2.83%), and sector headwinds to reduce downside risk and reallocate capital.
 
 ## Analysis
 
-The portfolio outlook remains neutral with a balanced stance. Conviction is maintained in strong performers AAPL, JNJ, and MSFT supported by momentum and positive news, while heightened caution is warranted for underperforming tech holdings NVDA, AMD, GOOGL, and AMZN. Selective partial sells in NVDA and AMD reduce risk exposure, and cash is retained as a prudent buffer amid market uncertainties and concentrated exposures. Market calls reflect mixed signals with several tech and cyclical names expected to underperform against the benchmark, offset by steady or outperforming defensive and high-quality growth names. Disciplined risk management and avoidance of overtrading underpin the current tactical approach.
+The portfolio maintains a cautious neutral stance with no aggressive new buys or widespread sales. Cash remains elevated deliberately to mitigate concentration and sector risks, giving flexibility amid mixed momentum across holdings. Strong momentum names like AAPL, JNJ, MSFT, and HD are held for their upside potential, while weakening or volatile names such as NVDA, AMD, AMZN, and GOOGL are monitored carefully with recent partial trims where appropriate. Risk management lessons guide restrained trading to avoid overreaction while preparing for eventual selective reallocation based on market developments. The bear case is acknowledged in part, but overall the balance of evidence favors measured holding and risk containment rather than wholesale defensive moves.
 
 ## Risk Assessment
 
-Significant portfolio risk arises from concentration in AAPL (25.8%), AMZN, and JNJ, which collectively form over 62.5% of the investment, and sector concentration over 51% in Information Technology. This exposes the portfolio to outsized volatility and sensitivity to regulatory, valuation, or sector-specific shocks. Momentum deterioration in AMD, NVDA, GOOGL, and AMZN heightens downside risk. Elevated cash cushions this but is insufficient alone to offset concentrated exposure, reinforcing the need for disciplined monitoring and measured risk management.
+High concentration risk persists with AAPL alone representing over 26% of the portfolio and AMZN and JNJ together adding nearly 38%, making the portfolio vulnerable to idiosyncratic shocks. Sector concentration in Information Technology at nearly 46% further amplifies exposure to tech-specific regulatory headwinds or momentum shifts. While elevated cash cushions volatility, it does not fully offset these concentration risks. Momentum fading and negative returns in several semiconductor and tech names (AMD, NVDA, GOOGL) warrant close monitoring and early risk mitigation to avoid large drawdowns.

@@ -104,3 +104,4 @@ run_20260715T193913Z_83493e56,2026-07-15,AMD,BUY,134,529.45,70945.67,"AMD shows 
 run_20260723T185202Z_a49b643e,2026-07-23,TSLA,SELL,7,321.20,2248.37,stop-loss: TSLA down -20% from cost basis
 run_20260727T164034Z_587ecc74,2026-07-27,NVDA,SELL,50,197.31,9865.50,"Negative momentum, recent price underperformance, and sector headwinds suggest partial trimming to reduce downside risk and reallocate capital."
 run_20260727T164034Z_587ecc74,2026-07-27,AMD,SELL,30,486.18,14585.40,"Weak momentum, negative returns, and chip sector challenges justify a partial sell to reduce risk exposure."
+run_20260727T190303Z_ae8072e1,2026-07-27,NVDA,SELL,50,197.40,9870.00,"Recent partial trim taken due to negative momentum, price underperformance (-2.83%), and sector headwinds to reduce downside risk and reallocate capital."
