@@ -1,12 +1,1 @@
-[
-  {
-    "run_id": "run_20260727T190303Z_ae8072e1",
-    "date": "2026-07-27",
-    "symbol": "NVDA",
-    "action": "SELL",
-    "shares": 50,
-    "price": 197.39999389648438,
-    "total": 9869.999694824219,
-    "reasoning": "Recent partial trim taken due to negative momentum, price underperformance (-2.83%), and sector headwinds to reduce downside risk and reallocate capital."
-  }
-]
+[]
