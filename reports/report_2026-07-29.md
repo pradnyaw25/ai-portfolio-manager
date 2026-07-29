@@ -1,10 +1,10 @@
 # Portfolio Report — 2026-07-29
 
 ## Summary
-- **Run ID:** `run_20260729T160633Z_50b38425`
-- **Total Value:** $1,015,849.09
-- **Cash:** $296,459.14 (29.2%)
-- **Invested:** $719,389.94
+- **Run ID:** `run_20260729T184341Z_54100baf`
+- **Total Value:** $1,022,267.83
+- **Cash:** $296,459.14 (29.0%)
+- **Invested:** $725,808.69
 - **Positions:** 12
 - **Outlook:** NEUTRAL
 
@@ -12,28 +12,27 @@
 
 | Symbol | Shares | Avg Cost | Current | P&L % |
 |--------|--------|----------|---------|-------|
-| AAPL | 631 | $295.59 | $340.88 | 15.3% |
-| JNJ | 543 | $239.58 | $268.19 | 11.9% |
-| AMZN | 636 | $238.13 | $227.57 | -4.4% |
-| NVDA | 414 | $203.30 | $190.93 | -6.1% |
-| GOOGL | 122 | $356.63 | $333.27 | -6.5% |
-| MSFT | 93 | $385.13 | $394.77 | 2.5% |
-| HD | 100 | $326.01 | $341.53 | 4.8% |
-| V | 22 | $319.05 | $371.91 | 16.6% |
-| META | 10 | $568.43 | $586.98 | 3.3% |
-| MA | 8 | $486.51 | $568.84 | 16.9% |
-| JPM | 10 | $313.49 | $348.16 | 11.1% |
-| UNH | 3 | $405.55 | $426.03 | 5.0% |
+| AAPL | 631 | $295.59 | $343.48 | 16.2% |
+| AMZN | 636 | $238.13 | $231.72 | -2.7% |
+| JNJ | 543 | $239.58 | $266.73 | 11.3% |
+| NVDA | 414 | $203.30 | $195.06 | -4.1% |
+| GOOGL | 122 | $356.63 | $340.89 | -4.4% |
+| MSFT | 93 | $385.13 | $398.60 | 3.5% |
+| HD | 100 | $326.01 | $340.77 | 4.5% |
+| V | 22 | $319.05 | $369.59 | 15.8% |
+| META | 10 | $568.43 | $595.27 | 4.7% |
+| MA | 8 | $486.51 | $566.34 | 16.4% |
+| JPM | 10 | $313.49 | $348.95 | 11.3% |
+| UNH | 3 | $405.55 | $424.27 | 4.6% |
 
 ## Today's Trades
 
-- **SELL** 104 AMD @ $425.11 — stop-loss: AMD down -20% from cost basis
-- **BUY** 20 AAPL @ $340.88 — Strong 30-day momentum (16.03%) with robust positive news and solid returns. Apple remains a portfolio anchor with potential for further upside ahead of earnings and on sustained market leadership.
+No trades executed today.
 
 ## Analysis
 
-The portfolio holds a neutral outlook balancing strong performers like AAPL and JNJ with negative momentum and losses in key semiconductor and tech names including AMD, NVDA, AMZN, and GOOGL. Elevated cash at 25.5% prudently cushions concentration and sector risks while preserving dry powder. A modest buy is recommended in AAPL given strong momentum and positive news, a partial sell is advised for AMD due to deteriorating fundamentals, and holdings in other names should be maintained without change to avoid overtrading amid mixed signals. Risk assessments emphasize continued monitoring and selective risk management in concentrated tech exposures. The bear analyst's warnings about the portfolio's downside risks are largely accepted, supporting a cautious and disciplined approach rather than aggressive repositioning at this time.
+The portfolio retains a neutral outlook given mixed momentum signals and elevated concentration and sector risks. Strong momentum and positive outlook for core holdings such as AAPL, JNJ, and MSFT justify holding, while weaker momentum and underperformance in NVDA, AMZN, and GOOGL warrant cautious monitoring without aggressive trading. Elevated cash remains a strategic buffer amid uncertainty and risk concentration but limits upside participation. Risk lessons highlight disciplined risk management and avoiding overtrading to protect capital. The portfolio will be closely monitored for emerging clearer buy or sell signals to dynamically adjust exposures while maintaining balanced risk.
 
 ## Risk Assessment
 
-Significant concentration risk persists with AAPL, JNJ, and AMZN combinations comprising over 65% of the portfolio, and nearly 49% exposure to Information Technology. This increases vulnerability to sector or idiosyncratic downturns. Negative momentum and losses in AMD, NVDA, AMZN, and GOOGL increase downside risk. Prior risk lessons emphasize cautious partial trimming and proactive risk management, which supports maintaining cautious positioning and disciplined monitoring.
+Key risks include high concentration in few stocks (AAPL, AMZN, JNJ) and tech sector exposure, increasing vulnerability to regulatory shocks or sector downturns. Several holdings (NVDA, AMZN, GOOGL) exhibit fading momentum and negative returns, elevating downside risk. Prior risk lessons emphasize early and incremental trimming to limit losses, especially in tech and volatile stocks. Elevated cash cushions downside but also exposes opportunity cost. Prudent vigilance, disciplined trimming, and preserving liquidity are critical to risk management.
