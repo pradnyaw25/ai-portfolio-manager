@@ -107,3 +107,9 @@ run_20260727T164034Z_587ecc74,2026-07-27,AMD,SELL,30,486.18,14585.40,"Weak momen
 run_20260727T190303Z_ae8072e1,2026-07-27,NVDA,SELL,50,197.40,9870.00,"Recent partial trim taken due to negative momentum, price underperformance (-2.83%), and sector headwinds to reduce downside risk and reallocate capital."
 run_20260729T160633Z_50b38425,2026-07-29,AMD,SELL,104,425.11,44211.70,stop-loss: AMD down -20% from cost basis
 run_20260729T160633Z_50b38425,2026-07-29,AAPL,BUY,20,340.88,6817.60,Strong 30-day momentum (16.03%) with robust positive news and solid returns. Apple remains a portfolio anchor with potential for further upside ahead of earnings and on sustained market leadership.
+run_20260730T161151Z_1b5d1b4c,2026-07-30,NVDA,SELL,64,194.35,12438.08,"Negative momentum, ongoing volatility, and sector headwinds support further trimming to reduce downside risk and reallocate capital."
+run_20260730T161151Z_1b5d1b4c,2026-07-30,AAPL,BUY,33,331.04,10924.32,"AAPL is a core large-cap tech stock with solid fundamentals and growth potential. Buying 33 shares (~$10,979) efficiently deploys cash in a high-quality holding."
+run_20260730T161151Z_1b5d1b4c,2026-07-30,AMZN,BUY,45,239.29,10768.05,"AMZN provides diversified exposure to e-commerce and cloud. At current price, 45 shares utilize approximately $10,771 of cash near target size."
+run_20260730T161151Z_1b5d1b4c,2026-07-30,GOOGL,BUY,32,334.16,10693.12,"GOOGL offers strong market position in search and advertising with growth prospects. 32 shares cost about $10,682 efficiently deploying capital."
+run_20260730T161151Z_1b5d1b4c,2026-07-30,MSFT,BUY,24,456.17,10948.08,"MSFT has a consistent track record and exposure to cloud and enterprise software. Buying 24 shares (~$10,929) aligns with target trade size."
+run_20260730T161151Z_1b5d1b4c,2026-07-30,HD,BUY,33,331.74,10947.42,"HD is a strong consumer discretionary stock with stable performance. Buying 33 shares (~$10,951) fits well within sizing constraints."

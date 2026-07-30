@@ -1,1 +1,62 @@
-[]
+[
+  {
+    "run_id": "run_20260730T161151Z_1b5d1b4c",
+    "date": "2026-07-30",
+    "symbol": "NVDA",
+    "action": "SELL",
+    "shares": 64,
+    "price": 194.34500122070312,
+    "total": 12438.080078125,
+    "reasoning": "Negative momentum, ongoing volatility, and sector headwinds support further trimming to reduce downside risk and reallocate capital."
+  },
+  {
+    "run_id": "run_20260730T161151Z_1b5d1b4c",
+    "date": "2026-07-30",
+    "symbol": "AAPL",
+    "action": "BUY",
+    "shares": 33,
+    "price": 331.0400085449219,
+    "total": 10924.320281982422,
+    "reasoning": "AAPL is a core large-cap tech stock with solid fundamentals and growth potential. Buying 33 shares (~$10,979) efficiently deploys cash in a high-quality holding."
+  },
+  {
+    "run_id": "run_20260730T161151Z_1b5d1b4c",
+    "date": "2026-07-30",
+    "symbol": "AMZN",
+    "action": "BUY",
+    "shares": 45,
+    "price": 239.2899932861328,
+    "total": 10768.049697875977,
+    "reasoning": "AMZN provides diversified exposure to e-commerce and cloud. At current price, 45 shares utilize approximately $10,771 of cash near target size."
+  },
+  {
+    "run_id": "run_20260730T161151Z_1b5d1b4c",
+    "date": "2026-07-30",
+    "symbol": "GOOGL",
+    "action": "BUY",
+    "shares": 32,
+    "price": 334.1600036621094,
+    "total": 10693.1201171875,
+    "reasoning": "GOOGL offers strong market position in search and advertising with growth prospects. 32 shares cost about $10,682 efficiently deploying capital."
+  },
+  {
+    "run_id": "run_20260730T161151Z_1b5d1b4c",
+    "date": "2026-07-30",
+    "symbol": "MSFT",
+    "action": "BUY",
+    "shares": 24,
+    "price": 456.17010498046875,
+    "total": 10948.08251953125,
+    "reasoning": "MSFT has a consistent track record and exposure to cloud and enterprise software. Buying 24 shares (~$10,929) aligns with target trade size."
+  },
+  {
+    "run_id": "run_20260730T161151Z_1b5d1b4c",
+    "date": "2026-07-30",
+    "symbol": "HD",
+    "action": "BUY",
+    "shares": 33,
+    "price": 331.739990234375,
+    "total": 10947.419677734375,
+    "reasoning": "HD is a strong consumer discretionary stock with stable performance. Buying 33 shares (~$10,951) fits well within sizing constraints."
+  }
+]
