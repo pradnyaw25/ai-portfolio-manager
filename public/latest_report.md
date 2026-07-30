@@ -1,10 +1,10 @@
 # Portfolio Report — 2026-07-30
 
 ## Summary
-- **Run ID:** `run_20260730T161151Z_1b5d1b4c`
-- **Total Value:** $1,016,021.09
-- **Cash:** $254,616.23 (25.1%)
-- **Invested:** $761,404.86
+- **Run ID:** `run_20260730T190248Z_ab2582b5`
+- **Total Value:** $1,016,626.47
+- **Cash:** $264,302.05 (26.0%)
+- **Invested:** $752,324.42
 - **Positions:** 12
 - **Outlook:** NEUTRAL
 
@@ -12,32 +12,27 @@
 
 | Symbol | Shares | Avg Cost | Current | P&L % |
 |--------|--------|----------|---------|-------|
-| AAPL | 664 | $297.35 | $331.04 | 11.3% |
-| AMZN | 681 | $238.21 | $239.29 | 0.5% |
-| JNJ | 543 | $239.58 | $256.00 | 6.9% |
-| NVDA | 350 | $203.30 | $194.35 | -4.4% |
-| MSFT | 117 | $399.70 | $456.17 | 14.1% |
-| GOOGL | 154 | $351.96 | $334.16 | -5.1% |
-| HD | 133 | $327.43 | $331.74 | 1.3% |
-| V | 22 | $319.05 | $362.45 | 13.6% |
-| META | 10 | $568.43 | $533.60 | -6.1% |
-| MA | 8 | $486.51 | $572.14 | 17.6% |
-| JPM | 10 | $313.49 | $349.78 | 11.6% |
-| UNH | 3 | $405.55 | $423.46 | 4.4% |
+| AAPL | 664 | $297.35 | $333.58 | 12.2% |
+| AMZN | 681 | $238.21 | $237.65 | -0.2% |
+| JNJ | 543 | $239.58 | $256.17 | 6.9% |
+| NVDA | 300 | $203.30 | $193.72 | -4.7% |
+| MSFT | 117 | $399.70 | $455.85 | 14.0% |
+| GOOGL | 154 | $351.96 | $334.43 | -5.0% |
+| HD | 133 | $327.43 | $331.92 | 1.4% |
+| V | 22 | $319.05 | $365.87 | 14.7% |
+| META | 10 | $568.43 | $533.84 | -6.1% |
+| MA | 8 | $486.51 | $577.48 | 18.7% |
+| JPM | 10 | $313.49 | $351.48 | 12.1% |
+| UNH | 3 | $405.55 | $423.86 | 4.5% |
 
 ## Today's Trades
 
-- **SELL** 64 NVDA @ $194.35 — Negative momentum, ongoing volatility, and sector headwinds support further trimming to reduce downside risk and reallocate capital.
-- **BUY** 33 AAPL @ $331.04 — AAPL is a core large-cap tech stock with solid fundamentals and growth potential. Buying 33 shares (~$10,979) efficiently deploys cash in a high-quality holding.
-- **BUY** 45 AMZN @ $239.29 — AMZN provides diversified exposure to e-commerce and cloud. At current price, 45 shares utilize approximately $10,771 of cash near target size.
-- **BUY** 32 GOOGL @ $334.16 — GOOGL offers strong market position in search and advertising with growth prospects. 32 shares cost about $10,682 efficiently deploying capital.
-- **BUY** 24 MSFT @ $456.17 — MSFT has a consistent track record and exposure to cloud and enterprise software. Buying 24 shares (~$10,929) aligns with target trade size.
-- **BUY** 33 HD @ $331.74 — HD is a strong consumer discretionary stock with stable performance. Buying 33 shares (~$10,951) fits well within sizing constraints.
+- **SELL** 50 NVDA @ $193.72 — Recent fading momentum, continued negative returns, and sector headwinds justify further trimming to reduce downside risk as per recent risk lessons and successful prior partial sells.
 
 ## Analysis
 
-The portfolio maintains a neutral outlook balancing strong momentum in key holdings (AAPL, MSFT, V) against fading momentum and underperformance in semiconductor and certain tech stocks (NVDA, GOOGL, META). Elevated cash is justified given concentration risk and volatility, providing flexibility and downside protection. No aggressive trades are recommended except a partial NVDA trim to manage risk. Holdings should be monitored closely for clearer directional signals while preserving capital through disciplined risk management and avoiding overtrading.
+Portfolio remains neutral with elevated cash to manage concentrated sector and stock risks. Strong momentum and fundamentals in core tech holdings like AAPL and MSFT support holding while fading momentum and negative returns in NVDA, AMZN, GOOGL and META require cautious monitoring and selective trimming. Recent risk lessons and trades uphold discipline to mitigate downside, balancing growth participation with volatility control. No aggressive trading is warranted now; instead, maintain vigilance for clearer signals ahead.
 
 ## Risk Assessment
 
-Portfolio risks stem primarily from high concentration in a few large stocks (AAPL, AMZN, JNJ) and sector skew toward Information Technology (~46%), heightening vulnerability to regulatory, cyclical, or sector-specific shocks. Negative momentum and losses in semiconductor and some tech stocks (NVDA, GOOGL, AMD) underline downside risk amid fading sector strength. Elevated cash mitigates immediate drawdown risk but limits upside participation during rallies. Prior risk lessons and recent trades stress disciplined partial trimming on weakening names to avoid large losses and the necessity of vigilance to balance growth potential with downside protection.
+Key portfolio risks stem from heavy concentration in a handful of names (AAPL ~29%, AMZN ~21%, JNJ ~18%) and sectoral skew toward Information Technology (~45%) and Consumer Discretionary (~27%), increasing susceptibility to idiosyncratic or sector-specific downturns. Recent fading momentum and negative returns in NVDA, AMZN, GOOGL, and META elevate downside risk. Prior risk lessons emphasize disciplined partial trimming on weakening stocks and avoiding overtrading, which remain the guiding principles. Elevated cash mitigates immediate downside and volatility but entails opportunity cost during rallies.
