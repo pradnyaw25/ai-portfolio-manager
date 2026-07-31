@@ -1,1 +1,22 @@
-[]
+[
+  {
+    "run_id": "run_20260731T185916Z_e4b0cfaf",
+    "date": "2026-07-31",
+    "symbol": "AAPL",
+    "action": "BUY",
+    "shares": 15,
+    "price": 303.2049865722656,
+    "total": 4548.074798583984,
+    "reasoning": "Strong 30-day momentum of ~17.5%, robust fundamentals, and recent positive news despite short-term cautious forecasts warrant a modest increase to capitalize on continued growth potential."
+  },
+  {
+    "run_id": "run_20260731T185916Z_e4b0cfaf",
+    "date": "2026-07-31",
+    "symbol": "NVDA",
+    "action": "SELL",
+    "shares": 50,
+    "price": 198.99000549316406,
+    "total": 9949.500274658203,
+    "reasoning": "Recent underperformance, negative 5d and 30d returns, and mixed news with bearish influence from notable short positions support further partial trimming to reduce risk exposure."
+  }
+]
