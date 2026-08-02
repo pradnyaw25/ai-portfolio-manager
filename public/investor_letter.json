@@ -1,137 +1,205 @@
 {
-  "week_end": "2026-07-26",
-  "week_start": "2026-07-20",
+  "week_end": "2026-08-02",
+  "week_start": "2026-07-27",
   "letter": {
-    "headline": "Navigating a Volatile Week with Resilience and Positive Alpha",
-    "performance": "The fund saw a modest decline of -0.18% from July 20 to July 26, outperforming the benchmark which fell -1.06%. This generated a positive alpha of 0.88%.",
+    "headline": "Modest Gains Amid Mixed Tech Signals",
+    "performance": "The fund rose 0.30% this week, trailing the benchmark's 0.69% advance and resulting in a -0.39% alpha. Portfolio value increased from $1,023,174.67 to $1,026,286.83.",
     "winners": [
-      "AAPL led gains with a 13.25% return, followed by JPM at 12.38% and V at 11.12%."
+      "MA led with a 17.77% gain, followed by MSFT at 15.42% and V at 14.80%."
     ],
     "losers": [
-      "GOOGL was the biggest detractor with a -10.33% return, alongside AMZN at -2.68% and AMD at -0.83%."
+      "NVDA declined -2.12%, and META fell -3.11% despite significant position sizes."
     ],
-    "portfolio_changes": "We executed a sale of 7 shares of TSLA on July 23, trimming exposure amid market volatility. Key positions such as AAPL, JNJ, and NVDA remain significant contributors to portfolio stability.",
-    "outlook": "Despite near-term pressure, the fund\u2019s ability to generate alpha in a down market provides confidence. We will continue to monitor risks closely while seeking selective opportunities in high-conviction holdings."
+    "portfolio_changes": "We reduced NVDA by selling 264 shares over the week and trimmed AMD by 134 shares. Concurrently, we increased exposure to AAPL via 68 shares, added 45 shares of AMZN, 32 of GOOGL, 33 of HD, and 24 of MSFT, reflecting a shift toward more stable growth names.",
+    "outlook": "While the benchmark outperformed, selective profit-taking in NVDA and AMD aims to balance risk. We remain focused on strong performers like MA, MSFT, and AMZN as we navigate ongoing market volatility."
   },
   "facts": {
-    "week_start": "2026-07-20",
-    "week_end": "2026-07-26",
-    "start_value": 1027537.69,
-    "end_value": 1025723.19,
-    "return_pct": -0.0018,
-    "benchmark_return_pct": -0.0106,
-    "alpha": 0.0088,
+    "week_start": "2026-07-27",
+    "week_end": "2026-08-02",
+    "start_value": 1023174.67,
+    "end_value": 1026286.83,
+    "return_pct": 0.003,
+    "benchmark_return_pct": 0.0069,
+    "alpha": -0.0039,
     "winners": [
       {
-        "symbol": "AAPL",
-        "return_pct": 0.1325,
-        "market_value": 203507.97
+        "symbol": "MA",
+        "return_pct": 0.1777,
+        "market_value": 4583.52
       },
       {
-        "symbol": "JPM",
-        "return_pct": 0.1238,
-        "market_value": 3522.9
+        "symbol": "MSFT",
+        "return_pct": 0.1542,
+        "market_value": 53976.19
       },
       {
         "symbol": "V",
-        "return_pct": 0.1112,
-        "market_value": 7799.66
+        "return_pct": 0.148,
+        "market_value": 8057.72
       }
     ],
     "losers": [
       {
-        "symbol": "AMD",
-        "return_pct": -0.0083,
-        "market_value": 70356.7
+        "symbol": "NVDA",
+        "return_pct": -0.0212,
+        "market_value": 49747.5
       },
       {
-        "symbol": "AMZN",
-        "return_pct": -0.0268,
-        "market_value": 147393.0
-      },
-      {
-        "symbol": "GOOGL",
-        "return_pct": -0.1033,
-        "market_value": 39015.6
+        "symbol": "META",
+        "return_pct": -0.0311,
+        "market_value": 5507.25
       }
     ],
     "positions": [
       {
-        "symbol": "AAPL",
-        "return_pct": 0.1325,
-        "market_value": 203507.97
-      },
-      {
-        "symbol": "JPM",
-        "return_pct": 0.1238,
-        "market_value": 3522.9
-      },
-      {
-        "symbol": "V",
-        "return_pct": 0.1112,
-        "market_value": 7799.66
-      },
-      {
         "symbol": "MA",
-        "return_pct": 0.1053,
-        "market_value": 4301.76
-      },
-      {
-        "symbol": "JNJ",
-        "return_pct": 0.0991,
-        "market_value": 142985.48
-      },
-      {
-        "symbol": "META",
-        "return_pct": 0.0569,
-        "market_value": 6007.95
-      },
-      {
-        "symbol": "UNH",
-        "return_pct": 0.0355,
-        "market_value": 1259.88
-      },
-      {
-        "symbol": "HD",
-        "return_pct": 0.0158,
-        "market_value": 33115.0
-      },
-      {
-        "symbol": "NVDA",
-        "return_pct": 0.0141,
-        "market_value": 105971.38
+        "return_pct": 0.1777,
+        "market_value": 4583.52
       },
       {
         "symbol": "MSFT",
-        "return_pct": -0.0021,
-        "market_value": 35741.76
+        "return_pct": 0.1542,
+        "market_value": 53976.19
       },
       {
-        "symbol": "AMD",
-        "return_pct": -0.0083,
-        "market_value": 70356.7
+        "symbol": "V",
+        "return_pct": 0.148,
+        "market_value": 8057.72
       },
       {
         "symbol": "AMZN",
-        "return_pct": -0.0268,
-        "market_value": 147393.0
+        "return_pct": 0.1411,
+        "market_value": 185102.61
+      },
+      {
+        "symbol": "JPM",
+        "return_pct": 0.1256,
+        "market_value": 3528.6
+      },
+      {
+        "symbol": "JNJ",
+        "return_pct": 0.0765,
+        "market_value": 140036.98
+      },
+      {
+        "symbol": "UNH",
+        "return_pct": 0.0318,
+        "market_value": 1255.34
+      },
+      {
+        "symbol": "AAPL",
+        "return_pct": 0.0192,
+        "market_value": 205876.19
+      },
+      {
+        "symbol": "HD",
+        "return_pct": 0.015,
+        "market_value": 44199.89
       },
       {
         "symbol": "GOOGL",
-        "return_pct": -0.1033,
-        "market_value": 39015.6
+        "return_pct": 0.0094,
+        "market_value": 54711.58
+      },
+      {
+        "symbol": "NVDA",
+        "return_pct": -0.0212,
+        "market_value": 49747.5
+      },
+      {
+        "symbol": "META",
+        "return_pct": -0.0311,
+        "market_value": 5507.25
       }
     ],
     "trades": [
       {
-        "date": "2026-07-23",
-        "symbol": "TSLA",
+        "date": "2026-07-27",
+        "symbol": "NVDA",
         "action": "SELL",
-        "shares": "7"
+        "shares": "50"
+      },
+      {
+        "date": "2026-07-27",
+        "symbol": "AMD",
+        "action": "SELL",
+        "shares": "30"
+      },
+      {
+        "date": "2026-07-27",
+        "symbol": "NVDA",
+        "action": "SELL",
+        "shares": "50"
+      },
+      {
+        "date": "2026-07-29",
+        "symbol": "AMD",
+        "action": "SELL",
+        "shares": "104"
+      },
+      {
+        "date": "2026-07-29",
+        "symbol": "AAPL",
+        "action": "BUY",
+        "shares": "20"
+      },
+      {
+        "date": "2026-07-30",
+        "symbol": "NVDA",
+        "action": "SELL",
+        "shares": "64"
+      },
+      {
+        "date": "2026-07-30",
+        "symbol": "AAPL",
+        "action": "BUY",
+        "shares": "33"
+      },
+      {
+        "date": "2026-07-30",
+        "symbol": "AMZN",
+        "action": "BUY",
+        "shares": "45"
+      },
+      {
+        "date": "2026-07-30",
+        "symbol": "GOOGL",
+        "action": "BUY",
+        "shares": "32"
+      },
+      {
+        "date": "2026-07-30",
+        "symbol": "MSFT",
+        "action": "BUY",
+        "shares": "24"
+      },
+      {
+        "date": "2026-07-30",
+        "symbol": "HD",
+        "action": "BUY",
+        "shares": "33"
+      },
+      {
+        "date": "2026-07-30",
+        "symbol": "NVDA",
+        "action": "SELL",
+        "shares": "50"
+      },
+      {
+        "date": "2026-07-31",
+        "symbol": "AAPL",
+        "action": "BUY",
+        "shares": "15"
+      },
+      {
+        "date": "2026-07-31",
+        "symbol": "NVDA",
+        "action": "SELL",
+        "shares": "50"
       }
     ]
   },
-  "markdown": "# Navigating a Volatile Week with Resilience and Positive Alpha\n\n*Week of 2026-07-20 to 2026-07-26*\n\n## Performance\n\nThe fund saw a modest decline of -0.18% from July 20 to July 26, outperforming the benchmark which fell -1.06%. This generated a positive alpha of 0.88%.\n\n## Winners\n\n- AAPL led gains with a 13.25% return, followed by JPM at 12.38% and V at 11.12%.\n\n## Losers\n\n- GOOGL was the biggest detractor with a -10.33% return, alongside AMZN at -2.68% and AMD at -0.83%.\n\n## Portfolio Changes\n\nWe executed a sale of 7 shares of TSLA on July 23, trimming exposure amid market volatility. Key positions such as AAPL, JNJ, and NVDA remain significant contributors to portfolio stability.\n\n## Outlook\n\nDespite near-term pressure, the fund\u2019s ability to generate alpha in a down market provides confidence. We will continue to monitor risks closely while seeking selective opportunities in high-conviction holdings.\n",
+  "markdown": "# Modest Gains Amid Mixed Tech Signals\n\n*Week of 2026-07-27 to 2026-08-02*\n\n## Performance\n\nThe fund rose 0.30% this week, trailing the benchmark's 0.69% advance and resulting in a -0.39% alpha. Portfolio value increased from $1,023,174.67 to $1,026,286.83.\n\n## Winners\n\n- MA led with a 17.77% gain, followed by MSFT at 15.42% and V at 14.80%.\n\n## Losers\n\n- NVDA declined -2.12%, and META fell -3.11% despite significant position sizes.\n\n## Portfolio Changes\n\nWe reduced NVDA by selling 264 shares over the week and trimmed AMD by 134 shares. Concurrently, we increased exposure to AAPL via 68 shares, added 45 shares of AMZN, 32 of GOOGL, 33 of HD, and 24 of MSFT, reflecting a shift toward more stable growth names.\n\n## Outlook\n\nWhile the benchmark outperformed, selective profit-taking in NVDA and AMD aims to balance risk. We remain focused on strong performers like MA, MSFT, and AMZN as we navigate ongoing market volatility.\n",
   "grounding": {
     "status": "ok",
     "grounded": true,

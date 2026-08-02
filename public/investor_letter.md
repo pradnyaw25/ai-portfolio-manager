@@ -1,23 +1,23 @@
-# Navigating a Volatile Week with Resilience and Positive Alpha
+# Modest Gains Amid Mixed Tech Signals
 
-*Week of 2026-07-20 to 2026-07-26*
+*Week of 2026-07-27 to 2026-08-02*
 
 ## Performance
 
-The fund saw a modest decline of -0.18% from July 20 to July 26, outperforming the benchmark which fell -1.06%. This generated a positive alpha of 0.88%.
+The fund rose 0.30% this week, trailing the benchmark's 0.69% advance and resulting in a -0.39% alpha. Portfolio value increased from $1,023,174.67 to $1,026,286.83.
 
 ## Winners
 
-- AAPL led gains with a 13.25% return, followed by JPM at 12.38% and V at 11.12%.
+- MA led with a 17.77% gain, followed by MSFT at 15.42% and V at 14.80%.
 
 ## Losers
 
-- GOOGL was the biggest detractor with a -10.33% return, alongside AMZN at -2.68% and AMD at -0.83%.
+- NVDA declined -2.12%, and META fell -3.11% despite significant position sizes.
 
 ## Portfolio Changes
 
-We executed a sale of 7 shares of TSLA on July 23, trimming exposure amid market volatility. Key positions such as AAPL, JNJ, and NVDA remain significant contributors to portfolio stability.
+We reduced NVDA by selling 264 shares over the week and trimmed AMD by 134 shares. Concurrently, we increased exposure to AAPL via 68 shares, added 45 shares of AMZN, 32 of GOOGL, 33 of HD, and 24 of MSFT, reflecting a shift toward more stable growth names.
 
 ## Outlook
 
-Despite near-term pressure, the fund’s ability to generate alpha in a down market provides confidence. We will continue to monitor risks closely while seeking selective opportunities in high-conviction holdings.
+While the benchmark outperformed, selective profit-taking in NVDA and AMD aims to balance risk. We remain focused on strong performers like MA, MSFT, and AMZN as we navigate ongoing market volatility.
