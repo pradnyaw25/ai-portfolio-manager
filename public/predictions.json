@@ -1,8 +1,8 @@
 {
   "metrics": {
-    "total": 210,
+    "total": 211,
     "resolved": 143,
-    "open": 67,
+    "open": 68,
     "accuracy_pct": 58.7
   },
   "calibration": {
@@ -1777,6 +1777,26 @@
       "start_price": 758.3350219726562,
       "spy_start_price": 758.3300170898438,
       "due_date": "2026-08-08",
+      "status": "open",
+      "scored_date": null,
+      "symbol_return": null,
+      "spy_return": null,
+      "outperformed": null,
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
+    },
+    {
+      "id": "83ce246c",
+      "date": "2026-08-05",
+      "symbol": "^VIX",
+      "prediction": "^VIX will underperform SPY over 5 days",
+      "thesis": "VIX is expected to remain near current moderate levels, reflecting steady volatility.",
+      "horizon_days": 5,
+      "confidence": 0.5,
+      "start_price": 15.569999694824219,
+      "spy_start_price": 771.8400268554688,
+      "due_date": "2026-08-10",
       "status": "open",
       "scored_date": null,
       "symbol_return": null,

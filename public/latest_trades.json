@@ -1,12 +1,1 @@
-[
-  {
-    "run_id": "run_20260804T191252Z_6644bdd1",
-    "date": "2026-08-04",
-    "symbol": "NVDA",
-    "action": "SELL",
-    "shares": 20,
-    "price": 212.64999389648438,
-    "total": 4252.9998779296875,
-    "reasoning": "Fading momentum and recent partial trims recommend further selective reduction to manage downside risk in volatile semiconductor exposure."
-  }
-]
+[]
