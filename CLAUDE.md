@@ -44,8 +44,13 @@ The system uses LLM agents to analyze markets, make trade decisions, and manage 
 ## Future Tasks
 
 > Reconciled against the code on 2026-07-07; SEO section + prediction/letter status re-reconciled
-> 2026-07-17. Completed items moved to "Recently Completed" below rather than deleted, so the
-> backlog keeps its history.
+> 2026-07-17; **prediction counts re-reconciled against `data/predictions.jsonl` on 2026-08-07**
+> (the launch gate is cleared — see "Recently Completed" under Distribution & SEO). Completed items
+> moved to "Recently Completed" below rather than deleted, so the backlog keeps its history.
+>
+> Still stale as of 2026-08-07, deliberately left alone: the **"Publish weekly investor letters as
+> pages"** High Priority item below is done — `public/letters/{2026-07-12,07-19,07-26,08-02}.html`
+> plus an index ship on `main`. Verify and move it before trusting that section.
 
 ### High Priority
 - [ ] **Correlation-aware diversification** — Sector concentration *is* enforced
@@ -178,6 +183,42 @@ All four shipped 2026-07-09 (PRs #69, #70, #71). Kept as a record.
 
 ### Recently Completed
 
+- [x] **Wait for resolved predictions before launching** *(gate cleared 2026-08-07)* — the target was
+  ~50–100 resolved. **As of 2026-08-07: 244 predictions, 177 scored, 67 open; 103 correct = 58.2%
+  hit rate**, scored over 2026-07-13 → 2026-08-07. (The old *41 resolved / 109 total* figure was
+  from 2026-07-17; note the store's status value is `scored`, not `resolved`.) N is no longer the
+  blocker for [Reposition the launch around calibration] — that item is now the only thing between
+  here and a launch.
+
+  **The calibration curve has the shape the launch needs — the model is overconfident:**
+
+  | stated confidence | n | actual | gap |
+  |---|---|---|---|
+  | 0.5–0.6 | 38 | 57.9% | **+3.2** |
+  | 0.6–0.7 | 79 | 53.2% | **−9.2** |
+  | 0.7–0.8 | 56 | 67.9% | −4.3 |
+  | 0.8–0.9 | 4 | 25.0% | **−56.2** |
+
+  **Brier: 0.2464** — barely better than the 0.25 a coin flip scores. Every bucket above 0.6 is
+  overconfident, and the four most confident calls went 1-for-4 (don't lead with that bucket alone,
+  n=4). By horizon: 5d 80/136 (58.8%), 30d 19/34 (55.9%).
+
+  Two asymmetries worth a paragraph each in the writeup: **UNDERPERFORM calls hit 66.7% (n=84) but
+  OUTPERFORM only 44.4% (n=45)** — the fund is good at spotting laggards and near-random at picking
+  winners, which is the opposite of how a stock-picker markets itself. And `became_trade` is true
+  for only **2** scored calls, so the "all views vs traded-only" two-curve plan is not viable yet;
+  the traded curve has no N. Either drop it or wait.
+
+  *How the N was reached, kept because it explains the data's shape:* **throughput was fixed on
+  2026-07-08** — predictions used to spawn only from BUYs (~7 in a month, biased toward high
+  conviction). Every run now records a directional call for every researched name at 5d and 30d
+  horizons, decoupled from trading (`record_market_calls` in `main.py`,
+  `PredictionStore.create_call`). Non-overlapping windows per (symbol, horizon) keep samples
+  independent, and the 5d horizon is why a curve exists ~3 weeks in rather than the ~6–9 months the
+  BUY-only path implied. N accumulates *forward* only — no live backfill without lookahead. That
+  decoupling is also why `became_trade` is near-zero: calls are recorded for the whole research
+  universe, but the fund only trades a couple of names a day.
+
 - [x] **Submit the sitemap in Google Search Console** (2026-07-08) — Domain property, verified by
   TXT record. Note the DNS lives on Vercel nameservers even though GitHub Pages serves the site, so
   the record goes in the Vercel dashboard, not GitHub. The sitemap grew from 6 URLs to 19 after the
@@ -207,18 +248,5 @@ All four shipped 2026-07-09 (PRs #69, #70, #71). Kept as a record.
   the Brier score and confidence-calibration curve are the artifact. Secondary hook: the read-only
   MCP server ("point Claude at a real fund's decision history and interrogate it"), currently
   buried as README bullet 11.
-- [ ] **Wait for resolved predictions before launching** — Launch at ~50–100 resolved predictions.
-  *Progress (2026-07-17): 41 resolved / 109 total, 24 correct (~59% hit rate); 68 still open.* On
-  the current ~2/day accrual the 50-mark is days away and 100 is ~2–3 weeks out — the first
-  calibration curve is nearly launch-ready.
-  An LLM that is *confidently wrong*, with receipts, is a better story than one that wins — but only
-  once N is large enough to mean anything. **Throughput was fixed on 2026-07-08**: predictions used
-  to spawn only from BUYs (~7 in a month, biased toward high conviction). Now every run records a
-  directional call for every researched name at 5d and 30d horizons, decoupled from trading
-  (`record_market_calls` in `main.py`, `PredictionStore.create_call`). Non-overlapping windows per
-  (symbol, horizon) keep samples independent; the 5d horizon means the first curve gets shape within
-  ~2 weeks rather than the ~6–9 months the BUY-only path implied. `became_trade` lets the writeup
-  show two curves (all views vs traded-only). N still accumulates *forward* from the ship date — no
-  live backfill without lookahead.
 - [ ] **Draft the retrospective** — `docs/article-notes.md` and `docs/incidents.md` are already the
-  skeleton.
+  skeleton. `incidents.md` gained the two August ops incidents on 2026-08-07 (#92, #93).
