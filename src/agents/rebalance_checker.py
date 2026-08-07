@@ -7,6 +7,7 @@ from src.llm import complete_structured
 from src.llm.schemas import RebalanceResponse
 from src.models.portfolio import PortfolioSnapshot
 from src.models.prediction import TradePrediction
+from src.research.market_context import BENCHMARK_SYMBOLS
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -91,8 +92,50 @@ class RebalanceChecker:
             for p in portfolio.positions
         ) or "No current holdings"
 
-        watchlist = research.get("watchlist", [])
-        movers = research.get("top_movers", [])
+        # Build the candidate universe from research["symbols"], which is what the
+        # researcher actually produces.
+        #
+        # This used to read research["watchlist"] and research["top_movers"] — keys
+        # NOTHING has ever set. MarketContext (src/research/market_context.py) defines
+        # date/portfolio_value/cash/cash_pct/holdings/symbols/market_news/symbol_news
+        # and nothing adds the other two, so both were always []. The prompt rendered a
+        # literal "Watchlist: []" — actively telling the model there were no candidates
+        # — and the price menu below fell through to its `list(prices.keys())[:20]`
+        # fallback: the alphabetically-first 20 of 34 symbols. That silently cut MU,
+        # ORCL, PG, SNDK, TSLA, TSM, WMT and XOM out of the fund's reach entirely, and
+        # cut held names (NVDA, UNH, V) out of even being topped up. XOM was the name
+        # the PM was most often bullish on while unheld — and the rebalancer could
+        # never see it.
+        #
+        # The unit tests passed research={"watchlist": [...]} — a key production never
+        # produces — so they only ever exercised the live branch and the dead one
+        # survived. See tests/test_rebalance_checker.py.
+        symbol_rows = [
+            r
+            for r in research.get("symbols", [])
+            if r.get("symbol")
+            and r["symbol"] not in BENCHMARK_SYMBOLS  # not investable
+            and r["symbol"] not in sold_symbols
+            and prices.get(r["symbol"])
+        ]
+        candidates = {r["symbol"] for r in symbol_rows}
+        held = {p.symbol for p in portfolio.positions}
+        watchlist = sorted(candidates - held)
+
+        # Rank by absolute recent move so the model sees what's actually in play. The
+        # researcher already attaches these returns to every symbol.
+        movers = [
+            {
+                "symbol": r["symbol"],
+                "return_5d": r.get("return_5d"),
+                "return_30d": r.get("return_30d"),
+            }
+            for r in sorted(
+                symbol_rows,
+                key=lambda r: abs(r.get("return_5d") or 0) + abs(r.get("return_30d") or 0),
+                reverse=True,
+            )
+        ]
 
         per_position_budget = excess_cash / 5
 
@@ -115,7 +158,7 @@ Current state:
 - Current holdings: {holdings_summary}
 - Total portfolio value: ${portfolio.total_value:,.2f}
 
-Watchlist: {watchlist}
+Names you do not currently hold (all buyable): {watchlist}
 Recent top movers: {json.dumps(movers[:5])}
 Market news: {json.dumps(research.get("market_news", [])[:3])}
 
@@ -128,7 +171,7 @@ CRITICAL SIZING RULES:
 - DO NOT propose single-digit share counts for stocks under $500. That deploys too little cash.
 {exclusion}
 Available prices:
-{json.dumps({s: p for s, p in prices.items() if s in (watchlist if watchlist else list(prices.keys())[:20]) and s not in sold_symbols}, indent=2)}
+{json.dumps({s: prices[s] for s in sorted(candidates)}, indent=2)}
 
 You MUST do exactly one of these:
 

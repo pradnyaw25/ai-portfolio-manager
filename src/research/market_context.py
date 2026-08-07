@@ -4,7 +4,7 @@ from datetime import date
 from src.config import WATCHLIST, WATCHLIST_NEWS_LIMIT
 from src.models.portfolio import PortfolioSnapshot
 
-_BENCHMARK_SYMBOLS = {"SPY", "QQQ", "^VIX"}
+BENCHMARK_SYMBOLS = {"SPY", "QQQ", "^VIX"}
 
 
 @dataclass
@@ -60,7 +60,7 @@ class MarketContextBuilder:
             (
                 sc
                 for sc in symbol_contexts
-                if sc.symbol not in held_set and sc.symbol not in _BENCHMARK_SYMBOLS
+                if sc.symbol not in held_set and sc.symbol not in BENCHMARK_SYMBOLS
             ),
             key=lambda sc: abs(sc.return_5d or 0) + abs(sc.return_30d or 0),
             reverse=True,
