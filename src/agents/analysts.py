@@ -39,10 +39,26 @@ def _shell(portfolio, benchmark, lens_block: str) -> str:
     )
 
 
+def _flatten_memory(memory) -> list[dict]:
+    """Accept either a flat list of memories or the grouped dict the pipeline passes.
+
+    Production hands the debate ``run.memory_groups`` — a ``dict[str, list[dict]]``
+    keyed by bucket (symbol_theses, risk_lessons, recent_trades, macro). Iterating a
+    dict yields its KEYS, so the old ``for m in memory`` walked bare strings, every
+    ``isinstance(m, dict)`` was False, and both analysts silently received no memory
+    at all. The bull/bear memory routing below has therefore been dead in production
+    since it was written, while the unit tests only ever passed ``memory=None`` and
+    so never noticed.
+    """
+    if isinstance(memory, dict):
+        return [m for group in memory.values() if isinstance(group, list) for m in group if isinstance(m, dict)]
+    if isinstance(memory, list):
+        return [m for m in memory if isinstance(m, dict)]
+    return []
+
+
 def _memory_block(memory, types: set[str], label: str) -> str:
-    if not memory:
-        return ""
-    picked = [m for m in memory if isinstance(m, dict) and m.get("type") in types]
+    picked = [m for m in _flatten_memory(memory) if m.get("type") in types]
     if not picked:
         return ""
     return f"\n{label} fund memory:\n{json.dumps(picked, default=str)[:2500]}\n"

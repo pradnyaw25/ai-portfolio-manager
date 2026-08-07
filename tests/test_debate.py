@@ -170,3 +170,67 @@ def test_pm_omits_bear_case_prompt_without_analysts(monkeypatch):
     monkeypatch.setattr(pm_mod, "complete_structured", fake)
     pm_mod.PortfolioManagerAgent().decide("pf", "r", "b")
     assert "committee debate" not in captured["prompt"]
+
+
+# --- fund-memory routing ----------------------------------------------------
+
+
+def _memory_groups():
+    """The shape the pipeline actually passes: run.memory_groups, a dict of buckets.
+
+    See src/models/run_state.py (memory_groups: dict[str, list[dict]]) and
+    format_grouped_memory_for_prompt in src/memory/retriever.py.
+    """
+    return {
+        "symbol_theses": [{"id": "m1", "type": "thesis", "content": "AAPL momentum intact"}],
+        "risk_lessons": [{"id": "m2", "type": "risk_lesson", "content": "trim into weakness"}],
+        "recent_trades": [{"id": "m3", "type": "trade", "content": "BUY AAPL"}],
+        "macro": [{"id": "m4", "type": "macro_regime", "content": "rates steady"}],
+    }
+
+
+def _ctx(analyst, memory):
+    pf = {"cash_pct": 0.15, "positions": [{"symbol": "AAPL", "shares": 10, "current_price": 300}]}
+    research = {"symbols": [{"symbol": "AAPL", "price": 300, "return_5d": 0.01, "return_30d": 0.02}]}
+    return analyst.build_context(pf, research, {"return_pct": 0.03}, memory)
+
+
+def test_analysts_receive_the_grouped_memory_the_pipeline_passes():
+    """Regression: the debate ran with no memory at all for months.
+
+    daily_graph passes run.memory_groups (a dict). _memory_block iterated it directly,
+    so it walked the dict's KEYS — bare strings — every isinstance(m, dict) was False,
+    and both analysts got an empty memory block. The routing below was dead code in
+    production; the tests only ever passed memory=None and never caught it.
+    """
+    bull = _ctx(BullAnalyst(), _memory_groups())
+    bear = _ctx(BearAnalyst(), _memory_groups())
+
+    assert "AAPL momentum intact" in bull
+    assert "trim into weakness" in bear
+
+
+def test_memory_routing_keeps_the_two_lenses_separate():
+    """Information asymmetry is the point — if both sides see everything, the debate
+    collapses into two parallel monologues that agree."""
+    bull = _ctx(BullAnalyst(), _memory_groups())
+    bear = _ctx(BearAnalyst(), _memory_groups())
+
+    # Assert both actually received memory first — otherwise "separate" is satisfied
+    # trivially by the very bug this file exists to catch.
+    assert "fund memory" in bull and "fund memory" in bear
+
+    assert "trim into weakness" not in bull  # cautionary memory is the bear's
+    assert "AAPL momentum intact" not in bear  # constructive memory is the bull's
+
+
+def test_a_flat_memory_list_still_works():
+    """Older callers and tests pass a flat list; both shapes must be accepted."""
+    flat = [m for group in _memory_groups().values() for m in group]
+
+    assert "AAPL momentum intact" in _ctx(BullAnalyst(), flat)
+
+
+def test_absent_or_malformed_memory_is_harmless():
+    for memory in (None, {}, [], "a string", {"symbol_theses": None}):
+        assert "fund memory" not in _ctx(BullAnalyst(), memory)
