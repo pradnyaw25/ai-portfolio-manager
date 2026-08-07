@@ -32,8 +32,25 @@ permissions:
   pages: write
   id-token: write
 
+# One group per cron slot, NOT a single shared "pages" group.
+#
+# Both daily runs used to sit in the same group as each other (and as deploy-pages).
+# A group holds at most one in-progress plus one pending run: when a third enters, the
+# PENDING one is cancelled. On 2026-08-06 the scheduler was ~103 min late on the
+# morning slot and ~4h45m late on the afternoon one; the morning run was still queued
+# when the afternoon run arrived, so it was cancelled outright and the fund lost the
+# whole trading day (the afternoon retry then landed after the close and the
+# market-hours guard correctly skipped it).
+#
+# Keying on the cron expression keeps each slot serialized against itself — a second
+# morning run still waits for the first — while making the two slots independent, so a
+# delay in one can no longer evict the other. workflow_dispatch has no
+# github.event.schedule, so it falls back to a per-run group and never queues.
+#
+# The cost: morning and afternoon can now overlap if the scheduler is >3h late. The
+# push step below rebases and retries to stay safe under that.
 concurrency:
-  group: pages
+  group: daily-run-${{ github.event.schedule || github.run_id }}
   cancel-in-progress: false
 
 jobs:
@@ -63,8 +80,14 @@ jobs:
           pip install -U pip
           pip install -e .
 
+      # continue-on-error so a failed cycle still journals and publishes below; the
+      # "Report run failure" step at the end turns the job red. Without that pairing
+      # we'd trade one silent failure mode for another (a red job that loses the
+      # audit trail of what went wrong).
       - name: Run portfolio manager
+        id: portfolio-run
         if: steps.market-hours.outputs.should_run == 'true'
+        continue-on-error: true
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           QDRANT_URL: ${{ secrets.QDRANT_URL }}
@@ -90,10 +113,22 @@ jobs:
           git diff --staged --quiet || \
           git commit -m "Daily portfolio update"
 
+      # Retry with a rebase: the two cron slots are no longer serialized against each
+      # other, so a badly delayed run can race a later one to the same branch. The
+      # data files are append-mostly and each run's writes are idempotent, so replaying
+      # this run's commit on top of the other one is the correct resolution.
       - name: Push changes
         if: steps.market-hours.outputs.should_run == 'true'
         run: |
-          git push
+          for attempt in 1 2 3; do
+            if git push; then
+              exit 0
+            fi
+            echo "Push failed (attempt $attempt); rebasing on origin/main and retrying"
+            git pull --rebase origin main
+          done
+          echo "::error::Could not push after 3 attempts"
+          exit 1
 
       - name: Setup Pages
         if: steps.market-hours.outputs.should_run == 'true'
@@ -109,3 +144,11 @@ jobs:
         if: steps.market-hours.outputs.should_run == 'true'
         id: deployment
         uses: actions/deploy-pages@v5
+
+      # The journal and the site are published by now, so failing here loses nothing
+      # and is the only signal that the cycle didn't actually reach a decision.
+      - name: Report run failure
+        if: steps.portfolio-run.outcome == 'failure'
+        run: |
+          echo "::error::Daily portfolio run failed - see data/run_history.jsonl for the failed step and errors"
+          exit 1
