@@ -350,3 +350,111 @@ def test_export_generates_a_hub_for_every_symbol_and_links_them(tmp_path):
     sitemap = (tmp_path / "sitemap.xml").read_text()
     assert "https://glasshousefund.com/symbols/AAPL.html" in sitemap
     assert f"/symbols/{untouched}.html" not in sitemap  # empty placeholder excluded
+
+
+# --- verbosity, charts and sources -----------------------------------------
+
+
+def _calls(n):
+    return [
+        {
+            "symbol": f"SYM{i}",
+            "direction": "OUTPERFORM" if i % 2 else "UNDERPERFORM",
+            "confidence": 0.55 + (i % 5) * 0.08,
+            "thesis": f"Thesis number {i} explaining the call at some length.",
+        }
+        for i in range(n)
+    ]
+
+
+def _debate():
+    return {
+        "bull": {"thesis": "Bull thesis.", "conviction": 0.8, "key_points": ["a", "b"]},
+        "bear": {"thesis": "Bear thesis.", "conviction": 0.6, "key_points": ["c"]},
+    }
+
+
+def test_long_sections_are_collapsed_but_still_in_the_html():
+    """Collapse, don't delete: the page must read short while staying crawlable.
+
+    The calls table and debate transcript are the bulk of the page (~1,000 of 2,126
+    body words on a 33-call day). They move behind <details> — which crawlers still
+    index and which keeps the audit trail intact — rather than being dropped.
+    """
+    entry = _entry("2026-08-07", created_at="2026-08-07T20:00:00Z", debate=_debate())
+    entry["raw_decision"]["market_calls"] = _calls(30)
+    entry["raw_decision"]["market_summary"] = "Market summary prose."
+    entry["raw_decision"]["risk_assessment"] = "Risk assessment prose."
+
+    html = decision_pages.render_decision_page(entry, prev=None, next_=None)
+
+    assert "<details" in html
+    # Every collapsed body is still present in the served HTML.
+    assert "Thesis number 7" in html
+    assert "Bull thesis." in html
+    assert "Risk assessment prose." in html
+
+
+def test_market_calls_render_a_chart_without_javascript():
+    """These pages are static and must render identically with JS disabled."""
+    entry = _entry("2026-08-07", created_at="2026-08-07T20:00:00Z")
+    entry["raw_decision"]["market_calls"] = _calls(12)
+
+    html = decision_pages.render_decision_page(entry, prev=None, next_=None)
+
+    assert "<svg" in html
+    assert html.count('class="tick') == 12  # one tick per call
+    # The chart is inline SVG: no chart library, no external fetch. (The page shell
+    # has its own small theme-toggle script; the chart must not need one.)
+    figure = html.split('<figure class="chart"', 1)[1].split("</figure>", 1)[0]
+    assert "<script" not in figure
+    assert "src=" not in figure
+
+
+def test_sources_are_linked_when_the_run_journalled_them():
+    entry = _entry(
+        "2026-08-07",
+        created_at="2026-08-07T20:00:00Z",
+        news_sources=[
+            {
+                "symbol": "AAPL",
+                "title": "Apple ships something",
+                "link": "https://news.example.com/apple",
+                "source": "Reuters",
+            }
+        ],
+    )
+
+    html = decision_pages.render_decision_page(entry, prev=None, next_=None)
+
+    assert "<h2>Sources</h2>" in html
+    assert 'href="https://news.example.com/apple"' in html
+    assert "Apple ships something" in html
+    # Outbound links to third parties shouldn't pass ranking signal.
+    assert 'rel="nofollow noopener"' in html
+
+
+def test_sources_section_absent_on_runs_predating_the_field():
+    """35 pages were published before news_sources existed; they must not show an
+    empty Sources heading."""
+    entry = _entry("2026-07-01", created_at="2026-07-01T20:00:00Z")
+
+    html = decision_pages.render_decision_page(entry, prev=None, next_=None)
+
+    assert "<h2>Sources</h2>" not in html
+
+
+def test_source_entries_without_a_usable_link_are_dropped():
+    entry = _entry(
+        "2026-08-07",
+        created_at="2026-08-07T20:00:00Z",
+        news_sources=[
+            {"title": "No link", "link": ""},
+            {"title": "Not http", "link": "javascript:alert(1)"},
+        ],
+    )
+
+    html = decision_pages.render_decision_page(entry, prev=None, next_=None)
+
+    assert "<h2>Sources</h2>" not in html
+    assert "javascript:alert" not in html

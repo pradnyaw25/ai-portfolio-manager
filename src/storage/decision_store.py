@@ -36,6 +36,7 @@ class DecisionStore:
         memory_citation_warnings: list[str] | None = None,
         grounding: dict | None = None,
         research_brief: dict | None = None,
+        news_sources: list[dict] | None = None,
         run_id: str | None = None,
     ) -> None:
         row = {
@@ -62,6 +63,10 @@ class DecisionStore:
             "memory_citation_warnings": memory_citation_warnings or [],
             "grounding": grounding,
             "research_brief": research_brief,
+            # The news articles that fed this run, so a decision page can cite what it
+            # read. Accrues forward only — runs before this field existed have none,
+            # and there is no way to reconstruct which articles they saw.
+            "news_sources": news_sources or [],
         }
         self._upsert(row, run_id)
         logger.info("Saved decision journal entry")

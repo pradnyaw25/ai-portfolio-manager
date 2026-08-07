@@ -105,6 +105,26 @@ p { margin:0 0 12px; }
 .tag { display:inline-block; border:1px solid var(--border-strong); border-radius:999px;
   padding:0 8px; font-size:11px; font-weight:800; color:var(--muted-strong); white-space:nowrap; }
 .muted { color:var(--muted); }
+details.more { margin:6px 0 18px; }
+details.more > summary { cursor:pointer; font-size:13px; font-weight:800; color:var(--accent);
+  padding:7px 0; list-style:none; }
+details.more > summary::-webkit-details-marker { display:none; }
+details.more > summary::before { content:"▸ "; display:inline-block; transition:transform .15s; }
+details.more[open] > summary::before { content:"▾ "; }
+details.more > summary:hover { text-decoration:underline; }
+details.more h3 { font-size:14px; margin:16px 0 4px; }
+figure.chart { margin:10px 0 4px; }
+figure.chart svg { width:100%; height:auto; display:block; }
+figure.chart figcaption { font-size:12px; margin-top:2px; }
+.chart .axis { stroke:var(--border-strong); stroke-width:1; }
+.chart .ax { font-size:10px; fill:var(--muted); font-weight:700; }
+.chart .tick { stroke-width:3; stroke-linecap:round; opacity:.75; }
+.chart .tick.up { stroke:var(--positive); }
+.chart .tick.down { stroke:var(--negative); }
+.chart .tick:hover { opacity:1; stroke-width:5; }
+ul.sources { list-style:none; margin:6px 0 0; padding:0; font-size:14px; }
+ul.sources li { border-bottom:1px solid var(--row-border); padding:8px 0; margin:0; }
+ul.sources a { color:var(--ink); font-weight:700; }
 ul { margin:6px 0 0; padding-left:20px; }
 li { margin-bottom:4px; }
 .role { font-size:11.5px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--accent); }
@@ -382,12 +402,96 @@ def _render_market_calls(entry: dict) -> str:
         f"({n_out} outperform, {len(calls) - n_out} underperform); {n_traded} became trades. "
         "These are the fund's calibration record."
     )
+    # The table is the page's single biggest block (~500 words of near-identical prose
+    # on a 33-name day). The chart carries the shape at a glance; the table stays in
+    # the HTML — collapsed, not dropped — so it remains crawlable and auditable.
     return (
         "<h2>Market calls</h2>"
         f'<p class="muted">{intro}</p>'
+        f"{_render_calls_chart(calls, _conf, _is_outperform)}"
+        f"<details class=\"more\"><summary>All {len(calls)} calls, with reasoning</summary>"
         '<div class="calls-wrap"><table class="calls">'
         "<thead><tr><th>Symbol</th><th>Call</th><th>Conf.</th><th></th><th>Why</th></tr></thead>"
-        f"<tbody>{''.join(rows)}</tbody></table></div>"
+        f"<tbody>{''.join(rows)}</tbody></table></div></details>"
+    )
+
+
+def _render_calls_chart(calls: list[dict], conf_of, is_outperform) -> str:
+    """A confidence strip: one tick per call, outperform above the line, lag below.
+
+    Inline SVG on purpose — these pages are static, self-contained, and must render
+    without JS (a crawler and a no-JS reader see the same thing). No chart library.
+    """
+    if not calls:
+        return ""
+
+    width, height, mid = 680, 132, 66
+    ticks = []
+    for call in calls:
+        conf = conf_of(call)
+        if not conf:
+            continue
+        up = is_outperform(call)
+        # x by confidence (0.5 → left, 1.0 → right); the fund rarely states < 0.5.
+        x = 40 + (max(0.5, min(1.0, conf)) - 0.5) / 0.5 * (width - 80)
+        y1, y2 = (mid - 6, mid - 46) if up else (mid + 6, mid + 46)
+        symbol = escape(str(call.get("symbol") or "").upper())
+        ticks.append(
+            f'<line x1="{x:.1f}" y1="{y1}" x2="{x:.1f}" y2="{y2}" '
+            f'class="tick {"up" if up else "down"}"><title>{symbol}: '
+            f'{"outperform" if up else "underperform"} at {conf * 100:.0f}%</title></line>'
+        )
+
+    if not ticks:
+        return ""
+
+    axis = "".join(
+        f'<text x="{40 + (c - 0.5) / 0.5 * (width - 80):.1f}" y="{height - 6}" '
+        f'class="ax" text-anchor="middle">{int(c * 100)}%</text>'
+        for c in (0.5, 0.6, 0.7, 0.8, 0.9, 1.0)
+    )
+    return (
+        f'<figure class="chart"><svg viewBox="0 0 {width} {height}" role="img" '
+        f'aria-label="Confidence of each market call, outperform above the line and '
+        f'underperform below">'
+        f'<line x1="30" y1="{mid}" x2="{width - 30}" y2="{mid}" class="axis"/>'
+        f'<text x="30" y="{mid - 50}" class="ax">beat SPY</text>'
+        f'<text x="30" y="{mid + 58}" class="ax">lag SPY</text>'
+        f"{''.join(ticks)}{axis}</svg>"
+        '<figcaption class="muted">Each tick is one call, placed by stated confidence. '
+        "Hover for the name.</figcaption></figure>"
+    )
+
+
+def _render_sources(entry: dict) -> str:
+    """The news articles that fed this run.
+
+    Only present on runs journalled after news_sources shipped — earlier pages
+    legitimately have none, and there is no way to reconstruct what they read.
+    """
+    sources = entry.get("news_sources") or []
+    if not sources:
+        return ""
+
+    items = []
+    for s in sources:
+        link = str(s.get("link") or "")
+        if not link.startswith(("http://", "https://")):
+            continue
+        symbol = str(s.get("symbol") or "").upper()
+        tag = f'<span class="tag">{escape(symbol)}</span> ' if symbol else ""
+        outlet = str(s.get("source") or "")
+        meta = f' <span class="muted">· {escape(outlet)}</span>' if outlet else ""
+        items.append(
+            f'<li>{tag}<a href="{escape(link)}" rel="nofollow noopener" '
+            f'target="_blank">{escape(str(s.get("title") or link))}</a>{meta}</li>'
+        )
+    if not items:
+        return ""
+    return (
+        "<h2>Sources</h2>"
+        f'<p class="muted">The {len(items)} articles the fund read before deciding.</p>'
+        f'<ul class="sources">{"".join(items)}</ul>'
     )
 
 
@@ -413,13 +517,49 @@ def _render_debate(debate: dict) -> str:
         )
     if not blocks:
         return ""
-    return "<h2>The debate</h2>" + "".join(blocks)
+    convictions = " · ".join(
+        f"{role} {float(debate[role]['conviction']):.2f}"
+        for role in ("bull", "bear", "risk")
+        if isinstance(debate.get(role), dict)
+        and isinstance(debate[role].get("conviction"), int | float)
+    )
+    hint = f" — {escape(convictions)}" if convictions else ""
+    return (
+        "<h2>The debate</h2>"
+        f'<details class="more"><summary>Bull, bear and risk cases{hint}</summary>'
+        f'{"".join(blocks)}</details>'
+    )
 
 
 def _section(heading: str, text) -> str:
     if not text:
         return ""
     return f"<h2>{escape(heading)}</h2><p>{escape(str(text))}</p>"
+
+
+def _render_commentary(entry: dict, rd: dict) -> str:
+    """The four narrative blocks, grouped behind one toggle.
+
+    The cash thesis stays out here and visible: when cash is over target the fund is
+    *required* to justify it, so it's a commitment rather than commentary.
+    """
+    cash = entry.get("cash_thesis") or rd.get("cash_thesis")
+    blocks = [
+        ("Bear case response", rd.get("bear_case_response")),
+        ("Market summary", rd.get("market_summary")),
+        ("Portfolio assessment", rd.get("portfolio_assessment")),
+        ("Risk assessment", rd.get("risk_assessment")),
+    ]
+    present = [
+        f"<h3>{escape(h)}</h3><p>{escape(str(t))}</p>" for h, t in blocks if t
+    ]
+    out = _section("Cash thesis", cash)
+    if present:
+        out += (
+            '<details class="more"><summary>Full commentary</summary>'
+            f'{"".join(present)}</details>'
+        )
+    return out
 
 
 def render_decision_page(entry: dict, *, prev: dict | None, next_: dict | None) -> str:
@@ -455,11 +595,8 @@ def render_decision_page(entry: dict, *, prev: dict | None, next_: dict | None) 
     {_render_trades(entry)}
     {_render_market_calls(entry)}
     {_render_debate(rd.get("debate") or {})}
-    {_section("Bear case response", rd.get("bear_case_response"))}
-    {_section("Market summary", rd.get("market_summary"))}
-    {_section("Portfolio assessment", rd.get("portfolio_assessment"))}
-    {_section("Risk assessment", rd.get("risk_assessment"))}
-    {_section("Cash thesis", entry.get("cash_thesis") or rd.get("cash_thesis"))}
+    {_render_commentary(entry, rd)}
+    {_render_sources(entry)}
     <div class="pager">
       <span>{f'<a href="{prev["date"]}.html">← {_fmt_date(prev["date"])}</a>' if prev else ""}</span>
       <span>{f'<a href="{next_["date"]}.html">{_fmt_date(next_["date"])} →</a>' if next_ else ""}</span>
