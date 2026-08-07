@@ -15,6 +15,84 @@ Entry template:
 
 ---
 
+## 2026-08-06 · A late cron and a shared concurrency group cost the fund a whole trading day
+
+- **Symptom.** No decisions, no journal entry, no site update, and no tweets for
+  2026-08-06 — a normal Thursday. `data/portfolio_history.csv` jumps straight from
+  08-05 to 08-07, and `run_history.jsonl` has no 08-06 rows at all. The fund simply
+  wasn't there that day. Nothing reported an error, because from the pipeline's point
+  of view nothing ever started.
+- **Root cause.** Two causes compounding. GitHub's scheduler, which had been running
+  59–101 minutes late on every observed run, fired the 14:40 UTC morning slot at 16:23
+  (~103 min) and the 17:50 slot at **22:36 (~4h45m)** — far outside the delay the cron
+  times were designed around. Meanwhile *both* daily slots sat in the same
+  `concurrency: group: pages` as `deploy-pages.yml`. A concurrency group holds at most
+  one in-progress plus one pending run, and a third arrival evicts the **pending** one.
+  The badly delayed morning run was still queued when the afternoon run entered the
+  group, so it was cancelled outright. The afternoon run then landed at 22:36, well
+  after the close, and `market_hours_guard.py` correctly skipped it. Both slots gone.
+- **Fix.** [#92](https://github.com/pradnyaw25/ai-portfolio-manager/pull/92) — key the
+  group per cron slot (`daily-run-${{ github.event.schedule || github.run_id }}`) so
+  each slot stays serialized against itself but the two can no longer evict each other;
+  `workflow_dispatch` falls back to a per-run group. That permits the slots to overlap
+  when the scheduler is >3h late, so the push step now rebases and retries up to 3
+  times — the data files are append-mostly and each run's writes are idempotent.
+  Tests pin the group and the rebase.
+- **Detection gap.** Unusually, the platform *did* flag this one — the run shows
+  `conclusion=failure` (job `cancelled`) and a red X in the Actions tab. Nobody was
+  looking. There is no notification, no alert, and no check that the fund actually
+  traded today; the Actions tab is only ever opened when something else prompts it. The
+  application-side record is worse: `run_history.jsonl` only records runs that *start*,
+  so a run cancelled before its first step leaves **no row at all** — the audit trail
+  structurally cannot record its own absence. And every dashboard reads forward from
+  whatever rows exist, so a missing day renders as a slightly shorter chart rather than
+  a hole. Found 1 day later by scanning `portfolio_history.csv` for skipped weekdays
+  during an unrelated review.
+- **Article angle.** *The audit trail can't record the run that never happened.* Every
+  observability surface here was built to explain what the fund **did**; none could
+  represent a day it did nothing, so total absence was the one failure mode that looked
+  like clean data. The deeper lesson is about inherited platform semantics: nobody
+  chooses "evict the pending run" — it's a default buried in a concurrency group copied
+  from the Pages deploy example, and it silently converts *lateness* into *loss*.
+  Also a nice illustration of a fix that makes a failure non-fatal without fixing the
+  underlying fragility: the scheduler is still 1–5h late, we just no longer die of it.
+
+## 2026-08-05 · The fund timed out mid-decision and CI reported success
+
+- **Symptom.** The 2026-08-05 morning run reached `decide_trades` and died with
+  `Request timed out.` No trades were considered, no decision was journalled — and
+  GitHub Actions marked the job **success**, committed, and deployed. The site published
+  a normal-looking day on top of a run that never made a decision. The only evidence
+  was a single `"status": "failed"` row in `data/run_history.jsonl` that no surface reads
+  and no alert watches. It sat undiscovered for 2 days.
+- **Root cause.** Two independent swallows in sequence. The LangGraph cycle catches a
+  failed node, records it on the run, and returns normally so the run still journals and
+  the site still publishes — deliberate, and correct. But `scripts/daily_run.py` then
+  called `run_daily_cycle_graph(...)` and **discarded the returned run object**, falling
+  off the end of `__main__` and exiting 0. The failure had been faithfully recorded and
+  then thrown away one stack frame later.
+- **Fix.** [#92](https://github.com/pradnyaw25/ai-portfolio-manager/pull/92) —
+  `daily_run.py` returns 1 when the run records errors (logic moved into a `main()` so
+  it's reachable from tests rather than stranded under `if __name__ == "__main__"`). The
+  workflow runs it with `continue-on-error: true` so the journal and site still publish,
+  then fails the job in a gate step placed *after* the deploy — failing immediately would
+  have traded a silent failure for a lost audit trail, which is the same bug wearing a
+  different hat.
+- **Detection gap.** Nothing tested the script's exit code; all coverage stopped at the
+  graph's return value, so the last four lines of the entry point — the part that decides
+  whether the outside world hears about a failure — were untested. And `run_history.jsonl`
+  had a `status` field that no dashboard, alert, or check ever read: recording a failure
+  is not the same as reporting one. Notably the 60s `LLM_REQUEST_TIMEOUT` from the
+  2026-07-08 incident *worked exactly as designed* here — it failed fast instead of
+  hanging — and the fast failure was then rendered invisible by the exit code.
+- **Article angle.** *Every layer handled the error correctly and the system still lied.*
+  The graph caught it, the store recorded it, the log printed it — and the process exited
+  0, so the only signal that crosses the boundary out of the process said "fine." Error
+  handling is only as good as the narrowest channel it has to survive, and for a CI job
+  that channel is one byte. Worth pairing with the observation that the previous
+  incident's fix (fail fast on a stalled LLM call) is what *created* the failure this one
+  hid — hardening one layer moves the failure to the next unguarded one.
+
 ## 2026-07-09 · The risk engine logged 22 "rejected trades" that were never trades
 
 - **Symptom.** Today's decision journal showed **22 rejected trades** — every one a
