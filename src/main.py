@@ -315,6 +315,7 @@ def journal_run(
     memory_result,
     grounding=None,
     research_brief=None,
+    research=None,
     run_id,
 ):
     citation_review = review_memory_citations(
@@ -337,8 +338,54 @@ def journal_run(
         memory_citation_warnings=citation_review.warnings,
         grounding=grounding,
         research_brief=research_brief,
+        news_sources=collect_news_sources(research or {}),
         run_id=run_id,
     )
+
+
+# Cap per run: enough to cite a day's reasoning without bloating decisions.jsonl,
+# which the site serves in full and which is already the largest file in data/.
+MAX_JOURNALLED_SOURCES = 24
+
+
+def collect_news_sources(research: dict) -> list[dict]:
+    """The articles that actually fed this run, flattened for the decision journal.
+
+    The researcher fetches news normalized to ``{title, link, published, source}``
+    (``src/data_sources/news.py``) and puts it in the prompt, but nothing persisted it
+    — so every decision page cited zero sources while the reasoning behind it was
+    demonstrably news-driven. Journalling them here makes the pages auditable.
+
+    Market-wide news first, then per-symbol, deduped by link.
+    """
+    out: list[dict] = []
+    seen: set[str] = set()
+
+    def add(item, symbol=None):
+        if not isinstance(item, dict):
+            return
+        link = str(item.get("link") or "").strip()
+        title = str(item.get("title") or "").strip()
+        # A source with no link can't be cited, and one with no title can't be read.
+        if not link or not title or link in seen or len(out) >= MAX_JOURNALLED_SOURCES:
+            return
+        seen.add(link)
+        out.append(
+            {
+                "symbol": symbol,
+                "title": title,
+                "link": link,
+                "source": str(item.get("source") or "").strip() or None,
+                "published": str(item.get("published") or "").strip() or None,
+            }
+        )
+
+    for item in research.get("market_news") or []:
+        add(item)
+    for symbol, items in (research.get("symbol_news") or {}).items():
+        for item in items or []:
+            add(item, symbol=str(symbol).upper())
+    return out
 
 
 def save_portfolio_and_performance(portfolio_store, snapshot, market_data):

@@ -441,6 +441,7 @@ def journal_run_node(state: DailyGraphState) -> DailyGraphState:
         memory_result=run.memory_result,
         grounding=run.grounding,
         research_brief=run.research_brief,
+        research=run.research,
         run_id=run.run_id,
     )
     return {"run": run}
