@@ -1,5 +1,5 @@
 {
-  "ingested_at": "2026-08-01T14:42:41.668249Z",
+  "ingested_at": "2026-08-08T13:59:51.923490Z",
   "ingestion": {
     "status": "ok",
     "created": 2897,
@@ -187,8 +187,8 @@
     {
       "symbol": "AMD",
       "form": "10-Q",
-      "accession_number": "0000002488-26-000076",
-      "filing_date": "2026-05-06",
+      "accession_number": "0000002488-26-000123",
+      "filing_date": "2026-08-05",
       "sections": [
         "item_2",
         "item_3"
@@ -307,8 +307,8 @@
     {
       "symbol": "SNDK",
       "form": "8-K",
-      "accession_number": "0001628280-26-028879",
-      "filing_date": "2026-04-30",
+      "accession_number": "0001628280-26-053346",
+      "filing_date": "2026-08-05",
       "records": 30
     },
     {
@@ -529,8 +529,8 @@
     {
       "symbol": "JPM",
       "form": "10-Q",
-      "accession_number": "0001628280-26-029344",
-      "filing_date": "2026-05-01",
+      "accession_number": "0001628280-26-054343",
+      "filing_date": "2026-08-06",
       "sections": [
         "item_2",
         "item_3"
@@ -663,8 +663,8 @@
     {
       "symbol": "PG",
       "form": "10-K",
-      "accession_number": "0000080424-25-000076",
-      "filing_date": "2025-08-04",
+      "accession_number": "0000080424-26-000103",
+      "filing_date": "2026-08-04",
       "sections": [
         "item_1",
         "item_1a",
@@ -724,8 +724,8 @@
     {
       "symbol": "XOM",
       "form": "10-Q",
-      "accession_number": "0000034088-26-000067",
-      "filing_date": "2026-05-04",
+      "accession_number": "0000034088-26-000093",
+      "filing_date": "2026-08-03",
       "sections": [
         "item_2",
         "item_3"
@@ -748,8 +748,8 @@
     {
       "symbol": "CAT",
       "form": "10-Q",
-      "accession_number": "0000018230-26-000021",
-      "filing_date": "2026-05-06",
+      "accession_number": "0000018230-26-000046",
+      "filing_date": "2026-08-05",
       "sections": [
         "item_2",
         "item_3"
@@ -759,8 +759,8 @@
     {
       "symbol": "CAT",
       "form": "8-K",
-      "accession_number": "0000018230-26-000017",
-      "filing_date": "2026-04-30",
+      "accession_number": "0000018230-26-000040",
+      "filing_date": "2026-08-04",
       "records": 30
     }
   ],
