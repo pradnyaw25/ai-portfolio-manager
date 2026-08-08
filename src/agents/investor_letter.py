@@ -48,6 +48,30 @@ def _window_return(rows: list[dict], value_key: str) -> tuple[float | None, floa
     return round(start, 2), round(end, 2), ret
 
 
+def _week_return(market_data: Any, symbol: str) -> float | None:
+    """This holding's return over the letter's window, or None if unavailable.
+
+    Defensive by design: the letter must still publish when a price fetch fails. A
+    None here degrades the ranking to since-entry, it does not block the letter.
+    """
+    if market_data is None:
+        return None
+    try:
+        # Calendar days, so ask for more than the 7-day window to clear the weekend
+        # and still land at least two trading sessions.
+        history = market_data.get_history(symbol, days=WINDOW_DAYS + 4)
+        if history is None or history.empty or len(history) < 2:
+            return None
+        start = float(history["Close"].iloc[0])
+        end = float(history["Close"].iloc[-1])
+        if start <= 0:
+            return None
+        return round(end / start - 1, 4)
+    except Exception as exc:  # noqa: BLE001 — a bad symbol must not kill the letter
+        logger.warning("Weekly return unavailable for %s: %s", symbol, exc)
+        return None
+
+
 def gather_letter_facts(
     week_end: str,
     *,
@@ -55,8 +79,14 @@ def gather_letter_facts(
     trade_store: Any = None,
     performance_rows: list[dict] | None = None,
     benchmark_rows: list[dict] | None = None,
+    market_data: Any = None,
 ) -> dict:
-    """Build the deterministic fact base the letter must be grounded in."""
+    """Build the deterministic fact base the letter must be grounded in.
+
+    ``market_data`` supplies each holding's return *over the letter's week*. Without
+    it the per-position numbers are since-entry only, which is why they must never be
+    presented as weekly moves — see ``return_since_entry_pct`` below.
+    """
     week_start = (date.fromisoformat(week_end) - timedelta(days=WINDOW_DAYS - 1)).isoformat()
 
     def _in_window(day: str) -> bool:
@@ -77,13 +107,36 @@ def gather_letter_facts(
             (
                 {
                     "symbol": p.symbol,
-                    "return_pct": round(p.return_pct, 4),
+                    # Named, not bare "return_pct". This field is cumulative P&L since
+                    # the position was opened — it is NOT a weekly move. The letter is
+                    # a weekly letter, and under the old bare name the writer read it
+                    # as one: the 2026-08-02 letter said "the fund rose 0.30% this
+                    # week" and then "MA led with a 17.77% gain", which a reader can
+                    # only take as a weekly figure. The grounding judge passed it
+                    # because the number was faithfully grounded — in a mislabelled
+                    # fact. Self-describing keys are the fix.
+                    "return_since_entry_pct": round(p.return_pct, 4),
+                    "week_return_pct": _week_return(market_data, p.symbol),
                     "market_value": round(p.market_value, 2),
                 }
                 for p in snapshot.positions
             ),
-            key=lambda x: x["return_pct"],
+            key=lambda x: (
+                x["week_return_pct"]
+                if x["week_return_pct"] is not None
+                else x["return_since_entry_pct"]
+            ),
             reverse=True,
+        )
+
+    # Rank on the week when we have it — this is a weekly letter — and fall back to
+    # since-entry only when the price fetch failed. Either way both numbers travel
+    # with the position, so the writer can never mistake one for the other.
+    def _rank(p: dict) -> float | None:
+        return (
+            p["week_return_pct"]
+            if p["week_return_pct"] is not None
+            else p["return_since_entry_pct"]
         )
 
     trades = [
@@ -107,8 +160,8 @@ def gather_letter_facts(
         "alpha": round(return_pct - benchmark_return_pct, 4)
         if return_pct is not None and benchmark_return_pct is not None
         else None,
-        "winners": [p for p in positions if p["return_pct"] > 0][:3],
-        "losers": [p for p in positions if p["return_pct"] < 0][-3:],
+        "winners": [p for p in positions if (_rank(p) or 0) > 0][:3],
+        "losers": [p for p in positions if (_rank(p) or 0) < 0][-3:],
         "positions": positions,
         "trades": trades,
     }
@@ -122,6 +175,10 @@ def has_letter_material(facts: dict) -> bool:
 # the grounding judge — as percent strings ("2.31%").
 _PERCENT_KEYS = ("return_pct", "benchmark_return_pct", "alpha")
 _POSITION_LISTS = ("winners", "losers", "positions")
+# Ratio fields inside each position dict. Both must be formatted, or the writer sees
+# one number as "1.20%" and its neighbour as 0.1777 and the grounding judge sees a
+# unit mismatch — the exact failure that blocked every letter before 464b801.
+_POSITION_PERCENT_KEYS = ("week_return_pct", "return_since_entry_pct")
 
 
 def _as_percent(value: Any) -> Any:
@@ -148,7 +205,8 @@ def format_facts_for_prompt(facts: dict) -> dict:
         display[key] = _as_percent(display.get(key))
     for key in _POSITION_LISTS:
         display[key] = [
-            {**p, "return_pct": _as_percent(p.get("return_pct"))} for p in (display.get(key) or [])
+            {**p, **{k: _as_percent(p.get(k)) for k in _POSITION_PERCENT_KEYS if k in p}}
+            for p in (display.get(key) or [])
         ]
     return display
 
@@ -161,6 +219,15 @@ class InvestorLetterAgent:
             "below — every number you state must come from them; do not invent prices, "
             "returns, or events. Percentages are already formatted (e.g. \"2.31%\"); quote "
             "them as given, do not convert or recompute them.\n\n"
+            "Each position carries TWO different returns and they must not be "
+            "confused:\n"
+            "  * week_return_pct — how the name moved THIS WEEK. Use this whenever you "
+            "describe the week's winners, losers or moves.\n"
+            "  * return_since_entry_pct — cumulative P&L since the position was first "
+            "opened, often many weeks ago. NEVER describe it as a weekly move. If you "
+            "mention it, say explicitly that it is since the position was opened.\n"
+            "If week_return_pct is null the weekly move is unknown for that name — say "
+            "nothing about how it moved this week.\n\n"
             f"WEEK FACTS:\n{json.dumps(facts, default=str)}\n\n"
             'Return JSON: {"headline": "...", "performance": "...", '
             '"winners": ["..."], "losers": ["..."], "portfolio_changes": "...", '
@@ -209,6 +276,7 @@ def generate_weekly_letter(
     trade_store: Any = None,
     performance_rows: list[dict] | None = None,
     benchmark_rows: list[dict] | None = None,
+    market_data: Any = None,
     letter_store: InvestorLetterStore | None = None,
     tweet_publisher: Any = None,
     post_letter: bool = POST_INVESTOR_LETTER,
@@ -224,6 +292,10 @@ def generate_weekly_letter(
         trade_store=trade_store,
         performance_rows=performance_rows,
         benchmark_rows=benchmark_rows,
+        # NOT defaulted to a live client here: this function is exercised by unit
+        # tests, and constructing one would make them hit yfinance for real. The
+        # weekly entry point (scripts/weekly_letter.py) injects the live client.
+        market_data=market_data,
     )
     if not has_letter_material(facts):
         logger.info("No portfolio activity for week ending %s — skipping letter", week_end)

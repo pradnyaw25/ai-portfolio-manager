@@ -7,6 +7,7 @@ import pytest
 
 from src.agents.investor_letter import (
     _PERCENT_KEYS,
+    _POSITION_PERCENT_KEYS,
     format_facts_for_prompt,
     gather_letter_facts,
     generate_weekly_letter,
@@ -55,6 +56,24 @@ class FakeStore:
         return self._rows
 
 
+class FakeMarketData:
+    """Weekly returns keyed by symbol, so tests exercise the real weekly path.
+
+    Returns a two-row frame; ``_week_return`` reads Close[0] -> Close[-1].
+    """
+
+    def __init__(self, week_returns=None):
+        self.week_returns = week_returns or {}
+
+    def get_history(self, symbol, days=7):
+        import pandas as pd
+
+        if symbol not in self.week_returns:
+            return pd.DataFrame()
+        start = 100.0
+        return pd.DataFrame({"Close": [start, start * (1 + self.week_returns[symbol])]})
+
+
 class FakeAgent:
     def __init__(self, letter):
         self.letter = letter
@@ -74,6 +93,9 @@ def _facts(**over):
         ]),
         performance_rows=PERF,
         benchmark_rows=BENCH,
+        # NVDA +4% and AAPL +1% this week; MSFT -3%. Deliberately different from the
+        # since-entry numbers so a test can tell which one the code used.
+        market_data=FakeMarketData({"NVDA": 0.04, "AAPL": 0.01, "MSFT": -0.03}),
     )
     kwargs.update(over)
     return gather_letter_facts(WEEK_END, **kwargs)
@@ -219,11 +241,11 @@ def test_every_numeric_fact_is_classified_as_ratio_or_non_ratio():
 
     So: walk a real fact base and require every number to be *declared*. A new numeric
     fact fails here until someone decides whether it is a ratio (add to ``_PERCENT_KEYS``
-    / a position ``return_pct``) or a dollar/count (add to ``NON_RATIO`` below).
+    / ``_POSITION_PERCENT_KEYS``) or a dollar/count (add to ``NON_RATIO`` below).
     """
     # Dollar amounts and share counts — numbers the judge should read as-is.
     NON_RATIO = {"start_value", "end_value", "market_value", "shares"}
-    ratio_keys = set(_PERCENT_KEYS) | {"return_pct"}  # return_pct is the per-position ratio
+    ratio_keys = set(_PERCENT_KEYS) | set(_POSITION_PERCENT_KEYS)
 
     unclassified: list[str] = []
 
@@ -256,8 +278,8 @@ def test_format_facts_renders_ratios_as_percent_strings():
     assert display["return_pct"] == "3.00%"
     assert display["benchmark_return_pct"] == "2.00%"
     assert display["alpha"] == "1.00%"
-    assert display["winners"][0]["return_pct"] == "50.00%"
-    assert display["losers"][0]["return_pct"] == "-20.00%"
+    assert display["winners"][0]["return_since_entry_pct"] == "50.00%"
+    assert display["losers"][0]["return_since_entry_pct"] == "-20.00%"
     # Non-ratio fields are untouched — a price stays a number.
     assert display["end_value"] == 1030000.0
     assert display["winners"][0]["market_value"] == 15000.0
@@ -271,7 +293,7 @@ def test_format_facts_passes_through_none_and_leaves_source_untouched():
     facts = _facts()
     format_facts_for_prompt(facts)
     assert facts["return_pct"] == 0.03
-    assert facts["winners"][0]["return_pct"] == 0.5
+    assert facts["winners"][0]["return_since_entry_pct"] == 0.5
 
 
 def test_agent_and_judge_receive_the_same_percent_formatted_facts(tmp_path):
@@ -292,7 +314,7 @@ def test_agent_and_judge_receive_the_same_percent_formatted_facts(tmp_path):
 
     assert seen["agent"]["return_pct"] == "3.00%"
     assert seen["judge"] == seen["agent"]  # identical view, no unit gap
-    assert seen["judge_portfolio"][0]["return_pct"] == "50.00%"
+    assert seen["judge_portfolio"][0]["return_since_entry_pct"] == "50.00%"
 
 
 def test_stored_facts_remain_canonical_decimals(tmp_path):
@@ -361,3 +383,67 @@ def test_live_judge_still_blocks_a_fabricated_price(tmp_path):
     # And nothing leaked out to the dashboard or the journal.
     assert not (tmp_path / "public" / "investor_letter.md").exists()
     assert InvestorLetterStore(path=tmp_path / "letters.jsonl").load() == []
+
+
+# --- weekly vs since-entry returns ------------------------------------------
+
+
+def test_winners_are_ranked_by_the_week_not_by_lifetime_pnl():
+    """The 2026-08-02 letter said "the fund rose 0.30% this week" and then "MA led
+    with a 17.77% gain". MA had not moved 17.77% that week — that was its cumulative
+    P&L since entry, surfaced under a bare ``return_pct`` the writer read as weekly.
+
+    Here MSFT is the best position since entry but the worst this week. A weekly
+    letter's winners must be the week's winners.
+    """
+    facts = _facts(
+        portfolio_store=FakeStore(
+            snapshot=PortfolioSnapshot(
+                date=date(2026, 6, 28),
+                cash=100_000,
+                positions=[
+                    Position("MSFT", 10, 100.0, 200.0),  # +100% since entry
+                    Position("NVDA", 10, 100.0, 105.0),  # +5% since entry
+                ],
+            )
+        ),
+        market_data=FakeMarketData({"MSFT": -0.02, "NVDA": 0.06}),
+    )
+
+    assert [w["symbol"] for w in facts["winners"]] == ["NVDA"]
+    assert [x["symbol"] for x in facts["losers"]] == ["MSFT"]
+
+
+def test_each_position_carries_both_returns_distinctly_named():
+    """The writer must never see a bare 'return_pct' it can read either way."""
+    facts = _facts()
+    nvda = next(p for p in facts["positions"] if p["symbol"] == "NVDA")
+
+    assert nvda["week_return_pct"] == 0.04  # this week
+    assert nvda["return_since_entry_pct"] == 0.5  # since the position opened
+    assert "return_pct" not in nvda
+
+
+def test_both_position_returns_reach_the_prompt_as_percent_strings():
+    """A ratio left as a decimal next to a formatted one is the units mismatch that
+    blocked every letter before 464b801 — the judge reads it as a fabrication."""
+    display = format_facts_for_prompt(_facts())
+    nvda = next(p for p in display["positions"] if p["symbol"] == "NVDA")
+
+    assert nvda["week_return_pct"] == "4.00%"
+    assert nvda["return_since_entry_pct"] == "50.00%"
+
+
+def test_a_failed_price_fetch_degrades_instead_of_blocking_the_letter():
+    """The letter must still publish when the weekly move is unknown — it just can't
+    claim one. Ranking falls back to since-entry."""
+    facts = _facts(market_data=FakeMarketData({}))  # every lookup returns empty
+
+    assert all(p["week_return_pct"] is None for p in facts["positions"])
+    assert [w["symbol"] for w in facts["winners"]] == ["NVDA", "AAPL"]  # since-entry order
+
+
+def test_no_market_data_means_no_weekly_claim():
+    facts = _facts(market_data=None)
+
+    assert all(p["week_return_pct"] is None for p in facts["positions"])
