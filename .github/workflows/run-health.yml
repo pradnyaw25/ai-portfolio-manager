@@ -1,0 +1,52 @@
+name: Daily Run Health Check
+
+# Independent watchdog for the daily cycle.
+#
+# This is deliberately a SEPARATE workflow, not a step in daily-run.yml. A run that is
+# cancelled before its first step writes no run_history row at all — the audit trail
+# structurally cannot record its own absence — so the daily run can never detect the
+# case where it didn't happen. That was the 2026-08-06 failure: a late cron left the
+# morning run queued, the afternoon run evicted it from the shared concurrency group,
+# and the fund lost a whole trading day with nothing reporting it.
+#
+# A failed job here emails the repo owner, which is the actual notification. #92 made
+# failures visible in the Actions tab; this is what makes them noticed.
+
+on:
+  schedule:
+    # 22:15 UTC on weekdays. The afternoon slot fires at 17:50 UTC and has been seen
+    # up to ~4h45m late (2026-08-06), so this leaves room for a very late run to still
+    # finish and record itself before we judge the day. Later than this and we would
+    # cross into the next UTC day during EDT.
+    - cron: "15 22 * * 1-5"
+
+  workflow_dispatch:
+    inputs:
+      date:
+        description: "Trading day to check (YYYY-MM-DD). Defaults to today, market time."
+        required: false
+
+permissions:
+  contents: read
+
+# Never cancel a health check in favour of a newer one, and never let one evict
+# another — the failure mode this workflow exists to catch was exactly that.
+concurrency:
+  group: run-health-${{ github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+
+      # The check reads a committed data file and needs no secrets, no network and no
+      # LLM — keep it that way, so the watchdog can't fail for reasons of its own.
+      - name: Check the fund ran and succeeded today
+        run: |
+          python scripts/check_run_health.py ${{ inputs.date && format('--date {0}', inputs.date) || '' }}
