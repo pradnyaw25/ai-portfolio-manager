@@ -183,6 +183,13 @@ All four shipped 2026-07-09 (PRs #69, #70, #71). Kept as a record.
 
 ### Recently Completed
 
+- [x] **GitHub repo metadata** *(2026-08-07)* — homepage set to `https://glasshousefund.com`
+  (verified HTTP 200); description rewritten to lead with the scoring and MCP hooks rather than
+  "AI-powered portfolio management system"; 12 topics added (`llm-agents`, `mcp`,
+  `model-context-protocol`, `evals`, `calibration`, `ai-engineering`, `langgraph`, `llm`,
+  `paper-trading`, `agentic-ai`, `qdrant`, `python`). Live now — the repo is public. Reword with
+  `gh repo edit --description "…"` if the launch framing shifts.
+
 - [x] **Wait for resolved predictions before launching** *(gate cleared 2026-08-07)* — the target was
   ~50–100 resolved. **As of 2026-08-07: 244 predictions, 177 scored, 67 open; 103 correct = 58.2%
   hit rate**, scored over 2026-07-13 → 2026-08-07. (The old *41 resolved / 109 total* figure was
@@ -238,10 +245,6 @@ All four shipped 2026-07-09 (PRs #69, #70, #71). Kept as a record.
   static pages get none, so the file doesn't churn daily.
 
 ### Medium Priority
-- [ ] **GitHub repo metadata** *(owner decision — publishes immediately)* — Repo has `topics: null`,
-  empty `homepageUrl`, and a stale generic description that never names Glasshouse Fund. Set the
-  homepage to `https://glasshousefund.com`, rewrite the description to lead with evals + MCP, and
-  add topics (`llm-agents`, `mcp`, `evals`, `ai-engineering`, `paper-trading`, …).
 - [ ] **Reposition the launch around calibration** — Do *not* launch as "an AI portfolio manager":
   it's a crowded, low-credibility genre whose implicit claim ("I beat the market") nobody believes.
   Lead instead with *"I made an LLM make N stock predictions and then actually scored them"* —
