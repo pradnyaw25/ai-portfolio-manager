@@ -133,7 +133,15 @@ All configuration is managed via environment variables. See `.env.example` for r
 
 ## Automation
 
-GitHub Actions runs the portfolio cycle hourly on weekdays during a broad UTC window. A market-hours guard keeps scheduled runs inside regular US market hours (9:30am-4:00pm America/New_York). Manual workflow dispatches always run.
+GitHub Actions runs the portfolio cycle twice each weekday (`.github/workflows/daily-run.yml`, at 14:40 and 17:50 UTC). Those times budget for GitHub's scheduler, which on this repo has started runs 59–101 minutes late as a rule and once by ~4h45m; a market-hours guard aborts a run that lands outside regular US market hours (9:30am–4:00pm America/New_York), so the cron times are chosen to stay in-hours even when late. Manual workflow dispatches always run.
+
+Each cron slot has its own concurrency group. They previously shared one, and on 2026-08-06 a late morning run was still queued when the afternoon run arrived and evicted it — the fund lost a whole trading day.
+
+**Run health check** (`.github/workflows/run-health.yml`) — a separate watchdog at 22:15 UTC on weekdays that verifies the fund actually ran and succeeded that trading day, and fails (emailing the owner) if not. It is deliberately independent of the daily run: a run cancelled before its first step writes no `run_history` row, so the pipeline cannot detect its own absence. It stays quiet on weekends, on the market holidays listed in `scripts/check_run_health.py`, and when a failed run was recovered by the day's second slot. Run it by hand for any date:
+
+```bash
+python scripts/check_run_health.py --date 2026-08-06
+```
 
 ### Qdrant Memory Store
 
