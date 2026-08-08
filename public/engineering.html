@@ -199,259 +199,338 @@
       </div>
     </div>
 
-    <header class="page-header">
-      <div class="eyebrow">Engineering &amp; Retrospective</div>
+        <header class="page-header">
+      <div class="eyebrow">Engineering</div>
       <h1>How the fund is built</h1>
-      <p class="subtitle">An explainable, LLM-run paper hedge fund — in public. A LangGraph-orchestrated daily cycle sits on a hardened LLM gateway, with idempotent stores as the system of record, Qdrant as long-term memory, evals in CI, and every decision traced, cited, and scored.</p>
+      <p class="subtitle">An LLM runs a simulated $1M book in public. A 22-node LangGraph cycle sits on one hardened LLM gateway; deterministic guardrails sit outside the model; append-only files are the system of record; and every directional call the fund makes is scored against what actually happened.</p>
     </header>
 
     <section>
       <div class="card">
-        <p class="lede" style="margin:0;">The fund analyzes markets, debates, trades a simulated <strong>$1M</strong> book, and justifies itself — every run. Deterministic guardrails (position sizing, turnover, sector limits, stop-loss/take-profit) sit <strong>outside</strong> the model; the LLM must argue its case and respond to the bear thesis before anything executes. A LangGraph cycle sits on a hardened LLM gateway, with idempotent stores as the system of record, Qdrant as long-term memory, and evals in CI. The differentiator isn't returns — it's <strong>radical transparency</strong>.</p>
+        <p class="lede" style="margin:0;">The interesting engineering here is not the trading. It is everything built to make an unreliable component — a language model — produce an auditable record: a gateway that validates and retries, guardrails the model cannot argue past, a grounding gate that blocks unsupported claims, and a scoreboard that grades its predictions in public whether they were right or not.</p>
       </div>
     </section>
 
-    <!-- ARCHITECTURE DIAGRAM -->
+    <section>
+      <div class="section-head">
+        <h2>One daily cycle</h2>
+        <p>Twice each weekday the graph runs 22 nodes end to end. Two edges matter more than the happy path: the branch that skips execution on a no-trade day, and the fact that <em>every</em> node is wrapped, so a failure anywhere still produces a journalled run rather than silence.</p>
+      </div>
+      <figure class="diagram" style="margin:0;">
+        <div class="svgwrap">
+          <svg viewBox="0 0 1120 330" style="width:100%;min-width:900px" role="img" aria-label="The daily cycle runs six phases left to right; a branch skips execution when no trades are approved, and any node that raises routes to a failure finalizer that still journals the run.">
+            <defs>
+              <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M0 0 L10 5 L0 10 z" fill="var(--muted-strong)"/>
+              </marker>
+              <marker id="arf" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M0 0 L10 5 L0 10 z" fill="var(--negative)"/>
+              </marker>
+              <marker id="ara" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M0 0 L10 5 L0 10 z" fill="var(--accent)"/>
+              </marker>
+            </defs>
+
+            <rect class="box" x="20" y="70" width="160" height="68" rx="8"/>
+            <text class="lbl" x="100" y="98" text-anchor="middle">Contextualize</text>
+            <text class="sub" x="100" y="116" text-anchor="middle">mark-to-market</text>
+            <text class="sub" x="100" y="130" text-anchor="middle">research · memory</text>
+
+            <rect class="box" x="200" y="70" width="160" height="68" rx="8"/>
+            <text class="lbl" x="280" y="98" text-anchor="middle">Decide</text>
+            <text class="sub" x="280" y="116" text-anchor="middle">bull · bear · risk</text>
+            <text class="sub" x="280" y="130" text-anchor="middle">→ PM synthesis</text>
+
+            <rect class="box accent" x="380" y="70" width="160" height="68" rx="8"/>
+            <text class="lbl on-accent" x="460" y="98" text-anchor="middle">Ground</text>
+            <text class="sub" x="460" y="116" text-anchor="middle">claims checked</text>
+            <text class="sub" x="460" y="130" text-anchor="middle">against the facts</text>
+
+            <rect class="box risk" x="560" y="70" width="160" height="68" rx="8"/>
+            <text class="lbl on-risk" x="640" y="98" text-anchor="middle">Guardrails</text>
+            <text class="sub" x="640" y="116" text-anchor="middle">risk review</text>
+            <text class="sub" x="640" y="130" text-anchor="middle">rebalance check</text>
+
+            <rect class="box exec" x="740" y="70" width="160" height="68" rx="8"/>
+            <text class="lbl on-exec" x="820" y="98" text-anchor="middle">Execute</text>
+            <text class="sub" x="820" y="116" text-anchor="middle">approval gate</text>
+            <text class="sub" x="820" y="130" text-anchor="middle">fills · mark P&amp;L</text>
+
+            <rect class="box" x="920" y="70" width="160" height="68" rx="8"/>
+            <text class="lbl" x="1000" y="98" text-anchor="middle">Record</text>
+            <text class="sub" x="1000" y="116" text-anchor="middle">journal · calls</text>
+            <text class="sub" x="1000" y="130" text-anchor="middle">site · X · memory</text>
+
+            <line class="edge" x1="180" y1="104" x2="198" y2="104" marker-end="url(#ar)"/>
+            <line class="edge" x1="360" y1="104" x2="378" y2="104" marker-end="url(#ar)"/>
+            <line class="edge" x1="540" y1="104" x2="558" y2="104" marker-end="url(#ar)"/>
+            <line class="edge" x1="720" y1="104" x2="738" y2="104" marker-end="url(#ar)"/>
+            <line class="edge" x1="900" y1="104" x2="918" y2="104" marker-end="url(#ar)"/>
+
+            <path class="edge dash" d="M640 70 C 720 14, 900 14, 985 68" stroke="var(--accent)" marker-end="url(#ara)"/>
+            <text class="elabel" x="800" y="26" text-anchor="middle" fill="var(--accent)">nothing approved → skip execution, still record the day's calls</text>
+
+            <line class="edge dash" x1="100" y1="138" x2="100" y2="206" stroke="var(--negative)"/>
+            <line class="edge dash" x1="280" y1="138" x2="280" y2="206" stroke="var(--negative)"/>
+            <line class="edge dash" x1="460" y1="138" x2="460" y2="206" stroke="var(--negative)"/>
+            <line class="edge dash" x1="640" y1="138" x2="640" y2="206" stroke="var(--negative)"/>
+            <line class="edge dash" x1="820" y1="138" x2="820" y2="206" stroke="var(--negative)"/>
+            <line class="edge dash" x1="1000" y1="138" x2="1000" y2="206" stroke="var(--negative)"/>
+            <line class="edge dash" x1="100" y1="206" x2="1000" y2="206" stroke="var(--negative)"/>
+            <text class="elabel" x="550" y="200" text-anchor="middle" fill="var(--negative)">any node raises</text>
+            <line class="edge" x1="550" y1="206" x2="550" y2="243" stroke="var(--negative)" marker-end="url(#arf)"/>
+
+            <rect class="box fail" x="380" y="245" width="360" height="56" rx="8"/>
+            <text class="lbl on-fail" x="560" y="270" text-anchor="middle">finalize_failure</text>
+            <text class="sub" x="560" y="290" text-anchor="middle">status recorded, partial run still journalled, exit code non-zero</text>
+          </svg>
+        </div>
+        <figcaption class="sub" style="margin-top:10px;">Every node is wrapped by <code>guarded_node</code>: a raise is caught, recorded against the run, and short-circuits the rest of the graph to the finalizer. The run still writes its journal — a failed day is a visible row, not a gap.</figcaption>
+      </figure>
+    </section>
+
+    <section>
+      <div class="section-head">
+        <h2>How a proposed trade survives</h2>
+        <p>The model can propose anything. What reaches the book is whatever survives a fixed sequence of deterministic checks — none of which the model can talk its way past, because none of them are written in English.</p>
+      </div>
+      <figure class="diagram" style="margin:0;">
+        <div class="svgwrap">
+          <svg viewBox="0 0 760 470" style="width:100%;min-width:620px" role="img" aria-label="Proposed trades pass through five deterministic gates — HOLD skip, confidence floor, turnover cap, sector cap and per-order position cap — with rejects and share-caps exiting to the right.">
+            <defs>
+              <marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M0 0 L10 5 L0 10 z" fill="var(--muted-strong)"/>
+              </marker>
+              <marker id="ar2r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M0 0 L10 5 L0 10 z" fill="var(--negative)"/>
+              </marker>
+            </defs>
+
+            <rect class="box accent" x="120" y="14" width="300" height="46" rx="8"/>
+            <text class="lbl on-accent" x="270" y="34" text-anchor="middle">PM proposes a decision per researched name</text>
+            <text class="sub" x="270" y="50" text-anchor="middle">BUY / SELL / HOLD, each with a stated confidence</text>
+
+            <rect class="box risk" x="120" y="78" width="300" height="46" rx="8"/>
+            <text class="lbl on-risk" x="270" y="97" text-anchor="middle">system exits injected</text>
+            <text class="sub" x="270" y="114" text-anchor="middle">stop-loss 15% · take-profit 40%</text>
+
+            <rect class="box" x="120" y="136" width="300" height="40" rx="8"/>
+            <text class="lbl" x="270" y="161" text-anchor="middle">HOLD → skipped, never a &ldquo;trade&rdquo;</text>
+
+            <rect class="box" x="120" y="194" width="300" height="40" rx="8"/>
+            <text class="lbl" x="270" y="219" text-anchor="middle">confidence ≥ 0.60</text>
+
+            <rect class="box" x="120" y="252" width="300" height="40" rx="8"/>
+            <text class="lbl" x="270" y="277" text-anchor="middle">daily turnover ≤ 20% of book</text>
+
+            <rect class="box" x="120" y="310" width="300" height="40" rx="8"/>
+            <text class="lbl" x="270" y="335" text-anchor="middle">sector exposure ≤ 40%</text>
+
+            <rect class="box" x="120" y="368" width="300" height="40" rx="8"/>
+            <text class="lbl" x="270" y="393" text-anchor="middle">order ≤ 10% of book</text>
+
+            <rect class="box exec" x="120" y="426" width="300" height="38" rx="8"/>
+            <text class="lbl on-exec" x="270" y="450" text-anchor="middle">filled at the last marked price</text>
+
+            <line class="edge" x1="270" y1="60" x2="270" y2="76" marker-end="url(#ar2)"/>
+            <line class="edge" x1="270" y1="124" x2="270" y2="134" marker-end="url(#ar2)"/>
+            <line class="edge" x1="270" y1="176" x2="270" y2="192" marker-end="url(#ar2)"/>
+            <line class="edge" x1="270" y1="234" x2="270" y2="250" marker-end="url(#ar2)"/>
+            <line class="edge" x1="270" y1="292" x2="270" y2="308" marker-end="url(#ar2)"/>
+            <line class="edge" x1="270" y1="350" x2="270" y2="366" marker-end="url(#ar2)"/>
+            <line class="edge" x1="270" y1="408" x2="270" y2="424" marker-end="url(#ar2)"/>
+
+            <line class="edge dash" x1="420" y1="214" x2="560" y2="214" stroke="var(--negative)" marker-end="url(#ar2r)"/>
+            <text class="elabel" x="490" y="208" text-anchor="middle" fill="var(--negative)">rejected</text>
+            <line class="edge dash" x1="420" y1="272" x2="560" y2="272" stroke="var(--negative)" marker-end="url(#ar2r)"/>
+            <text class="elabel" x="490" y="266" text-anchor="middle" fill="var(--negative)">capped or rejected</text>
+            <line class="edge dash" x1="420" y1="330" x2="560" y2="330" stroke="var(--negative)" marker-end="url(#ar2r)"/>
+            <text class="elabel" x="490" y="324" text-anchor="middle" fill="var(--negative)">capped or rejected</text>
+            <line class="edge dash" x1="420" y1="388" x2="560" y2="388" stroke="var(--negative)" marker-end="url(#ar2r)"/>
+            <text class="elabel" x="490" y="382" text-anchor="middle" fill="var(--negative)">shares reduced</text>
+
+            <rect class="box fail" x="560" y="188" width="180" height="220" rx="8"/>
+            <text class="lbl on-fail" x="650" y="286" text-anchor="middle">not executed</text>
+            <text class="sub" x="650" y="306" text-anchor="middle">every rejection is</text>
+            <text class="sub" x="650" y="320" text-anchor="middle">journalled with a reason</text>
+
+            <text class="sub" x="20" y="103">injected</text>
+            <text class="sub" x="20" y="161">no-ops</text>
+            <text class="sub" x="20" y="219">floor</text>
+            <text class="sub" x="20" y="277">budget</text>
+            <text class="sub" x="20" y="335">concentration</text>
+            <text class="sub" x="20" y="393">sizing</text>
+          </svg>
+        </div>
+        <figcaption class="sub" style="margin-top:10px;">The first four gates run in <code>RiskManagerAgent.review</code>; the last is enforced by the execution engine. Note it caps the <em>order</em>, not the resulting position — a holding already near the limit can still be topped up, which is a known gap rather than a design choice. Rebalance trades re-enter at the top of this same sequence; there is no bypass.</figcaption>
+      </figure>
+    </section>
+
     <section>
       <div class="section-head">
         <h2>System architecture</h2>
-        <p>One LLM gateway is the single choke point — routing, retries, tracing, and cost tracking are one-time costs, not per-agent ones.</p>
+        <p>One rule shapes the layout: every model call goes through a single gateway, and nothing that decides money is written in English.</p>
       </div>
-      <div class="diagram">
-        <div class="layer">
-          <div class="layer-label">Orchestrate</div>
-          <div class="nodes">
-            <div class="node accent">LangGraph daily cycle<small>conditional routing · SQLite resume · HITL approval</small></div>
-          </div>
+      <figure class="diagram" style="margin:0;">
+        <div class="svgwrap">
+          <svg viewBox="0 0 1080 430" style="width:100%;min-width:860px" role="img" aria-label="Layered architecture: schedulers drive the graph, which drives agents; all model calls funnel through one gateway to providers, while data sources, vector memory and append-only stores sit alongside, and the site, X and a read-only MCP server read from the stores.">
+            <defs>
+              <marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M0 0 L10 5 L0 10 z" fill="var(--muted-strong)"/>
+              </marker>
+            </defs>
+
+            <text class="sub" x="14" y="42">TRIGGERS</text>
+            <rect class="box" x="140" y="22" width="180" height="34" rx="7"/>
+            <text class="lbl" x="230" y="44" text-anchor="middle">cron ×2 weekdays</text>
+            <rect class="box" x="340" y="22" width="200" height="34" rx="7"/>
+            <text class="lbl" x="440" y="44" text-anchor="middle">health watchdog 22:15</text>
+
+            <text class="sub" x="14" y="112">ORCHESTRATION</text>
+            <rect class="box accent" x="140" y="86" width="400" height="48" rx="7"/>
+            <text class="lbl on-accent" x="340" y="107" text-anchor="middle">LangGraph — 22 guarded nodes</text>
+            <text class="sub" x="340" y="124" text-anchor="middle">resume by run_id · progress in SQLite</text>
+
+            <text class="sub" x="14" y="188">AGENTS</text>
+            <rect class="box" x="140" y="164" width="400" height="44" rx="7"/>
+            <text class="lbl" x="340" y="183" text-anchor="middle">analysts · portfolio manager · risk · rebalancer</text>
+            <text class="sub" x="340" y="199" text-anchor="middle">letter writer · tweet writer · grounding judge</text>
+
+            <text class="sub" x="14" y="264">GATEWAY</text>
+            <rect class="box accent" x="140" y="238" width="400" height="50" rx="7"/>
+            <text class="lbl on-accent" x="340" y="259" text-anchor="middle">one LLM gateway</text>
+            <text class="sub" x="340" y="277" text-anchor="middle">tiered routing · schema validation + repair · backoff · 60s timeout</text>
+
+            <text class="sub" x="14" y="338">PROVIDERS</text>
+            <rect class="box" x="140" y="316" width="190" height="38" rx="7"/>
+            <text class="lbl" x="235" y="340" text-anchor="middle">OpenAI (+ fallback slot)</text>
+            <rect class="box" x="350" y="316" width="190" height="38" rx="7"/>
+            <text class="lbl" x="445" y="340" text-anchor="middle">yfinance · news · SEC</text>
+
+            <line class="edge" x1="340" y1="56" x2="340" y2="84" marker-end="url(#ar3)"/>
+            <line class="edge" x1="340" y1="134" x2="340" y2="162" marker-end="url(#ar3)"/>
+            <line class="edge" x1="340" y1="208" x2="340" y2="236" marker-end="url(#ar3)"/>
+            <text class="elabel" x="352" y="227">every model call</text>
+            <line class="edge" x1="340" y1="288" x2="340" y2="314" marker-end="url(#ar3)"/>
+
+            <rect class="box" x="640" y="86" width="200" height="48" rx="7"/>
+            <text class="lbl" x="740" y="107" text-anchor="middle">Qdrant memory</text>
+            <text class="sub" x="740" y="124" text-anchor="middle">theses · lessons · trades · macro</text>
+            <line class="edge" x1="540" y1="110" x2="638" y2="110" marker-end="url(#ar3)" marker-start="url(#ar3)"/>
+            <text class="elabel" x="589" y="102" text-anchor="middle">read + write</text>
+
+            <rect class="box" x="640" y="180" width="200" height="76" rx="7"/>
+            <text class="lbl" x="740" y="204" text-anchor="middle">stores</text>
+            <text class="sub" x="740" y="222" text-anchor="middle">decisions · trades · predictions</text>
+            <text class="sub" x="740" y="236" text-anchor="middle">letters · history · run log</text>
+            <text class="sub" x="740" y="250" text-anchor="middle">append-only jsonl / csv / json</text>
+            <line class="edge" x1="540" y1="200" x2="638" y2="205" marker-end="url(#ar3)"/>
+            <text class="elabel" x="589" y="194" text-anchor="middle">append</text>
+
+            <rect class="box exec" x="890" y="86" width="170" height="44" rx="7"/>
+            <text class="lbl on-exec" x="975" y="106" text-anchor="middle">static site</text>
+            <text class="sub" x="975" y="122" text-anchor="middle">prerendered, on Pages</text>
+            <rect class="box exec" x="890" y="150" width="170" height="40" rx="7"/>
+            <text class="lbl on-exec" x="975" y="175" text-anchor="middle">X / @GlassHouseFund</text>
+            <rect class="box exec" x="890" y="210" width="170" height="46" rx="7"/>
+            <text class="lbl on-exec" x="975" y="230" text-anchor="middle">MCP server</text>
+            <text class="sub" x="975" y="246" text-anchor="middle">read-only, 6 tools</text>
+
+            <line class="edge" x1="840" y1="140" x2="888" y2="112" marker-end="url(#ar3)"/>
+            <line class="edge" x1="840" y1="200" x2="888" y2="172" marker-end="url(#ar3)"/>
+            <line class="edge" x1="840" y1="228" x2="888" y2="230" marker-end="url(#ar3)"/>
+            <text class="elabel" x="864" y="256" text-anchor="middle">reads</text>
+
+            <rect class="box" x="640" y="316" width="420" height="60" rx="7"/>
+            <text class="lbl" x="850" y="340" text-anchor="middle">evals in CI</text>
+            <text class="sub" x="850" y="358" text-anchor="middle">golden decision set · ablations (memory / debate) · chunking · grounding</text>
+            <text class="sub" x="850" y="371" text-anchor="middle">temperature 0, no network, runs on every pull request</text>
+          </svg>
         </div>
-        <div class="layer">
-          <div class="layer-label">Agents</div>
-          <div class="nodes">
-            <div class="node">Research<small>tool-calling</small></div>
-            <div class="node">Debate<small>bull · bear · risk</small></div>
-            <div class="node">PM synthesis<small>strong tier</small></div>
-            <div class="node">Risk engine<small>deterministic</small></div>
-            <div class="node">Reflection<small>weekly</small></div>
-            <div class="node">Investor letter<small>weekly</small></div>
-          </div>
-        </div>
-        <div class="layer">
-          <div class="layer-label">Gateway</div>
-          <div class="nodes">
-            <div class="node gate">LLM Gateway — Pydantic schemas · repair retry · backoff · tier routing + fallback · tool loop · cost/latency log</div>
-          </div>
-        </div>
-        <div class="layer">
-          <div class="layer-label">Providers</div>
-          <div class="nodes">
-            <div class="node">OpenAI</div>
-            <div class="node">Fallback route</div>
-            <div class="node">Langfuse<small>tracing (opt-in)</small></div>
-          </div>
-        </div>
-        <div class="layer">
-          <div class="layer-label">Data</div>
-          <div class="nodes">
-            <div class="node">SQLite<small>run-progress / resume</small></div>
-            <div class="node">CSV · JSONL<small>idempotent by run_id</small></div>
-            <div class="node">Qdrant<small>chunked RAG · sector metadata</small></div>
-            <div class="node">Durable run history</div>
-          </div>
-        </div>
-        <div class="layer">
-          <div class="layer-label">Assure</div>
-          <div class="nodes">
-            <div class="node">Decision evals in CI</div>
-            <div class="node">Grounding judge</div>
-            <div class="node">Calibration<small>Brier · curves</small></div>
-            <div class="node">Retrieval eval</div>
-          </div>
-        </div>
-        <div class="layer">
-          <div class="layer-label">Surface</div>
-          <div class="nodes">
-            <div class="node pos">GitHub Pages dashboard</div>
-            <div class="node pos">MCP server<small>7 read-only tools</small></div>
-            <div class="node pos">Weekly investor letter</div>
-          </div>
-        </div>
-      </div>
+        <figcaption class="sub" style="margin-top:10px;">The gateway is the highest-leverage piece: routing, retries, structured-output validation, timeouts, tracing and cost accounting are paid for once rather than per agent. Everything downstream of it is deterministic.</figcaption>
+      </figure>
     </section>
 
-    <!-- RUN STATE MACHINE -->
     <section>
       <div class="section-head">
-        <h2>Run state machine</h2>
-        <p>Each daily run is a guarded LangGraph state machine. Guardrails run before execution; an empty or fully-rejected decision skips execution; any node error finalizes with diagnostics; a killed run resumes by reusing its <code>run_id</code>.</p>
+        <h2>Failure is the normal case</h2>
+        <p>A daily job that depends on a scheduler, three external APIs and a language model will fail. The design assumption is not that it won't — it is that a failure must never look like a success.</p>
       </div>
-      <div class="diagram svgwrap">
-        <svg viewBox="0 0 640 560" style="width:100%;min-width:600px" role="img" aria-label="Run state machine diagram">
-          <defs>
-            <marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
-              <path d="M0,0 L7,3 L0,6 Z" fill="var(--muted-strong)"/>
-            </marker>
-          </defs>
-
-          <!-- initial -->
-          <circle class="term" cx="235" cy="20" r="7"/>
-          <path class="edge" d="M235,27 V42" marker-end="url(#ah)"/>
-
-          <!-- states -->
-          <rect class="box" x="110" y="44" width="250" height="50" rx="9"/>
-          <text class="lbl"  x="235" y="67" text-anchor="middle">Contextualize</text>
-          <text class="sub"  x="235" y="83" text-anchor="middle">mark-to-market · research · memory</text>
-          <path class="edge" d="M235,94 V112" marker-end="url(#ah)"/>
-
-          <rect class="box accent" x="110" y="112" width="250" height="50" rx="9"/>
-          <text class="lbl on-accent" x="235" y="135" text-anchor="middle">Decide</text>
-          <text class="sub" x="235" y="151" text-anchor="middle">debate → PM synthesis → grounding</text>
-          <path class="edge" d="M235,162 V180" marker-end="url(#ah)"/>
-
-          <rect class="box risk" x="110" y="180" width="250" height="50" rx="9"/>
-          <text class="lbl on-risk" x="235" y="203" text-anchor="middle">Guardrails</text>
-          <text class="sub" x="235" y="219" text-anchor="middle">risk review · rebalance</text>
-          <path class="edge" d="M235,230 V252" marker-end="url(#ah)"/>
-
-          <!-- decision -->
-          <polygon class="box" points="235,252 300,292 235,332 170,292"/>
-          <text class="sub" x="235" y="296" text-anchor="middle">approved?</text>
-          <path class="edge" d="M235,332 V356" marker-end="url(#ah)"/>
-          <text class="elabel" x="243" y="348">yes</text>
-
-          <rect class="box exec" x="110" y="356" width="250" height="50" rx="9"/>
-          <text class="lbl on-exec" x="235" y="379" text-anchor="middle">Approve &amp; Execute</text>
-          <text class="sub" x="235" y="395" text-anchor="middle">HITL · execute · track</text>
-          <path class="edge" d="M235,406 V428" marker-end="url(#ah)"/>
-
-          <rect class="box" x="110" y="428" width="250" height="54" rx="9"/>
-          <text class="lbl" x="235" y="451" text-anchor="middle">Persist &amp; Publish</text>
-          <text class="sub" x="235" y="467" text-anchor="middle">journal · report · tweet · export · ingest</text>
-          <path class="edge" d="M235,482 V500" marker-end="url(#ah)"/>
-
-          <!-- terminal -->
-          <circle class="edge" cx="235" cy="512" r="10" fill="none"/>
-          <circle class="term ok" cx="235" cy="512" r="4.5"/>
-          <text class="sub" x="258" y="516">Done · status recorded</text>
-
-          <!-- "none" branch: skip execution straight to persist -->
-          <path class="edge dash" d="M300,292 H392 V455 H362" marker-end="url(#ah)"/>
-          <text class="elabel" x="400" y="380">none →</text>
-          <text class="elabel" x="392" y="396">skip exec</text>
-
-          <!-- failure -->
-          <rect class="box fail" x="452" y="180" width="168" height="50" rx="9"/>
-          <text class="lbl on-fail" x="536" y="203" text-anchor="middle">Failed</text>
-          <text class="sub" x="536" y="219" text-anchor="middle">finalize · diagnostics</text>
-          <path class="edge dash" d="M360,205 H452" marker-end="url(#ah)"/>
-          <text class="elabel" x="372" y="197">on error</text>
-
-          <!-- resume -->
-          <path class="edge dash" d="M205,512 C 52,505 52,70 108,68" marker-end="url(#ah)"/>
-          <text class="elabel" x="40" y="300" text-anchor="middle" transform="rotate(-90 40 300)">resume · reuse run_id</text>
-        </svg>
-      </div>
-      <div class="branch-note">
-        <div class="chip"><b>Idempotent:</b> re-executing a resumed run overwrites by <code>run_id</code> — no duplicate trades or journal entries</div>
-        <div class="chip"><b>Non-idempotent guard:</b> an already-sent tweet isn't re-posted on resume</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Failure</th><th>What catches it</th></tr></thead>
+          <tbody>
+            <tr><td>A node raises mid-run</td><td><code>guarded_node</code> records it on the run, skips the remaining nodes, and still journals the day. The process exits non-zero so CI goes red.</td></tr>
+            <tr><td>A model call stalls</td><td>A 60-second client timeout, then the gateway's exponential backoff. Added after one stalled connection froze a batch for ten minutes.</td></tr>
+            <tr><td>A model returns malformed JSON</td><td>The gateway re-prompts once with the validation error, then fails loudly rather than passing a half-parsed decision downstream.</td></tr>
+            <tr><td>The model states something it cannot support</td><td>A grounding judge compares every claim against the facts the writer was given. Ungrounded decisions and letters are blocked before publication, not after.</td></tr>
+            <tr><td>A process dies halfway</td><td>Re-entering reuses the same <code>run_id</code>; the stores dedupe on it, so replaying a partial run does not double-write or double-tweet.</td></tr>
+            <tr><td>The run never happens at all</td><td>An independent watchdog. A run cancelled before its first step writes no row anywhere — the audit trail cannot record its own absence, so only an outside observer can notice the gap.</td></tr>
+          </tbody>
+        </table>
       </div>
     </section>
 
-    <!-- SEQUENCE -->
     <section>
       <div class="section-head">
-        <h2>One daily cycle — sequence</h2>
-        <p>How the components talk during a single run. Solid arrows are calls; dashed are returns.</p>
+        <h2>What is actually measured</h2>
+        <p>Claiming an AI system works is cheap. These are the numbers it is held to, all of them regenerated every run.</p>
       </div>
-      <div class="diagram svgwrap">
-        <svg viewBox="0 0 900 430" style="width:100%;min-width:760px" role="img" aria-label="Sequence diagram of a daily cycle">
-          <defs>
-            <marker id="sq" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
-              <path d="M0,0 L7,3 L0,6 Z" fill="var(--accent)"/>
-            </marker>
-            <marker id="sqr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
-              <path d="M0,0 L7,3 L0,6 Z" fill="var(--muted)"/>
-            </marker>
-          </defs>
-
-          <!-- lifelines + headers -->
-          <g>
-            <rect class="box accent" x="12" y="20" width="96" height="34" rx="7"/>
-            <text class="lbl on-accent" x="60" y="41" text-anchor="middle">Graph</text>
-            <line class="life" x1="60" y1="54" x2="60" y2="404"/>
-
-            <rect class="box" x="168" y="20" width="96" height="34" rx="7"/>
-            <text class="lbl" x="216" y="41" text-anchor="middle">Agents</text>
-            <line class="life" x1="216" y1="54" x2="216" y2="404"/>
-
-            <rect class="box" x="324" y="20" width="96" height="34" rx="7"/>
-            <text class="lbl" x="372" y="41" text-anchor="middle">Gateway</text>
-            <line class="life" x1="372" y1="54" x2="372" y2="404"/>
-
-            <rect class="box risk" x="480" y="20" width="96" height="34" rx="7"/>
-            <text class="lbl on-risk" x="528" y="41" text-anchor="middle">Risk</text>
-            <line class="life" x1="528" y1="54" x2="528" y2="404"/>
-
-            <rect class="box exec" x="636" y="20" width="96" height="34" rx="7"/>
-            <text class="lbl on-exec" x="684" y="41" text-anchor="middle">Simulator</text>
-            <line class="life" x1="684" y1="54" x2="684" y2="404"/>
-
-            <rect class="box" x="792" y="20" width="96" height="34" rx="7"/>
-            <text class="lbl" x="840" y="41" text-anchor="middle">Stores</text>
-            <line class="life" x1="840" y1="54" x2="840" y2="404"/>
-          </g>
-
-          <!-- messages -->
-          <text class="mlabel" x="63" y="86">research + memory</text>
-          <path class="msg" d="M60,92 H216" marker-end="url(#sq)"/>
-
-          <text class="mlabel" x="219" y="116">debate → decide</text>
-          <path class="msg" d="M216,122 H372" marker-end="url(#sq)"/>
-
-          <text class="mlabel" x="219" y="146">validated JSON</text>
-          <path class="msg ret" d="M372,152 H216" marker-end="url(#sqr)"/>
-
-          <text class="mlabel" x="63" y="176">grounding check</text>
-          <path class="msg" d="M60,182 H372" marker-end="url(#sq)"/>
-
-          <text class="mlabel" x="63" y="206">grounded?</text>
-          <path class="msg ret" d="M372,212 H60" marker-end="url(#sqr)"/>
-
-          <text class="mlabel" x="63" y="236">review + stop-loss / take-profit</text>
-          <path class="msg" d="M60,242 H528" marker-end="url(#sq)"/>
-
-          <text class="mlabel" x="63" y="266">approved trades</text>
-          <path class="msg ret" d="M528,272 H60" marker-end="url(#sqr)"/>
-
-          <text class="mlabel" x="63" y="296">execute approved</text>
-          <path class="msg" d="M60,302 H684" marker-end="url(#sq)"/>
-
-          <text class="mlabel" x="687" y="326">upsert trades / journal</text>
-          <path class="msg" d="M684,332 H840" marker-end="url(#sq)"/>
-
-          <text class="mlabel" x="63" y="356">export dashboard · publish (if grounded)</text>
-          <path class="msg" d="M60,362 H840" marker-end="url(#sq)"/>
-        </svg>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Measure</th><th>Method</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Prediction accuracy</strong></td><td>Every researched name gets a directional call against the S&amp;P at 5- and 30-day horizons, recorded before the outcome is known and scored automatically when the window closes. Decoupled from trading, so the sample is not limited to names the fund bought.</td></tr>
+            <tr><td><strong>Calibration</strong></td><td>Stated confidence bucketed against realised hit rate, plus a Brier score. This is the measure the project exists to publish: whether the model's confidence means anything.</td></tr>
+            <tr><td><strong>Component value</strong></td><td>An ablation harness scores the full system against no-memory and no-debate variants on a fixed eval set with a fixed judge — evidence that the AI parts earn their place, rather than an assertion.</td></tr>
+            <tr><td><strong>Baselines</strong></td><td>The fund is compared against buy-and-hold SPY, 100% QQQ, and the mean of 500 random equal-weight portfolios drawn from its own watchlist.</td></tr>
+            <tr><td><strong>Cost</strong></td><td>Every model call is logged with tokens, latency and dollar cost. A measured finding: the flagship models cost roughly 11× more for no reliable gain in decision quality on this eval set, so the strong tier is deliberately not the biggest model available.</td></tr>
+          </tbody>
+        </table>
       </div>
     </section>
 
-    <!-- KEY DECISIONS -->
     <section>
       <div class="section-head">
         <h2>Key engineering decisions</h2>
-        <p>The calls that shaped the project — foundational bets first, then the choices a constraint forced later.</p>
+        <p>The calls that shaped the project, and the reasoning behind them.</p>
       </div>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Decision</th><th>Why</th></tr></thead>
           <tbody>
-            <tr><td><b>One LLM gateway as the single choke point</b></td><td>The highest-leverage refactor in the repo: routing, retries, structured-output validation, tracing, and cost tracking become one-time costs instead of per-agent ones. Every agent flows through it — the later provider seam and tool loop were built on it.</td></tr>
-            <tr><td><b>Deterministic guardrails outside the LLM</b></td><td>The portfolio manager can be creative; the risk layer is boring on purpose. Position sizing, turnover, sector limits, and stop-loss/take-profit are enforced in code the model can't argue past.</td></tr>
-            <tr><td><b>LangGraph as the only runner</b></td><td>The legacy linear orchestrator was deleted once the graph reached parity. Two orchestrators is debt, not safety.</td></tr>
-            <tr><td><b>SQLite, not Postgres, as the system of record</b></td><td>Transactions, upserts, and queryability without running a server. Stop committing raw state to <code>main</code>; keep committing exports to Pages.</td></tr>
-            <tr><td><b>Langfuse over LangSmith</b> for tracing</td><td>Self-hostable and open source — a better story for an in-public project, and a no-op unless keys are set.</td></tr>
-            <tr><td><b>Idempotency-based resume</b> over LangGraph's native <code>SqliteSaver</code></td><td>The graph state carries non-serializable live handles (engine, clients). Persisting <em>progress</em> + reusing the <code>run_id</code> leans on the idempotent stores for duplicate-free re-execution — correct, without a large risky state refactor.</td></tr>
-            <tr><td><b>Chunking eval with a deterministic hashing embedder + in-memory Qdrant</b></td><td>Runs in CI with no API key, yet does real vector search. Cosine over TF vectors rewards term concentration — the actual reason chunking helps — so the <span class="delta">0.15 → 1.00</span> hit@1 win is honest, not rigged.</td></tr>
-            <tr><td><b>Grounding gate before publish</b></td><td>Both a daily decision and the weekly letter are checked against the facts they had; unsupported claims are blocked, never published or tweeted.</td></tr>
+            <tr>
+              <td><strong>One LLM gateway as the single choke point</strong></td>
+              <td>The highest-leverage refactor in the repo. Routing, retries, structured-output validation, tracing and cost tracking become one-time costs instead of per-agent ones. Every agent flows through it, and the provider seam was built on it.</td>
+            </tr>
+            <tr>
+              <td><strong>Deterministic guardrails outside the model</strong></td>
+              <td>The portfolio manager is allowed to be creative; the risk layer is boring on purpose. Position sizing, turnover, sector limits and stop-loss/take-profit are enforced in code the model cannot argue past.</td>
+            </tr>
+            <tr>
+              <td><strong>Append-only files as the system of record</strong></td>
+              <td>Decisions, trades, predictions, letters and run history are JSONL, CSV and JSON — diffable, replayable, and readable without a client. SQLite is used for exactly one thing: the run-progress table that makes resume work. Raw state is committed alongside the site, so the published numbers and the data behind them move together.</td>
+            </tr>
+            <tr>
+              <td><strong>LangGraph as the only runner</strong></td>
+              <td>The legacy linear orchestrator was deleted once the graph reached parity. Two orchestrators is debt, not safety.</td>
+            </tr>
+            <tr>
+              <td><strong>Idempotency-based resume, not native checkpointing</strong></td>
+              <td>Graph state carries live, non-serializable handles. Persisting progress and reusing the <code>run_id</code> leans on already-idempotent stores for duplicate-free re-execution — correct, without a large and risky state refactor.</td>
+            </tr>
+            <tr>
+              <td><strong>Prerendered pages, not a client-rendered app</strong></td>
+              <td>The journal used to be one URL that fetched JSON, so a crawler saw almost nothing. Every trading day, every ticker and every letter is now a static page with real text at a permanent URL.</td>
+            </tr>
+            <tr>
+              <td><strong>Grounding gate before anything publishes</strong></td>
+              <td>Daily decisions and weekly letters are both checked against the facts they were given. It has real limits: it verifies that a number came from the fact base, not that the fact was labelled correctly — a mislabelled field passed the judge and reached four published letters before it was caught.</td>
+            </tr>
+            <tr>
+              <td><strong>Publish the misses too</strong></td>
+              <td>Rejected trades, blocked letters, failed runs and wrong predictions are all part of the public record. A scoreboard that only shows wins is marketing; the point of this project is that it is checkable.</td>
+            </tr>
           </tbody>
         </table>
       </div>
