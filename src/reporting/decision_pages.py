@@ -238,6 +238,7 @@ def _shell(
       <nav class="nav" aria-label="Site navigation">
         {nav("dashboard.html", "Dashboard")}
         {nav("decisions.html", "Decision Journal")}
+        {nav("letters/", "Weekly Investor Letters")}
         {nav("predictions.html", "Prediction Accuracy")}
         {nav("engineering.html", "Engineering")}
         {nav("about.html", "About")}
