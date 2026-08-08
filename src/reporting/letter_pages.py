@@ -107,6 +107,40 @@ def _section(heading: str, text: Any) -> str:
     return f"<h2>{escape(heading)}</h2><p>{escape(str(text))}</p>"
 
 
+def _correction_note(facts: dict) -> str:
+    """Flag letters written before per-position returns were disambiguated.
+
+    Until 2026-08-08, ``gather_letter_facts`` handed the writer a bare ``return_pct``
+    per position that was cumulative P&L *since the position opened*, while the
+    fund-level return on the same fact base was a true weekly window. The writer read
+    them as the same thing, so those letters name weekly "winners" using lifetime
+    numbers — the 2026-08-02 letter reports "MA led with a 17.77% gain" in a week the
+    fund moved 0.30%.
+
+    The letters are kept as written rather than silently rewritten: they are dated
+    public records, and the point of this project is that it does not quietly edit its
+    own history. They cannot be regenerated correctly in any case — ``get_history``
+    anchors to today, so re-running a past week would compute *this* week's moves and
+    label them as that one, which is the same bug wearing a different hat.
+
+    Detection is structural, not a date list: post-fix letters carry
+    ``week_return_pct`` on every position.
+    """
+    positions = facts.get("positions") or []
+    if not positions or any("week_return_pct" in p for p in positions):
+        return ""
+    return (
+        '<div class="correction" role="note">'
+        "<strong>Correction.</strong> The per-position percentages below are each "
+        "holding&rsquo;s return <em>since the position was opened</em>, not its move "
+        "during this week &mdash; a labelling bug in the letter generator, fixed on "
+        "2026-08-08. The fund-level return and the trade list are unaffected and "
+        "correct as written. Letters from 2026-08-08 onward report true weekly moves. "
+        "This letter is left as originally published."
+        "</div>"
+    )
+
+
 def render_letter_page(entry: dict, *, prev: dict | None, next_: dict | None) -> str:
     from html import escape
 
@@ -135,6 +169,7 @@ def render_letter_page(entry: dict, *, prev: dict | None, next_: dict | None) ->
     body = f"""    <div class="eyebrow">Investor letter</div>
     <h1>{escape(headline or title)}</h1>
     <p class="lede">Week of {escape(span)}{f" · {ret} return" if ret else ""}.</p>
+    {_correction_note(facts)}
     {_facts_pills(facts)}
     {_section("Performance", letter.get("performance"))}
     <h2>Winners</h2>
