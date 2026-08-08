@@ -90,6 +90,10 @@ p { margin:0 0 12px; }
 .tag { display:inline-block; border:1px solid var(--border-strong); border-radius:999px;
   padding:0 8px; font-size:11px; font-weight:800; color:var(--muted-strong); white-space:nowrap; }
 .muted { color:var(--muted); }
+.correction { border:1px solid var(--negative); border-left:4px solid var(--negative);
+  border-radius:8px; background:var(--negative-bg); color:var(--text);
+  padding:12px 14px; margin:14px 0 4px; font-size:13.5px; }
+.correction strong { color:var(--negative); }
 details.more { margin:6px 0 18px; }
 details.more > summary { cursor:pointer; font-size:13px; font-weight:800; color:var(--accent);
   padding:7px 0; list-style:none; }
@@ -149,6 +153,7 @@ footer { margin-top:48px; border-top:1px solid var(--row-border); padding-top:16
     <div class="eyebrow">Investor letter</div>
     <h1>Navigating a Volatile Week with Resilience and Positive Alpha</h1>
     <p class="lede">Week of July 20, 2026 – July 26, 2026 · -0.18% return.</p>
+    <div class="correction" role="note"><strong>Correction.</strong> The per-position percentages below are each holding&rsquo;s return <em>since the position was opened</em>, not its move during this week &mdash; a labelling bug in the letter generator, fixed on 2026-08-08. The fund-level return and the trade list are unaffected and correct as written. Letters from 2026-08-08 onward report true weekly moves. This letter is left as originally published.</div>
     <div class="facts"><span class="pill">Return -0.18%</span><span class="pill">S&amp;P 500 -1.06%</span><span class="pill">Alpha +0.88%</span><span class="pill">Portfolio $1,025,723</span></div>
     <h2>Performance</h2><p>The fund saw a modest decline of -0.18% from July 20 to July 26, outperforming the benchmark which fell -1.06%. This generated a positive alpha of 0.88%.</p>
     <h2>Winners</h2>
