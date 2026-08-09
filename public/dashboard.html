@@ -735,6 +735,23 @@
       border-bottom-color: currentColor;
     }
 
+    /* The dotted border above is sized for ~13px inline text, where it reads as a
+       quiet affordance. The two KPI tickers render at 25px/850, and at that weight
+       the dots pack into what looks like a solid rule — while the neighbouring KPI
+       values ($800.1K, 1) carry no underline at all, so the two linked ones read as
+       a rendering fault rather than a link. Reveal it on hover/focus instead: these
+       are card headlines, not links buried in prose. */
+    .kpi-value .sym-link {
+      border-bottom: none;
+    }
+
+    .kpi-value .sym-link:hover,
+    .kpi-value .sym-link:focus-visible {
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 5px;
+    }
+
     .ticker {
       position: relative;
       cursor: default;
