@@ -1,8 +1,8 @@
 // Funnel event tracking for GA4 (G-MCDDGJ3XEC).
 //
 // One delegated click listener fires named events for the things that matter on a
-// launch site — outbound clicks to GitHub / X / LinkedIn (the conversion goals)
-// and internal navigation between pages (the funnel) — so the analytics can answer
+// launch site: outbound clicks to GitHub / X / LinkedIn (the conversion goals)
+// and internal navigation between pages (the funnel), so the analytics can answer
 // "do visitors convert and how do they move", not just "which page did they land on".
 //
 // window.track(name, params) is exposed for page-specific events.
@@ -52,7 +52,7 @@
         return;
       }
 
-      // Outbound clicks — name the important conversion targets explicitly so they
+      // Outbound clicks: name the important conversion targets explicitly so they
       // can be marked as key events in GA with one click.
       var domain = url.hostname.replace(/^www\./, "");
       var name = "outbound_click";

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-  <title>Decision Journal — Glasshouse Fund</title>
+  <title>Decision Journal | Glasshouse Fund</title>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script>
@@ -27,11 +27,11 @@
   <script src="analytics.js" defer></script>
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <link rel="canonical" href="https://glasshousefund.com/decisions.html" />
-  <meta name="description" content="Every trade the AI made, and why — the bull, bear, and risk analyst debate behind each call, the evidence it cited, the tools it ran, and the prediction it staked on the outcome." />
+  <meta name="description" content="Every trade the AI made, and why: the bull, bear, and risk analyst debate behind each call, the evidence it cited, the tools it ran, and the prediction it staked on the outcome." />
   <meta name="author" content="Pradnya Wakchaure" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://glasshousefund.com/decisions.html" />
-  <meta property="og:title" content="Decision Journal — Glasshouse Fund" />
+  <meta property="og:title" content="Decision Journal | Glasshouse Fund" />
   <meta property="og:description" content="Every trade the AI made and why: the bull/bear/risk debate, the evidence it cited, and how each call actually turned out." />
   <meta property="og:image" content="https://glasshousefund.com/og-cover.png" />
   <meta name="twitter:card" content="summary_large_image" />
@@ -622,7 +622,7 @@
 
     function memorySourceInfo(item) {
       // The useful fields live under item.metadata (the old render read item.metadata.source,
-      // which doesn't exist — hence "Unknown source" for everything).
+      // which doesn't exist, hence "Unknown source" for everything).
       const m = item.metadata || item;
       const nested = m.metadata || {};
       const symbol = (m.symbols && m.symbols[0]) || nested.ticker || "";
@@ -667,7 +667,7 @@
     }
 
     // One collapsed section per decision holding both the tool-call trace and the
-    // (deduped, linked) memory sources — the "how it researched" plumbing, out of the
+    // (deduped, linked) memory sources: the "how it researched" plumbing, out of the
     // way of the decision itself but one click from the receipts.
     function renderResearchDetails(toolCalls, memoryUsed) {
       const sources = dedupeMemory(memoryUsed);
@@ -678,7 +678,7 @@
 
       let inner = "";
       if (toolCalls.length) {
-        inner += `<div class="rt-label muted">Tool calls — ${escapeHtml(toolCallBreakdown(toolCalls))}</div>`;
+        inner += `<div class="rt-label muted">Tool calls: ${escapeHtml(toolCallBreakdown(toolCalls))}</div>`;
         inner += `<ul>${toolCallItems(toolCalls)}</ul>`;
       }
       if (sources.length) {

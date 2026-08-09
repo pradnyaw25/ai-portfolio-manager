@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-  <title>Engineering — Glasshouse Fund</title>
+  <title>Engineering | Glasshouse Fund</title>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script>
@@ -31,8 +31,8 @@
   <meta name="author" content="Pradnya Wakchaure" />
   <meta property="og:type" content="article" />
   <meta property="og:url" content="https://glasshousefund.com/engineering.html" />
-  <meta property="og:title" content="Engineering — Glasshouse Fund" />
-  <meta property="og:description" content="The LLM agent debate, deterministic risk engine, CI-gating evals, and RAG pipeline behind an autonomous AI fund — plus what broke along the way." />
+  <meta property="og:title" content="Engineering | Glasshouse Fund" />
+  <meta property="og:description" content="The LLM agent debate, deterministic risk engine, CI-gating evals, and RAG pipeline behind an autonomous AI fund, plus what broke along the way." />
   <meta property="og:image" content="https://glasshousefund.com/og-cover.png" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@GlassHouseFund" />
@@ -207,7 +207,7 @@
 
     <section>
       <div class="card">
-        <p class="lede" style="margin:0;">The interesting engineering here is not the trading. It is everything built to make an unreliable component — a language model — produce an auditable record: a gateway that validates and retries, guardrails the model cannot argue past, a grounding gate that blocks unsupported claims, and a scoreboard that grades its predictions in public whether they were right or not.</p>
+        <p class="lede" style="margin:0;">The interesting engineering here is not the trading. It is everything built to make an unreliable component (a language model) produce an auditable record: a gateway that validates and retries, guardrails the model cannot argue past, a grounding gate that blocks unsupported claims, and a scoreboard that grades its predictions in public whether they were right or not.</p>
       </div>
     </section>
 
@@ -285,18 +285,18 @@
             <text class="sub" x="560" y="290" text-anchor="middle">status recorded, partial run still journalled, exit code non-zero</text>
           </svg>
         </div>
-        <figcaption class="sub" style="margin-top:10px;">Every node is wrapped by <code>guarded_node</code>: a raise is caught, recorded against the run, and short-circuits the rest of the graph to the finalizer. The run still writes its journal — a failed day is a visible row, not a gap.</figcaption>
+        <figcaption class="sub" style="margin-top:10px;">Every node is wrapped by <code>guarded_node</code>: a raise is caught, recorded against the run, and short-circuits the rest of the graph to the finalizer. The run still writes its journal: a failed day is a visible row, not a gap.</figcaption>
       </figure>
     </section>
 
     <section>
       <div class="section-head">
         <h2 id="guardrails">How a proposed trade survives</h2>
-        <p>The model can propose anything. What reaches the book is whatever survives a fixed sequence of deterministic checks — none of which the model can talk its way past, because none of them are written in English.</p>
+        <p>The model can propose anything. What reaches the book is whatever survives a fixed sequence of deterministic checks, none of which the model can talk its way past, because none of them are written in English.</p>
       </div>
       <figure class="diagram" style="margin:0;">
         <div class="svgwrap">
-          <svg viewBox="0 0 760 470" style="width:100%;min-width:620px" role="img" aria-label="Proposed trades pass through five deterministic gates — HOLD skip, confidence floor, turnover cap, sector cap and per-order position cap — with rejects and share-caps exiting to the right.">
+          <svg viewBox="0 0 760 470" style="width:100%;min-width:620px" role="img" aria-label="Proposed trades pass through five deterministic gates: HOLD skip, confidence floor, turnover cap, sector cap and per-order position cap, with rejects and share-caps exiting to the right.">
             <defs>
               <marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
                 <path d="M0 0 L10 5 L0 10 z" fill="var(--muted-strong)"/>
@@ -362,7 +362,7 @@
             <text class="sub" x="20" y="393">sizing</text>
           </svg>
         </div>
-        <figcaption class="sub" style="margin-top:10px;">The first four gates run in <code>RiskManagerAgent.review</code>; the last is enforced by the execution engine. Note it caps the <em>order</em>, not the resulting position — a holding already near the limit can still be topped up, which is a known gap rather than a design choice. Rebalance trades re-enter at the top of this same sequence; there is no bypass.</figcaption>
+        <figcaption class="sub" style="margin-top:10px;">The first four gates run in <code>RiskManagerAgent.review</code>; the last is enforced by the execution engine. Note it caps the <em>order</em>, not the resulting position: a holding already near the limit can still be topped up, which is a known gap rather than a design choice. Rebalance trades re-enter at the top of this same sequence; there is no bypass.</figcaption>
       </figure>
     </section>
 
@@ -388,7 +388,7 @@
 
             <text class="sub" x="14" y="112">ORCHESTRATION</text>
             <rect class="box accent" x="140" y="86" width="400" height="48" rx="7"/>
-            <text class="lbl on-accent" x="340" y="107" text-anchor="middle">LangGraph — 22 guarded nodes</text>
+            <text class="lbl on-accent" x="340" y="107" text-anchor="middle">LangGraph: 22 guarded nodes</text>
             <text class="sub" x="340" y="124" text-anchor="middle">resume by run_id · progress in SQLite</text>
 
             <text class="sub" x="14" y="188">AGENTS</text>
@@ -459,7 +459,7 @@
     <section>
       <div class="section-head">
         <h2 id="failure">Failure is the normal case</h2>
-        <p>A daily job that depends on a scheduler, three external APIs and a language model will fail. The design assumption is not that it won't — it is that a failure must never look like a success.</p>
+        <p>A daily job that depends on a scheduler, three external APIs and a language model will fail. The design assumption is not that it won't; it is that a failure must never look like a success.</p>
       </div>
       <div class="table-wrap">
         <table>
@@ -470,7 +470,7 @@
             <tr><td>A model returns malformed JSON</td><td>The gateway re-prompts once with the validation error, then fails loudly rather than passing a half-parsed decision downstream.</td></tr>
             <tr><td>The model states something it cannot support</td><td>A grounding judge compares every claim against the facts the writer was given. Ungrounded decisions and letters are blocked before publication, not after.</td></tr>
             <tr><td>A process dies halfway</td><td>Re-entering reuses the same <code>run_id</code>; the stores dedupe on it, so replaying a partial run does not double-write or double-tweet.</td></tr>
-            <tr><td>The run never happens at all</td><td>An independent watchdog. A run cancelled before its first step writes no row anywhere — the audit trail cannot record its own absence, so only an outside observer can notice the gap.</td></tr>
+            <tr><td>The run never happens at all</td><td>An independent watchdog. A run cancelled before its first step writes no row anywhere: the audit trail cannot record its own absence, so only an outside observer can notice the gap.</td></tr>
           </tbody>
         </table>
       </div>
@@ -487,7 +487,7 @@
           <tbody>
             <tr><td><strong>Prediction accuracy</strong></td><td>Every researched name gets a directional call against the S&amp;P at 5- and 30-day horizons, recorded before the outcome is known and scored automatically when the window closes. Decoupled from trading, so the sample is not limited to names the fund bought.</td></tr>
             <tr><td><strong>Calibration</strong></td><td>Stated confidence bucketed against realised hit rate, plus a Brier score. This is the measure the project exists to publish: whether the model's confidence means anything.</td></tr>
-            <tr><td><strong>Component value</strong></td><td>An ablation harness scores the full system against no-memory and no-debate variants on a fixed eval set with a fixed judge — evidence that the AI parts earn their place, rather than an assertion.</td></tr>
+            <tr><td><strong>Component value</strong></td><td>An ablation harness scores the full system against no-memory and no-debate variants on a fixed eval set with a fixed judge: evidence that the AI parts earn their place, rather than an assertion.</td></tr>
             <tr><td><strong>Baselines</strong></td><td>The fund is compared against buy-and-hold SPY, 100% QQQ, and the mean of 500 random equal-weight portfolios drawn from its own watchlist.</td></tr>
             <tr><td><strong>Cost</strong></td><td>Every model call is logged with tokens, latency and dollar cost. A measured finding: the flagship models cost roughly 11× more for no reliable gain in decision quality on this eval set, so the strong tier is deliberately not the biggest model available.</td></tr>
           </tbody>
@@ -514,7 +514,7 @@
             </tr>
             <tr>
               <td><strong>Append-only files as the system of record</strong></td>
-              <td>Decisions, trades, predictions, letters and run history are JSONL, CSV and JSON — diffable, replayable, and readable without a client. SQLite is used for exactly one thing: the run-progress table that makes resume work. Raw state is committed alongside the site, so the published numbers and the data behind them move together.</td>
+              <td>Decisions, trades, predictions, letters and run history are JSONL, CSV and JSON: diffable, replayable, and readable without a client. SQLite is used for exactly one thing: the run-progress table that makes resume work. Raw state is committed alongside the site, so the published numbers and the data behind them move together.</td>
             </tr>
             <tr>
               <td><strong>LangGraph as the only runner</strong></td>
@@ -522,7 +522,7 @@
             </tr>
             <tr>
               <td><strong>Idempotency-based resume, not native checkpointing</strong></td>
-              <td>Graph state carries live, non-serializable handles. Persisting progress and reusing the <code>run_id</code> leans on already-idempotent stores for duplicate-free re-execution — correct, without a large and risky state refactor.</td>
+              <td>Graph state carries live, non-serializable handles. Persisting progress and reusing the <code>run_id</code> leans on already-idempotent stores for duplicate-free re-execution: correct, without a large and risky state refactor.</td>
             </tr>
             <tr>
               <td><strong>Prerendered pages, not a client-rendered app</strong></td>
@@ -530,7 +530,7 @@
             </tr>
             <tr>
               <td><strong>Grounding gate before anything publishes</strong></td>
-              <td>Daily decisions and weekly letters are both checked against the facts they were given. It has real limits: it verifies that a number came from the fact base, not that the fact was labelled correctly — a mislabelled field passed the judge and reached four published letters before it was caught.</td>
+              <td>Daily decisions and weekly letters are both checked against the facts they were given. It has real limits: it verifies that a number came from the fact base, not that the fact was labelled correctly: a mislabelled field passed the judge and reached four published letters before it was caught.</td>
             </tr>
             <tr>
               <td><strong>Publish the misses too</strong></td>
@@ -542,7 +542,7 @@
     </section>
 
     <footer>
-      Paper trading — simulated capital, not investment advice. Source &amp; full roadmap in the repository;
+      Paper trading. Simulated capital, not investment advice. Source &amp; full roadmap in the repository;
       the fund is also queryable from any MCP client (Claude Desktop / Code) via the read-only server.
     </footer>
   </main>

@@ -1,4 +1,4 @@
-# Portfolio Report — 2026-08-07
+# Portfolio Report, 2026-08-07
 
 ## Summary
 - **Run ID:** `run_20260807T183247Z_07bc8571`
@@ -27,7 +27,7 @@
 
 ## Today's Trades
 
-- **BUY** 50 AAPL @ $311.88 — AAPL shows positive 5-day momentum and promising product innovation news, supporting a strategic incremental add to capitalize on potential upside while maintaining risk discipline given mixed 30-day momentum.
+- **BUY** 50 AAPL @ $311.88. AAPL shows positive 5-day momentum and promising product innovation news, supporting a strategic incremental add to capitalize on potential upside while maintaining risk discipline given mixed 30-day momentum.
 
 ## Analysis
 

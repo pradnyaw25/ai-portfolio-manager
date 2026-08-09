@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-  <title>Prediction Accuracy — Glasshouse Fund</title>
+  <title>Prediction Accuracy | Glasshouse Fund</title>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script>
@@ -31,7 +31,7 @@
   <meta name="author" content="Pradnya Wakchaure" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://glasshousefund.com/predictions.html" />
-  <meta property="og:title" content="Prediction Accuracy — Glasshouse Fund" />
+  <meta property="og:title" content="Prediction Accuracy | Glasshouse Fund" />
   <meta property="og:description" content="Does an LLM know when it is right? Brier score and confidence calibration for an AI fund's 30-day stock predictions." />
   <meta property="og:image" content="https://glasshousefund.com/og-cover.png" />
   <meta name="twitter:card" content="summary_large_image" />
@@ -397,7 +397,7 @@
     <header class="page-header">
       <div>
         <h1>Prediction Accuracy</h1>
-        <p class="subtitle">Tracks whether the fund's directional calls — outperform or underperform SPY — were right over their evaluation window.</p>
+        <p class="subtitle">Tracks whether the fund's directional calls (outperform or underperform SPY) were right over their evaluation window.</p>
       </div>
       <p class="updated-at" id="updated-at">Updated at: Loading...</p>
     </header>
@@ -513,7 +513,7 @@
 
     const pct = (value, digits = 1) => {
       const number = Number(value);
-      return Number.isFinite(number) ? `${number.toFixed(digits)}%` : "—";
+      return Number.isFinite(number) ? `${number.toFixed(digits)}%` : "-";
     };
 
     function escapeHtml(value) {
@@ -559,7 +559,7 @@
     }
 
     // Mirror of was_correct() in src/scoring/calibration.py. A win is a correct
-    // directional *call*, not a symbol that beat SPY — an underperform call is right
+    // directional *call*, not a symbol that beat SPY. An underperform call is right
     // precisely when the symbol lags. Accepts raw or serialized predictions; legacy
     // rows without `correct` were all outperform bets, so they fall back.
     function wasCorrect(p) {
@@ -647,7 +647,7 @@
           edge_pct: edgePct,
         };
       };
-      // Rank by edge (how much the CALL was right by), not raw alpha — see
+      // Rank by edge (how much the CALL was right by), not raw alpha. See
       // _rank_resolved_predictions in src/reporting/public_exporter.py.
       const ranked = resolved.map(serialize).sort((a, b) => (b.edge_pct ?? 0) - (a.edge_pct ?? 0));
       const wins = resolved.filter(p => wasCorrect(p));
@@ -714,7 +714,7 @@
       const buckets = calibration.buckets || [];
 
       if (!calibration.sample_size) {
-        summary.textContent = "No resolved predictions yet — calibration appears once predictions are scored.";
+        summary.textContent = "No resolved predictions yet. Calibration appears once predictions are scored.";
         document.getElementById("calibration-buckets").innerHTML =
           '<tr><td colspan="4" style="text-align:center; opacity:0.6;">No data yet.</td></tr>';
         return;

@@ -7,6 +7,7 @@ from src.config import DATA_DIR
 from src.models.portfolio import PortfolioSnapshot
 from src.models.trade import Trade
 from src.scoring.calibration import compute_calibration, was_correct
+from src.reporting.decision_pages import strip_em_dashes
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -125,7 +126,8 @@ class PublicExporter:
         )
 
     def _write_latest_report(self, report_markdown: str) -> None:
-        (PUBLIC_DIR / "latest_report.md").write_text(report_markdown)
+        # House style: the report is model-authored prose, same as the decision pages.
+        (PUBLIC_DIR / "latest_report.md").write_text(strip_em_dashes(report_markdown))
 
     def _write_site_meta(self) -> None:
         payload = {

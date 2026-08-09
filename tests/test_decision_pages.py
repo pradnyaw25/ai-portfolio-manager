@@ -76,7 +76,7 @@ def test_page_renders_debate_and_trades_as_server_side_text():
     # SEO surface
     assert '<link rel="canonical" href="https://glasshousefund.com/decisions/2026-07-07.html" />' in html
     assert 'property="og:url" content="https://glasshousefund.com/decisions/2026-07-07.html"' in html
-    assert "<title>AI fund buys AAPL — July 7, 2026</title>" in html
+    assert "<title>AI fund buys AAPL · July 7, 2026</title>" in html
     assert 'name="description" content="BUY AAPL.' in html
 
 
@@ -99,9 +99,9 @@ def test_page_handles_a_day_with_no_trades_and_no_debate():
     entry = _entry("2026-06-29", created_at="2026-06-29T12:00:00Z", summary="Held.")
     html = decision_pages.render_decision_page(entry, prev=None, next_=None)
 
-    assert "No trades this day — the fund held." in html
+    assert "No trades this day. The fund held." in html
     assert "The debate" not in html  # section omitted rather than left empty
-    assert "The fund held — no trades." in html  # description fallback
+    assert "The fund held, no trades." in html  # description fallback
 
 
 def test_market_calls_render_direction_and_traded_tag():
@@ -264,14 +264,14 @@ def test_title_and_h1_carry_the_traded_symbols():
         ],
     )
     html = decision_pages.render_decision_page(entry, prev=None, next_=None)
-    assert "<title>AI fund buys AAPL, sells NVDA — July 7, 2026</title>" in html
-    assert "<h1>AI fund buys AAPL, sells NVDA — July 7, 2026</h1>" in html
+    assert "<title>AI fund buys AAPL, sells NVDA · July 7, 2026</title>" in html
+    assert "<h1>AI fund buys AAPL, sells NVDA · July 7, 2026</h1>" in html
 
 
 def test_hold_day_title_falls_back_to_plain_decision():
     entry = _entry("2026-06-29", created_at="2026-06-29T12:00:00Z", summary="Held.")
     html = decision_pages.render_decision_page(entry, prev=None, next_=None)
-    assert "<title>AI fund decision — June 29, 2026</title>" in html
+    assert "<title>AI fund decision · June 29, 2026</title>" in html
 
 
 def test_thin_page_is_noindexed_and_excluded_from_sitemap():
@@ -458,3 +458,26 @@ def test_source_entries_without_a_usable_link_are_dropped():
 
     assert "<h2>Sources</h2>" not in html
     assert "javascript:alert" not in html
+
+
+def test_no_em_dashes_reach_the_rendered_page():
+    """House style. Most em dashes on this site come from *model* prose, not the
+    templates, so the guarantee has to live at render time — see strip_em_dashes."""
+    entry = _entry(
+        "2026-07-07",
+        created_at="2026-07-07T12:00:00Z",
+        summary="Bought Apple — the momentum is strong — and trimmed NVDA.",
+        debate={"bull": {"thesis": "Strong buybacks — a durable edge", "key_points": ["x — y"]}},
+    )
+    entry["raw_decision"]["market_calls"] = [
+        {"symbol": "AAPL", "direction": "OUTPERFORM", "confidence": 0.7,
+         "thesis": "momentum — and buybacks"}
+    ]
+
+    html = decision_pages.render_decision_page(entry, prev=None, next_=None)
+
+    assert "—" not in html
+    assert "&mdash;" not in html
+    # and the text survives, rather than being dropped
+    assert "the momentum is strong" in html
+    assert "a durable edge" in html
