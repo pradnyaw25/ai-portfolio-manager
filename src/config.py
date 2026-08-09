@@ -80,23 +80,29 @@ BENCHMARK_SYMBOLS = [
 # tweets). Each tier resolves to a (provider, model) route; an optional fallback
 # route is tried if the primary provider fails after retries.
 #
-# Both tiers default to gpt-5.6-luna as of 2026-08-08, measured via
-# `make eval-compare` on the 8 golden scenarios with the judge held at gpt-4o:
-# luna scored 4.04/5 against gpt-4.1-mini's 3.79 while costing LESS per token
-# ($0.20/$1.20 per 1M vs $0.40/$1.60) — better and cheaper, so there was no
-# trade to weigh. gpt-5.6-terra edged it at 4.08 but costs 5x input / 7.5x
-# output, and +0.04 is far inside the judge's ±0.3 run-to-run noise.
+# Both tiers moved to the gpt-5.6 family on 2026-08-08, measured via
+# `make eval-compare` on the 8 golden scenarios with the judge held at gpt-4o
+# (two runs; docs/model-selection.md has the table and the caveats):
 #
-# CAVEAT worth keeping in view: with both tiers on the same model the strong/cheap
-# split is once again vestigial — exactly the state docs/model-selection.md was
-# written to end. It buys uniformity now; the moment the tiers should genuinely
-# differ, set LLM_STRONG_MODEL=gpt-5.6-terra and leave cheap on luna.
+#   gpt-4.1-mini (old strong)  3.79 / 3.71 quality   $0.00173/scenario
+#   gpt-5.6-luna               4.04 / 4.17           $0.00162
+#   gpt-5.6-terra              4.08 / 4.21           $0.01421
+#
+# terra takes the strong tier: it scored highest in both runs, and the tier exists
+# precisely so the decisions that matter (PM synthesis, judges, rebalance, letters)
+# can run a better model than the chatter. luna takes the cheap tier, where it beats
+# the outgoing gpt-4o-mini on quality for ~2x the output price — still fractions of
+# a cent a day at this volume.
+#
+# The split is deliberate. Pointing both tiers at one model, as an earlier draft of
+# this change did, makes the routing vestigial — the exact state this file's
+# docs/model-selection.md was written to end.
 #
 # NOTE the gpt-5.6 family rejects temperature=0 (400, "only the default (1)"), so
 # every eval that pins temperature is running these models at 1. The provider drops
 # the parameter automatically; see src/llm/providers/openai_provider.py.
 LLM_PROVIDER = os.getenv("LLM_PROVIDER", "openai")  # legacy default provider
-LLM_STRONG_MODEL = os.getenv("LLM_STRONG_MODEL", "gpt-5.6-luna")
+LLM_STRONG_MODEL = os.getenv("LLM_STRONG_MODEL", "gpt-5.6-terra")
 LLM_CHEAP_MODEL = os.getenv("LLM_CHEAP_MODEL", "gpt-5.6-luna")
 LLM_STRONG_PROVIDER = os.getenv("LLM_STRONG_PROVIDER", LLM_PROVIDER)
 LLM_CHEAP_PROVIDER = os.getenv("LLM_CHEAP_PROVIDER", LLM_PROVIDER)

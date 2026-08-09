@@ -92,15 +92,20 @@ against gpt-4.1-mini's $0.40/$1.60.
 
 ### Decision
 
-**Move both tiers to `gpt-5.6-luna`.**
+**Strong tier -> `gpt-5.6-terra`. Cheap tier -> `gpt-5.6-luna`.**
 
-Unusually, there was no trade-off to weigh. Luna scored ~0.36/5 higher than the
-incumbent averaged across two runs, at **93% of the cost** and **82% of the latency**.
-Better, cheaper, faster.
+Both beat the outgoing `gpt-4.1-mini`, and terra scored highest in both runs, so it
+takes the tier that exists for exactly this: the calls where quality is worth paying
+for (PM synthesis, the judges, rebalance, the investor letter).
 
-`gpt-5.6-terra` scored marginally higher again (+0.04 over luna) but costs **8.2×**
-per scenario. That is the same verdict the 2026-07-07 run reached about the flagship,
-for the same reason: the gap is inside the judge's noise and the price is not.
+On cost alone luna would win the strong tier too — it scored within 0.04 of terra at
+an eighth of the price, and the 2026-07-07 run rejected the flagship on precisely
+that logic. The counter-argument is that pointing both tiers at one model makes the
+routing vestigial, which is the condition this document was written to end. At this
+fund's volume the difference is cents a month, so the split is worth keeping real.
+
+Revisit if strong-tier spend ever stops being a rounding error: `LLM_STRONG_MODEL=gpt-5.6-luna`
+collapses it back and costs ~0.04/5 of measured quality.
 
 ### Honest limits
 
