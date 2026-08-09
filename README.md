@@ -315,10 +315,12 @@ Every LLM call is routed by **tier** through a provider abstraction
 (`src/llm/providers/`, `src/llm/routing.py`): the **strong** tier serves final
 decisions, PM synthesis, and judges; the **cheap** tier serves analysts, summaries,
 and tweets. Each tier resolves to a `(provider, model)` route. The strong tier
-defaults to `gpt-4.1-mini` and the cheap tier to `gpt-4o-mini` — a *measured* choice:
+defaults to `gpt-5.6-terra` and the cheap tier to `gpt-5.6-luna` — a *measured* choice:
 `make eval-compare` runs the decision evals under each candidate model and reports a
-quality-vs-cost table, which found the flagship models (`gpt-4o`, `gpt-4.1`) cost
-~11× more for no reliable quality gain (see [docs/model-selection.md](docs/model-selection.md)).
+quality-vs-cost table. It found the flagships (`gpt-4o`, `gpt-4.1`) cost ~11× more for
+no reliable quality gain, and later that both `gpt-5.6` variants beat the incumbent
+`gpt-4.1-mini` (4.21 and 4.17 vs 3.71 out of 5), with `luna` costing *less* per token
+(see [docs/model-selection.md](docs/model-selection.md)).
 Override either tier via `LLM_STRONG_MODEL` / `LLM_CHEAP_MODEL`. If
 `LLM_FALLBACK_PROVIDER` / `LLM_FALLBACK_MODEL` are set, a call that exhausts retries
 on its primary route falls back to that route before failing; the cost log records

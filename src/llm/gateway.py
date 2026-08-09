@@ -44,6 +44,12 @@ _MODEL_PRICING: dict[str, tuple[float, float]] = {
     "gpt-4o": (0.00250, 0.01000),
     "gpt-4.1-mini": (0.00040, 0.00160),
     "gpt-4.1": (0.00200, 0.00800),
+    # gpt-5.6 family (developers.openai.com/api/docs/pricing, read 2026-08-08).
+    # Worth noting luna undercuts gpt-4.1-mini on BOTH sides ($0.20/$1.20 vs
+    # $0.40/$1.60), while terra is 5x input / 7.5x output of the current strong tier.
+    "gpt-5.6-luna": (0.00020, 0.00120),
+    "gpt-5.6-terra": (0.00200, 0.01200),
+    "gpt-5.6-sol": (0.00500, 0.03000),
 }
 
 

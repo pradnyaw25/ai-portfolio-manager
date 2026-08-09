@@ -80,13 +80,30 @@ BENCHMARK_SYMBOLS = [
 # tweets). Each tier resolves to a (provider, model) route; an optional fallback
 # route is tried if the primary provider fails after retries.
 #
-# The strong tier defaults to gpt-4.1-mini (a real generational step up from the
-# cheap gpt-4o-mini) rather than the flagship: `make eval-compare` measured that
-# gpt-4o/gpt-4.1 cost ~11x more for no reliable decision-quality gain on the eval
-# set. See docs/model-selection.md.
+# Both tiers moved to the gpt-5.6 family on 2026-08-08, measured via
+# `make eval-compare` on the 8 golden scenarios with the judge held at gpt-4o
+# (two runs; docs/model-selection.md has the table and the caveats):
+#
+#   gpt-4.1-mini (old strong)  3.79 / 3.71 quality   $0.00173/scenario
+#   gpt-5.6-luna               4.04 / 4.17           $0.00162
+#   gpt-5.6-terra              4.08 / 4.21           $0.01421
+#
+# terra takes the strong tier: it scored highest in both runs, and the tier exists
+# precisely so the decisions that matter (PM synthesis, judges, rebalance, letters)
+# can run a better model than the chatter. luna takes the cheap tier, where it beats
+# the outgoing gpt-4o-mini on quality for ~2x the output price — still fractions of
+# a cent a day at this volume.
+#
+# The split is deliberate. Pointing both tiers at one model, as an earlier draft of
+# this change did, makes the routing vestigial — the exact state this file's
+# docs/model-selection.md was written to end.
+#
+# NOTE the gpt-5.6 family rejects temperature=0 (400, "only the default (1)"), so
+# every eval that pins temperature is running these models at 1. The provider drops
+# the parameter automatically; see src/llm/providers/openai_provider.py.
 LLM_PROVIDER = os.getenv("LLM_PROVIDER", "openai")  # legacy default provider
-LLM_STRONG_MODEL = os.getenv("LLM_STRONG_MODEL", "gpt-4.1-mini")
-LLM_CHEAP_MODEL = os.getenv("LLM_CHEAP_MODEL", "gpt-4o-mini")
+LLM_STRONG_MODEL = os.getenv("LLM_STRONG_MODEL", "gpt-5.6-terra")
+LLM_CHEAP_MODEL = os.getenv("LLM_CHEAP_MODEL", "gpt-5.6-luna")
 LLM_STRONG_PROVIDER = os.getenv("LLM_STRONG_PROVIDER", LLM_PROVIDER)
 LLM_CHEAP_PROVIDER = os.getenv("LLM_CHEAP_PROVIDER", LLM_PROVIDER)
 LLM_FALLBACK_PROVIDER = os.getenv("LLM_FALLBACK_PROVIDER", "")  # empty = no fallback
