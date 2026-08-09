@@ -24,29 +24,47 @@ bull/bear/risk debate behind it, the evidence it cited, and how its predictions 
 
 An LLM-agent portfolio system with a hardened gateway, a deterministic risk engine, evals gating CI, crash-safe orchestration, chunked RAG over SEC filings, and a read-only MCP server you can point Claude at.
 
+The interesting part is not the trading. It is what is built around an unreliable component — a language model — to make it produce an auditable record: a gateway that validates and retries, guardrails the model cannot argue past, a grounding check that blocks unsupported claims, and a scoreboard that grades its own predictions in public whether they were right or not.
+
+**As of 2026-08-07, after 34 trading days:** 177 scored predictions, a **58.2%** hit rate and a **Brier score of 0.2464** — against 0.25 for a coin flip. Every confidence bucket above 0.6 is overconfident. That result is the point of the project, and it is published whether or not it flatters the model. See [prediction accuracy](https://glasshousefund.com/predictions.html) for the live curve.
+
 ## Features
 
-- **Analyst Debate**: Bull, bear, and risk analyst agents each argue a structured thesis; the portfolio manager synthesizes them and must explicitly respond to the bear case. The full debate transcript is journaled and shown on the dashboard.
-- **Tool-Calling Research**: A research agent uses typed tools (price, history, news, memory, portfolio) to investigate targeted questions before the decision; the tool-call trace is journaled and shown on the dashboard.
-- **Weekly Reflection**: A weekly graph reads the week's resolved predictions (win/loss vs SPY) and trades and synthesizes `risk_lesson` / `mistake` memories — each grounded in the prediction/trade ids it came from — so lessons resurface in the next daily run's retrieved memory.
-- **Weekly Investor Letter**: An AI-written weekly letter (performance vs benchmark, winners/losers, portfolio changes, outlook) generated through the gateway from deterministically computed facts, gated by the grounding check before publish, and exported to the dashboard. Optional X-thread posting, off by default.
-- **Portfolio Management Agent**: Makes buy/sell/hold decisions based on market data and news
-- **Research Agent**: Gathers and synthesizes market data, news, and sentiment
-- **Tweet Generator**: Creates social media content about portfolio performance
-- **Simulated Trading**: Paper trading engine with full position tracking
-- **Reporting**: Markdown and HTML performance reports
-- **Benchmarking**: Compare portfolio performance against S&P 500 and other indices
-- **Prediction Calibration**: Every daily run records a directional "beat/lag SPY" call for *every* researched name — holdings and watchlist, whether or not the fund trades it — at both a 5-day and a 30-day horizon, so the calibration set samples the model's full confidence distribution rather than only the high-conviction names that became trades (`became_trade` preserves the traded-vs-all slice). Non-overlapping windows per (symbol, horizon) keep the samples independent. The dashboard scores them and reports a Brier score and confidence-calibration curve (predicted confidence vs. observed win rate)
-- **Public Dashboard**: Static HTML dashboard with portfolio, run status, prediction accuracy, and decision journal views, including last-updated metadata
-- **Prerendered Decision Pages**: Every trading day gets its own static, indexable page at `/decisions/YYYY-MM-DD.html` — the trades, the full bull/bear/risk debate, and the cash thesis as real HTML rather than a client-side fetch. Generated each run by `src/reporting/decision_pages.py`, which also emits `sitemap.xml`
-- **MCP Server**: A read-only [MCP](https://modelcontextprotocol.io) server (`mcp_server/`) exposes the fund to Claude Desktop/Code — holdings, performance history, trades, decision journal, debate transcripts, and memory search — so you can ask "why did the fund sell NVDA in June?" against real data
+### The decision loop
+
+- **Analyst Debate**: Bull, bear, and risk analyst agents each argue a structured thesis, with the bear getting a rebuttal turn against the bull. The portfolio manager synthesizes them and must explicitly respond to the bear case. The full transcript is journaled and published.
+- **Tool-Calling Research**: A research agent uses five typed tools (price, history, news, memory, portfolio) to investigate targeted follow-up questions before the decision. Invalid arguments return a structured error the model corrects rather than crashing the run; the ordered tool-call trace is journaled.
+- **Deterministic risk engine**: Position sizing, daily turnover, sector concentration, a confidence floor, and stop-loss/take-profit exits are enforced in code, outside the model. Rebalance trades re-enter the same checks — there is no bypass.
+- **Simulated trading**: A paper engine with full position tracking, marked against real prices. No broker, no real money, by design.
+
+### Checking its own work
+
+- **Prediction calibration**: Every run records a directional "beat/lag SPY" call for *every* researched name — holdings and watchlist alike, whether or not the fund trades it — at 5- and 30-day horizons, so the sample covers the model's full confidence distribution rather than only high-conviction names that became trades. Non-overlapping windows per (symbol, horizon) keep samples independent. Scored automatically into a Brier score and a calibration curve.
+- **Grounding check**: Daily decisions and weekly letters are both checked against the facts they were given before anything publishes. Its limits are documented too — it verifies a number *came from* the fact base, not that the fact was *labelled* correctly.
+- **Evals in CI**: A golden decision set, an ablation harness scoring the full system against no-memory and no-debate variants, plus chunking and grounding evals. Temperature 0, no network, run on every pull request.
+- **Baselines**: Compared against buy-and-hold SPY, 100% QQQ, and the mean of 500 random equal-weight portfolios drawn from its own watchlist.
+- **Run health watchdog**: An independent scheduled check that the fund actually ran and succeeded on each trading day. A run cancelled before its first step writes no row anywhere, so only an outside observer can notice the gap.
+
+### What it publishes
+
+- **Prerendered decision pages**: Every trading day gets a static, indexable page at `/decisions/YYYY-MM-DD.html` — trades, the full debate, cash thesis and market calls as real HTML rather than a client-side fetch. Plus per-ticker hub pages and a generated `sitemap.xml`.
+- **Weekly investor letters**: An AI-written weekly letter (performance vs benchmark, winners and losers, portfolio changes, outlook) built from deterministically computed facts, gated by the grounding check, published at a dated permalink under `/letters/`.
+- **Public dashboard**: Portfolio, run status, prediction accuracy and decision journal, with last-updated metadata.
+- **Tweets**: Daily posts drafted by a tweet-writer agent through the same gateway as every other agent.
+- **MCP server**: A read-only [MCP](https://modelcontextprotocol.io) server (`mcp_server/`) exposes the fund to Claude Desktop/Code — holdings, performance history, trades, decision journal, debate transcripts and memory search — so you can ask "why did the fund sell NVDA in June?" against real data.
+
+### Memory
+
+- **Weekly reflection**: A weekly graph reads the week's resolved predictions and trades and synthesizes `risk_lesson` / `mistake` memories, each grounded in the prediction and trade ids it came from, so lessons resurface in the next daily run.
+- **Chunked RAG over SEC filings**: Metadata-filtered vector search in Qdrant, retrieved per run in four typed groups (symbol theses, risk lessons, recent trades, macro context).
 
 ## Setup
 
 1. Clone the repository
-2. Install dependencies:
+2. Install the package and its dependencies (this is what CI does, and it puts
+   `src/` on the path so the scripts resolve):
    ```bash
-   pip install -r requirements.txt
+   pip install -e .
    ```
 3. Copy `.env.example` to `.env` and fill in your API keys:
    ```bash
@@ -56,6 +74,9 @@ An LLM-agent portfolio system with a hardened gateway, a deterministic risk engi
    ```bash
    python scripts/daily_run.py
    ```
+
+The run exits non-zero if the cycle records an error, so it can be scheduled without
+a failure silently reporting success.
 
 ## Local Commands
 
@@ -115,16 +136,35 @@ harnesses answer it, both surfaced on the dashboard:
 
 ```
 src/
-  agents/          - LLM-powered agents (portfolio manager, researcher, tweet writer)
-  data_sources/    - Market data, news, and benchmark fetchers
-  models/          - Data models (portfolio, trade, prediction)
+  workflows/       - The LangGraph daily cycle and the weekly reflection graph
+  agents/          - Portfolio manager, analysts, risk manager, rebalancer,
+                     research agent, investor letter, tweet writer
+  llm/             - The gateway: tiered routing, structured-output validation,
+                     repair retry, backoff, tool-calling loop, cost logging
+  research/        - Deterministic market-context assembly (prices, returns, news)
+  memory/          - Qdrant vector store, extractors, grouped retrieval
+  scoring/         - Grounding check and prediction scorer
   simulator/       - Portfolio engine and performance tracking
-  reporting/       - Markdown reports, public JSON exports, prerendered decision pages
-  storage/         - CSV-based persistence layer
-  utils/           - Logging and date helpers
-scripts/           - CLI entry points (daily run, backfill, benchmark)
+  storage/         - Append-only stores: decisions/predictions/letters (JSONL),
+                     trades and history (CSV), portfolio state (JSON),
+                     run progress (SQLite)
+  reporting/       - Markdown reports, public JSON exports, prerendered decision,
+                     symbol and letter pages, sitemap
+  data_sources/    - Market data, news and benchmark fetchers
+  experiments/     - Ablations and baseline comparisons
+  observability/   - Tracing and run status
+  social/          - X publishing
+  models/          - Dataclasses (portfolio, trade, prediction, run state)
+  utils/           - Logging, market hours, date helpers
+mcp_server/        - Read-only MCP server exposing the fund
+evals/             - Golden decision set and ablation scenarios
+prompts/           - Versioned prompt templates
+config/            - Watchlist and sector maps
+scripts/           - CLI entry points (daily run, health check, backfill, evals)
 tests/             - Unit tests
-public/            - The published site: dashboard, predictions, decisions, and static exports
+docs/              - Roadmaps, incident log, article notes
+public/            - The published site: dashboard, decisions, letters, symbols,
+                     predictions and static exports
 ```
 
 ## Configuration
