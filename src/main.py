@@ -8,7 +8,7 @@ entrypoint for a run (``scripts/daily_run.py``). This module intentionally has n
 orchestration or ``__main__`` of its own.
 """
 
-from src.config import ENABLE_DEBATE, INITIAL_CAPITAL
+from src.config import ENABLE_DEBATE, INITIAL_CAPITAL, LLM_STRONG_MODEL
 from src.llm.cost import summarize_run_cost
 from src.storage.run_history_store import RunHistoryStore
 from src.storage.portfolio_store import PortfolioStore
@@ -232,6 +232,7 @@ def track_buy_predictions(trades, approved_trades, market_data):
                 trade=trade,
                 confidence=confidence_map.get(trade.symbol, 0.5),
                 spy_price=spy_price,
+                model=LLM_STRONG_MODEL,
             )
 
 
@@ -285,6 +286,10 @@ def record_market_calls(decisions, trades, approved_trades, research, market_dat
                 spy_price=spy_price,
                 horizon=horizon,
                 became_trade=symbol in executed_buys,
+                # Market calls are a strong-tier product: they come out of the
+                # portfolio manager's decision. Records the configured route rather
+                # than the served one, so a fallback (unset today) would not show.
+                model=LLM_STRONG_MODEL,
             )
             if created is not None:
                 recorded += 1

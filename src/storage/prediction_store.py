@@ -84,7 +84,9 @@ class PredictionStore:
                 return existing
         return None
 
-    def create_from_trade(self, trade, confidence: float, spy_price: float) -> dict:
+    def create_from_trade(
+        self, trade, confidence: float, spy_price: float, model: str | None = None
+    ) -> dict:
         # One open prediction per symbol at a time. Buying the same name across
         # several runs (or an early run that recorded no run_id) must not stack
         # overlapping "X will outperform SPY over 30 days" bets — that inflates the
@@ -106,6 +108,11 @@ class PredictionStore:
             "direction": "OUTPERFORM",
             "thesis": getattr(trade, "reasoning", "") or "",
             "horizon_days": horizon,
+            # Which model made this call. Without it, a model migration silently
+            # merges two populations into one calibration curve and the before/after
+            # comparison is unrecoverable — predictions accrue forward only, so the
+            # tag has to be written at creation time, not inferred later.
+            "model": model,
             "confidence": confidence,
             "became_trade": True,
             "start_price": trade.price,
@@ -129,6 +136,7 @@ class PredictionStore:
         spy_price: float,
         horizon: int,
         became_trade: bool = False,
+        model: str | None = None,
     ) -> dict | None:
         # Independence guard: one OPEN prediction per (symbol, horizon). A fresh
         # window only opens once the prior one for that horizon has resolved, so
@@ -148,6 +156,11 @@ class PredictionStore:
             "direction": direction,
             "thesis": thesis or "",
             "horizon_days": horizon,
+            # Which model made this call. Without it, a model migration silently
+            # merges two populations into one calibration curve and the before/after
+            # comparison is unrecoverable — predictions accrue forward only, so the
+            # tag has to be written at creation time, not inferred later.
+            "model": model,
             "confidence": confidence,
             "became_trade": became_trade,
             "start_price": start_price,
