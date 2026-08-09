@@ -104,6 +104,16 @@ SUPPORTED_LLM_PROVIDERS = {"openai"}
 # Observability. Langfuse tracing is optional: enabled only when both keys are
 # set, otherwise all tracing is a no-op. Run history is a durable record of every
 # run's final status (not just the latest).
+# Market/news data resilience. Both sources used to swallow every error and return
+# an empty result, so a 429 looked exactly like a delisted ticker and the fund
+# decided on whatever partial data arrived. Raised errors are retried with backoff;
+# a batch that loses more than MAX_MISSING_PCT of its symbols raises instead, because
+# a decision built on a fraction of the universe should fail loudly rather than
+# publish.
+MARKET_DATA_MAX_RETRIES = int(os.getenv("MARKET_DATA_MAX_RETRIES", "3"))
+MARKET_DATA_MAX_MISSING_PCT = float(os.getenv("MARKET_DATA_MAX_MISSING_PCT", "0.25"))
+NEWS_MAX_RETRIES = int(os.getenv("NEWS_MAX_RETRIES", "2"))
+
 LANGFUSE_PUBLIC_KEY = os.getenv("LANGFUSE_PUBLIC_KEY", "")
 LANGFUSE_SECRET_KEY = os.getenv("LANGFUSE_SECRET_KEY", "")
 # Accept LANGFUSE_BASE_URL as well as LANGFUSE_HOST. The Python SDK calls it HOST,

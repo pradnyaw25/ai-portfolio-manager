@@ -1,7 +1,9 @@
+import time
+
 import feedparser
 import requests
 
-from src.config import NEWS_API_KEY, PREFER_NEWSAPI
+from src.config import NEWS_API_KEY, NEWS_MAX_RETRIES, PREFER_NEWSAPI
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -23,10 +25,13 @@ class NewsClient:
         api_key: str = NEWS_API_KEY,
         prefer_newsapi: bool = PREFER_NEWSAPI,
         session: requests.Session | None = None,
+        sleep=None,
     ):
         self.api_key = api_key
         self.prefer_newsapi = prefer_newsapi
         self.session = session or requests.Session()
+        # Injectable so tests exercise the retry path without real delays.
+        self._sleep = sleep or time.sleep
 
     def get_stock_news(self, symbol: str, limit: int = 5) -> list[dict]:
         return self._fetch(newsapi_query=f"{symbol} stock", rss_query=f"{symbol}+stock", limit=limit)
@@ -43,8 +48,34 @@ class NewsClient:
             articles = self._fetch_newsapi(newsapi_query, limit)
         return articles
 
+    def _retrying(self, fetch, what: str):
+        """Retry a raised error with exponential backoff; give up quietly after that.
+
+        News is a catalyst source, not a price source: losing it degrades the quality
+        of a decision rather than invalidating it, so exhausting the retries returns
+        an empty list instead of failing the run. That is the opposite call from
+        MarketDataClient, deliberately — see its module docstring.
+        """
+        attempt = 0
+        while True:
+            try:
+                return fetch()
+            except Exception as exc:  # noqa: BLE001
+                if attempt >= NEWS_MAX_RETRIES:
+                    logger.warning(
+                        "%s failed after %d attempts: %s", what, attempt + 1, str(exc)[:150]
+                    )
+                    return None
+                delay = 2.0**attempt
+                logger.warning(
+                    "%s error (attempt %d/%d), backing off %.1fs: %s",
+                    what, attempt + 1, NEWS_MAX_RETRIES + 1, delay, str(exc)[:120],
+                )
+                self._sleep(delay)
+                attempt += 1
+
     def _fetch_newsapi(self, query: str, limit: int) -> list[dict]:
-        try:
+        def call():
             resp = self.session.get(
                 NEWSAPI_URL,
                 params={
@@ -57,8 +88,12 @@ class NewsClient:
                 timeout=10,
             )
             resp.raise_for_status()
-            articles = resp.json().get("articles", [])
-            return [
+            return resp.json().get("articles", [])
+
+        articles = self._retrying(call, f"NewsAPI request for {query!r}")
+        if articles is None:
+            return []
+        return [
                 {
                     "title": a.get("title", ""),
                     "link": a.get("url", ""),
@@ -67,15 +102,16 @@ class NewsClient:
                     "provider": "newsapi",
                 }
                 for a in articles[:limit]
-            ]
-        except Exception as exc:
-            logger.warning("NewsAPI request failed for %r: %s — falling back to RSS", query, exc)
-            return []
+        ]
 
     def _fetch_rss(self, query: str, limit: int) -> list[dict]:
-        try:
-            feed = feedparser.parse(GOOGLE_NEWS_RSS.format(query=query))
-            return [
+        feed = self._retrying(
+            lambda: feedparser.parse(GOOGLE_NEWS_RSS.format(query=query)),
+            f"RSS news fetch for {query!r}",
+        )
+        if feed is None:
+            return []
+        return [
                 {
                     "title": entry.get("title", ""),
                     "link": entry.get("link", ""),
@@ -84,7 +120,4 @@ class NewsClient:
                     "provider": "google_news_rss",
                 }
                 for entry in feed.entries[:limit]
-            ]
-        except Exception as exc:
-            logger.warning("RSS news fetch failed for %r: %s", query, exc)
-            return []
+        ]
