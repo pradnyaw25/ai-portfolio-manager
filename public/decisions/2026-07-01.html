@@ -90,6 +90,30 @@ p { margin:0 0 12px; }
 .tag { display:inline-block; border:1px solid var(--border-strong); border-radius:999px;
   padding:0 8px; font-size:11px; font-weight:800; color:var(--muted-strong); white-space:nowrap; }
 .muted { color:var(--muted); }
+.correction { border:1px solid var(--negative); border-left:4px solid var(--negative);
+  border-radius:8px; background:var(--negative-bg); color:var(--text);
+  padding:12px 14px; margin:14px 0 4px; font-size:13.5px; }
+.correction strong { color:var(--negative); }
+details.more { margin:6px 0 18px; }
+details.more > summary { cursor:pointer; font-size:13px; font-weight:800; color:var(--accent);
+  padding:7px 0; list-style:none; }
+details.more > summary::-webkit-details-marker { display:none; }
+details.more > summary::before { content:"▸ "; display:inline-block; transition:transform .15s; }
+details.more[open] > summary::before { content:"▾ "; }
+details.more > summary:hover { text-decoration:underline; }
+details.more h3 { font-size:14px; margin:16px 0 4px; }
+figure.chart { margin:10px 0 4px; }
+figure.chart svg { width:100%; height:auto; display:block; }
+figure.chart figcaption { font-size:12px; margin-top:2px; }
+.chart .axis { stroke:var(--border-strong); stroke-width:1; }
+.chart .ax { font-size:10px; fill:var(--muted); font-weight:700; }
+.chart .tick { stroke-width:3; stroke-linecap:round; opacity:.75; }
+.chart .tick.up { stroke:var(--positive); }
+.chart .tick.down { stroke:var(--negative); }
+.chart .tick:hover { opacity:1; stroke-width:5; }
+ul.sources { list-style:none; margin:6px 0 0; padding:0; font-size:14px; }
+ul.sources li { border-bottom:1px solid var(--row-border); padding:8px 0; margin:0; }
+ul.sources a { color:var(--ink); font-weight:700; }
 ul { margin:6px 0 0; padding-left:20px; }
 li { margin-bottom:4px; }
 .role { font-size:11.5px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--accent); }
@@ -119,7 +143,8 @@ footer { margin-top:48px; border-top:1px solid var(--row-border); padding-top:16
       <a class="brand" href="../index.html"><svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-linejoin="round" stroke-linecap="round"><path d="M24 5 L43 21 L43 43 L5 43 L5 21 Z" stroke-width="2.4"/><path d="M5 21 L43 21" stroke-width="2"/><path d="M24 5 L24 21" stroke-width="1.6"/><path d="M16 21 L16 43 M32 21 L32 43" stroke-width="1.6"/><path d="M5 32 L43 32" stroke-width="1.6"/></g></svg><span>Glasshouse Fund</span></a>
       <nav class="nav" aria-label="Site navigation">
         <a href="../dashboard.html">Dashboard</a>
-        <a class="active" href="../decisions.html">Decision Journal</a>
+        <a class="active" href="../decisions.html">Trade log</a>
+        <a href="../letters/">Weekly Investor Letters</a>
         <a href="../predictions.html">Prediction Accuracy</a>
         <a href="../engineering.html">Engineering</a>
         <a href="../about.html">About</a>
@@ -133,11 +158,8 @@ footer { margin-top:48px; border-top:1px solid var(--row-border); padding-top:16
     <div class="trade sell"><div class="head">SELL 50 <a class="sym-link" href="../symbols/NVDA.html">NVDA</a><span class="conf">65%</span><span class="muted"> · filled at $198</span></div><p style="margin:6px 0 0">Despite its long-term potential, NVDA has not performed well recently, and it&#x27;s wise to reduce exposure in light of current market sentiment and news indicating short-term pressures.</p><div class="muted" style="margin-top:6px">Risks the AI named</div><ul><li>Market volatility could impact NVDA&#x27;s recovery.</li><li>Reduced exposure might miss the upside if NVDA rebounds.</li></ul></div><div class="trade sell"><div class="head">SELL 30 <a class="sym-link" href="../symbols/PG.html">PG</a><span class="conf">60%</span><span class="muted"> · filled at $146</span></div><p style="margin:6px 0 0">PG is underperforming with a negative 30d return and might be better utilized as cash for other opportunities.</p><div class="muted" style="margin-top:6px">Risks the AI named</div><ul><li>Selling could lead to missing a potential rebound.</li><li>Loss of dividend yield.</li></ul></div>
     
     
+    <h2>Cash thesis</h2><p>The cash position is substantial, representing 27% of the portfolio, allowing for strategic purchases in a fluctuating market without the need for quick liquidation of current positions.</p><details class="more"><summary>Full commentary</summary><h3>Market summary</h3><p>The market is exhibiting mixed performance as the Dow rises while the Nasdaq faces pressures from declining chipmakers. Recent news suggests caution with key economic figures and mixed earnings expectations affecting investor sentiment.</p><h3>Portfolio assessment</h3><p>The portfolio is well-diversified with strong performers such as HD, JNJ, and TSLA. However, NVDA is showing a negative trend, and a portion of the portfolio is not performing optimally (e.g., PG and NVDA). Cash represents a significant portion (about 27%) of the total portfolio, providing flexibility for future opportunities.</p><h3>Risk assessment</h3><p>Market volatility remains a concern, particularly with the mixed performance of sectors and stocks. Recent news indicates potential overvaluation risks in specific holdings, necessitating careful monitoring of those positions.</p></details>
     
-    <h2>Market summary</h2><p>The market is exhibiting mixed performance as the Dow rises while the Nasdaq faces pressures from declining chipmakers. Recent news suggests caution with key economic figures and mixed earnings expectations affecting investor sentiment.</p>
-    <h2>Portfolio assessment</h2><p>The portfolio is well-diversified with strong performers such as HD, JNJ, and TSLA. However, NVDA is showing a negative trend, and a portion of the portfolio is not performing optimally (e.g., PG and NVDA). Cash represents a significant portion (about 27%) of the total portfolio, providing flexibility for future opportunities.</p>
-    <h2>Risk assessment</h2><p>Market volatility remains a concern, particularly with the mixed performance of sectors and stocks. Recent news indicates potential overvaluation risks in specific holdings, necessitating careful monitoring of those positions.</p>
-    <h2>Cash thesis</h2><p>The cash position is substantial, representing 27% of the portfolio, allowing for strategic purchases in a fluctuating market without the need for quick liquidation of current positions.</p>
     <div class="pager">
       <span><a href="2026-06-30.html">← June 30, 2026</a></span>
       <span><a href="2026-07-02.html">July 2, 2026 →</a></span>

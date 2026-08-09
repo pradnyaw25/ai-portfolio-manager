@@ -90,6 +90,30 @@ p { margin:0 0 12px; }
 .tag { display:inline-block; border:1px solid var(--border-strong); border-radius:999px;
   padding:0 8px; font-size:11px; font-weight:800; color:var(--muted-strong); white-space:nowrap; }
 .muted { color:var(--muted); }
+.correction { border:1px solid var(--negative); border-left:4px solid var(--negative);
+  border-radius:8px; background:var(--negative-bg); color:var(--text);
+  padding:12px 14px; margin:14px 0 4px; font-size:13.5px; }
+.correction strong { color:var(--negative); }
+details.more { margin:6px 0 18px; }
+details.more > summary { cursor:pointer; font-size:13px; font-weight:800; color:var(--accent);
+  padding:7px 0; list-style:none; }
+details.more > summary::-webkit-details-marker { display:none; }
+details.more > summary::before { content:"▸ "; display:inline-block; transition:transform .15s; }
+details.more[open] > summary::before { content:"▾ "; }
+details.more > summary:hover { text-decoration:underline; }
+details.more h3 { font-size:14px; margin:16px 0 4px; }
+figure.chart { margin:10px 0 4px; }
+figure.chart svg { width:100%; height:auto; display:block; }
+figure.chart figcaption { font-size:12px; margin-top:2px; }
+.chart .axis { stroke:var(--border-strong); stroke-width:1; }
+.chart .ax { font-size:10px; fill:var(--muted); font-weight:700; }
+.chart .tick { stroke-width:3; stroke-linecap:round; opacity:.75; }
+.chart .tick.up { stroke:var(--positive); }
+.chart .tick.down { stroke:var(--negative); }
+.chart .tick:hover { opacity:1; stroke-width:5; }
+ul.sources { list-style:none; margin:6px 0 0; padding:0; font-size:14px; }
+ul.sources li { border-bottom:1px solid var(--row-border); padding:8px 0; margin:0; }
+ul.sources a { color:var(--ink); font-weight:700; }
 ul { margin:6px 0 0; padding-left:20px; }
 li { margin-bottom:4px; }
 .role { font-size:11.5px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--accent); }
@@ -119,7 +143,8 @@ footer { margin-top:48px; border-top:1px solid var(--row-border); padding-top:16
       <a class="brand" href="../index.html"><svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-linejoin="round" stroke-linecap="round"><path d="M24 5 L43 21 L43 43 L5 43 L5 21 Z" stroke-width="2.4"/><path d="M5 21 L43 21" stroke-width="2"/><path d="M24 5 L24 21" stroke-width="1.6"/><path d="M16 21 L16 43 M32 21 L32 43" stroke-width="1.6"/><path d="M5 32 L43 32" stroke-width="1.6"/></g></svg><span>Glasshouse Fund</span></a>
       <nav class="nav" aria-label="Site navigation">
         <a href="../dashboard.html">Dashboard</a>
-        <a class="active" href="../decisions.html">Decision Journal</a>
+        <a class="active" href="../decisions.html">Trade log</a>
+        <a href="../letters/">Weekly Investor Letters</a>
         <a href="../predictions.html">Prediction Accuracy</a>
         <a href="../engineering.html">Engineering</a>
         <a href="../about.html">About</a>
@@ -133,11 +158,8 @@ footer { margin-top:48px; border-top:1px solid var(--row-border); padding-top:16
     <div class="trade sell"><div class="head">SELL 50 <a class="sym-link" href="../symbols/AAPL.html">AAPL</a><span class="conf">78%</span><span class="muted"> · filled at $289</span></div><p style="margin:6px 0 0">AAPL is showing negative short-term indicators, including recent declines and negative news sentiment surrounding data leaks. Selling a portion mitigates exposure.</p><div class="muted" style="margin-top:6px">Risks the AI named</div><ul><li>Market volatility may affect sale timing</li><li>Potential rebound in stock price post-sale</li></ul></div><div class="trade sell"><div class="head">SELL 30 <a class="sym-link" href="../symbols/PG.html">PG</a><span class="conf">65%</span><span class="muted"> · filled at $146</span></div><p style="margin:6px 0 0">PG has not recovered from recent price declines, and market narratives suggest it may be overvalued at current levels.</p><div class="muted" style="margin-top:6px">Risks the AI named</div><ul><li>Further losses if the market rebounds</li><li>Uncertain consumer demand affecting sales</li></ul></div>
     
     
+    <h2>Cash thesis</h2><p>Cash remains high due to the overall market uncertainty and mixed signals evident in recent financial news. Maintaining liquidity provides the flexibility to capitalize on better opportunities as they arise and mitigate potential losses.</p><details class="more"><summary>Full commentary</summary><h3>Market summary</h3><p>The market has recently shown signs of volatility with mixed performances among major indices. While the Nasdaq is on track to wrap the quarter positively, concerns about a potential market pullback loom due to recent headlines indicating excessive optimism and the possibility of significant upcoming IPOs.</p><h3>Portfolio assessment</h3><p>The portfolio shows significant exposure to large-cap tech and consumer stocks, with a strong cash position of 29.6% due to the cautious sentiment regarding the market. Several holdings are currently underperforming relative to their purchase prices, notably AAPL, MSFT, NVDA, and PG.</p><h3>Risk assessment</h3><p>Key risks include increasing market volatility and the potential for a significant market correction, especially given the current bearish sentiment despite strong quarterly performance in certain sectors. Holding positions in underperforming stocks further increases portfolio risk.</p></details>
     
-    <h2>Market summary</h2><p>The market has recently shown signs of volatility with mixed performances among major indices. While the Nasdaq is on track to wrap the quarter positively, concerns about a potential market pullback loom due to recent headlines indicating excessive optimism and the possibility of significant upcoming IPOs.</p>
-    <h2>Portfolio assessment</h2><p>The portfolio shows significant exposure to large-cap tech and consumer stocks, with a strong cash position of 29.6% due to the cautious sentiment regarding the market. Several holdings are currently underperforming relative to their purchase prices, notably AAPL, MSFT, NVDA, and PG.</p>
-    <h2>Risk assessment</h2><p>Key risks include increasing market volatility and the potential for a significant market correction, especially given the current bearish sentiment despite strong quarterly performance in certain sectors. Holding positions in underperforming stocks further increases portfolio risk.</p>
-    <h2>Cash thesis</h2><p>Cash remains high due to the overall market uncertainty and mixed signals evident in recent financial news. Maintaining liquidity provides the flexibility to capitalize on better opportunities as they arise and mitigate potential losses.</p>
     <div class="pager">
       <span><a href="2026-06-29.html">← June 29, 2026</a></span>
       <span><a href="2026-07-01.html">July 1, 2026 →</a></span>
