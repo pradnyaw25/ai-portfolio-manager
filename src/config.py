@@ -106,7 +106,16 @@ SUPPORTED_LLM_PROVIDERS = {"openai"}
 # run's final status (not just the latest).
 LANGFUSE_PUBLIC_KEY = os.getenv("LANGFUSE_PUBLIC_KEY", "")
 LANGFUSE_SECRET_KEY = os.getenv("LANGFUSE_SECRET_KEY", "")
-LANGFUSE_HOST = os.getenv("LANGFUSE_HOST", "https://cloud.langfuse.com")
+# Accept LANGFUSE_BASE_URL as well as LANGFUSE_HOST. The Python SDK calls it HOST,
+# but Langfuse's own setup UI and JS SDK call it BASE_URL, so that is the name people
+# actually paste into their env — and getting it wrong fails *silently*: the client
+# constructs happily against the default host, logs "tracing enabled", and then the
+# traces never arrive because US keys were pointed at the EU endpoint.
+LANGFUSE_HOST = (
+    os.getenv("LANGFUSE_HOST")
+    or os.getenv("LANGFUSE_BASE_URL")
+    or "https://cloud.langfuse.com"
+)
 RUN_HISTORY_LOG = DATA_DIR / "run_history.jsonl"
 
 # Human-in-the-loop approval. When AUTO_APPROVE is true (the default), the daily
