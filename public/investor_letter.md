@@ -1,23 +1,27 @@
-# Modest Gains Amid Mixed Tech Signals
+# A positive week in absolute terms, but meaningful underperformance versus the benchmark.
 
-*Week of 2026-07-27 to 2026-08-02*
+*Week of 2026-08-03 to 2026-08-09*
 
 ## Performance
 
-The fund rose 0.30% this week, trailing the benchmark's 0.69% advance and resulting in a -0.39% alpha. Portfolio value increased from $1,023,174.67 to $1,026,286.83.
+For the week ended 2026-08-09, portfolio value increased from 1043660.7 to 1045213.7, a return of 0.15%. The benchmark returned 2.31%, producing alpha of -2.16%.
 
 ## Winners
 
-- MA led with a 17.77% gain, followed by MSFT at 15.42% and V at 14.80%.
+- MSFT gained 28.03% this week; its return since the position was opened is 20.98%.
+- AMZN gained 21.10% this week; its return since the position was opened is 13.96%.
+- NVDA gained 17.87% this week; its return since the position was opened is 9.22%.
 
 ## Losers
 
-- NVDA declined -2.12%, and META fell -3.11% despite significant position sizes.
+- AAPL declined -7.35% this week; its return since the position was opened is 4.42%.
+- UNH declined -3.21% this week; its return since the position was opened is 0.88%.
+- JNJ declined -2.37% this week; its return since the position was opened is 7.09%.
 
 ## Portfolio Changes
 
-We reduced NVDA by selling 264 shares over the week and trimmed AMD by 134 shares. Concurrently, we increased exposure to AAPL via 68 shares, added 45 shares of AMZN, 32 of GOOGL, 33 of HD, and 24 of MSFT, reflecting a shift toward more stable growth names.
+We bought 70 shares of AAPL, 20 shares of MSFT, and 50 shares of AMZN. We sold 100 shares of NVDA.
 
 ## Outlook
 
-While the benchmark outperformed, selective profit-taking in NVDA and AMD aims to balance risk. We remain focused on strong performers like MA, MSFT, and AMZN as we navigate ongoing market volatility.
+The portfolio finished modestly higher, but the 0.15% return did not keep pace with the benchmark's 2.31% gain. We will continue to monitor the portfolio's concentrated holdings and the effects of this week's additions to AAPL, MSFT, and AMZN alongside the reduction in NVDA.

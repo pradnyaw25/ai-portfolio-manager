@@ -1,205 +1,190 @@
 {
-  "week_end": "2026-08-02",
-  "week_start": "2026-07-27",
+  "week_end": "2026-08-09",
+  "week_start": "2026-08-03",
   "letter": {
-    "headline": "Modest Gains Amid Mixed Tech Signals",
-    "performance": "The fund rose 0.30% this week, trailing the benchmark's 0.69% advance and resulting in a -0.39% alpha. Portfolio value increased from $1,023,174.67 to $1,026,286.83.",
+    "headline": "A positive week in absolute terms, but meaningful underperformance versus the benchmark.",
+    "performance": "For the week ended 2026-08-09, portfolio value increased from 1043660.7 to 1045213.7, a return of 0.15%. The benchmark returned 2.31%, producing alpha of -2.16%.",
     "winners": [
-      "MA led with a 17.77% gain, followed by MSFT at 15.42% and V at 14.80%."
+      "MSFT gained 28.03% this week; its return since the position was opened is 20.98%.",
+      "AMZN gained 21.10% this week; its return since the position was opened is 13.96%.",
+      "NVDA gained 17.87% this week; its return since the position was opened is 9.22%."
     ],
     "losers": [
-      "NVDA declined -2.12%, and META fell -3.11% despite significant position sizes."
+      "AAPL declined -7.35% this week; its return since the position was opened is 4.42%.",
+      "UNH declined -3.21% this week; its return since the position was opened is 0.88%.",
+      "JNJ declined -2.37% this week; its return since the position was opened is 7.09%."
     ],
-    "portfolio_changes": "We reduced NVDA by selling 264 shares over the week and trimmed AMD by 134 shares. Concurrently, we increased exposure to AAPL via 68 shares, added 45 shares of AMZN, 32 of GOOGL, 33 of HD, and 24 of MSFT, reflecting a shift toward more stable growth names.",
-    "outlook": "While the benchmark outperformed, selective profit-taking in NVDA and AMD aims to balance risk. We remain focused on strong performers like MA, MSFT, and AMZN as we navigate ongoing market volatility."
+    "portfolio_changes": "We bought 70 shares of AAPL, 20 shares of MSFT, and 50 shares of AMZN. We sold 100 shares of NVDA.",
+    "outlook": "The portfolio finished modestly higher, but the 0.15% return did not keep pace with the benchmark's 2.31% gain. We will continue to monitor the portfolio's concentrated holdings and the effects of this week's additions to AAPL, MSFT, and AMZN alongside the reduction in NVDA."
   },
   "facts": {
-    "week_start": "2026-07-27",
-    "week_end": "2026-08-02",
-    "start_value": 1023174.67,
-    "end_value": 1026286.83,
-    "return_pct": 0.003,
-    "benchmark_return_pct": 0.0069,
-    "alpha": -0.0039,
+    "week_start": "2026-08-03",
+    "week_end": "2026-08-09",
+    "start_value": 1043660.7,
+    "end_value": 1045213.7,
+    "return_pct": 0.0015,
+    "benchmark_return_pct": 0.0231,
+    "alpha": -0.0216,
     "winners": [
       {
-        "symbol": "MA",
-        "return_pct": 0.1777,
-        "market_value": 4583.52
-      },
-      {
         "symbol": "MSFT",
-        "return_pct": 0.1542,
-        "market_value": 53976.19
+        "return_since_entry_pct": 0.2098,
+        "week_return_pct": 0.2803,
+        "market_value": 68414.38
       },
       {
-        "symbol": "V",
-        "return_pct": 0.148,
-        "market_value": 8057.72
+        "symbol": "AMZN",
+        "return_since_entry_pct": 0.1396,
+        "week_return_pct": 0.211,
+        "market_value": 200725.29
+      },
+      {
+        "symbol": "NVDA",
+        "return_since_entry_pct": 0.0922,
+        "week_return_pct": 0.1787,
+        "market_value": 33306.0
       }
     ],
     "losers": [
       {
-        "symbol": "NVDA",
-        "return_pct": -0.0212,
-        "market_value": 49747.5
+        "symbol": "JNJ",
+        "return_since_entry_pct": 0.0709,
+        "week_return_pct": -0.0237,
+        "market_value": 139309.36
       },
       {
-        "symbol": "META",
-        "return_pct": -0.0311,
-        "market_value": 5507.25
+        "symbol": "UNH",
+        "return_since_entry_pct": 0.0088,
+        "week_return_pct": -0.0321,
+        "market_value": 1227.3
+      },
+      {
+        "symbol": "AAPL",
+        "return_since_entry_pct": 0.0442,
+        "week_return_pct": -0.0735,
+        "market_value": 233598.12
       }
     ],
     "positions": [
       {
-        "symbol": "MA",
-        "return_pct": 0.1777,
-        "market_value": 4583.52
-      },
-      {
         "symbol": "MSFT",
-        "return_pct": 0.1542,
-        "market_value": 53976.19
-      },
-      {
-        "symbol": "V",
-        "return_pct": 0.148,
-        "market_value": 8057.72
+        "return_since_entry_pct": 0.2098,
+        "week_return_pct": 0.2803,
+        "market_value": 68414.38
       },
       {
         "symbol": "AMZN",
-        "return_pct": 0.1411,
-        "market_value": 185102.61
-      },
-      {
-        "symbol": "JPM",
-        "return_pct": 0.1256,
-        "market_value": 3528.6
-      },
-      {
-        "symbol": "JNJ",
-        "return_pct": 0.0765,
-        "market_value": 140036.98
-      },
-      {
-        "symbol": "UNH",
-        "return_pct": 0.0318,
-        "market_value": 1255.34
-      },
-      {
-        "symbol": "AAPL",
-        "return_pct": 0.0192,
-        "market_value": 205876.19
-      },
-      {
-        "symbol": "HD",
-        "return_pct": 0.015,
-        "market_value": 44199.89
-      },
-      {
-        "symbol": "GOOGL",
-        "return_pct": 0.0094,
-        "market_value": 54711.58
+        "return_since_entry_pct": 0.1396,
+        "week_return_pct": 0.211,
+        "market_value": 200725.29
       },
       {
         "symbol": "NVDA",
-        "return_pct": -0.0212,
-        "market_value": 49747.5
+        "return_since_entry_pct": 0.0922,
+        "week_return_pct": 0.1787,
+        "market_value": 33306.0
+      },
+      {
+        "symbol": "GOOGL",
+        "return_since_entry_pct": 0.0063,
+        "week_return_pct": 0.0522,
+        "market_value": 54543.72
+      },
+      {
+        "symbol": "HD",
+        "return_since_entry_pct": 0.0794,
+        "week_return_pct": 0.0513,
+        "market_value": 47004.2
+      },
+      {
+        "symbol": "JPM",
+        "return_since_entry_pct": 0.1411,
+        "week_return_pct": 0.0372,
+        "market_value": 3577.28
       },
       {
         "symbol": "META",
-        "return_pct": -0.0311,
-        "market_value": 5507.25
+        "return_since_entry_pct": 0.0411,
+        "week_return_pct": 0.0111,
+        "market_value": 5918.15
+      },
+      {
+        "symbol": "MA",
+        "return_since_entry_pct": 0.1568,
+        "week_return_pct": -0.0007,
+        "market_value": 4502.24
+      },
+      {
+        "symbol": "V",
+        "return_since_entry_pct": 0.1368,
+        "week_return_pct": -0.0169,
+        "market_value": 7979.29
+      },
+      {
+        "symbol": "JNJ",
+        "return_since_entry_pct": 0.0709,
+        "week_return_pct": -0.0237,
+        "market_value": 139309.36
+      },
+      {
+        "symbol": "UNH",
+        "return_since_entry_pct": 0.0088,
+        "week_return_pct": -0.0321,
+        "market_value": 1227.3
+      },
+      {
+        "symbol": "AAPL",
+        "return_since_entry_pct": 0.0442,
+        "week_return_pct": -0.0735,
+        "market_value": 233598.12
       }
     ],
     "trades": [
       {
-        "date": "2026-07-27",
-        "symbol": "NVDA",
-        "action": "SELL",
-        "shares": "50"
-      },
-      {
-        "date": "2026-07-27",
-        "symbol": "AMD",
-        "action": "SELL",
-        "shares": "30"
-      },
-      {
-        "date": "2026-07-27",
-        "symbol": "NVDA",
-        "action": "SELL",
-        "shares": "50"
-      },
-      {
-        "date": "2026-07-29",
-        "symbol": "AMD",
-        "action": "SELL",
-        "shares": "104"
-      },
-      {
-        "date": "2026-07-29",
+        "date": "2026-08-03",
         "symbol": "AAPL",
         "action": "BUY",
         "shares": "20"
       },
       {
-        "date": "2026-07-30",
-        "symbol": "NVDA",
-        "action": "SELL",
-        "shares": "64"
-      },
-      {
-        "date": "2026-07-30",
-        "symbol": "AAPL",
-        "action": "BUY",
-        "shares": "33"
-      },
-      {
-        "date": "2026-07-30",
-        "symbol": "AMZN",
-        "action": "BUY",
-        "shares": "45"
-      },
-      {
-        "date": "2026-07-30",
-        "symbol": "GOOGL",
-        "action": "BUY",
-        "shares": "32"
-      },
-      {
-        "date": "2026-07-30",
-        "symbol": "MSFT",
-        "action": "BUY",
-        "shares": "24"
-      },
-      {
-        "date": "2026-07-30",
-        "symbol": "HD",
-        "action": "BUY",
-        "shares": "33"
-      },
-      {
-        "date": "2026-07-30",
+        "date": "2026-08-03",
         "symbol": "NVDA",
         "action": "SELL",
         "shares": "50"
       },
       {
-        "date": "2026-07-31",
-        "symbol": "AAPL",
+        "date": "2026-08-03",
+        "symbol": "MSFT",
         "action": "BUY",
-        "shares": "15"
+        "shares": "20"
       },
       {
-        "date": "2026-07-31",
+        "date": "2026-08-03",
         "symbol": "NVDA",
         "action": "SELL",
+        "shares": "30"
+      },
+      {
+        "date": "2026-08-04",
+        "symbol": "AMZN",
+        "action": "BUY",
+        "shares": "50"
+      },
+      {
+        "date": "2026-08-04",
+        "symbol": "NVDA",
+        "action": "SELL",
+        "shares": "20"
+      },
+      {
+        "date": "2026-08-07",
+        "symbol": "AAPL",
+        "action": "BUY",
         "shares": "50"
       }
     ]
   },
-  "markdown": "# Modest Gains Amid Mixed Tech Signals\n\n*Week of 2026-07-27 to 2026-08-02*\n\n## Performance\n\nThe fund rose 0.30% this week, trailing the benchmark's 0.69% advance and resulting in a -0.39% alpha. Portfolio value increased from $1,023,174.67 to $1,026,286.83.\n\n## Winners\n\n- MA led with a 17.77% gain, followed by MSFT at 15.42% and V at 14.80%.\n\n## Losers\n\n- NVDA declined -2.12%, and META fell -3.11% despite significant position sizes.\n\n## Portfolio Changes\n\nWe reduced NVDA by selling 264 shares over the week and trimmed AMD by 134 shares. Concurrently, we increased exposure to AAPL via 68 shares, added 45 shares of AMZN, 32 of GOOGL, 33 of HD, and 24 of MSFT, reflecting a shift toward more stable growth names.\n\n## Outlook\n\nWhile the benchmark outperformed, selective profit-taking in NVDA and AMD aims to balance risk. We remain focused on strong performers like MA, MSFT, and AMZN as we navigate ongoing market volatility.\n",
+  "markdown": "# A positive week in absolute terms, but meaningful underperformance versus the benchmark.\n\n*Week of 2026-08-03 to 2026-08-09*\n\n## Performance\n\nFor the week ended 2026-08-09, portfolio value increased from 1043660.7 to 1045213.7, a return of 0.15%. The benchmark returned 2.31%, producing alpha of -2.16%.\n\n## Winners\n\n- MSFT gained 28.03% this week; its return since the position was opened is 20.98%.\n- AMZN gained 21.10% this week; its return since the position was opened is 13.96%.\n- NVDA gained 17.87% this week; its return since the position was opened is 9.22%.\n\n## Losers\n\n- AAPL declined -7.35% this week; its return since the position was opened is 4.42%.\n- UNH declined -3.21% this week; its return since the position was opened is 0.88%.\n- JNJ declined -2.37% this week; its return since the position was opened is 7.09%.\n\n## Portfolio Changes\n\nWe bought 70 shares of AAPL, 20 shares of MSFT, and 50 shares of AMZN. We sold 100 shares of NVDA.\n\n## Outlook\n\nThe portfolio finished modestly higher, but the 0.15% return did not keep pace with the benchmark's 2.31% gain. We will continue to monitor the portfolio's concentrated holdings and the effects of this week's additions to AAPL, MSFT, and AMZN alongside the reduction in NVDA.\n",
   "grounding": {
     "status": "ok",
     "grounded": true,
