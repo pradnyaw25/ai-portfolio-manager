@@ -133,7 +133,7 @@ def _correction_note(facts: dict) -> str:
         '<div class="correction" role="note">'
         "<strong>Correction.</strong> The per-position percentages below are each "
         "holding&rsquo;s return <em>since the position was opened</em>, not its move "
-        "during this week &mdash; a labelling bug in the letter generator, fixed on "
+        "during this week, a labelling bug in the letter generator, fixed on "
         "2026-08-08. The fund-level return and the trade list are unaffected and "
         "correct as written. Letters from 2026-08-08 onward report true weekly moves. "
         "This letter is left as originally published."
@@ -152,7 +152,7 @@ def render_letter_page(entry: dict, *, prev: dict | None, next_: dict | None) ->
     headline = str(letter.get("headline") or "").strip()
     ret = _pct(facts.get("return_pct"))
     title = headline or (
-        f"AI fund weekly letter — {span}" if span else "AI fund weekly letter"
+        f"AI fund weekly letter · {span}" if span else "AI fund weekly letter"
     )
     desc = (
         (str(letter.get("performance") or "").strip() or headline)
@@ -215,7 +215,7 @@ def render_index(entries: list[dict]) -> str:
     <ul class="dlist">{"".join(items)}</ul>
 """
     return _shell(
-        title="Weekly investor letters — Glasshouse Fund",
+        title="Weekly investor letters | Glasshouse Fund",
         description=(
             "Every weekly investor letter from an autonomous AI fund: performance vs the "
             "S&P 500, winners and losers, trades, and outlook — one page per week."

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-  <title>Glasshouse Fund — the AI fund that shows its work</title>
+  <title>Glasshouse Fund: the AI fund that shows its work</title>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script>
@@ -27,12 +27,12 @@
   <script src="analytics.js" defer></script>
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <link rel="canonical" href="https://glasshousefund.com/" />
-  <meta name="description" content="An autonomous AI fund managing $1M of simulated money — every decision debated, grounded in evidence, scored, and published in the open." />
+  <meta name="description" content="An autonomous AI fund managing $1M of simulated money. Every decision debated, grounded in evidence, scored, and published in the open." />
   <meta name="author" content="Pradnya Wakchaure" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://glasshousefund.com/" />
-  <meta property="og:title" content="Glasshouse Fund — the AI fund that shows its work" />
-  <meta property="og:description" content="An autonomous AI fund managing $1M of simulated money — every decision debated, grounded, scored, and published in the open." />
+  <meta property="og:title" content="Glasshouse Fund: the AI fund that shows its work" />
+  <meta property="og:description" content="An autonomous AI fund managing $1M of simulated money. Every decision debated, grounded, scored, and published in the open." />
   <meta property="og:image" content="https://glasshousefund.com/og-cover.png" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@GlassHouseFund" />
@@ -45,7 +45,7 @@
         "@id": "https://glasshousefund.com/#website",
         "url": "https://glasshousefund.com/",
         "name": "Glasshouse Fund",
-        "description": "An autonomous AI fund managing $1M of simulated money — every decision debated, grounded in evidence, scored, and published in the open.",
+        "description": "An autonomous AI fund managing $1M of simulated money. Every decision debated, grounded in evidence, scored, and published in the open.",
         "inLanguage": "en",
         "creator": { "@id": "https://glasshousefund.com/#creator" },
         "about": [
@@ -187,7 +187,7 @@
       <div>
         <div class="eyebrow">Autonomous · Simulated · In the open</div>
         <h1>The AI fund that shows its work.</h1>
-        <p class="lede">An autonomous AI manages a simulated $1M book — and publishes every decision, the debate behind it, the evidence it cited, and how its predictions actually turn out.</p>
+        <p class="lede">An autonomous AI manages a simulated $1M book, and publishes every decision, the debate behind it, the evidence it cited, and how its predictions actually turn out.</p>
         <div class="cta">
           <a class="btn primary" href="dashboard.html">View live dashboard →</a>
           <a class="btn ghost" href="https://github.com/pradnyaw25/ai-portfolio-manager" target="_blank" rel="noopener">GitHub</a>
@@ -196,23 +196,23 @@
       </div>
       <div class="hero-card">
         <div class="hc-eyebrow">Return since inception · simulated $1M</div>
-        <div class="hc-value" id="pv-return">—</div>
+        <div class="hc-value" id="pv-return">-</div>
         <div class="hc-sub" id="pv-sub">Portfolio value <b id="pv">$1,000,000</b></div>
         <div class="compare" id="compare">
           <div class="crow me">
             <span class="cname">This fund</span>
             <span class="cbar"><i id="bar-fund"></i></span>
-            <span class="cval" id="c-fund">—</span>
+            <span class="cval" id="c-fund">-</span>
           </div>
           <div class="crow">
             <span class="cname">S&amp;P 500</span>
             <span class="cbar"><i id="bar-spy"></i></span>
-            <span class="cval" id="c-spy">—</span>
+            <span class="cval" id="c-spy">-</span>
           </div>
           <div class="crow">
             <span class="cname">Nasdaq 100</span>
             <span class="cbar"><i id="bar-qqq"></i></span>
-            <span class="cval" id="c-qqq">—</span>
+            <span class="cval" id="c-qqq">-</span>
           </div>
         </div>
         <a class="hc-foot" href="dashboard.html" id="alpha-line">See the full performance dashboard →</a>
@@ -223,7 +223,7 @@
     <div class="tiles">
       <a class="tile" href="decisions.html"><h3>Decision journal</h3><p>Every daily decision with the full bull/bear/risk debate, the risk checks, and the memory it cited.</p><div class="go">Read the journal →</div></a>
       <a class="tile" href="predictions.html"><h3>Prediction accuracy</h3><p>Each BUY spawns a 30-day “beat SPY” prediction. We score them and publish the Brier calibration curve.</p><div class="go">See the scoreboard →</div></a>
-      <a class="tile" href="engineering.html"><h3>Engineering</h3><p>An LLM gateway, a deterministic risk engine, evals gating CI, and crash-safe orchestration — diagrammed.</p><div class="go">How it's built →</div></a>
+      <a class="tile" href="engineering.html"><h3>Engineering</h3><p>An LLM gateway, a deterministic risk engine, evals gating CI, and crash-safe orchestration, diagrammed.</p><div class="go">How it's built →</div></a>
     </div>
 
     <p class="sec-title">How it works</p>
@@ -236,7 +236,7 @@
     </div>
 
     <footer>
-      <span>Paper trading — simulated capital, not investment advice.</span>
+      <span>Paper trading. Simulated capital, not investment advice.</span>
       <span>
         <a href="https://github.com/pradnyaw25/ai-portfolio-manager" target="_blank" rel="noopener">GitHub</a> ·
         <a href="https://x.com/GlassHouseFund" target="_blank" rel="noopener">X</a> ·
@@ -273,7 +273,7 @@
         if (s.portfolio_value) setText("pv", money.format(s.portfolio_value));
       } catch (_) {}
 
-      // Performance vs benchmarks — the story: is the fund beating the market?
+      // Performance vs benchmarks. The story: is the fund beating the market?
       try {
         const ph = await fetchCsv("portfolio_history.csv");
         const bh = await fetchCsv("benchmark_history.csv");

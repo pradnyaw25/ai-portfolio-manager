@@ -177,7 +177,7 @@ def _money(value) -> str:
     try:
         return f"${float(value):,.0f}"
     except (TypeError, ValueError):
-        return "—"
+        return "-"
 
 
 def _is_substantial(entry: dict) -> bool:
@@ -197,6 +197,32 @@ def _is_substantial(entry: dict) -> bool:
     return has_debate or has_trade or has_calls
 
 
+_EM_DASH_RE = re.compile(r"\s*(?:—|&mdash;|&#8212;)\s*")
+
+
+def strip_em_dashes(text: str) -> str:
+    """Remove em dashes from rendered output, house style.
+
+    Applied to the whole page rather than to individual fields on purpose: most of
+    the em dashes on this site are in **model-authored** prose (299 of them in
+    decisions.jsonl alone — summaries, theses, debate transcripts, bear-case
+    responses), not in the templates. Sanitising per-field would mean finding every
+    call site that renders model text and would silently miss the next one added.
+
+    The substitution picks punctuation from what follows: a capital letter starts a
+    new sentence, so the dash becomes a full stop; anything else is an aside, so it
+    becomes a comma. That is a heuristic over prose nobody hand-wrote, and it is a
+    deliberate trade — a comma splice here and there is a smaller cost than the
+    inconsistency of leaving the dashes in.
+    """
+
+    def repl(match: re.Match) -> str:
+        rest = text[match.end() : match.end() + 1]
+        return ". " if rest.isupper() else ", "
+
+    return _EM_DASH_RE.sub(repl, text)
+
+
 def _shell(
     *, title: str, description: str, canonical: str, body: str, active: str = "", robots: str = ""
 ) -> str:
@@ -207,7 +233,7 @@ def _shell(
         cls = ' class="active"' if href == active else ""
         return f'<a{cls} href="../{href}">{escape(label)}</a>'
 
-    return f"""<!DOCTYPE html>
+    return strip_em_dashes(f"""<!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
   <title>{escape(title)}</title>
@@ -259,7 +285,7 @@ def _shell(
   </div>
 </body>
 </html>
-"""
+""")
 
 
 # A plain equity ticker (1–5 caps). Excludes things like ^VIX that can't be a page.
@@ -352,7 +378,7 @@ def _render_trades(entry: dict) -> str:
         )
 
     if not out:
-        return '<p class="muted">No trades this day — the fund held.</p>'
+        return '<p class="muted">No trades this day. The fund held.</p>'
     return "".join(out)
 
 
@@ -385,7 +411,7 @@ def _render_market_calls(entry: dict) -> str:
         symbol = str(call.get("symbol") or "?").upper()
         outperform = _is_outperform(call)
         conf = _conf(call)
-        conf_html = f"{conf * 100:.0f}%" if conf else "—"
+        conf_html = f"{conf * 100:.0f}%" if conf else "-"
         traded = (
             '<span class="tag" title="The fund opened or added this position">traded</span>'
             if symbol in bought
@@ -402,7 +428,7 @@ def _render_market_calls(entry: dict) -> str:
     n_out = sum(1 for c in calls if _is_outperform(c))
     n_traded = len(bought & {str(c.get("symbol") or "").upper() for c in calls})
     intro = (
-        "A directional call — beat or lag the S&amp;P 500 over the horizon — on every "
+        "A directional call (beat or lag the S&amp;P 500 over the horizon) on every "
         f"researched name, whether or not the fund traded it. {len(calls)} calls "
         f"({n_out} outperform, {len(calls) - n_out} underperform); {n_traded} became trades. "
         "These are the fund's calibration record."
@@ -528,7 +554,7 @@ def _render_debate(debate: dict) -> str:
         if isinstance(debate.get(role), dict)
         and isinstance(debate[role].get("conviction"), int | float)
     )
-    hint = f" — {escape(convictions)}" if convictions else ""
+    hint = f": {escape(convictions)}" if convictions else ""
     return (
         "<h2>The debate</h2>"
         f'<details class="more"><summary>Bull, bear and risk cases{hint}</summary>'
@@ -576,14 +602,14 @@ def render_decision_page(entry: dict, *, prev: dict | None, next_: dict | None) 
     trades = _trade_summary(entry)
 
     phrase = _title_phrase(entry)
-    title = f"AI fund {phrase} — {pretty}" if phrase else f"AI fund decision — {pretty}"
+    title = f"AI fund {phrase} · {pretty}" if phrase else f"AI fund decision · {pretty}"
     desc = (
         f"{trades}. {summary}"[:300]
         if trades
-        else f"The fund held — no trades. {summary}"[:300]
+        else f"The fund held, no trades. {summary}"[:300]
     ) or f"What an autonomous AI fund decided on {pretty}, and why."
 
-    facts = [f'<span class="pill">Outlook: {escape(str(rd.get("outlook") or "—"))}</span>']
+    facts = [f'<span class="pill">Outlook: {escape(str(rd.get("outlook") or "-"))}</span>']
     if portfolio.get("total_value") is not None:
         facts.append(f'<span class="pill">Portfolio {_money(portfolio["total_value"])}</span>')
     if portfolio.get("cash_pct") is not None:
@@ -620,11 +646,11 @@ def render_decision_page(entry: dict, *, prev: dict | None, next_: dict | None) 
 def render_index(entries: list[dict]) -> str:
     items = []
     for e in reversed(entries):  # newest first
-        trades = _trade_summary(e) or "held — no trades"
+        trades = _trade_summary(e) or "held, no trades"
         summary = (e["raw_decision"].get("summary") or "")[:160]
         items.append(
             f'<li><a href="{e["date"]}.html">{escape(_fmt_date(e["date"]))}</a>'
-            f'<div class="sub">{escape(trades)} — {escape(summary)}</div></li>'
+            f'<div class="sub">{escape(trades)}. {escape(summary)}</div></li>'
         )
     body = f"""    <div class="eyebrow">Decision journal</div>
     <h1>Every decision, by day</h1>
@@ -633,7 +659,7 @@ def render_index(entries: list[dict]) -> str:
     <ul class="dlist">{"".join(items)}</ul>
 """
     return _shell(
-        title="Decisions by day — Glasshouse Fund",
+        title="Decisions by day | Glasshouse Fund",
         description=(
             "Every trading day's decision from an autonomous AI fund, as its own page: "
             "trades, the bull/bear/risk debate, and the cash thesis."
@@ -690,10 +716,10 @@ def _conf_suffix(value) -> str:
 def render_symbol_page(symbol: str, touches: list[dict]) -> str:
     n_days = len(touches)
     n_trades = sum(1 for t in touches if t["trades"])
-    title = f"{symbol}: every AI fund decision — Glasshouse Fund"
+    title = f"{symbol}: every AI fund decision | Glasshouse Fund"
     desc = (
         f"Every trade and directional call an autonomous AI fund made on {symbol}, "
-        f"newest first — {n_days} decision days, {n_trades} with a trade — each with its reasoning."
+        f"newest first: {n_days} decision days, {n_trades} with a trade, each with its reasoning."
     )[:300]
 
     cards = []
@@ -741,7 +767,7 @@ def render_symbol_page(symbol: str, touches: list[dict]) -> str:
         # acts on this name; more content can be added here later.
         lede = (
             f"The AI fund hasn't traded or made a directional call on {escape(symbol)} yet. "
-            "When it does, every decision will appear here — newest first."
+            "When it does, every decision will appear here, newest first."
         )
         facts = '<div class="facts"><span class="pill">No decisions yet</span></div>'
         content = '<p class="muted">Nothing to show for this ticker yet.</p>'
@@ -780,12 +806,12 @@ def render_symbol_index(rows: list[tuple[str, int, int]]) -> str:
     )
     body = f"""    <div class="eyebrow">By symbol</div>
     <h1>Every stock in the fund's universe</h1>
-    <p class="lede">One page per ticker, aggregating every decision the AI fund made on it —
-    trades and directional calls — newest first. {len(rows)} symbols.</p>
+    <p class="lede">One page per ticker, aggregating every decision the AI fund made on it:
+    trades and directional calls, newest first. {len(rows)} symbols.</p>
     <ul class="dlist">{items}</ul>
 """
     return _shell(
-        title="Symbols — Glasshouse Fund",
+        title="Symbols | Glasshouse Fund",
         description=(
             "Every stock an autonomous AI fund has traded or made a directional call on, "
             "one page each, aggregating its full decision history."

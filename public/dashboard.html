@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-  <title>Dashboard — Glasshouse Fund</title>
+  <title>Dashboard | Glasshouse Fund</title>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script>
@@ -31,14 +31,14 @@
   <meta name="author" content="Pradnya Wakchaure" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://glasshousefund.com/dashboard.html" />
-  <meta property="og:title" content="Dashboard — Glasshouse Fund" />
+  <meta property="og:title" content="Dashboard | Glasshouse Fund" />
   <meta property="og:description" content="Live holdings, P&amp;L, benchmark comparison, and run status for an autonomous AI fund managing $1M of simulated money." />
   <meta property="og:image" content="https://glasshousefund.com/og-cover.png" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@GlassHouseFund" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    /* Glasshouse — sage + black */
+    /* Glasshouse: sage + black */
     :root {
       color-scheme: light dark;
       --bg: #e9ecdf;
@@ -737,7 +737,7 @@
 
     /* The dotted border above is sized for ~13px inline text, where it reads as a
        quiet affordance. The two KPI tickers render at 25px/850, and at that weight
-       the dots pack into what looks like a solid rule — while the neighbouring KPI
+       the dots pack into what looks like a solid rule, while the neighbouring KPI
        values ($800.1K, 1) carry no underline at all, so the two linked ones read as
        a rendering fault rather than a link. Reveal it on hover/focus instead: these
        are card headlines, not links buried in prose. */
@@ -1312,7 +1312,7 @@
       const maxAbs = Math.max(...variants.map(v => Math.abs(v.return_pct)), 0.0001);
       const signed = x => `${x >= 0 ? "+" : ""}${(x * 100).toFixed(2)}%`;
 
-      document.getElementById("baselines-sub").textContent = "Does the AI beat the index — or a monkey?";
+      document.getElementById("baselines-sub").textContent = "Does the AI beat the index, or a monkey?";
 
       document.getElementById("baselines").innerHTML = variants.map(v => {
         const pos = v.return_pct >= 0;
@@ -1332,7 +1332,7 @@
         ? `The fund is ${signed(fund.alpha_vs_spy)} vs buy-and-hold SPY over this window. `
         : "";
       document.getElementById("baselines-note").textContent =
-        `${data.start_date} → ${data.end_date} · ${alpha}${days} days is a small, noisy sample — directional, not proof. `
+        `${data.start_date} → ${data.end_date} · ${alpha}${days} days is a small, noisy sample: directional, not proof. `
         + `Random = mean of many random equal-weight watchlist portfolios.`;
 
       document.getElementById("baselines-card").style.display = "";
@@ -1355,11 +1355,11 @@
         a.key === "full" ? -1 : b.key === "full" ? 1 : b.quality_mean - a.quality_mean);
 
       document.getElementById("ablations-sub").textContent =
-        "Same scenarios, same judge — with one piece switched off. Does memory or the debate actually improve the call?";
+        "Same scenarios, same judge, with one piece switched off. Does memory or the debate actually improve the call?";
 
       document.getElementById("ablations").innerHTML = variants.map(v => {
         const w = (Math.max(0, Math.min(5, v.quality_mean)) / 5) * 100;
-        let deltaHtml = `<span class="abl-delta flat">—</span>`;
+        let deltaHtml = `<span class="abl-delta flat">-</span>`;
         if (v.quality_delta != null) {
           const d = v.quality_delta;
           const cls = d < -0.05 ? "hurt" : d > 0.05 ? "help" : "flat";
@@ -1375,7 +1375,7 @@
 
       document.getElementById("ablations-note").innerHTML =
         `Decision-quality rubric (1–5), graded by a fixed ${escapeHtml(data.judge_model)} judge over ${data.scenarios} scenarios. `
-        + `Δ is each variant's quality minus the full system's — <b>negative means removing that piece lowered quality</b> (it earns its keep). `
+        + `Δ is each variant's quality minus the full system's. <b>Negative means removing that piece lowered quality</b> (it earns its keep). `
         + `This scores reasoning quality on an eval set, not live P&L; the tools ablation isn't measurable here (research is a fixed input).`;
 
       document.getElementById("ablations-card").style.display = "";
