@@ -213,7 +213,7 @@
 
     <section>
       <div class="section-head">
-        <h2>One daily cycle</h2>
+        <h2 id="daily-cycle">One daily cycle</h2>
         <p>Twice each weekday the graph runs 22 nodes end to end. Two edges matter more than the happy path: the branch that skips execution on a no-trade day, and the fact that <em>every</em> node is wrapped, so a failure anywhere still produces a journalled run rather than silence.</p>
       </div>
       <figure class="diagram" style="margin:0;">
@@ -291,7 +291,7 @@
 
     <section>
       <div class="section-head">
-        <h2>How a proposed trade survives</h2>
+        <h2 id="guardrails">How a proposed trade survives</h2>
         <p>The model can propose anything. What reaches the book is whatever survives a fixed sequence of deterministic checks — none of which the model can talk its way past, because none of them are written in English.</p>
       </div>
       <figure class="diagram" style="margin:0;">
@@ -368,7 +368,7 @@
 
     <section>
       <div class="section-head">
-        <h2>System architecture</h2>
+        <h2 id="architecture">System architecture</h2>
         <p>One rule shapes the layout: every model call goes through a single gateway, and nothing that decides money is written in English.</p>
       </div>
       <figure class="diagram" style="margin:0;">
@@ -458,7 +458,7 @@
 
     <section>
       <div class="section-head">
-        <h2>Failure is the normal case</h2>
+        <h2 id="failure">Failure is the normal case</h2>
         <p>A daily job that depends on a scheduler, three external APIs and a language model will fail. The design assumption is not that it won't — it is that a failure must never look like a success.</p>
       </div>
       <div class="table-wrap">
@@ -478,7 +478,7 @@
 
     <section>
       <div class="section-head">
-        <h2>What is actually measured</h2>
+        <h2 id="measured">What is actually measured</h2>
         <p>Claiming an AI system works is cheap. These are the numbers it is held to, all of them regenerated every run.</p>
       </div>
       <div class="table-wrap">
@@ -497,7 +497,7 @@
 
     <section>
       <div class="section-head">
-        <h2>Key engineering decisions</h2>
+        <h2 id="decisions">Key engineering decisions</h2>
         <p>The calls that shaped the project, and the reasoning behind them.</p>
       </div>
       <div class="table-wrap">
