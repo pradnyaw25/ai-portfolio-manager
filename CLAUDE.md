@@ -81,7 +81,7 @@ The system uses LLM agents to analyze markets, make trade decisions, and manage 
   compares the live fund to baselines over recorded history (post-hoc attribution, not a backtest).
 - [ ] **Multi-model live calibration** *(high leverage for the launch; owner has Groq credits, will
   plug in providers)* — Run the same `market_calls` prompt through several providers each cycle
-  (Claude, Groq/Llama, the current gpt-4.1-mini), tag each prediction with the model that made it,
+  (Claude, Groq/Llama, the current gpt-5.6-luna), tag each prediction with the model that made it,
   and publish one calibration curve per model. Turns the launch artifact from "I scored an LLM's
   predictions" into "**Claude vs Llama vs GPT — whose stated confidence is actually honest**," with
   live dated receipts. Directly amplifies [Reposition the launch around calibration]. Build is

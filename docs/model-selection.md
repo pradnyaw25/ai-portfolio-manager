@@ -73,3 +73,48 @@ down and this same harness measures the delta).
   not absolute.
 - Re-run with `make eval-compare` (optionally `--candidates ... --judge ...`) when
   the eval set gets harder or new models ship.
+
+---
+
+## Re-run (2026-08-08, judge = gpt-4o, 8 scenarios) — gpt-5.6 family
+
+OpenAI's gpt-5.6 family (`sol` flagship, `terra` strong-at-lower-price, `luna`
+high-volume) prompted a re-measurement with the same harness.
+
+| model | pass | quality/5 (run 1 / run 2) | $/scenario | ms/scenario |
+|---|---|---|---|---|
+| gpt-4.1-mini *(incumbent)* | 100% | 3.79 / 3.71 | $0.00173 | 12,188 |
+| **gpt-5.6-luna** | 100% | **4.04 / 4.17** | **$0.00162** | **9,960** |
+| gpt-5.6-terra | 100% | 4.08 / 4.21 | $0.01421 | 11,354 |
+
+Published pricing per 1M tokens: luna $0.20/$1.20, terra $2/$12, sol $5/$30,
+against gpt-4.1-mini's $0.40/$1.60.
+
+### Decision
+
+**Move both tiers to `gpt-5.6-luna`.**
+
+Unusually, there was no trade-off to weigh. Luna scored ~0.36/5 higher than the
+incumbent averaged across two runs, at **93% of the cost** and **82% of the latency**.
+Better, cheaper, faster.
+
+`gpt-5.6-terra` scored marginally higher again (+0.04 over luna) but costs **8.2×**
+per scenario. That is the same verdict the 2026-07-07 run reached about the flagship,
+for the same reason: the gap is inside the judge's noise and the price is not.
+
+### Honest limits
+
+- **n = 8 scenarios, two runs.** The *ordering* (terra > luna > gpt-4.1-mini) held in
+  both, which is the load-bearing part. The absolute numbers moved ±0.13 between runs.
+- **Temperature could not be held constant.** The gpt-5.6 family rejects
+  `temperature=0` (HTTP 400, "only the default (1)"), so the new models were measured
+  at temperature 1 while gpt-4.1-mini ran at 0. The new models were therefore judged
+  under *more* randomness and still scored higher, which if anything understates them
+   — but this is no longer a like-for-like comparison, and the harness's "temp 0 for
+  determinism" premise no longer holds across model generations.
+- **`reasoning_effort` was left at its default.** The gpt-5.6 models accept
+  none/low/medium/high/xhigh/max. It was not set, so it is an uncontrolled variable
+  and a tuning lever that has not been explored.
+- **Both tiers now resolve to the same model**, which makes the strong/cheap split
+  vestigial again — the exact condition this document was originally written to end.
+  It is deliberate for now; `LLM_STRONG_MODEL=gpt-5.6-terra` restores a real split.

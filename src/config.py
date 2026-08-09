@@ -80,13 +80,24 @@ BENCHMARK_SYMBOLS = [
 # tweets). Each tier resolves to a (provider, model) route; an optional fallback
 # route is tried if the primary provider fails after retries.
 #
-# The strong tier defaults to gpt-4.1-mini (a real generational step up from the
-# cheap gpt-4o-mini) rather than the flagship: `make eval-compare` measured that
-# gpt-4o/gpt-4.1 cost ~11x more for no reliable decision-quality gain on the eval
-# set. See docs/model-selection.md.
+# Both tiers default to gpt-5.6-luna as of 2026-08-08, measured via
+# `make eval-compare` on the 8 golden scenarios with the judge held at gpt-4o:
+# luna scored 4.04/5 against gpt-4.1-mini's 3.79 while costing LESS per token
+# ($0.20/$1.20 per 1M vs $0.40/$1.60) — better and cheaper, so there was no
+# trade to weigh. gpt-5.6-terra edged it at 4.08 but costs 5x input / 7.5x
+# output, and +0.04 is far inside the judge's ±0.3 run-to-run noise.
+#
+# CAVEAT worth keeping in view: with both tiers on the same model the strong/cheap
+# split is once again vestigial — exactly the state docs/model-selection.md was
+# written to end. It buys uniformity now; the moment the tiers should genuinely
+# differ, set LLM_STRONG_MODEL=gpt-5.6-terra and leave cheap on luna.
+#
+# NOTE the gpt-5.6 family rejects temperature=0 (400, "only the default (1)"), so
+# every eval that pins temperature is running these models at 1. The provider drops
+# the parameter automatically; see src/llm/providers/openai_provider.py.
 LLM_PROVIDER = os.getenv("LLM_PROVIDER", "openai")  # legacy default provider
-LLM_STRONG_MODEL = os.getenv("LLM_STRONG_MODEL", "gpt-4.1-mini")
-LLM_CHEAP_MODEL = os.getenv("LLM_CHEAP_MODEL", "gpt-4o-mini")
+LLM_STRONG_MODEL = os.getenv("LLM_STRONG_MODEL", "gpt-5.6-luna")
+LLM_CHEAP_MODEL = os.getenv("LLM_CHEAP_MODEL", "gpt-5.6-luna")
 LLM_STRONG_PROVIDER = os.getenv("LLM_STRONG_PROVIDER", LLM_PROVIDER)
 LLM_CHEAP_PROVIDER = os.getenv("LLM_CHEAP_PROVIDER", LLM_PROVIDER)
 LLM_FALLBACK_PROVIDER = os.getenv("LLM_FALLBACK_PROVIDER", "")  # empty = no fallback
