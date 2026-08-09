@@ -241,7 +241,7 @@ def _shell(
       <a class="brand" href="../index.html">{_BRAND_SVG}<span>Glasshouse Fund</span></a>
       <nav class="nav" aria-label="Site navigation">
         {nav("dashboard.html", "Dashboard")}
-        {nav("decisions.html", "Decision Journal")}
+        {nav("decisions.html", "Trade log")}
         {nav("letters/", "Weekly Investor Letters")}
         {nav("predictions.html", "Prediction Accuracy")}
         {nav("engineering.html", "Engineering")}
