@@ -32,6 +32,9 @@ jobs:
       - name: Post weekly state-of-fund tweet
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          LANGFUSE_PUBLIC_KEY: ${{ secrets.LANGFUSE_PUBLIC_KEY }}
+          LANGFUSE_SECRET_KEY: ${{ secrets.LANGFUSE_SECRET_KEY }}
+          LANGFUSE_BASE_URL: ${{ secrets.LANGFUSE_BASE_URL }}
           # Gate the weekly image tweet independently of the daily recap.
           POST_TWEET: ${{ vars.POST_STATE_TWEET }}
           X_API_KEY: ${{ secrets.X_API_KEY }}

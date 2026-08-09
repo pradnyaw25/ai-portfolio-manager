@@ -36,6 +36,9 @@ jobs:
       - name: Post engineering note
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          LANGFUSE_PUBLIC_KEY: ${{ secrets.LANGFUSE_PUBLIC_KEY }}
+          LANGFUSE_SECRET_KEY: ${{ secrets.LANGFUSE_SECRET_KEY }}
+          LANGFUSE_BASE_URL: ${{ secrets.LANGFUSE_BASE_URL }}
           # Separate toggle from the daily/state tweets: set the POST_WEEKEND_CONTENT
           # repo variable to "true" to publish; unset/false runs it as a dry run.
           POST_TWEET: ${{ vars.POST_WEEKEND_CONTENT }}
