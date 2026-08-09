@@ -1498,9 +1498,14 @@
       if (best) {
         document.getElementById("best-position").innerHTML = symbolLink(best.symbol);
         const name = symbolNames[best.symbol] || best.symbol;
-        setText("best-position-sub", `${name} · ${signedPct(best.return_pct, 1)} unrealized`);
-        document.getElementById("best-position").className =
-          `kpi-value ${best.return_pct >= 0 ? "pos" : "neg"}`;
+        // The ticker stays neutral so this card matches "Largest holding" — one of
+        // five KPI values rendering in a different colour read as a style bug, and
+        // the figure below already carries the sign. The gain/loss colour moves to
+        // the percentage, which is what it actually describes.
+        document.getElementById("best-position-sub").innerHTML =
+          `${escapeHtml(name)} · <span class="${best.return_pct >= 0 ? "pos" : "neg"}">` +
+          `${escapeHtml(signedPct(best.return_pct, 1))}</span> unrealized`;
+        document.getElementById("best-position").className = "kpi-value";
       }
 
       function renderHoldings() {
