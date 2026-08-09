@@ -10,8 +10,12 @@ The system uses LLM agents to analyze markets, make trade decisions, and manage 
 ## Architecture
 
 - `src/main.py` — Orchestrates the daily cycle
+- `src/workflows/daily_graph.py` — the LangGraph cycle (22 guarded nodes) that actually runs
+- `src/research/market_context.py` — Deterministic prices, returns and news for holdings + watchlist
+  (there is no `researcher.py`; the old ResearchAgent was replaced by MarketContextBuilder)
 - `src/agents/` — LLM-powered agents:
-  - `researcher.py` — Gathers prices, movers, news for holdings + watchlist
+  - `analysts.py` / `debate.py` — bull, bear and risk cases plus the bear's rebuttal
+  - `research_agent.py` — tool-calling follow-up research
   - `portfolio_manager.py` — LLM decides trades (BUY/SELL/HOLD) with cash allocation rules
   - `risk_manager.py` — Deterministic guardrails: validates, filters, caps trades
   - `rebalance_checker.py` — Enforces cash target (≤25%): deploy capital or write a cash thesis
@@ -34,7 +38,12 @@ The system uses LLM agents to analyze markets, make trade decisions, and manage 
 
 - Use the `.venv` virtual environment: `.venv/bin/python`
 - Config is in `src/config.py`, all values overridable via `.env`
-- Data files (`data/`, `reports/`) are gitignored — don't commit generated output
+- `data/` and `reports/` ARE committed, not gitignored — the daily run does
+  `git add -f public data reports`, so the published site and the data behind it move together.
+  14 files under `data/` and 35 under `reports/` are tracked. Don't "fix" this by ignoring them.
+  Do avoid staging them by hand: `pytest` writes to `data/llm_calls.jsonl`,
+  `data/social_posts.jsonl` and `public/baseline_comparison.json`, so a local test run leaves
+  them dirty and they should be discarded rather than committed
 - The decision journal (`data/decisions.jsonl`) is the audit trail — always include `cash_thesis` and `rebalance_trades` when saving
 
 ## README Maintenance
@@ -47,10 +56,6 @@ The system uses LLM agents to analyze markets, make trade decisions, and manage 
 > 2026-07-17; **prediction counts re-reconciled against `data/predictions.jsonl` on 2026-08-07**
 > (the launch gate is cleared — see "Recently Completed" under Distribution & SEO). Completed items
 > moved to "Recently Completed" below rather than deleted, so the backlog keeps its history.
->
-> Still stale as of 2026-08-07, deliberately left alone: the **"Publish weekly investor letters as
-> pages"** High Priority item below is done — `public/letters/{2026-07-12,07-19,07-26,08-02}.html`
-> plus an index ship on `main`. Verify and move it before trusting that section.
 
 ### High Priority
 - [ ] **Correlation-aware diversification** — Sector concentration *is* enforced
@@ -91,16 +96,12 @@ The system uses LLM agents to analyze markets, make trade decisions, and manage 
 ### Low Priority
 - [ ] **Slack/Discord notifications** — Post daily summaries to a channel. The only outbound
   channel today is X/Twitter (`src/social/twitter.py`).
-- [ ] **Rate limit handling** — Graceful retry/backoff for the data sources. Note the original
-  entry named Alpha Vantage, which this codebase has never used. The real gaps are yfinance
-  (`src/data_sources/market_data.py:22`) and the news client (`src/data_sources/news.py:71`), both
-  of which swallow exceptions and silently degrade to empty results on a 429. Exponential backoff
-  already exists for the LLM gateway (`src/llm/gateway.py:299`) and is a reasonable model to copy.
-  *Partly addressed 2026-07-09 (#66):* the OpenAI client now sets `LLM_REQUEST_TIMEOUT` (60s) so a
-  stalled LLM call fails fast instead of hanging a run — but the yfinance/news 429 degradation is
-  still open.
-- [ ] **Delete dead `src/reporting/html_report.py`** — Never imported or called; the pipeline uses
-  `MarkdownReportGenerator` (`src/main.py:31`). Its static P&L table was superseded by the dashboard.
+- [ ] **Memory retrieval reaches only the alphabetically-early names** — `extract_memory_symbols`
+  (`src/main.py`) takes every holding plus `research["symbols"][:12]`, and that list is sorted, so
+  the slice is an alphabetical prefix. 13 of the 34 universe names are unreachable by memory today
+  and all 13 are unheld. Holdings get guaranteed inclusion; everything else plays a lottery on its
+  ticker. Found 2026-08-07 while tracing why the fund almost never opens a new position — see the
+  incumbency findings in `docs/`.
 
 ### Recently Completed
 
@@ -147,20 +148,7 @@ The framing to hold onto: **this project's rare asset is that it generates uniqu
 opinionated content every single day.** Everything below follows from that.
 
 ### High Priority
-- [ ] **Publish weekly investor letters as pages** — *Unblocked 2026-07-08 (PR #63); reconciled
-  2026-07-17.* The grounding false positive that hard-blocked every letter is **fixed**: the fix
-  (`464b801`) stopped arguing with the judge and removed the ambiguity —
-  `format_facts_for_prompt()` now renders every ratio-valued fact as a percent string *once* and
-  hands the identical view to both the writer and the auditor, so they can't disagree about
-  decimal-vs-percent units. A real, grounded letter has since published (2026-07-12, +0.71% week).
-  **But it only reaches `public/investor_letter.{json,md}` — a single file overwritten each week.**
-  The actual remaining work is the durable surface: build `/letters/YYYY-MM-DD.html` + an index +
-  sitemap entries, following `decision_pages.py`, so each weekly letter becomes a dated permalink
-  instead of vanishing on the next run. **Watch out:** no per-week history actually accumulates
-  yet — `InvestorLetterStore` writes `data/investor_letters.jsonl`, but `weekly-letter.yml` only
-  commits `public/investor_letter.{json,md}` (`git add -f`), so the jsonl is never persisted and
-  each run sees only the current week. The page builder must therefore either also commit the
-  jsonl (let history accumulate) or emit + commit the dated `/letters/*.html` at letter-time.
+
 ### Decision pages — follow-up
 
 All four shipped 2026-07-09 (PRs #69, #70, #71). Kept as a record.
@@ -182,6 +170,24 @@ All four shipped 2026-07-09 (PRs #69, #70, #71). Kept as a record.
   `_symbol_touches()` / `render_symbol_page()` / `_symbol_link()` in `decision_pages.py`.
 
 ### Recently Completed
+
+- [x] **Rate limit handling** *(2026-08-08, #109)* — yfinance and the news client both caught bare
+  `Exception` and returned empty, so a 429 was indistinguishable from a delisted ticker and the fund
+  decided on partial data while reporting success. Raised errors now retry with exponential backoff;
+  an *empty* result is not retried (that is a delisted ticker, not a failure). A batch losing more
+  than `MARKET_DATA_MAX_MISSING_PCT` (25%) raises `MarketDataUnavailable` instead of returning gaps.
+  News deliberately goes the other way — it degrades to empty rather than failing a run.
+
+- [x] **Publish weekly investor letters as pages** *(verified done 2026-08-08)* — dated permalinks
+  at `public/letters/YYYY-MM-DD.html` plus an index and sitemap entries, built by
+  `src/reporting/letter_pages.py` following `decision_pages.py`. The "watch out" on that entry is
+  also resolved: `weekly-letter.yml:68` commits `data/investor_letters.jsonl` and `public/letters`,
+  so per-week history accumulates — 4 letters are in the committed store. Letters were reachable
+  only via `sitemap.xml` until 2026-08-08 (#100) added them to the nav.
+
+- [x] **Delete dead `src/reporting/html_report.py`** *(2026-08-08)* — zero references anywhere in
+  `src/`, `scripts/`, `tests/`, `mcp_server/` or `evals/`. The README also advertised "Markdown and
+  HTML performance reports"; that claim went in #105.
 
 - [x] **GitHub repo metadata** *(2026-08-07)* — homepage set to `https://glasshousefund.com`
   (verified HTTP 200); description rewritten to lead with the scoring and MCP hooks rather than
