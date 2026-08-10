@@ -18,6 +18,21 @@ from src import main as steps
 logger = get_logger(__name__)
 
 
+# Nodes that *augment* the cycle rather than carry it. A failure here degrades the
+# run — recorded as a warning and a diagnostic, visible in run_history — instead of
+# aborting it, because losing the enrichment is worth far less than losing the day's
+# decision. On 2026-08-10 a 400 from the tool-calling research agent killed a whole
+# trading day for exactly this reason. `retrieve_memory` survives its *expected*
+# failure (an unavailable store, handled inside the node) but would still abort the
+# run on an unexpected one — a candidate for this set, kept out for now because its
+# handled path already covers the failure seen in production.
+#
+# The bar for this set: the fund must be able to decide without the node's output.
+# Anything that produces or validates a trade, moves money, or writes the audit
+# trail stays fatal.
+OPTIONAL_NODES = frozenset({"research_followup"})
+
+
 class DailyGraphState(TypedDict):
     run: PortfolioRunState
 
@@ -60,7 +75,10 @@ def build_daily_cycle_graph():
     ]
 
     for node_name, node_func in workflow_nodes:
-        graph.add_node(node_name, guarded_node(node_name, node_func))
+        graph.add_node(
+            node_name,
+            guarded_node(node_name, node_func, optional=node_name in OPTIONAL_NODES),
+        )
     graph.add_node("finalize_failure", finalize_failure_node)
 
     graph.add_edge(START, "load_portfolio")
@@ -170,6 +188,8 @@ def run_daily_cycle_graph(*, resume: bool = False, progress=None) -> PortfolioRu
 def guarded_node(
     node_name: str,
     node_func: Callable[[DailyGraphState], DailyGraphState],
+    *,
+    optional: bool = False,
 ) -> Callable[[DailyGraphState], DailyGraphState]:
     def wrapped(state: DailyGraphState) -> DailyGraphState:
         run = state["run"]
@@ -184,6 +204,21 @@ def guarded_node(
                     run.progress.mark_phase(run.run_id, node_name)
                 return result
             except Exception as exc:
+                if optional:
+                    # Degrade, don't abort: the run continues without this node's
+                    # contribution and says so. The phase is deliberately left
+                    # unmarked so a resumed run retries it.
+                    logger.warning(
+                        "Optional node degraded node=%s run_id=%s: %s",
+                        node_name,
+                        run.run_id,
+                        exc,
+                        exc_info=True,
+                    )
+                    run.warnings.append(f"{node_name}: {exc}")
+                    run.diagnostics[node_name] = f"degraded — proceeding without it: {exc}"
+                    return {"run": run}
+
                 logger.exception(
                     "LangGraph node failed node=%s run_id=%s",
                     node_name,
@@ -480,7 +515,12 @@ def build_run_status_node(state: DailyGraphState) -> DailyGraphState:
     run.run_status["human_review"] = run.human_review
     if run.diagnostics:
         run.run_status["diagnostics"] = dict(run.diagnostics)
-    run.warnings = list(run.run_status.get("warnings", []))
+    # Merge, don't replace: warnings raised earlier in the cycle (a degraded optional
+    # node, say) would otherwise be dropped here and never reach run_history, which is
+    # precisely the silent-degradation failure this file's guards exist to prevent.
+    earlier = [w for w in run.warnings if w not in run.run_status.get("warnings", [])]
+    run.warnings = earlier + list(run.run_status.get("warnings", []))
+    run.run_status["warnings"] = run.warnings
     return {"run": run}
 
 

@@ -36,7 +36,9 @@ EXPECTED_ORDER = [
 ]
 
 
-def test_graph_runs_full_pipeline_in_order(monkeypatch):
+def _drive_graph(monkeypatch, raising: dict | None = None):
+    """Mock every step function and run the whole graph. ``raising`` maps a step
+    function name to an exception it should raise instead of returning."""
     monkeypatch.setattr(daily_graph, "is_regular_market_hours", lambda: True)
     calls: list[str] = []
 
@@ -91,12 +93,41 @@ def test_graph_runs_full_pipeline_in_order(monkeypatch):
     }
     for fn_name, ret in patches.items():
         label = labels.get(fn_name, fn_name)
+        if raising and fn_name in raising:
+            monkeypatch.setattr(daily_graph.steps, fn_name, _raiser(raising[fn_name]))
+            continue
         monkeypatch.setattr(daily_graph.steps, fn_name, record(label, ret))
 
     result = build_daily_cycle_graph().invoke(create_initial_state())
-    run = result["run"]
+    return result["run"], calls, trades
+
+
+def _raiser(exc):
+    def fn(*args, **kwargs):
+        raise exc
+
+    return fn
+
+
+def test_graph_runs_full_pipeline_in_order(monkeypatch):
+    run, calls, trades = _drive_graph(monkeypatch)
 
     assert not run.errors
     assert run.run_status["status"] == "success"
     assert run.trades == trades
     assert calls == EXPECTED_ORDER
+
+
+def test_graph_completes_when_the_research_followup_fails(monkeypatch):
+    # 2026-08-10: a 400 from the tool-calling research agent ended the cycle at
+    # research_followup and the fund recorded no decision for the day. The follow-up
+    # only augments the context, so the rest of the pipeline must still run.
+    run, calls, _ = _drive_graph(
+        monkeypatch, raising={"run_research_followup": RuntimeError("400 tool error")}
+    )
+
+    assert not run.errors
+    assert run.failed_step is None
+    assert run.run_status["status"] == "success"
+    assert run.warnings == ["research_followup: 400 tool error"]
+    assert calls == [n for n in EXPECTED_ORDER if n != "research_followup"]
