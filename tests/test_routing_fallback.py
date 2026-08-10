@@ -56,19 +56,22 @@ def test_openai_provider_wraps_api_error_as_provider_error():
 
 # -- per-model API quirks ----------------------------------------------------
 #
-# Regression cover for 2026-08-10: the gpt-5.6 family applies a default
-# reasoning_effort that chat.completions rejects alongside function tools, which
-# killed the daily run's research-followup node. The workarounds are learned from
+# Regression cover for 2026-08-10, when two daily runs died on gpt-5.6 quirks: a
+# default reasoning_effort that chat.completions rejects alongside function tools,
+# and max_tokens renamed to max_completion_tokens. The workarounds are learned from
 # the 400 and cached on the class, so each test starts from a clean slate.
+# `scripts/probe_model_compat.py` is the live counterpart to these tests.
 
 
 @pytest.fixture(autouse=True)
 def _clear_learned_quirks():
     OpenAIProvider._NO_TEMPERATURE.clear()
     OpenAIProvider._TOOLS_NEED_EFFORT_NONE.clear()
+    OpenAIProvider._RENAMED_MAX_TOKENS.clear()
     yield
     OpenAIProvider._NO_TEMPERATURE.clear()
     OpenAIProvider._TOOLS_NEED_EFFORT_NONE.clear()
+    OpenAIProvider._RENAMED_MAX_TOKENS.clear()
 
 
 def _bad_request(message):
@@ -150,6 +153,67 @@ def test_reasoning_effort_workaround_is_not_applied_without_tools():
 
     assert len(client.calls) == 1
     assert "reasoning_effort" not in client.calls[0]
+
+
+def test_max_tokens_is_renamed_to_max_completion_tokens():
+    client = _RecordingClient(
+        _bad_request(
+            "Unsupported parameter: 'max_tokens' is not supported with this model. "
+            "Use 'max_completion_tokens' instead."
+        )
+    )
+    provider = OpenAIProvider(client)
+
+    provider.chat(model="gpt-5.6-luna", messages=[], temperature=0, max_tokens=64)
+
+    assert len(client.calls) == 2
+    assert client.calls[0]["max_tokens"] == 64
+    assert "max_tokens" not in client.calls[1]
+    assert client.calls[1]["max_completion_tokens"] == 64
+    # Learned, so a later call sends the new name on the first attempt.
+    later = _RecordingClient(None, fail_times=0)
+    OpenAIProvider(later).chat(model="gpt-5.6-luna", messages=[], temperature=0, max_tokens=64)
+    assert later.calls[0]["max_completion_tokens"] == 64
+
+
+def test_several_quirks_on_one_call_are_each_worked_around():
+    # gpt-5.6 rejects temperature=0 *and* max_tokens; one call must survive both.
+    errors = [
+        _bad_request("Unsupported value: 'temperature' does not support 0 with this model."),
+        _bad_request(
+            "Unsupported parameter: 'max_tokens' is not supported with this model. "
+            "Use 'max_completion_tokens' instead."
+        ),
+    ]
+
+    class _Client:
+        def __init__(self):
+            self.calls = []
+            outer = self
+
+            class completions:
+                @staticmethod
+                def create(**kwargs):
+                    outer.calls.append(kwargs)
+                    if len(outer.calls) <= len(errors):
+                        raise errors[len(outer.calls) - 1]
+                    return _fake_sdk_response("done")
+
+            class chat:
+                pass
+
+            chat.completions = completions
+            self.chat = chat
+
+    client = _Client()
+    resp = OpenAIProvider(client).chat(
+        model="gpt-5.6-terra", messages=[], temperature=0, max_tokens=64
+    )
+
+    assert resp.content == "done"
+    assert len(client.calls) == 3
+    assert "temperature" not in client.calls[2]
+    assert client.calls[2]["max_completion_tokens"] == 64
 
 
 def test_default_only_temperature_is_dropped_and_remembered():

@@ -100,7 +100,11 @@ BENCHMARK_SYMBOLS = [
 #
 # NOTE the gpt-5.6 family rejects temperature=0 (400, "only the default (1)"), so
 # every eval that pins temperature is running these models at 1. The provider drops
-# the parameter automatically; see src/llm/providers/openai_provider.py.
+# the parameter automatically; see src/llm/providers/openai_provider.py, which also
+# absorbs the family's other two quirks (max_tokens renamed to max_completion_tokens,
+# and function tools requiring reasoning_effort="none"). Both were found by failed
+# production runs on 2026-08-10. **Run `make probe-models` before changing a model
+# here** — it exercises every call shape the pipeline uses and names any new quirk.
 LLM_PROVIDER = os.getenv("LLM_PROVIDER", "openai")  # legacy default provider
 LLM_STRONG_MODEL = os.getenv("LLM_STRONG_MODEL", "gpt-5.6-terra")
 LLM_CHEAP_MODEL = os.getenv("LLM_CHEAP_MODEL", "gpt-5.6-luna")

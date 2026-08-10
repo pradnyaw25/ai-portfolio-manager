@@ -1,7 +1,7 @@
 PYTHON ?= .venv/bin/python
 PORT ?= 8000
 
-.PHONY: help install test eval eval-compare eval-ablate baselines run dashboard ingest-memory ingest-sec-filings memory-eval chunking-eval reflect letter mcp market-hours benchmark backfill status
+.PHONY: help install test eval eval-compare eval-ablate baselines probe-models run dashboard ingest-memory ingest-sec-filings memory-eval chunking-eval reflect letter mcp market-hours benchmark backfill status
 
 help:
 	@echo "AI Portfolio Manager commands"
@@ -12,6 +12,7 @@ help:
 	@echo "  make eval-compare    Compare strong-tier models: quality vs cost delta (needs OPENAI_API_KEY)"
 	@echo "  make eval-ablate     Ablate memory/debate: does the machinery improve decisions? (needs OPENAI_API_KEY)"
 	@echo "  make baselines       Compare the fund vs buy-and-hold SPY/QQQ and random-from-watchlist"
+	@echo "  make probe-models    Probe the configured models for API quirks (run before a model swap)"
 	@echo "  make run             Run the daily portfolio cycle through LangGraph"
 	@echo "  make dashboard       Serve public/ locally on PORT (default: 8000)"
 	@echo "  make ingest-memory   Ingest existing reports into Qdrant memory"
@@ -43,6 +44,12 @@ eval-ablate:
 
 baselines:
 	$(PYTHON) scripts/compare_baselines.py
+
+# Run before switching models: probes every call shape the pipeline uses against
+# the configured tiers, so a new model's API quirks surface here and not in a
+# failed daily run.
+probe-models:
+	$(PYTHON) scripts/probe_model_compat.py
 
 run:
 	$(PYTHON) scripts/daily_run.py
