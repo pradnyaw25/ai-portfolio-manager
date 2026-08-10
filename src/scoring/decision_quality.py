@@ -60,7 +60,8 @@ def _default_judge(decision: dict, context: dict) -> DecisionQuality:
     return complete_structured(
         [{"role": "user", "content": prompt}],
         DecisionQuality,
-        tier="strong",
+        # Pinned judge — see LLM_JUDGE_MODEL in src/config.py.
+        tier="judge",
         prompt_version=QUALITY_PROMPT_VERSION,
     )
 

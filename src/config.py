@@ -110,6 +110,24 @@ LLM_STRONG_MODEL = os.getenv("LLM_STRONG_MODEL", "gpt-5.6-terra")
 LLM_CHEAP_MODEL = os.getenv("LLM_CHEAP_MODEL", "gpt-5.6-luna")
 LLM_STRONG_PROVIDER = os.getenv("LLM_STRONG_PROVIDER", LLM_PROVIDER)
 LLM_CHEAP_PROVIDER = os.getenv("LLM_CHEAP_PROVIDER", LLM_PROVIDER)
+
+# The judge tier: the grounding gate and the decision-quality rubric. Deliberately
+# NOT the strong tier, and deliberately slow to change.
+#
+# A judge that follows the model under test measures nothing — upgrade the model and
+# you silently upgrade the grader too. `scripts/compare_strong_model.py` has always
+# held its judge fixed for exactly this reason; the *live* grounding gate did not,
+# until 2026-08-10. When both tiers moved to gpt-5.6 on 08-08, the first two runs on
+# the new model both failed grounding, against 1 flagged run in the previous 42 — and
+# because the swap moved the writer and the referee together, that number could not
+# distinguish "worse rationale" from "stricter grader". Pinning the judge makes the
+# next such comparison answerable.
+#
+# gpt-4.1-mini is the incumbent referee: 41 of 42 runs judged grounded, no known
+# false-block since the 2026-07-06 rounding-error incident. Change it on purpose,
+# with a measurement, and expect it to reset the grounding base rate.
+LLM_JUDGE_MODEL = os.getenv("LLM_JUDGE_MODEL", "gpt-4.1-mini")
+LLM_JUDGE_PROVIDER = os.getenv("LLM_JUDGE_PROVIDER", LLM_PROVIDER)
 LLM_FALLBACK_PROVIDER = os.getenv("LLM_FALLBACK_PROVIDER", "")  # empty = no fallback
 LLM_FALLBACK_MODEL = os.getenv("LLM_FALLBACK_MODEL", "")
 LLM_TEMPERATURE = float(os.getenv("LLM_TEMPERATURE", "1.0"))

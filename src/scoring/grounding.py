@@ -80,7 +80,9 @@ def _default_judge(decision: dict, context: dict) -> GroundingVerdict:
     return complete_structured(
         [{"role": "user", "content": prompt}],
         GroundingVerdict,
-        tier="strong",
+        # Pinned judge, not the strong tier: the referee must not move when the
+        # model under test does. See LLM_JUDGE_MODEL in src/config.py.
+        tier="judge",
         prompt_version=GROUNDING_PROMPT_VERSION,
     )
 

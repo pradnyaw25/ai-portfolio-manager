@@ -123,3 +123,27 @@ collapses it back and costs ~0.04/5 of measured quality.
 - **Both tiers now resolve to the same model**, which makes the strong/cheap split
   vestigial again — the exact condition this document was originally written to end.
   It is deliberate for now; `LLM_STRONG_MODEL=gpt-5.6-terra` restores a real split.
+
+## The judge tier (2026-08-10)
+
+The grounding gate and the decision-quality rubric used to route on the **strong**
+tier, so every model swap changed the examiner along with the candidate. That is the
+one thing this document's own methodology says never to do — `compare_strong_model.py`
+has always held its judge fixed — and the live pipeline did it anyway.
+
+It cost a real measurement. When both tiers moved to gpt-5.6 on 08-08, the first two
+runs on the new model both failed the grounding gate, against **1 flagged run in the
+previous 42**. That number cannot distinguish "terra writes less grounded rationale"
+from "terra is a stricter referee", because both changed at once.
+
+Judges now route on their own tier, `LLM_JUDGE_MODEL`, defaulting to `gpt-4.1-mini` —
+the incumbent referee behind that 41-of-42 record. Consequences worth knowing:
+
+- **Change it on purpose, with a measurement.** Expect a judge change to reset the
+  grounding base rate, which makes flagged-rate history discontinuous at that point.
+- **`--judge` on both comparison harnesses now sets `LLM_JUDGE_MODEL`**, not
+  `LLM_STRONG_MODEL`. Setting the strong tier would leave the judge on its default
+  and quietly make the flag a no-op.
+- **The open question stays open until tomorrow.** With the referee pinned, the next
+  runs answer it directly: still flagged means terra's rationale really is weaker;
+  clean means the 2-of-2 was the grader tightening.
