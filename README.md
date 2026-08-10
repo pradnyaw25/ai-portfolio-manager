@@ -313,15 +313,20 @@ the decisions dashboard. Runs on the cheap tier.
 
 Every LLM call is routed by **tier** through a provider abstraction
 (`src/llm/providers/`, `src/llm/routing.py`): the **strong** tier serves final
-decisions, PM synthesis, and judges; the **cheap** tier serves analysts, summaries,
-and tweets. Each tier resolves to a `(provider, model)` route. The strong tier
+decisions and PM synthesis; the **cheap** tier serves analysts, summaries, and
+tweets; and a separate **judge** tier serves the graders — the grounding gate and
+the decision-quality rubric. Each tier resolves to a `(provider, model)` route. The strong tier
 defaults to `gpt-5.6-terra` and the cheap tier to `gpt-5.6-luna` — a *measured* choice:
 `make eval-compare` runs the decision evals under each candidate model and reports a
 quality-vs-cost table. It found the flagships (`gpt-4o`, `gpt-4.1`) cost ~11× more for
 no reliable quality gain, and later that both `gpt-5.6` variants beat the incumbent
 `gpt-4.1-mini` (4.21 and 4.17 vs 3.71 out of 5), with `luna` costing *less* per token
 (see [docs/model-selection.md](docs/model-selection.md)).
-Override either tier via `LLM_STRONG_MODEL` / `LLM_CHEAP_MODEL`. If
+The judge tier is pinned to `gpt-4.1-mini` (`LLM_JUDGE_MODEL`) and is deliberately
+slow to change: a grader that follows the model under test measures nothing, since
+upgrading the model silently upgrades its own examiner. Override any tier via
+`LLM_STRONG_MODEL` / `LLM_CHEAP_MODEL` / `LLM_JUDGE_MODEL`, and run
+`make probe-models` before a swap to surface the new model's API quirks. If
 `LLM_FALLBACK_PROVIDER` / `LLM_FALLBACK_MODEL` are set, a call that exhausts retries
 on its primary route falls back to that route before failing; the cost log records
 the serving `provider` and whether it `fell_back`. Only OpenAI ships today — the

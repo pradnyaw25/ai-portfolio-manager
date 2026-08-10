@@ -65,6 +65,7 @@ def _run_variant(variant: dict, judge_model: str, stamp: str) -> dict:
     """Run every scenario under one ablation, grade each decision with the fixed
     judge, and return the variant's metrics. Restores config on exit."""
     original_strong = config.LLM_STRONG_MODEL
+    original_judge = config.LLM_JUDGE_MODEL
     decide = make_decide(use_memory=variant["use_memory"], use_debate=variant["use_debate"])
 
     # Phase 1 — decisions under this ablation (decision model unchanged).
@@ -90,7 +91,8 @@ def _run_variant(variant: dict, judge_model: str, stamp: str) -> dict:
     # Phase 2 — grade with the SAME fixed judge so the score reflects the ablated
     # component, not the grader. Judge cost is on a separate run_id and excluded.
     judge_run = f"abl-judge-{variant['key']}-{stamp}"
-    config.LLM_STRONG_MODEL = judge_model
+    # The rubric judge routes on the pinned judge tier — override that, not strong.
+    config.LLM_JUDGE_MODEL = judge_model
     per_scenario: dict[str, float] = {}
     qualities: list[float] = []
     set_run_id(judge_run)
@@ -106,6 +108,7 @@ def _run_variant(variant: dict, judge_model: str, stamp: str) -> dict:
     finally:
         set_run_id(None)
         config.LLM_STRONG_MODEL = original_strong
+        config.LLM_JUDGE_MODEL = original_judge
 
     n_decided = len(decisions) or 1
     n_judged = len(qualities) or 1

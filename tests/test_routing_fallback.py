@@ -427,3 +427,37 @@ def test_connection_errors_stay_retryable():
         OpenAIProvider(client).chat(model="m", messages=[], temperature=0)
 
     assert caught.value.retryable is True
+
+
+# -- the judge tier ----------------------------------------------------------
+#
+# The grounding gate and the quality rubric must NOT follow the model under test.
+# On 2026-08-10 both tiers moved to gpt-5.6 and the first two runs on the new model
+# both failed grounding (against 1 in the previous 42) — with the writer and the
+# referee having changed together, that number meant nothing.
+
+
+def test_judge_tier_resolves_independently_of_the_strong_tier(monkeypatch):
+    monkeypatch.setattr(config, "LLM_STRONG_PROVIDER", "openai")
+    monkeypatch.setattr(config, "LLM_STRONG_MODEL", "gpt-new-and-shiny")
+    monkeypatch.setattr(config, "LLM_JUDGE_PROVIDER", "openai")
+    monkeypatch.setattr(config, "LLM_JUDGE_MODEL", "gpt-4.1-mini")
+
+    assert resolve_route("judge") == Route("openai", "gpt-4.1-mini")
+    assert resolve_route("strong") == Route("openai", "gpt-new-and-shiny")
+
+
+def test_judge_default_is_not_the_strong_default():
+    # A regression guard with teeth: if someone "simplifies" the judge back onto the
+    # strong tier, the referee starts moving with every model swap again.
+    assert config.LLM_JUDGE_MODEL != config.LLM_STRONG_MODEL
+
+
+def test_graders_route_on_the_judge_tier():
+    import inspect
+
+    from src.scoring import decision_quality, grounding
+
+    for module in (grounding, decision_quality):
+        source = inspect.getsource(module._default_judge)
+        assert 'tier="judge"' in source, module.__name__

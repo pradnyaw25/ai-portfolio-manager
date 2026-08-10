@@ -60,6 +60,7 @@ def _run_candidate(model: str, judge_model: str, stamp: str) -> dict:
     """Run every scenario under ``model``, grade each decision with the fixed
     ``judge_model``, and return per-candidate metrics. Restores config on exit."""
     original_strong = config.LLM_STRONG_MODEL
+    original_judge = config.LLM_JUDGE_MODEL
 
     # Phase 1 — decisions under the candidate model (analysts stay cheap).
     pm_run = f"cmp-pm-{model}-{stamp}"
@@ -82,7 +83,10 @@ def _run_candidate(model: str, judge_model: str, stamp: str) -> dict:
     # reflects the decision-maker, not the grader. Judge cost uses a separate
     # run_id and is excluded from the candidate's operational cost.
     judge_run = f"cmp-judge-{model}-{stamp}"
-    config.LLM_STRONG_MODEL = judge_model
+    # The rubric judge routes on the pinned judge tier, so override that — setting
+    # the strong tier here would leave the judge on its configured default and
+    # silently make --judge a no-op.
+    config.LLM_JUDGE_MODEL = judge_model
     qualities: list[float] = []
     set_run_id(judge_run)
     try:
@@ -91,6 +95,7 @@ def _run_candidate(model: str, judge_model: str, stamp: str) -> dict:
     finally:
         set_run_id(None)
         config.LLM_STRONG_MODEL = original_strong
+        config.LLM_JUDGE_MODEL = original_judge
 
     n = len(decisions) or 1
     return {

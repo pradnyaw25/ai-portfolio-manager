@@ -14,6 +14,8 @@ class Route:
 def resolve_route(tier: str) -> Route:
     if tier == "cheap":
         return Route(config.LLM_CHEAP_PROVIDER, config.LLM_CHEAP_MODEL)
+    if tier == "judge":
+        return Route(config.LLM_JUDGE_PROVIDER, config.LLM_JUDGE_MODEL)
     return Route(config.LLM_STRONG_PROVIDER, config.LLM_STRONG_MODEL)
 
 

@@ -34,7 +34,7 @@ def _default_judge(decision, scenario) -> GroundingVerdict:
     return complete_structured(
         [{"role": "user", "content": prompt}],
         GroundingVerdict,
-        tier="strong",
+        tier="judge",
         prompt_version=JUDGE_PROMPT_VERSION,
     )
 
