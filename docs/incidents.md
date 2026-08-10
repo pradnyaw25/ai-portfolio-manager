@@ -15,6 +15,54 @@ Entry template:
 
 ---
 
+## 2026-08-10 · A model upgrade broke tool calling, and an optional node turned it into a lost day
+
+- **Symptom.** The 14:40 UTC daily run failed 43 seconds in, at `research_followup`,
+  with a 400: *"Function tools with reasoning_effort are not supported for
+  gpt-5.6-luna in /v1/chat/completions ... or set reasoning_effort to 'none'."* No
+  decision was recorded for 2026-08-10, 0 trades. Everything downstream of the failed
+  node — decide, risk, rebalance, execute, journal, tweet — never ran.
+- **Root cause.** Two, and the second is the interesting one.
+  1. **The model quirk.** #112 moved both LLM tiers to the gpt-5.6 family on 08-08.
+     That family applies a *server-side default* `reasoning_effort` which the
+     `chat.completions` endpoint rejects when function tools are present. The code
+     never sends `reasoning_effort` at all, so there was nothing in the diff to
+     notice: the incompatibility is with a default we inherit. Verified against the
+     API that both `gpt-5.6-luna` and `gpt-5.6-terra` 400 on tools, and both succeed
+     with `reasoning_effort="none"` — the fix cannot be unconditional, because
+     `gpt-4.1-mini` rejects that parameter as unrecognized.
+  2. **The amplifier.** `research_followup` only *augments* the context — the fund can
+     and does decide without it. But every node in the graph was fatal, so an optional
+     enrichment ended the cycle. The cost of the model quirk should have been a
+     slightly thinner run; instead it was the whole trading day.
+- **Fix.** [#115](https://github.com/pradnyaw25/ai-portfolio-manager/pull/115) — the
+  provider learns the quirk from the 400 and retries with `reasoning_effort="none"`,
+  cached per model, folded into one `_adapt()` helper alongside the existing
+  default-only-temperature workaround. [#116] — an `OPTIONAL_NODES` set in the daily
+  graph: those nodes degrade to a warning plus a diagnostic and the cycle continues.
+  Writing the test for that surfaced a third bug: `build_run_status_node` *overwrote*
+  `run.warnings` with the freshly built status, so a degradation warning would never
+  have reached `run_history` — the guard would have been silent. It merges now.
+- **Detection gap.** CI was green on #112 and stayed green: no test exercises a live
+  provider with tools, so the entire tool-calling path is only ever exercised in
+  production. This is the repo's recurring shape: tests feed a shape production never
+  produces (here, a mock client that accepts any kwargs), so a broken path survives
+  with a passing suite. Nothing alerted, either — the failure was found only because
+  someone asked about the day's run. `run_history.jsonl` *did* honestly record
+  `status: failed` with the real error, which is an improvement on the 08-05 incident.
+  Prediction scoring runs outside the cycle and still resolved the 08-03 batch, so the
+  calibration dataset did not lose a day.
+- **Article angle.** *A config change with no code in it.* The diff that broke this
+  was three model strings; the failing parameter appears nowhere in the codebase. When
+  behavior lives in a provider's defaults, "changing the model" is a code change with
+  an invisible blast radius, and the only honest test is a live one. The second lesson
+  is sharper and more portable: **an optional dependency wired as mandatory is a
+  single point of failure you didn't know you had.** `retrieve_memory` degrades
+  gracefully and has never cost a run; `research_followup` was one line of graph
+  wiring away from the same treatment and cost a full day. Worth pairing with the
+  08-05 entry — together they're a study in how an autonomous system's *error
+  handling*, not its intelligence, decides what a bad day costs.
+
 ## 2026-08-06 · A late cron and a shared concurrency group cost the fund a whole trading day
 
 - **Symptom.** No decisions, no journal entry, no site update, and no tweets for
