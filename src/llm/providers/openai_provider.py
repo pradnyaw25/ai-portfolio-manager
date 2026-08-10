@@ -8,6 +8,22 @@ from openai import OpenAI
 from src.config import LLM_REQUEST_TIMEOUT
 from src.llm.providers import LLMProvider, ProviderError, ProviderResponse, ToolCall
 
+def _is_retryable(exc: openai.APIError) -> bool:
+    """Whether re-sending the identical request could plausibly succeed.
+
+    A 4xx other than rate-limiting and request-timeout means the request itself is
+    wrong for this model — a bad parameter, an oversized context, a rejected schema
+    — and will be just as wrong on the next attempt. Everything else (429, 5xx,
+    connection drops, timeouts) is worth retrying.
+    """
+    status = getattr(exc, "status_code", None)
+    if status is None:
+        return True  # connection/timeout errors carry no status
+    if status in (408, 429):
+        return True
+    return not 400 <= status < 500
+
+
 # Number of per-model API quirks `OpenAIProvider._adapt` knows how to work around.
 # Bounds the retry loop: one extra attempt per quirk, and no more. Keep in step with
 # `_adapt`; `scripts/probe_model_compat.py` enumerates the quirks a model actually has.
@@ -77,7 +93,7 @@ class OpenAIProvider(LLMProvider):
                 response = self._client.chat.completions.create(**kwargs)
             except openai.APIError as exc:
                 if not self._adapt(model, kwargs, exc):
-                    raise ProviderError(str(exc)) from exc
+                    raise ProviderError(str(exc), retryable=_is_retryable(exc)) from exc
                 continue
             return self._normalize(response)
 

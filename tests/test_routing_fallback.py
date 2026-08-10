@@ -267,16 +267,17 @@ def test_resolve_fallback_when_configured(monkeypatch):
 class _FakeProvider:
     """Records the models it was asked to serve; can be scripted to fail."""
 
-    def __init__(self, name, *, fail=False, content="{}"):
+    def __init__(self, name, *, fail=False, content="{}", retryable=True):
         self.name = name
         self.fail = fail
         self.content = content
+        self.retryable = retryable
         self.calls = []
 
     def chat(self, *, model, messages, temperature, response_format=None, tools=None, max_tokens=None):
         self.calls.append(model)
         if self.fail:
-            raise ProviderError(f"{self.name} down")
+            raise ProviderError(f"{self.name} down", retryable=self.retryable)
         return ProviderResponse(content=self.content, prompt_tokens=5, completion_tokens=5)
 
 
@@ -333,3 +334,96 @@ def test_fallback_also_failing_raises():
     with pytest.raises(LLMError):
         gw.complete_structured([{"role": "user", "content": "x"}], RebalanceResponse)
     assert primary.calls == ["primary-model"] and backup.calls == ["backup-model"]
+
+
+# -- non-retryable errors ----------------------------------------------------
+#
+# A malformed request fails identically on every attempt. Both of 2026-08-10's
+# outages burned two retries and 3s of backoff on 400s that could never succeed.
+
+
+def test_non_retryable_error_is_not_retried():
+    primary = _FakeProvider("primary", fail=True, retryable=False)
+    slept = []
+    gw = LLMGateway(
+        providers={"primary": primary},
+        fallback_route=None,
+        sleep=slept.append,
+        max_retries=3,
+    )
+
+    with pytest.raises(LLMError):
+        gw.complete_structured([{"role": "user", "content": "x"}], RebalanceResponse)
+
+    assert primary.calls == ["primary-model"]  # one attempt, not four
+    assert slept == []  # and no backoff
+
+
+def test_non_retryable_error_still_falls_back():
+    # A different model may accept a request this one rejects — exactly the case
+    # where the fallback route earns its keep.
+    primary = _FakeProvider("primary", fail=True, retryable=False)
+    backup = _FakeProvider("backup", content=json.dumps({"action": "hold_cash"}))
+    gw = LLMGateway(
+        providers={"primary": primary, "backup": backup},
+        fallback_route=Route("backup", "backup-model"),
+        sleep=lambda _s: None,
+        max_retries=3,
+    )
+
+    result = gw.complete_structured([{"role": "user", "content": "x"}], RebalanceResponse)
+
+    assert result.action == "hold_cash"
+    assert primary.calls == ["primary-model"]
+    assert backup.calls == ["backup-model"]
+
+
+def test_transient_errors_are_still_retried():
+    primary = _FakeProvider("primary", fail=True)  # retryable by default
+    slept = []
+    gw = LLMGateway(
+        providers={"primary": primary},
+        fallback_route=None,
+        sleep=slept.append,
+        max_retries=2,
+    )
+
+    with pytest.raises(LLMError):
+        gw.complete_structured([{"role": "user", "content": "x"}], RebalanceResponse)
+
+    assert primary.calls == ["primary-model"] * 3
+    assert slept == [1.0, 2.0]
+
+
+def test_provider_classifies_bad_request_as_non_retryable():
+    client = _RecordingClient(_bad_request("context_length_exceeded"))
+    with pytest.raises(ProviderError) as caught:
+        OpenAIProvider(client).chat(model="m", messages=[], temperature=0)
+
+    assert caught.value.retryable is False
+
+
+def test_provider_classifies_rate_limit_as_retryable():
+    import httpx
+    import openai
+
+    request = httpx.Request("POST", "http://t")
+    rate_limited = openai.RateLimitError(
+        "slow down", response=httpx.Response(429, request=request), body=None
+    )
+    client = _RecordingClient(rate_limited)
+    with pytest.raises(ProviderError) as caught:
+        OpenAIProvider(client).chat(model="m", messages=[], temperature=0)
+
+    assert caught.value.retryable is True
+
+
+def test_connection_errors_stay_retryable():
+    import httpx
+    import openai
+
+    client = _RecordingClient(openai.APIConnectionError(request=httpx.Request("POST", "http://t")))
+    with pytest.raises(ProviderError) as caught:
+        OpenAIProvider(client).chat(model="m", messages=[], temperature=0)
+
+    assert caught.value.retryable is True
