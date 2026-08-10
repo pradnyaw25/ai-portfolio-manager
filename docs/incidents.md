@@ -15,6 +15,39 @@ Entry template:
 
 ---
 
+## 2026-08-10 (second run) · The same model swap broke a second parameter, three hours later
+
+- **Symptom.** The afternoon run got much further — research follow-up succeeded (the
+  morning's fix held), the PM decided HOLD/HOLD on AAPL and NVDA, 34 market calls and
+  the decision were journaled and pushed — then died at `generate_outputs` on
+  *"Unsupported parameter: 'max_tokens' is not supported with this model. Use
+  'max_completion_tokens' instead."* Lost: the report, both tweets, the public site
+  export, and memory ingestion. Kept: the decision, the portfolio state, and 35 new
+  predictions (tagged `gpt-5.6-terra`, the first rows carrying the new model).
+- **Root cause.** The same #112 model swap, a different parameter. gpt-5.6 renamed the
+  output cap; `chat.completions` rejects the old name outright rather than ignoring it.
+  Fixing the first quirk simply moved the failure downstream to the next call shape the
+  pipeline uses — `complete_text`, which is the only path that passes `max_tokens`.
+- **Fix.** [#117](https://github.com/pradnyaw25/ai-portfolio-manager/pull/117) — the
+  rename joins the same learned-per-model `_adapt` mechanism. More importantly,
+  `scripts/probe_model_compat.py` (`make probe-models`) now issues one small live
+  request per (model × call shape) and reports which quirks each model has and whether
+  the provider absorbs them. Run before a model swap, it would have caught all three at
+  once. The gpt-5.6 family has exactly three: `temperature`, `max_tokens`, and tools
+  needing `reasoning_effort="none"`; `response_format` and plain calls are fine.
+- **Detection gap.** Identical to the morning's, which is the point: the first fix
+  addressed the *instance*, not the *class*. Between the two runs, the pipeline was
+  never once exercised against the new models outside production — and one-quirk-at-a-
+  time discovery costs one failed run per quirk. Three incidents in one day from a
+  three-string diff.
+- **Article angle.** *Fixing the instance versus fixing the class.* The morning fix was
+  correct, tested, verified live, and still left the fund broken for the afternoon,
+  because a quirk found in production tells you a model is unfamiliar — and unfamiliar
+  models have more than one surprise. The cheap generalization (enumerate the call
+  shapes you actually use, probe them all, once) existed the whole time and took twenty
+  minutes to write. Good companion beat for the calibration piece too: this is what
+  "the model changed" means in an operational system, as opposed to a benchmark table.
+
 ## 2026-08-10 · A model upgrade broke tool calling, and an optional node turned it into a lost day
 
 - **Symptom.** The 14:40 UTC daily run failed 43 seconds in, at `research_followup`,

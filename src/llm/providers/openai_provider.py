@@ -9,8 +9,9 @@ from src.config import LLM_REQUEST_TIMEOUT
 from src.llm.providers import LLMProvider, ProviderError, ProviderResponse, ToolCall
 
 # Number of per-model API quirks `OpenAIProvider._adapt` knows how to work around.
-# Bounds the retry loop: one extra attempt per quirk, and no more.
-_KNOWN_QUIRKS = 2
+# Bounds the retry loop: one extra attempt per quirk, and no more. Keep in step with
+# `_adapt`; `scripts/probe_model_compat.py` enumerates the quirks a model actually has.
+_KNOWN_QUIRKS = 3
 
 
 class OpenAIProvider(LLMProvider):
@@ -34,6 +35,11 @@ class OpenAIProvider(LLMProvider):
     # and gpt-5.6-terra need this; sending it to a model that predates the parameter
     # (gpt-4.1-mini) is itself a 400, hence per-model rather than unconditional.
     _TOOLS_NEED_EFFORT_NONE: set[str] = set()
+
+    # Models that renamed the output cap: "Unsupported parameter: 'max_tokens' is not
+    # supported with this model. Use 'max_completion_tokens' instead." The gpt-5.6
+    # family rejects the old name outright, so this is a rename, not a fallback.
+    _RENAMED_MAX_TOKENS: set[str] = set()
 
     def __init__(self, client: OpenAI | None = None):
         # Cap the per-request timeout so a stalled connection fails fast and lets the
@@ -60,7 +66,8 @@ class OpenAIProvider(LLMProvider):
             if model in self._TOOLS_NEED_EFFORT_NONE:
                 kwargs["reasoning_effort"] = "none"
         if max_tokens is not None:
-            kwargs["max_tokens"] = max_tokens
+            cap = "max_completion_tokens" if model in self._RENAMED_MAX_TOKENS else "max_tokens"
+            kwargs[cap] = max_tokens
 
         # Each known quirk can be worked around at most once, so the loop terminates
         # even if a model trips several of them. Anything unrecognized normalizes to a
@@ -96,6 +103,12 @@ class OpenAIProvider(LLMProvider):
         ):
             self._TOOLS_NEED_EFFORT_NONE.add(model)
             kwargs["reasoning_effort"] = "none"
+            return True
+
+        # Renamed the output cap: move the value across.
+        if "max_completion_tokens" in message and "max_tokens" in kwargs:
+            self._RENAMED_MAX_TOKENS.add(model)
+            kwargs["max_completion_tokens"] = kwargs.pop("max_tokens")
             return True
 
         return False
