@@ -10,7 +10,19 @@ from typing import Any, Protocol
 
 
 class ProviderError(Exception):
-    """A transient or terminal provider failure the gateway may retry/fall back on."""
+    """A provider failure the gateway may retry and/or fall back on.
+
+    ``retryable`` distinguishes "the network wobbled, try again" from "this request
+    is malformed for this model, and will be malformed every time". Retrying the
+    latter buys nothing but delay: on 2026-08-10 two runs died on unsupported
+    parameters, and each burned two pointless retries plus 3s of backoff before the
+    error surfaced. Providers set it; the gateway honors it. Defaults to True so an
+    unclassified failure keeps the old, safer behavior.
+    """
+
+    def __init__(self, *args: Any, retryable: bool = True):
+        super().__init__(*args)
+        self.retryable = retryable
 
 
 @dataclass

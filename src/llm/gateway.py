@@ -312,6 +312,17 @@ class LLMGateway:
             try:
                 return provider.chat(model=route.model, **chat_kwargs)
             except ProviderError as exc:
+                # A malformed request is malformed every time: retrying it only adds
+                # delay before the same failure. Fall back, though — a different model
+                # may well accept a request this one rejects.
+                if not getattr(exc, "retryable", True):
+                    logger.error(
+                        "LLM call failed with a non-retryable error (%s/%s): %s",
+                        route.provider,
+                        route.model,
+                        exc,
+                    )
+                    raise LLMError(str(exc)) from exc
                 if attempt >= self._max_retries:
                     logger.error(
                         "LLM call failed after %d retries (%s/%s): %s",
