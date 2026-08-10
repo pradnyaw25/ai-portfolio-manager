@@ -38,7 +38,9 @@ Entry template:
 - **Fix.** [#115](https://github.com/pradnyaw25/ai-portfolio-manager/pull/115) — the
   provider learns the quirk from the 400 and retries with `reasoning_effort="none"`,
   cached per model, folded into one `_adapt()` helper alongside the existing
-  default-only-temperature workaround. [#116] — an `OPTIONAL_NODES` set in the daily
+  default-only-temperature workaround.
+  [#116](https://github.com/pradnyaw25/ai-portfolio-manager/pull/116) — an
+  `OPTIONAL_NODES` set in the daily
   graph: those nodes degrade to a warning plus a diagnostic and the cycle continues.
   Writing the test for that surfaced a third bug: `build_run_status_node` *overwrote*
   `run.warnings` with the freshly built status, so a degradation warning would never
