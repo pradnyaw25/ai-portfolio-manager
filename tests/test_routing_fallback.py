@@ -54,6 +54,124 @@ def test_openai_provider_wraps_api_error_as_provider_error():
         OpenAIProvider(_Client()).chat(model="m", messages=[], temperature=0)
 
 
+# -- per-model API quirks ----------------------------------------------------
+#
+# Regression cover for 2026-08-10: the gpt-5.6 family applies a default
+# reasoning_effort that chat.completions rejects alongside function tools, which
+# killed the daily run's research-followup node. The workarounds are learned from
+# the 400 and cached on the class, so each test starts from a clean slate.
+
+
+@pytest.fixture(autouse=True)
+def _clear_learned_quirks():
+    OpenAIProvider._NO_TEMPERATURE.clear()
+    OpenAIProvider._TOOLS_NEED_EFFORT_NONE.clear()
+    yield
+    OpenAIProvider._NO_TEMPERATURE.clear()
+    OpenAIProvider._TOOLS_NEED_EFFORT_NONE.clear()
+
+
+def _bad_request(message):
+    import httpx
+    import openai
+
+    request = httpx.Request("POST", "http://t")
+    return openai.BadRequestError(
+        message, response=httpx.Response(400, request=request), body=None
+    )
+
+
+class _RecordingClient:
+    """Fails the first ``fail_times`` calls with ``error``, recording every kwargs."""
+
+    def __init__(self, error, fail_times=1):
+        self.calls = []
+        self._error = error
+        self._fail_times = fail_times
+        outer = self
+
+        class completions:
+            @staticmethod
+            def create(**kwargs):
+                outer.calls.append(kwargs)
+                if len(outer.calls) <= outer._fail_times:
+                    raise outer._error
+                return _fake_sdk_response("done")
+
+        class chat:
+            pass
+
+        chat.completions = completions
+        self.chat = chat
+
+
+TOOLS = [{"type": "function", "function": {"name": "get_price"}}]
+_EFFORT_ERROR = (
+    "Function tools with reasoning_effort are not supported for gpt-5.6-luna in "
+    "/v1/chat/completions. To use function tools, use /v1/responses or set "
+    "reasoning_effort to 'none'."
+)
+
+
+def test_tool_call_retries_with_reasoning_effort_none():
+    client = _RecordingClient(_bad_request(_EFFORT_ERROR))
+    provider = OpenAIProvider(client)
+
+    resp = provider.chat(model="gpt-5.6-luna", messages=[], temperature=0, tools=TOOLS)
+
+    assert resp.content == "done"
+    assert len(client.calls) == 2
+    assert "reasoning_effort" not in client.calls[0]
+    assert client.calls[1]["reasoning_effort"] == "none"
+    assert client.calls[1]["tools"] == TOOLS
+
+
+def test_reasoning_effort_quirk_is_remembered_for_later_calls():
+    client = _RecordingClient(_bad_request(_EFFORT_ERROR))
+    provider = OpenAIProvider(client)
+    provider.chat(model="gpt-5.6-luna", messages=[], temperature=0, tools=TOOLS)
+
+    second = _RecordingClient(_bad_request(_EFFORT_ERROR), fail_times=0)
+    OpenAIProvider(second).chat(
+        model="gpt-5.6-luna", messages=[], temperature=0, tools=TOOLS
+    )
+
+    # Learned on the class, so the second provider pays no failed attempt.
+    assert len(second.calls) == 1
+    assert second.calls[0]["reasoning_effort"] == "none"
+
+
+def test_reasoning_effort_workaround_is_not_applied_without_tools():
+    # A model that predates the parameter 400s on receiving it at all, so it must
+    # never be sent speculatively — only in response to the tools-specific error.
+    client = _RecordingClient(_bad_request("Unrecognized request argument supplied: reasoning_effort"))
+    with pytest.raises(ProviderError):
+        OpenAIProvider(client).chat(model="gpt-4.1-mini", messages=[], temperature=0)
+
+    assert len(client.calls) == 1
+    assert "reasoning_effort" not in client.calls[0]
+
+
+def test_default_only_temperature_is_dropped_and_remembered():
+    client = _RecordingClient(_bad_request("temperature does not support 0 with this model"))
+    provider = OpenAIProvider(client)
+
+    provider.chat(model="gpt-5.6-terra", messages=[], temperature=0)
+
+    assert len(client.calls) == 2
+    assert client.calls[0]["temperature"] == 0
+    assert "temperature" not in client.calls[1]
+    assert "gpt-5.6-terra" in OpenAIProvider._NO_TEMPERATURE
+
+
+def test_unrecognized_bad_request_surfaces_without_retrying():
+    client = _RecordingClient(_bad_request("context_length_exceeded"))
+    with pytest.raises(ProviderError):
+        OpenAIProvider(client).chat(model="m", messages=[], temperature=0, tools=TOOLS)
+
+    assert len(client.calls) == 1
+
+
 # -- routing -----------------------------------------------------------------
 
 
