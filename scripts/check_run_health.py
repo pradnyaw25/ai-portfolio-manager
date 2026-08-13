@@ -22,13 +22,19 @@ the fund was supposed to run and either didn't or failed.
 import argparse
 import json
 import sys
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, time, timedelta
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
-from src.config import DATA_DIR
-from src.utils.market_hours import MARKET_OPEN, MARKET_TZ
+# Inlined rather than imported from src: this watchdog must run on a bare checkout with
+# no third-party dependencies installed — importing src.config pulls in PyYAML, which
+# is exactly the "fails for reasons of its own" trap the workflow warns against (it was
+# the actual cause of every check failing). These are stable facts (data lives in
+# data/, the NYSE opens 9:30 ET); keep them in step with src.config.DATA_DIR and
+# src.utils.market_hours.
+DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+MARKET_TZ = ZoneInfo("America/New_York")
+MARKET_OPEN = time(9, 30)
 
 RUN_HISTORY = DATA_DIR / "run_history.jsonl"
 
