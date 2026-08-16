@@ -1,194 +1,160 @@
 {
-  "week_end": "2026-08-09",
-  "week_start": "2026-08-03",
+  "week_end": "2026-08-16",
+  "week_start": "2026-08-10",
   "letter": {
-    "headline": "A positive week in absolute terms, but meaningful underperformance versus the benchmark.",
-    "performance": "For the week ended 2026-08-09, portfolio value increased from 1043660.7 to 1045213.7, a return of 0.15%. The benchmark returned 2.31%, producing alpha of -2.16%.",
+    "headline": "Weekly letter: the portfolio declined and trailed the benchmark.",
+    "performance": "For the week of 2026-08-10 to 2026-08-16, portfolio value moved from 1045707.11 to 1031341.38, a -1.37% return versus the benchmark's 0.47%, for -1.84% alpha.",
     "winners": [
-      "MSFT gained 28.03% this week; its return since the position was opened is 20.98%.",
-      "AMZN gained 21.10% this week; its return since the position was opened is 13.96%.",
-      "NVDA gained 17.87% this week; its return since the position was opened is 9.22%."
+      "NVDA rose 2.71% this week; it is up 10.64% since the position was opened.",
+      "MSFT gained 1.63% this week; it is up 20.01% since the position was opened.",
+      "JNJ advanced 1.07% this week; it is up 8.94% since the position was opened."
     ],
     "losers": [
-      "AAPL declined -7.35% this week; its return since the position was opened is 4.42%.",
-      "UNH declined -3.21% this week; its return since the position was opened is 0.88%.",
-      "JNJ declined -2.37% this week; its return since the position was opened is 7.09%."
+      "GOOGL declined -4.56% this week; it is down -1.95% since the position was opened.",
+      "HD fell -4.04% this week; it is up 3.70% since the position was opened.",
+      "AMZN declined -3.67% this week; it is up 9.23% since the position was opened."
     ],
-    "portfolio_changes": "We bought 70 shares of AAPL, 20 shares of MSFT, and 50 shares of AMZN. We sold 100 shares of NVDA.",
-    "outlook": "The portfolio finished modestly higher, but the 0.15% return did not keep pace with the benchmark's 2.31% gain. We will continue to monitor the portfolio's concentrated holdings and the effects of this week's additions to AAPL, MSFT, and AMZN alongside the reduction in NVDA."
+    "portfolio_changes": "On 2026-08-12, the fund sold 75 shares of AAPL.",
+    "outlook": "This was a difficult week, with the portfolio declining while the benchmark advanced. We remain focused on position-level results and disciplined portfolio management."
   },
   "facts": {
-    "week_start": "2026-08-03",
-    "week_end": "2026-08-09",
-    "start_value": 1043660.7,
-    "end_value": 1045213.7,
-    "return_pct": 0.0015,
-    "benchmark_return_pct": 0.0231,
-    "alpha": -0.0216,
+    "week_start": "2026-08-10",
+    "week_end": "2026-08-16",
+    "start_value": 1045707.11,
+    "end_value": 1031341.38,
+    "return_pct": -0.0137,
+    "benchmark_return_pct": 0.0047,
+    "alpha": -0.0184,
     "winners": [
       {
-        "symbol": "MSFT",
-        "return_since_entry_pct": 0.2098,
-        "week_return_pct": 0.2803,
-        "market_value": 68414.38
-      },
-      {
-        "symbol": "AMZN",
-        "return_since_entry_pct": 0.1396,
-        "week_return_pct": 0.211,
-        "market_value": 200725.29
-      },
-      {
         "symbol": "NVDA",
-        "return_since_entry_pct": 0.0922,
-        "week_return_pct": 0.1787,
-        "market_value": 33306.0
+        "return_since_entry_pct": 0.1064,
+        "week_return_pct": 0.0271,
+        "market_value": 33739.5
+      },
+      {
+        "symbol": "MSFT",
+        "return_since_entry_pct": 0.2001,
+        "week_return_pct": 0.0163,
+        "market_value": 67865.77
+      },
+      {
+        "symbol": "JNJ",
+        "return_since_entry_pct": 0.0894,
+        "week_return_pct": 0.0107,
+        "market_value": 141725.72
       }
     ],
     "losers": [
       {
-        "symbol": "JNJ",
-        "return_since_entry_pct": 0.0709,
-        "week_return_pct": -0.0237,
-        "market_value": 139309.36
+        "symbol": "AMZN",
+        "return_since_entry_pct": 0.0923,
+        "week_return_pct": -0.0367,
+        "market_value": 192402.93
       },
       {
-        "symbol": "UNH",
-        "return_since_entry_pct": 0.0088,
-        "week_return_pct": -0.0321,
-        "market_value": 1227.3
+        "symbol": "HD",
+        "return_since_entry_pct": 0.037,
+        "week_return_pct": -0.0404,
+        "market_value": 45160.81
       },
       {
-        "symbol": "AAPL",
-        "return_since_entry_pct": 0.0442,
-        "week_return_pct": -0.0735,
-        "market_value": 233598.12
+        "symbol": "GOOGL",
+        "return_since_entry_pct": -0.0195,
+        "week_return_pct": -0.0456,
+        "market_value": 53145.4
       }
     ],
     "positions": [
       {
-        "symbol": "MSFT",
-        "return_since_entry_pct": 0.2098,
-        "week_return_pct": 0.2803,
-        "market_value": 68414.38
-      },
-      {
-        "symbol": "AMZN",
-        "return_since_entry_pct": 0.1396,
-        "week_return_pct": 0.211,
-        "market_value": 200725.29
-      },
-      {
         "symbol": "NVDA",
-        "return_since_entry_pct": 0.0922,
-        "week_return_pct": 0.1787,
-        "market_value": 33306.0
+        "return_since_entry_pct": 0.1064,
+        "week_return_pct": 0.0271,
+        "market_value": 33739.5
       },
       {
-        "symbol": "GOOGL",
-        "return_since_entry_pct": 0.0063,
-        "week_return_pct": 0.0522,
-        "market_value": 54543.72
-      },
-      {
-        "symbol": "HD",
-        "return_since_entry_pct": 0.0794,
-        "week_return_pct": 0.0513,
-        "market_value": 47004.2
-      },
-      {
-        "symbol": "JPM",
-        "return_since_entry_pct": 0.1411,
-        "week_return_pct": 0.0372,
-        "market_value": 3577.28
-      },
-      {
-        "symbol": "META",
-        "return_since_entry_pct": 0.0411,
-        "week_return_pct": 0.0111,
-        "market_value": 5918.15
-      },
-      {
-        "symbol": "MA",
-        "return_since_entry_pct": 0.1568,
-        "week_return_pct": -0.0007,
-        "market_value": 4502.24
-      },
-      {
-        "symbol": "V",
-        "return_since_entry_pct": 0.1368,
-        "week_return_pct": -0.0169,
-        "market_value": 7979.29
+        "symbol": "MSFT",
+        "return_since_entry_pct": 0.2001,
+        "week_return_pct": 0.0163,
+        "market_value": 67865.77
       },
       {
         "symbol": "JNJ",
-        "return_since_entry_pct": 0.0709,
-        "week_return_pct": -0.0237,
-        "market_value": 139309.36
+        "return_since_entry_pct": 0.0894,
+        "week_return_pct": 0.0107,
+        "market_value": 141725.72
       },
       {
-        "symbol": "UNH",
-        "return_since_entry_pct": 0.0088,
-        "week_return_pct": -0.0321,
-        "market_value": 1227.3
+        "symbol": "JPM",
+        "return_since_entry_pct": 0.1587,
+        "week_return_pct": 0.01,
+        "market_value": 3632.55
+      },
+      {
+        "symbol": "META",
+        "return_since_entry_pct": 0.0403,
+        "week_return_pct": 0.0018,
+        "market_value": 5913.35
+      },
+      {
+        "symbol": "MA",
+        "return_since_entry_pct": 0.171,
+        "week_return_pct": -0.0021,
+        "market_value": 4557.68
+      },
+      {
+        "symbol": "V",
+        "return_since_entry_pct": 0.1458,
+        "week_return_pct": -0.0101,
+        "market_value": 8042.32
       },
       {
         "symbol": "AAPL",
-        "return_since_entry_pct": 0.0442,
-        "week_return_pct": -0.0735,
-        "market_value": 233598.12
+        "return_since_entry_pct": 0.0245,
+        "week_return_pct": -0.0155,
+        "market_value": 206250.75
+      },
+      {
+        "symbol": "UNH",
+        "return_since_entry_pct": -0.0076,
+        "week_return_pct": -0.0267,
+        "market_value": 1207.35
+      },
+      {
+        "symbol": "AMZN",
+        "return_since_entry_pct": 0.0923,
+        "week_return_pct": -0.0367,
+        "market_value": 192402.93
+      },
+      {
+        "symbol": "HD",
+        "return_since_entry_pct": 0.037,
+        "week_return_pct": -0.0404,
+        "market_value": 45160.81
+      },
+      {
+        "symbol": "GOOGL",
+        "return_since_entry_pct": -0.0195,
+        "week_return_pct": -0.0456,
+        "market_value": 53145.4
       }
     ],
     "trades": [
       {
-        "date": "2026-08-03",
+        "date": "2026-08-12",
         "symbol": "AAPL",
-        "action": "BUY",
-        "shares": "20"
-      },
-      {
-        "date": "2026-08-03",
-        "symbol": "NVDA",
         "action": "SELL",
-        "shares": "50"
-      },
-      {
-        "date": "2026-08-03",
-        "symbol": "MSFT",
-        "action": "BUY",
-        "shares": "20"
-      },
-      {
-        "date": "2026-08-03",
-        "symbol": "NVDA",
-        "action": "SELL",
-        "shares": "30"
-      },
-      {
-        "date": "2026-08-04",
-        "symbol": "AMZN",
-        "action": "BUY",
-        "shares": "50"
-      },
-      {
-        "date": "2026-08-04",
-        "symbol": "NVDA",
-        "action": "SELL",
-        "shares": "20"
-      },
-      {
-        "date": "2026-08-07",
-        "symbol": "AAPL",
-        "action": "BUY",
-        "shares": "50"
+        "shares": "75"
       }
     ]
   },
-  "markdown": "# A positive week in absolute terms, but meaningful underperformance versus the benchmark.\n\n*Week of 2026-08-03 to 2026-08-09*\n\n## Performance\n\nFor the week ended 2026-08-09, portfolio value increased from 1043660.7 to 1045213.7, a return of 0.15%. The benchmark returned 2.31%, producing alpha of -2.16%.\n\n## Winners\n\n- MSFT gained 28.03% this week; its return since the position was opened is 20.98%.\n- AMZN gained 21.10% this week; its return since the position was opened is 13.96%.\n- NVDA gained 17.87% this week; its return since the position was opened is 9.22%.\n\n## Losers\n\n- AAPL declined -7.35% this week; its return since the position was opened is 4.42%.\n- UNH declined -3.21% this week; its return since the position was opened is 0.88%.\n- JNJ declined -2.37% this week; its return since the position was opened is 7.09%.\n\n## Portfolio Changes\n\nWe bought 70 shares of AAPL, 20 shares of MSFT, and 50 shares of AMZN. We sold 100 shares of NVDA.\n\n## Outlook\n\nThe portfolio finished modestly higher, but the 0.15% return did not keep pace with the benchmark's 2.31% gain. We will continue to monitor the portfolio's concentrated holdings and the effects of this week's additions to AAPL, MSFT, and AMZN alongside the reduction in NVDA.\n",
+  "markdown": "# Weekly letter: the portfolio declined and trailed the benchmark.\n\n*Week of 2026-08-10 to 2026-08-16*\n\n## Performance\n\nFor the week of 2026-08-10 to 2026-08-16, portfolio value moved from 1045707.11 to 1031341.38, a -1.37% return versus the benchmark's 0.47%, for -1.84% alpha.\n\n## Winners\n\n- NVDA rose 2.71% this week; it is up 10.64% since the position was opened.\n- MSFT gained 1.63% this week; it is up 20.01% since the position was opened.\n- JNJ advanced 1.07% this week; it is up 8.94% since the position was opened.\n\n## Losers\n\n- GOOGL declined -4.56% this week; it is down -1.95% since the position was opened.\n- HD fell -4.04% this week; it is up 3.70% since the position was opened.\n- AMZN declined -3.67% this week; it is up 9.23% since the position was opened.\n\n## Portfolio Changes\n\nOn 2026-08-12, the fund sold 75 shares of AAPL.\n\n## Outlook\n\nThis was a difficult week, with the portfolio declining while the benchmark advanced. We remain focused on position-level results and disciplined portfolio management.\n",
   "grounding": {
     "status": "ok",
     "grounded": true,
-    "severity": "none",
-    "issues": []
+    "severity": "minor",
+    "issues": [
+      "The decision states 'HD fell -4.04% this week; it is up 3.70% since the position was opened.' The phrase 'fell -4.04%' is redundant or imprecise; better phrasing would be 'fell 4.04%' or 'declined 4.04%'. This is a minor stylistic/imprecision issue rather than a factual error."
+    ]
   }
 }

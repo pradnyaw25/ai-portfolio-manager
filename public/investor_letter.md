@@ -1,27 +1,27 @@
-# A positive week in absolute terms, but meaningful underperformance versus the benchmark.
+# Weekly letter: the portfolio declined and trailed the benchmark.
 
-*Week of 2026-08-03 to 2026-08-09*
+*Week of 2026-08-10 to 2026-08-16*
 
 ## Performance
 
-For the week ended 2026-08-09, portfolio value increased from 1043660.7 to 1045213.7, a return of 0.15%. The benchmark returned 2.31%, producing alpha of -2.16%.
+For the week of 2026-08-10 to 2026-08-16, portfolio value moved from 1045707.11 to 1031341.38, a -1.37% return versus the benchmark's 0.47%, for -1.84% alpha.
 
 ## Winners
 
-- MSFT gained 28.03% this week; its return since the position was opened is 20.98%.
-- AMZN gained 21.10% this week; its return since the position was opened is 13.96%.
-- NVDA gained 17.87% this week; its return since the position was opened is 9.22%.
+- NVDA rose 2.71% this week; it is up 10.64% since the position was opened.
+- MSFT gained 1.63% this week; it is up 20.01% since the position was opened.
+- JNJ advanced 1.07% this week; it is up 8.94% since the position was opened.
 
 ## Losers
 
-- AAPL declined -7.35% this week; its return since the position was opened is 4.42%.
-- UNH declined -3.21% this week; its return since the position was opened is 0.88%.
-- JNJ declined -2.37% this week; its return since the position was opened is 7.09%.
+- GOOGL declined -4.56% this week; it is down -1.95% since the position was opened.
+- HD fell -4.04% this week; it is up 3.70% since the position was opened.
+- AMZN declined -3.67% this week; it is up 9.23% since the position was opened.
 
 ## Portfolio Changes
 
-We bought 70 shares of AAPL, 20 shares of MSFT, and 50 shares of AMZN. We sold 100 shares of NVDA.
+On 2026-08-12, the fund sold 75 shares of AAPL.
 
 ## Outlook
 
-The portfolio finished modestly higher, but the 0.15% return did not keep pace with the benchmark's 2.31% gain. We will continue to monitor the portfolio's concentrated holdings and the effects of this week's additions to AAPL, MSFT, and AMZN alongside the reduction in NVDA.
+This was a difficult week, with the portfolio declining while the benchmark advanced. We remain focused on position-level results and disciplined portfolio management.
