@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <title>AI fund decision · August 18, 2026</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script>
+(function () {
+  try {
+    var stored = localStorage.getItem("ai-portfolio-theme");
+    var theme = (stored === "light" || stored === "dark")
+      ? stored
+      : (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+    document.documentElement.setAttribute("data-theme", theme);
+  } catch (e) {}
+})();
+</script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-MCDDGJ3XEC"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-MCDDGJ3XEC');
+  </script>
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+  <link rel="canonical" href="https://glasshousefund.com/decisions/2026-08-18.html" />
+  <meta name="description" content="The fund held, no trades. Hold all positions and retain the 25.9% cash reserve. The decision reflects concentration risk, unavailable benchmark and equity momentum data, and a yield-driven market backdrop, while avoiding reactive sales in modestly weak holdings. Sources informing the restraint inclu" />
+  <meta name="author" content="Pradnya Wakchaure" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://glasshousefund.com/decisions/2026-08-18.html" />
+  <meta property="og:title" content="AI fund decision · August 18, 2026" />
+  <meta property="og:description" content="The fund held, no trades. Hold all positions and retain the 25.9% cash reserve. The decision reflects concentration risk, unavailable benchmark and equity momentum data, and a yield-driven market backdrop, while avoiding reactive sales in modestly weak holdings. Sources informing the restraint inclu" />
+  <meta property="og:image" content="https://glasshousefund.com/og-cover.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@GlassHouseFund" />
+  <style>
+:root { color-scheme: light dark;
+  --bg:#e9ecdf; --surface:#f3f5ec; --surface-subtle:#e1e5d4; --border:#cdd4bd;
+  --border-strong:#b4bd9f; --text:#191c11; --muted:#5e6851; --muted-strong:#3f4834;
+  --positive:#4d6a2c; --positive-bg:#dde7ca; --negative:#9c3a30; --negative-bg:#f0dbd6;
+  --accent:#5f6b45; --ink:#12140d; --shadow:0 12px 34px rgba(18,20,13,.10);
+  --row-border:#dde2d0; --panel-subtle:#eef1e6; }
+:root[data-theme="dark"] {
+  --bg:#12140d; --surface:#1b1e14; --surface-subtle:#24281a; --border:#343a28;
+  --border-strong:#4a5138; --text:#e4e8d5; --muted:#99a487; --muted-strong:#c3ccb1;
+  --positive:#a6c07f; --positive-bg:#1b2712; --negative:#e59a90; --negative-bg:#2f1a16;
+  --accent:#aeba90; --ink:#f1f4e7; --shadow:0 16px 42px rgba(0,0,0,.40);
+  --row-border:#2a2f1f; --panel-subtle:#15170f; }
+* { box-sizing:border-box; }
+body { margin:0; min-width:320px; background:var(--bg); color:var(--text);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif; line-height:1.6; }
+a { color:inherit; }
+.shell { width:min(860px, calc(100% - 32px)); margin:0 auto; padding:22px 0 60px; }
+.topbar { display:flex; align-items:center; justify-content:space-between; gap:18px; margin-bottom:34px; }
+.brand { display:flex; align-items:center; gap:10px; font-weight:800; color:var(--ink); text-decoration:none; }
+.brand-mark { display:block; width:30px; height:30px; color:var(--ink); flex:none; }
+.nav { display:flex; gap:4px; flex-wrap:wrap; }
+.nav a { display:inline-flex; align-items:center; min-height:34px; padding:0 12px; border-radius:6px;
+  color:var(--muted-strong); font-size:14px; font-weight:700; text-decoration:none; white-space:nowrap; }
+.nav a.active { background:var(--ink); color:var(--bg); }
+.nav a:hover:not(.active) { background:var(--surface-subtle); }
+.eyebrow { color:var(--accent); font-size:12px; font-weight:800; letter-spacing:.1em;
+  text-transform:uppercase; margin-bottom:12px; }
+h1 { margin:0 0 10px; color:var(--ink); font-size:clamp(26px,4.4vw,40px); line-height:1.08; letter-spacing:-.02em; }
+h2 { color:var(--ink); font-size:19px; margin:34px 0 8px; }
+h3 { color:var(--ink); font-size:15px; margin:0 0 6px; }
+p { margin:0 0 12px; }
+.lede { color:var(--muted-strong); font-size:17px; max-width:64ch; margin:0 0 10px; }
+.facts { display:flex; flex-wrap:wrap; gap:8px; margin:16px 0 8px; }
+.pill { border:1px solid var(--border-strong); border-radius:999px; background:var(--panel-subtle);
+  padding:3px 11px; font-size:12.5px; font-weight:700; color:var(--muted-strong); }
+.card { border:1px solid var(--border); border-radius:12px; background:var(--surface);
+  box-shadow:var(--shadow); padding:18px 20px; margin-bottom:12px; }
+.trade { border:1px solid var(--border); border-left:4px solid var(--positive); border-radius:8px;
+  background:var(--surface); padding:12px 14px; margin-bottom:10px; }
+.trade.sell { border-left-color:var(--negative); }
+.trade.rejected { border-left-color:var(--muted); opacity:.85; }
+.trade .head { color:var(--ink); font-weight:800; font-size:15px; }
+.conf { border-radius:5px; background:var(--positive-bg); color:var(--positive);
+  padding:1px 7px; font-size:12px; font-weight:800; margin-left:6px; }
+.calls-wrap { overflow-x:auto; margin:6px 0 12px; }
+.calls { width:100%; border-collapse:collapse; font-size:13.5px; }
+.calls th { text-align:left; font-size:11.5px; text-transform:uppercase; letter-spacing:.05em;
+  color:var(--muted); font-weight:800; padding:6px 12px 6px 0; border-bottom:1px solid var(--border); white-space:nowrap; }
+.calls td { padding:7px 12px 7px 0; border-bottom:1px solid var(--row-border); vertical-align:top; }
+.calls td.sym { font-weight:800; color:var(--ink); white-space:nowrap; }
+.dir { display:inline-block; border-radius:5px; padding:1px 7px; font-size:12px; font-weight:800; white-space:nowrap; }
+.dir.up { background:var(--positive-bg); color:var(--positive); }
+.dir.down { background:var(--negative-bg); color:var(--negative); }
+.tag { display:inline-block; border:1px solid var(--border-strong); border-radius:999px;
+  padding:0 8px; font-size:11px; font-weight:800; color:var(--muted-strong); white-space:nowrap; }
+.muted { color:var(--muted); }
+.correction { border:1px solid var(--negative); border-left:4px solid var(--negative);
+  border-radius:8px; background:var(--negative-bg); color:var(--text);
+  padding:12px 14px; margin:14px 0 4px; font-size:13.5px; }
+.correction strong { color:var(--negative); }
+details.more { margin:6px 0 18px; }
+details.more > summary { cursor:pointer; font-size:13px; font-weight:800; color:var(--accent);
+  padding:7px 0; list-style:none; }
+details.more > summary::-webkit-details-marker { display:none; }
+details.more > summary::before { content:"▸ "; display:inline-block; transition:transform .15s; }
+details.more[open] > summary::before { content:"▾ "; }
+details.more > summary:hover { text-decoration:underline; }
+details.more h3 { font-size:14px; margin:16px 0 4px; }
+figure.chart { margin:10px 0 4px; }
+figure.chart svg { width:100%; height:auto; display:block; }
+figure.chart figcaption { font-size:12px; margin-top:2px; }
+.chart .axis { stroke:var(--border-strong); stroke-width:1; }
+.chart .ax { font-size:10px; fill:var(--muted); font-weight:700; }
+.chart .tick { stroke-width:3; stroke-linecap:round; opacity:.75; }
+.chart .tick.up { stroke:var(--positive); }
+.chart .tick.down { stroke:var(--negative); }
+.chart .tick:hover { opacity:1; stroke-width:5; }
+ul.sources { list-style:none; margin:6px 0 0; padding:0; font-size:14px; }
+ul.sources li { border-bottom:1px solid var(--row-border); padding:8px 0; margin:0; }
+ul.sources a { color:var(--ink); font-weight:700; }
+ul { margin:6px 0 0; padding-left:20px; }
+li { margin-bottom:4px; }
+.role { font-size:11.5px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--accent); }
+.shead { display:flex; flex-wrap:wrap; align-items:center; gap:8px; color:var(--ink); font-weight:800; font-size:14px; }
+.shead a { text-decoration:none; }
+.shead a:hover { text-decoration:underline; }
+.sym-link { color:inherit; text-decoration:none; border-bottom:1px dotted var(--border-strong); }
+.sym-link:hover { border-bottom-color:currentColor; }
+.pager { display:flex; justify-content:space-between; gap:12px; margin-top:40px;
+  border-top:1px solid var(--row-border); padding-top:16px; font-size:14px; font-weight:700; }
+.dlist { list-style:none; margin:0; padding:0; }
+.dlist li { border-bottom:1px solid var(--row-border); padding:12px 0; margin:0; }
+.dlist a { color:var(--ink); font-weight:800; text-decoration:none; font-size:16px; }
+.dlist a:hover { text-decoration:underline; }
+.dlist .sub { color:var(--muted); font-size:13.5px; }
+footer { margin-top:48px; border-top:1px solid var(--row-border); padding-top:16px;
+  color:var(--muted); font-size:13px; }
+@media (max-width:560px) {
+  .topbar { flex-direction:column; align-items:flex-start; gap:12px; }
+  .nav a { padding:0 9px; font-size:13px; }
+}
+</style>
+</head>
+<body>
+  <div class="shell">
+    <div class="topbar">
+      <a class="brand" href="../index.html"><svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-linejoin="round" stroke-linecap="round"><path d="M24 5 L43 21 L43 43 L5 43 L5 21 Z" stroke-width="2.4"/><path d="M5 21 L43 21" stroke-width="2"/><path d="M24 5 L24 21" stroke-width="1.6"/><path d="M16 21 L16 43 M32 21 L32 43" stroke-width="1.6"/><path d="M5 32 L43 32" stroke-width="1.6"/></g></svg><span>Glasshouse Fund</span></a>
+      <nav class="nav" aria-label="Site navigation">
+        <a href="../dashboard.html">Dashboard</a>
+        <a class="active" href="../decisions.html">Trade log</a>
+        <a href="../letters/">Weekly Investor Letters</a>
+        <a href="../predictions.html">Prediction Accuracy</a>
+        <a href="../engineering.html">Engineering</a>
+        <a href="../about.html">About</a>
+      </nav>
+    </div>
+    <div class="eyebrow">Decision journal</div>
+    <h1>AI fund decision · August 18, 2026</h1>
+    <p class="lede">Hold all positions and retain the 25.9% cash reserve. The decision reflects concentration risk, unavailable benchmark and equity momentum data, and a yield-driven market backdrop, while avoiding reactive sales in modestly weak holdings. Sources informing the restraint include risk_lesson:run_20260803T191113Z_b5f11a59:report_risk, risk_lesson:run_20260729T184341Z_54100baf:report_risk, trade:run_20260812T183945Z_0d1bf062:AAPL:SELL, and trade:run_20260807T183247Z_07bc8571:AAPL:BUY.</p>
+    <div class="facts"><span class="pill">Outlook: NEUTRAL</span><span class="pill">Portfolio $1,035,159</span><span class="pill">Cash 25.9%</span><span class="pill">Grounding: ok</span></div>
+    <h2>Trades</h2>
+    <p class="muted">No trades this day. The fund held.</p>
+    <h2>Market calls</h2><p class="muted">A directional call (beat or lag the S&amp;P 500 over the horizon) on every researched name, whether or not the fund traded it. 34 calls (16 outperform, 18 underperform); 0 became trades. These are the fund's calibration record.</p><figure class="chart"><svg viewBox="0 0 680 132" role="img" aria-label="Confidence of each market call, outperform above the line and underperform below"><line x1="30" y1="66" x2="650" y2="66" class="axis"/><text x="30" y="16" class="ax">beat SPY</text><text x="30" y="124" class="ax">lag SPY</text><line x1="112.0" y1="72" x2="112.0" y2="112" class="tick down"><title>AAPL: underperform at 56%</title></line><line x1="148.0" y1="72" x2="148.0" y2="112" class="tick down"><title>AMD: underperform at 59%</title></line><line x1="112.0" y1="60" x2="112.0" y2="20" class="tick up"><title>AMZN: outperform at 56%</title></line><line x1="136.0" y1="72" x2="136.0" y2="112" class="tick down"><title>APLD: underperform at 58%</title></line><line x1="100.0" y1="60" x2="100.0" y2="20" class="tick up"><title>ASML: outperform at 55%</title></line><line x1="112.0" y1="60" x2="112.0" y2="20" class="tick up"><title>AVGO: outperform at 56%</title></line><line x1="124.0" y1="72" x2="124.0" y2="112" class="tick down"><title>BE: underperform at 57%</title></line><line x1="88.0" y1="60" x2="88.0" y2="20" class="tick up"><title>CAT: outperform at 54%</title></line><line x1="136.0" y1="72" x2="136.0" y2="112" class="tick down"><title>CORZ: underperform at 58%</title></line><line x1="124.0" y1="72" x2="124.0" y2="112" class="tick down"><title>CRWV: underperform at 57%</title></line><line x1="88.0" y1="60" x2="88.0" y2="20" class="tick up"><title>GLW: outperform at 54%</title></line><line x1="124.0" y1="72" x2="124.0" y2="112" class="tick down"><title>GOOGL: underperform at 57%</title></line><line x1="100.0" y1="72" x2="100.0" y2="112" class="tick down"><title>HD: underperform at 55%</title></line><line x1="136.0" y1="72" x2="136.0" y2="112" class="tick down"><title>INTC: underperform at 58%</title></line><line x1="136.0" y1="72" x2="136.0" y2="112" class="tick down"><title>IREN: underperform at 58%</title></line><line x1="136.0" y1="60" x2="136.0" y2="20" class="tick up"><title>JNJ: outperform at 58%</title></line><line x1="148.0" y1="60" x2="148.0" y2="20" class="tick up"><title>JPM: outperform at 59%</title></line><line x1="124.0" y1="60" x2="124.0" y2="20" class="tick up"><title>MA: outperform at 57%</title></line><line x1="112.0" y1="72" x2="112.0" y2="112" class="tick down"><title>META: underperform at 56%</title></line><line x1="112.0" y1="60" x2="112.0" y2="20" class="tick up"><title>MSFT: outperform at 56%</title></line><line x1="136.0" y1="72" x2="136.0" y2="112" class="tick down"><title>MU: underperform at 58%</title></line><line x1="112.0" y1="72" x2="112.0" y2="112" class="tick down"><title>NVDA: underperform at 56%</title></line><line x1="88.0" y1="60" x2="88.0" y2="20" class="tick up"><title>ORCL: outperform at 54%</title></line><line x1="124.0" y1="60" x2="124.0" y2="20" class="tick up"><title>PG: outperform at 57%</title></line><line x1="136.0" y1="72" x2="136.0" y2="112" class="tick down"><title>QQQ: underperform at 58%</title></line><line x1="136.0" y1="72" x2="136.0" y2="112" class="tick down"><title>SNDK: underperform at 58%</title></line><line x1="40.0" y1="60" x2="40.0" y2="20" class="tick up"><title>SPY: outperform at 50%</title></line><line x1="148.0" y1="72" x2="148.0" y2="112" class="tick down"><title>TSLA: underperform at 59%</title></line><line x1="112.0" y1="72" x2="112.0" y2="112" class="tick down"><title>TSM: underperform at 56%</title></line><line x1="88.0" y1="60" x2="88.0" y2="20" class="tick up"><title>UNH: outperform at 54%</title></line><line x1="124.0" y1="60" x2="124.0" y2="20" class="tick up"><title>V: outperform at 57%</title></line><line x1="124.0" y1="60" x2="124.0" y2="20" class="tick up"><title>WMT: outperform at 57%</title></line><line x1="148.0" y1="60" x2="148.0" y2="20" class="tick up"><title>XOM: outperform at 59%</title></line><line x1="100.0" y1="72" x2="100.0" y2="112" class="tick down"><title>^VIX: underperform at 55%</title></line><text x="40.0" y="126" class="ax" text-anchor="middle">50%</text><text x="160.0" y="126" class="ax" text-anchor="middle">60%</text><text x="280.0" y="126" class="ax" text-anchor="middle">70%</text><text x="400.0" y="126" class="ax" text-anchor="middle">80%</text><text x="520.0" y="126" class="ax" text-anchor="middle">90%</text><text x="640.0" y="126" class="ax" text-anchor="middle">100%</text></svg><figcaption class="muted">Each tick is one call, placed by stated confidence. Hover for the name.</figcaption></figure><details class="more"><summary>All 34 calls, with reasoning</summary><div class="calls-wrap"><table class="calls"><thead><tr><th>Symbol</th><th>Call</th><th>Conf.</th><th></th><th>Why</th></tr></thead><tbody><tr><td class="sym"><a class="sym-link" href="../symbols/AMD.html">AMD</a></td><td><span class="dir down">Underperform SPY</span></td><td>59%</td><td></td><td class="muted">Chip stocks are under pressure amid bond-market anxiety, with no verified momentum data to support relative strength.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/JPM.html">JPM</a></td><td><span class="dir up">Outperform SPY</span></td><td>59%</td><td></td><td class="muted">Higher yields can support bank economics, and the shares are materially above recorded cost, though macro stress remains a risk.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/TSLA.html">TSLA</a></td><td><span class="dir down">Underperform SPY</span></td><td>59%</td><td></td><td class="muted">High-duration consumer-discretionary exposure is vulnerable to rising yields, with no supplied catalyst supporting relative strength.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/XOM.html">XOM</a></td><td><span class="dir up">Outperform SPY</span></td><td>59%</td><td></td><td class="muted">Rising oil referenced in market headlines provides a relative tailwind versus the broader market.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/APLD.html">APLD</a></td><td><span class="dir down">Underperform SPY</span></td><td>58%</td><td></td><td class="muted">Recent commentary references the stock&#x27;s worst month in a year, and no confirming fundamental evidence offsets elevated AI-infrastructure risk.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/CORZ.html">CORZ</a></td><td><span class="dir down">Underperform SPY</span></td><td>58%</td><td></td><td class="muted">The name has high sensitivity to speculative AI and digital-infrastructure financing conditions as yields rise.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/INTC.html">INTC</a></td><td><span class="dir down">Underperform SPY</span></td><td>58%</td><td></td><td class="muted">Reported sector weakness in Intel and AMD, combined with chip pressure from rising yields, is unfavorable versus SPY.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/IREN.html">IREN</a></td><td><span class="dir down">Underperform SPY</span></td><td>58%</td><td></td><td class="muted">Risk-sensitive infrastructure exposure lacks supplied fundamental confirmation during a higher-yield market stress episode.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/JNJ.html">JNJ</a></td><td><span class="dir up">Outperform SPY</span></td><td>58%</td><td></td><td class="muted">Defensive healthcare characteristics and MONARCH clearance support relative resilience, despite valuation concerns.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/MU.html">MU</a></td><td><span class="dir down">Underperform SPY</span></td><td>58%</td><td></td><td class="muted">Semiconductor shares are specifically pressured by bond anxiety, and no supplied company-specific evidence offsets that risk.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/QQQ.html">QQQ</a></td><td><span class="dir down">Underperform SPY</span></td><td>58%</td><td></td><td class="muted">The growth-heavy index is especially exposed to rising yields and reported semiconductor weakness.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/SNDK.html">SNDK</a></td><td><span class="dir down">Underperform SPY</span></td><td>58%</td><td></td><td class="muted">The semiconductor backdrop is unfavorable under global bond-market anxiety, with no supplied offsetting evidence.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/BE.html">BE</a></td><td><span class="dir down">Underperform SPY</span></td><td>57%</td><td></td><td class="muted">Supply-chain allegations and a highly volatile operating backdrop create greater uncertainty than the broad market.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/CRWV.html">CRWV</a></td><td><span class="dir down">Underperform SPY</span></td><td>57%</td><td></td><td class="muted">Limited supplied company-specific evidence and risk-sensitive AI infrastructure exposure favor caution versus SPY.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/GOOGL.html">GOOGL</a></td><td><span class="dir down">Underperform SPY</span></td><td>57%</td><td></td><td class="muted">The position is below cost and Waymo expansion is longer-duration optionality rather than near-term proof of relative outperformance.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/MA.html">MA</a></td><td><span class="dir up">Outperform SPY</span></td><td>57%</td><td></td><td class="muted">A strong gain versus cost and durable payments economics support relative performance, with consumer spending as the key risk.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/PG.html">PG</a></td><td><span class="dir up">Outperform SPY</span></td><td>57%</td><td></td><td class="muted">Defensive consumer-staples exposure should be comparatively resilient in a higher-yield, risk-off equity session.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/V.html">V</a></td><td><span class="dir up">Outperform SPY</span></td><td>57%</td><td></td><td class="muted">Payments quality and the position&#x27;s gain versus cost support a modest relative-performance case, subject to consumer-spending risk.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/WMT.html">WMT</a></td><td><span class="dir up">Outperform SPY</span></td><td>57%</td><td></td><td class="muted">Defensive retail characteristics are comparatively favorable if yields and macro uncertainty continue to pressure cyclicals.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/AAPL.html">AAPL</a></td><td><span class="dir down">Underperform SPY</span></td><td>56%</td><td></td><td class="muted">AI supply-chain headwinds and exceptional portfolio concentration outweigh the speculative foldable-device catalyst versus SPY.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/AMZN.html">AMZN</a></td><td><span class="dir up">Outperform SPY</span></td><td>56%</td><td></td><td class="muted">AWS-driven long-term optimism supports relative resilience, though higher yields and consumer-discretionary exposure limit conviction.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/AVGO.html">AVGO</a></td><td><span class="dir up">Outperform SPY</span></td><td>56%</td><td></td><td class="muted">AI exposure remains supportive despite recent VMware concerns and broader semiconductor volatility.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/META.html">META</a></td><td><span class="dir down">Underperform SPY</span></td><td>56%</td><td></td><td class="muted">The shares are below recorded cost and no supplied catalyst establishes a near-term relative-performance advantage.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/MSFT.html">MSFT</a></td><td><span class="dir up">Outperform SPY</span></td><td>56%</td><td></td><td class="muted">Cloud and software quality support resilience, but China-related Windows risk and higher yields reduce conviction.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/NVDA.html">NVDA</a></td><td><span class="dir down">Underperform SPY</span></td><td>56%</td><td></td><td class="muted">AI demand remains constructive, but chip-sector pressure, valuation sensitivity, and prior risk memory favor caution versus SPY.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/TSM.html">TSM</a></td><td><span class="dir down">Underperform SPY</span></td><td>56%</td><td></td><td class="muted">Structural AI demand is favorable, but current sector-wide chip pressure and valuation sensitivity dominate near term.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/ASML.html">ASML</a></td><td><span class="dir up">Outperform SPY</span></td><td>55%</td><td></td><td class="muted">AI semiconductor-capex leadership is constructive, but the premium valuation and yield-sensitive market keep confidence low.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/HD.html">HD</a></td><td><span class="dir down">Underperform SPY</span></td><td>55%</td><td></td><td class="muted">Reaffirmed guidance is constructive, but management&#x27;s frozen-housing-market description leaves cyclical demand risk elevated.</td></tr><tr><td class="sym">^VIX</td><td><span class="dir down">Underperform SPY</span></td><td>55%</td><td></td><td class="muted">The VIX has declined over five and 30 days; relative to SPY this implies a lower probability of sustained volatility outperformance, though yields could reverse the trend.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/CAT.html">CAT</a></td><td><span class="dir up">Outperform SPY</span></td><td>54%</td><td></td><td class="muted">Infrastructure and AI-related demand themes are constructive, though the cyclical valuation backdrop limits conviction.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/GLW.html">GLW</a></td><td><span class="dir up">Outperform SPY</span></td><td>54%</td><td></td><td class="muted">Technology-infrastructure demand provides a possible tailwind, although no current return data validates a stronger call.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/ORCL.html">ORCL</a></td><td><span class="dir up">Outperform SPY</span></td><td>54%</td><td></td><td class="muted">Enterprise-cloud and AI infrastructure positioning may support relative demand, but evidence is insufficient for high conviction.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/UNH.html">UNH</a></td><td><span class="dir up">Outperform SPY</span></td><td>54%</td><td></td><td class="muted">Healthcare defensiveness and expanded member coaching access may support resilience, despite the shares being modestly below cost.</td></tr><tr><td class="sym"><a class="sym-link" href="../symbols/SPY.html">SPY</a></td><td><span class="dir up">Outperform SPY</span></td><td>50%</td><td></td><td class="muted">As the benchmark, SPY is assigned neutral mechanical relative performance with no directional edge.</td></tr></tbody></table></div></details>
+    <h2>The debate</h2><details class="more"><summary>Bull, bear and risk cases: bull 0.62 · bear 0.62 · risk 0.98</summary><div class="card"><div class="role">bull case <span class="muted">· conviction 0.62</span></div><p>The strongest bullish case is to hold the portfolio and selectively add to its proven winners rather than react to a macro-driven pullback. Several holdings are materially above cost, including MA, MSFT, JPM, V, JNJ, AMZN, NVDA, and HD, demonstrating positive portfolio-level relative strength even as yields, oil, and bond-market stress pressure equities. The volatility backdrop is also improving: VIX is down 6.7% over five days and 13.6% over 30 days. Near-term catalysts include Home Depot reaffirming fiscal-2026 guidance, J&amp;J&#x27;s MONARCH clearance, Apple&#x27;s potential foldable-iPhone opportunity, and Alphabet&#x27;s Waymo expansion and commercialization. The evidence is not strong enough for an aggressive portfolio-wide purchase because all reported equity momentum and benchmark returns are unavailable, but it supports maintaining exposure and emphasizing the strongest holdings.</p><ul><li>Cross-sectional strength is favorable: MA, MSFT, JPM, V, JNJ, AMZN, NVDA, and HD are all currently above their recorded average costs, with MA, MSFT, JPM, V, and JNJ among the clearest winners.</li><li>Risk sentiment has improved on the supplied volatility measure: VIX declined 6.7% over five days and 13.6% over 30 days, a constructive backdrop despite headlines about rising yields and oil.</li><li>HD reaffirmed fiscal-2026 guidance despite describing housing conditions as frozen, reducing the risk of a near-term guidance shock.</li><li>JNJ has a tangible product catalyst: MONARCH clearance is described as lifting momentum, although valuation concerns remain.</li><li>Alphabet has longer-duration upside optionality through Waymo, which is expanding domestically, entering international markets, and scaling operations.</li><li>Apple has a potential product catalyst in a foldable iPhone, while its large installed ecosystem remains a reason to hold; however, the evidence also flags AI supply-chain headwinds.</li><li>Formal five-day and 30-day price momentum for the stocks and the S&amp;P 500 benchmark are unavailable, so claims of market-beating momentum cannot be verified from this dataset.</li><li>The appropriate bullish stance is selective accumulation or holding, not indiscriminate buying: UNH, GOOGL, and META are below recorded average cost, and MSFT faces a reported China-related Windows risk.</li></ul></div><div class="card"><div class="role">bear case <span class="muted">· conviction 0.62</span></div><p>The clearest bearish case is that weakness is already appearing in UNH, GOOGL, and META, while the portfolio lacks a usable benchmark comparison to confirm that the broader holdings are outperforming. The available momentum evidence is also cautionary: the VIX is down 13.6% over 30 days, and the signal is explicitly characterized as fading momentum. With no positive benchmark data or candidate-specific evidence provided, there is insufficient support for adding risk, particularly to names already showing losses.</p><ul><li>UNH is below its average cost by approximately 1.9%, indicating current weakness rather than immediate follow-through from the holding.</li><li>GOOGL is below its average cost by approximately 2.7%, making it the weakest of the identified red positions and a direct source of portfolio downside.</li><li>META is below its average cost by approximately 3.0%, the largest reported loss among the holdings with downside signals.</li><li>The 30-day VIX change is -13.6% and is labeled as fading momentum; this provides a caution signal rather than evidence of strengthening risk conditions.</li><li>The S&amp;P 500 benchmark return and price fields are unavailable, so there is no reliable evidence that the portfolio or its winners are outperforming the market.</li><li>The evidence does not establish positive momentum for the many holdings currently above cost; gains could therefore be vulnerable if the limited breadth of weakness expands.</li><li>No candidates are specified, and no candidate-specific evidence supports initiating additional positions.</li></ul></div><div class="card"><div class="role">risk case <span class="muted">· conviction 0.98</span></div><p>The largest capital risks are concentration in three individual holdings and a substantial tilt toward Information Technology and Consumer Discretionary. AAPL, AMZN, and JNJ represent 71.4% of invested assets, while the two largest sectors represent 71.0% of invested assets. Cash at 25.9% provides a material buffer, but the invested portfolio remains highly dependent on a small number of positions and sectors.</p><ul><li>AAPL is 27.3% of invested assets, the largest single-position exposure.</li><li>AMZN is 24.9% and JNJ is 19.2%; together with AAPL, these three holdings comprise 71.4% of invested assets.</li><li>Information Technology is 40.2% and Consumer Discretionary is 30.8% of invested assets, creating significant sector concentration.</li><li>AAPL, MSFT, NVDA, and GOOGL collectively account for 47.1% of invested assets, reinforcing concentration in technology-related exposures.</li><li>The remaining holdings are comparatively small, limiting their ability to offset losses in the largest positions.</li><li>Cash is 25.9% of the total portfolio and reduces exposure to invested-asset losses, but it does not diversify the invested holdings themselves.</li><li>The benchmark return and current level are unavailable, so no evidence-based relative-risk or tracking assessment can be made.</li></ul></div></details>
+    <h2>Cash thesis</h2><p>Cash is 25.9% of portfolio value, above the 25% threshold. This reserve is intentional: it offsets substantial single-name and technology/consumer-discretionary concentration, preserves flexibility during a yield-driven market pullback, and avoids deploying capital without usable stock momentum, benchmark-relative returns, or sufficiently specific valuation evidence. The opportunity cost is acceptable until market breadth or company-specific confirmation improves.</p><details class="more"><summary>Full commentary</summary><h3>Bear case response</h3><p>Accept: GOOGL, META, and UNH are below recorded cost, which confirms modest current weakness and argues against adding to them today. Accept: unavailable S&amp;P 500 and individual-stock return data prevent a reliable claim of benchmark-relative outperformance, so above-cost positions should not be treated as confirmed momentum leaders. Accept in part: the lower VIX is ambiguous; it may reflect easing fear, but it does not override the yield and oil pressure or establish durable equity breadth. Reject the implication that the red positions require immediate selling: losses are limited, no thesis-breaking company-specific development is established, and selling solely on small drawdowns would conflict with the mandate to avoid overtrading. Accept: no new candidate has adequate supplied valuation, earnings, or momentum evidence for initiation. Accordingly, the response is to hold existing positions and preserve cash rather than add risk or execute reactive sales.</p><h3>Market summary</h3><p>The immediate backdrop is cautious: equity futures and chip shares are under pressure as global bond selling, higher yields, and oil weigh on risk assets. The VIX is lower over both five and 30 days, but equity and benchmark return series are unavailable, so breadth and relative-strength confirmation cannot be established. This supports retaining quality core exposure while avoiding fresh risk-taking.</p><h3>Portfolio assessment</h3><p>The portfolio is up modestly in aggregate and retains profitable core positions in JNJ, AAPL, MSFT, NVDA, AMZN, HD, JPM, V, and MA. However, AAPL ($209.4k), AMZN ($190.9k), and JNJ ($147.0k) remain dominant exposures, while GOOGL, META, and UNH are below cost. No trade is warranted today: prior recent-trade memory shows repeated AAPL adjustments, and current evidence does not justify reversing or adding to that exposure.</p><h3>Risk assessment</h3><p>Concentration is the principal risk. AAPL, AMZN, and JNJ account for approximately 71.4% of invested assets, and technology plus consumer-discretionary exposure is approximately 71.0% of invested assets. Higher yields may pressure long-duration technology valuations, while frozen housing conditions remain a cyclical risk for HD. The small positions in financials, payments, healthcare, and other names do not materially offset losses if the largest holdings weaken together. Recent risk lessons favor avoiding overtrading and using incremental trims only when deterioration is clearly evidenced.</p></details>
+    
+    <div class="pager">
+      <span><a href="2026-08-17.html">← August 17, 2026</a></span>
+      <span></span>
+    </div>
+
+    <footer>
+      Paper trading, simulated capital, not investment advice.
+      · <a href="../decisions.html">Decision journal</a>
+      · <a href="../decisions/">By day</a>
+      · <a href="../symbols/">By symbol</a>
+      · <a href="../letters/">Letters</a>
+    </footer>
+  </div>
+</body>
+</html>
