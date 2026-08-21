@@ -6,9 +6,9 @@
     {
       "name": "Glasshouse Fund",
       "start_value": 1000000.0,
-      "end_value": 1034301.99,
-      "return_pct": 0.034302,
-      "alpha_vs_spy": -0.003881,
+      "end_value": 1031305.42,
+      "return_pct": 0.031305,
+      "alpha_vs_spy": -0.006878,
       "detail": "the live AI fund"
     },
     {
