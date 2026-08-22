@@ -1,12 +1,12 @@
 {
-  "ingested_at": "2026-08-15T13:46:50.598989Z",
+  "ingested_at": "2026-08-22T13:47:05.165707Z",
   "ingestion": {
     "status": "ok",
-    "created": 2897,
+    "created": 2900,
     "updated": 0,
     "skipped": 0,
     "errors": [],
-    "total_processed": 2897
+    "total_processed": 2900
   },
   "processed": [
     {
@@ -283,15 +283,15 @@
     {
       "symbol": "SNDK",
       "form": "10-K",
-      "accession_number": "0002023554-25-000034",
-      "filing_date": "2025-08-21",
+      "accession_number": "0001628280-26-057406",
+      "filing_date": "2026-08-17",
       "sections": [
         "item_1",
         "item_1a",
         "item_7",
         "item_7a"
       ],
-      "records": 24
+      "records": 27
     },
     {
       "symbol": "SNDK",
