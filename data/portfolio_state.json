@@ -6,73 +6,73 @@
       "symbol": "HD",
       "shares": 133,
       "avg_cost": 327.43173424283367,
-      "current_price": 335.7200012207031
+      "current_price": 336.5199890136719
     },
     {
       "symbol": "JNJ",
       "shares": 543,
       "avg_cost": 239.57778686186228,
-      "current_price": 273.57000732421875
+      "current_price": 273.4800109863281
     },
     {
       "symbol": "AAPL",
       "shares": 674,
       "avg_cost": 298.6877331913369,
-      "current_price": 308.9599914550781
+      "current_price": 309.2449951171875
     },
     {
       "symbol": "MSFT",
       "shares": 137,
       "avg_cost": 412.76182054951244,
-      "current_price": 489.1300048828125
+      "current_price": 489.7799987792969
     },
     {
       "symbol": "NVDA",
       "shares": 150,
       "avg_cost": 203.29896344360853,
-      "current_price": 210.5695037841797
+      "current_price": 212.0
     },
     {
       "symbol": "UNH",
       "shares": 3,
       "avg_cost": 405.54998779296875,
-      "current_price": 396.6300048828125
+      "current_price": 397.42999267578125
     },
     {
       "symbol": "AMZN",
       "shares": 731,
       "avg_cost": 240.96075193141618,
-      "current_price": 260.385009765625
+      "current_price": 260.4949951171875
     },
     {
       "symbol": "GOOGL",
       "shares": 154,
       "avg_cost": 351.9579836362368,
-      "current_price": 346.0
+      "current_price": 346.01849365234375
     },
     {
       "symbol": "JPM",
       "shares": 10,
       "avg_cost": 313.489990234375,
-      "current_price": 354.92010498046875
+      "current_price": 356.1199951171875
     },
     {
       "symbol": "V",
       "shares": 22,
       "avg_cost": 319.04998779296875,
-      "current_price": 382.239990234375
+      "current_price": 382.9100036621094
     },
     {
       "symbol": "MA",
       "shares": 8,
       "avg_cost": 486.510009765625,
-      "current_price": 596.9299926757812
+      "current_price": 598.844970703125
     },
     {
       "symbol": "META",
       "shares": 10,
       "avg_cost": 568.4299926757812,
-      "current_price": 562.72998046875
+      "current_price": 564.8839721679688
     }
   ]
 }
