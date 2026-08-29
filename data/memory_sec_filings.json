@@ -1,12 +1,12 @@
 {
-  "ingested_at": "2026-08-22T13:47:05.165707Z",
+  "ingested_at": "2026-08-29T17:11:32.661833Z",
   "ingestion": {
     "status": "ok",
-    "created": 2900,
+    "created": 2875,
     "updated": 0,
     "skipped": 0,
     "errors": [],
-    "total_processed": 2900
+    "total_processed": 2875
   },
   "processed": [
     {
@@ -166,8 +166,8 @@
     {
       "symbol": "NVDA",
       "form": "10-Q",
-      "accession_number": "0001045810-26-000052",
-      "filing_date": "2026-05-20",
+      "accession_number": "0001045810-26-000075",
+      "filing_date": "2026-08-26",
       "sections": [
         "item_2",
         "item_3"
@@ -369,15 +369,15 @@
     {
       "symbol": "IREN",
       "form": "10-K",
-      "accession_number": "0001878848-25-000063",
-      "filing_date": "2025-08-28",
+      "accession_number": "0001878848-26-000052",
+      "filing_date": "2026-08-27",
       "sections": [
         "item_1",
         "item_1a",
         "item_7",
         "item_7a"
       ],
-      "records": 73
+      "records": 57
     },
     {
       "symbol": "IREN",
@@ -389,13 +389,6 @@
         "item_3"
       ],
       "records": 60
-    },
-    {
-      "symbol": "IREN",
-      "form": "8-K",
-      "accession_number": "0001140361-26-028871",
-      "filing_date": "2026-07-20",
-      "records": 9
     },
     {
       "symbol": "CORZ",
@@ -652,8 +645,8 @@
     {
       "symbol": "WMT",
       "form": "10-Q",
-      "accession_number": "0000104169-26-000102",
-      "filing_date": "2026-05-29",
+      "accession_number": "0000104169-26-000154",
+      "filing_date": "2026-08-28",
       "sections": [
         "item_2",
         "item_3"
@@ -700,8 +693,8 @@
     {
       "symbol": "HD",
       "form": "10-Q",
-      "accession_number": "0001628280-26-038247",
-      "filing_date": "2026-05-27",
+      "accession_number": "0001628280-26-058715",
+      "filing_date": "2026-08-25",
       "sections": [
         "item_2",
         "item_3"
@@ -822,6 +815,11 @@
     },
     {
       "symbol": "CRWV",
+      "form": "8-K",
+      "reason": "no EX-99 earnings exhibit"
+    },
+    {
+      "symbol": "IREN",
       "form": "8-K",
       "reason": "no EX-99 earnings exhibit"
     },
