@@ -1,12 +1,1 @@
-[
-  {
-    "run_id": "run_20260904T174632Z_f42b1a22",
-    "date": "2026-09-04",
-    "symbol": "AMZN",
-    "action": "SELL",
-    "shares": 75,
-    "price": 257.0199890136719,
-    "total": 19276.49917602539,
-    "reasoning": "Trim approximately $19,264 of AMZN exposure because it remains a very large portfolio position while declining 2.83% over five days and 4.67% over 30 days. The sale addresses persistent relative weakness and concentration while retaining a substantial core position."
-  }
-]
+[]
