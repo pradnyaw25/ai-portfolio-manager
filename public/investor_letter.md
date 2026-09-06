@@ -1,26 +1,27 @@
-# A modest down week, with strong technology gains offset by weakness in Home Depot and Johnson & Johnson.
+# Portfolio gained 0.55% for the week ended 2026-09-06, trailing the benchmark’s 1.03% return by -0.48%.
 
-*Week of 2026-08-24 to 2026-08-30*
+*Week of 2026-08-31 to 2026-09-06*
 
 ## Performance
 
-The portfolio ended the week at 1037407.24, down -0.07% from 1038100.89. The benchmark returned 0.34%, resulting in -0.41% alpha.
+Portfolio value rose from 1038297.01 to 1044042.09. The 0.55% weekly return was positive, though below the benchmark’s 1.03%.
 
 ## Winners
 
-- MSFT rose 6.23% this week; it is up 20.28% since the position was opened.
-- META gained 5.86% this week; it is up 1.60% since the position was opened.
-- V advanced 4.39% this week; it is up 20.38% since the position was opened.
+- NVDA rose 9.87% this week; it is up 13.49% since the position was opened.
+- META gained 7.05% this week; it is up 8.56% since the position was opened.
+- AAPL advanced 2.08% this week; it is up 7.32% since the position was opened.
 
 ## Losers
 
-- HD fell -4.10% this week; it is up 2.49% since the position was opened.
-- JNJ declined -1.48% this week; it is up 12.82% since the position was opened.
+- HD declined -3.41% this week; it is down -1.94% since the position was opened.
+- MA declined -3.22% this week; it is up 19.15% since the position was opened.
+- V declined -2.30% this week; it is up 17.28% since the position was opened.
 
 ## Portfolio Changes
 
-No trades were made during the week.
+Sold 75 shares of AMZN on 2026-09-04.
 
 ## Outlook
 
-This week’s result reflected uneven position-level performance: gains in MSFT, META and V were offset by declines in HD and JNJ. We remain focused on the existing portfolio.
+This was a constructive but benchmark-lagging week. Strong gains in NVDA and META helped offset weakness in HD, MA, and V; we remain focused on the portfolio’s existing positions and their respective risk profiles.

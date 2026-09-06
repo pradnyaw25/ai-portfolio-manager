@@ -1,140 +1,154 @@
 {
-  "week_end": "2026-08-30",
-  "week_start": "2026-08-24",
+  "week_end": "2026-09-06",
+  "week_start": "2026-08-31",
   "letter": {
-    "headline": "A modest down week, with strong technology gains offset by weakness in Home Depot and Johnson & Johnson.",
-    "performance": "The portfolio ended the week at 1037407.24, down -0.07% from 1038100.89. The benchmark returned 0.34%, resulting in -0.41% alpha.",
+    "headline": "Portfolio gained 0.55% for the week ended 2026-09-06, trailing the benchmark\u2019s 1.03% return by -0.48%.",
+    "performance": "Portfolio value rose from 1038297.01 to 1044042.09. The 0.55% weekly return was positive, though below the benchmark\u2019s 1.03%.",
     "winners": [
-      "MSFT rose 6.23% this week; it is up 20.28% since the position was opened.",
-      "META gained 5.86% this week; it is up 1.60% since the position was opened.",
-      "V advanced 4.39% this week; it is up 20.38% since the position was opened."
+      "NVDA rose 9.87% this week; it is up 13.49% since the position was opened.",
+      "META gained 7.05% this week; it is up 8.56% since the position was opened.",
+      "AAPL advanced 2.08% this week; it is up 7.32% since the position was opened."
     ],
     "losers": [
-      "HD fell -4.10% this week; it is up 2.49% since the position was opened.",
-      "JNJ declined -1.48% this week; it is up 12.82% since the position was opened."
+      "HD declined -3.41% this week; it is down -1.94% since the position was opened.",
+      "MA declined -3.22% this week; it is up 19.15% since the position was opened.",
+      "V declined -2.30% this week; it is up 17.28% since the position was opened."
     ],
-    "portfolio_changes": "No trades were made during the week.",
-    "outlook": "This week\u2019s result reflected uneven position-level performance: gains in MSFT, META and V were offset by declines in HD and JNJ. We remain focused on the existing portfolio."
+    "portfolio_changes": "Sold 75 shares of AMZN on 2026-09-04.",
+    "outlook": "This was a constructive but benchmark-lagging week. Strong gains in NVDA and META helped offset weakness in HD, MA, and V; we remain focused on the portfolio\u2019s existing positions and their respective risk profiles."
   },
   "facts": {
-    "week_start": "2026-08-24",
-    "week_end": "2026-08-30",
-    "start_value": 1038100.89,
-    "end_value": 1037407.24,
-    "return_pct": -0.0007,
-    "benchmark_return_pct": 0.0034,
-    "alpha": -0.0041,
+    "week_start": "2026-08-31",
+    "week_end": "2026-09-06",
+    "start_value": 1038297.01,
+    "end_value": 1044042.09,
+    "return_pct": 0.0055,
+    "benchmark_return_pct": 0.0103,
+    "alpha": -0.0048,
     "winners": [
       {
-        "symbol": "MSFT",
-        "return_since_entry_pct": 0.2028,
-        "week_return_pct": 0.0623,
-        "market_value": 68016.25
+        "symbol": "NVDA",
+        "return_since_entry_pct": 0.1349,
+        "week_return_pct": 0.0987,
+        "market_value": 34607.98
       },
       {
         "symbol": "META",
-        "return_since_entry_pct": 0.016,
-        "week_return_pct": 0.0586,
-        "market_value": 5775.2
+        "return_since_entry_pct": 0.0856,
+        "week_return_pct": 0.0705,
+        "market_value": 6170.7
       },
       {
-        "symbol": "V",
-        "return_since_entry_pct": 0.2038,
-        "week_return_pct": 0.0439,
-        "market_value": 8449.38
+        "symbol": "AAPL",
+        "return_since_entry_pct": 0.0732,
+        "week_return_pct": 0.0208,
+        "market_value": 216043.97
       }
     ],
     "losers": [
       {
-        "symbol": "JNJ",
-        "return_since_entry_pct": 0.1282,
-        "week_return_pct": -0.0148,
-        "market_value": 146762.04
+        "symbol": "V",
+        "return_since_entry_pct": 0.1728,
+        "week_return_pct": -0.023,
+        "market_value": 8232.35
+      },
+      {
+        "symbol": "MA",
+        "return_since_entry_pct": 0.1915,
+        "week_return_pct": -0.0322,
+        "market_value": 4637.6
       },
       {
         "symbol": "HD",
-        "return_since_entry_pct": 0.0249,
-        "week_return_pct": -0.041,
-        "market_value": 44632.14
+        "return_since_entry_pct": -0.0194,
+        "week_return_pct": -0.0341,
+        "market_value": 42702.31
       }
     ],
     "positions": [
       {
-        "symbol": "MSFT",
-        "return_since_entry_pct": 0.2028,
-        "week_return_pct": 0.0623,
-        "market_value": 68016.25
+        "symbol": "NVDA",
+        "return_since_entry_pct": 0.1349,
+        "week_return_pct": 0.0987,
+        "market_value": 34607.98
       },
       {
         "symbol": "META",
-        "return_since_entry_pct": 0.016,
-        "week_return_pct": 0.0586,
-        "market_value": 5775.2
-      },
-      {
-        "symbol": "V",
-        "return_since_entry_pct": 0.2038,
-        "week_return_pct": 0.0439,
-        "market_value": 8449.38
-      },
-      {
-        "symbol": "MA",
-        "return_since_entry_pct": 0.2314,
-        "week_return_pct": 0.0376,
-        "market_value": 4792.72
-      },
-      {
-        "symbol": "UNH",
-        "return_since_entry_pct": -0.0091,
-        "week_return_pct": 0.0112,
-        "market_value": 1205.58
+        "return_since_entry_pct": 0.0856,
+        "week_return_pct": 0.0705,
+        "market_value": 6170.7
       },
       {
         "symbol": "AAPL",
-        "return_since_entry_pct": 0.0542,
-        "week_return_pct": 0.0091,
-        "market_value": 212222.38
-      },
-      {
-        "symbol": "GOOGL",
-        "return_since_entry_pct": -0.0299,
-        "week_return_pct": 0.0054,
-        "market_value": 52580.22
-      },
-      {
-        "symbol": "AMZN",
-        "return_since_entry_pct": 0.0789,
-        "week_return_pct": 0.0022,
-        "market_value": 190045.39
-      },
-      {
-        "symbol": "JPM",
-        "return_since_entry_pct": 0.1411,
-        "week_return_pct": 0.001,
-        "market_value": 3577.2
-      },
-      {
-        "symbol": "NVDA",
-        "return_since_entry_pct": 0.0379,
-        "week_return_pct": -0.0,
-        "market_value": 31651.5
+        "return_since_entry_pct": 0.0732,
+        "week_return_pct": 0.0208,
+        "market_value": 216043.97
       },
       {
         "symbol": "JNJ",
-        "return_since_entry_pct": 0.1282,
-        "week_return_pct": -0.0148,
-        "market_value": 146762.04
+        "return_since_entry_pct": 0.1496,
+        "week_return_pct": 0.0194,
+        "market_value": 149558.49
+      },
+      {
+        "symbol": "MSFT",
+        "return_since_entry_pct": 0.2118,
+        "week_return_pct": 0.0067,
+        "market_value": 68526.03
+      },
+      {
+        "symbol": "JPM",
+        "return_since_entry_pct": 0.1419,
+        "week_return_pct": 0.006,
+        "market_value": 3579.7
+      },
+      {
+        "symbol": "AMZN",
+        "return_since_entry_pct": 0.0738,
+        "week_return_pct": -0.0068,
+        "market_value": 169743.28
+      },
+      {
+        "symbol": "UNH",
+        "return_since_entry_pct": -0.0237,
+        "week_return_pct": -0.0097,
+        "market_value": 1187.76
+      },
+      {
+        "symbol": "GOOGL",
+        "return_since_entry_pct": -0.0392,
+        "week_return_pct": -0.0097,
+        "market_value": 52078.18
+      },
+      {
+        "symbol": "V",
+        "return_since_entry_pct": 0.1728,
+        "week_return_pct": -0.023,
+        "market_value": 8232.35
+      },
+      {
+        "symbol": "MA",
+        "return_since_entry_pct": 0.1915,
+        "week_return_pct": -0.0322,
+        "market_value": 4637.6
       },
       {
         "symbol": "HD",
-        "return_since_entry_pct": 0.0249,
-        "week_return_pct": -0.041,
-        "market_value": 44632.14
+        "return_since_entry_pct": -0.0194,
+        "week_return_pct": -0.0341,
+        "market_value": 42702.31
       }
     ],
-    "trades": []
+    "trades": [
+      {
+        "date": "2026-09-04",
+        "symbol": "AMZN",
+        "action": "SELL",
+        "shares": "75"
+      }
+    ]
   },
-  "markdown": "# A modest down week, with strong technology gains offset by weakness in Home Depot and Johnson & Johnson.\n\n*Week of 2026-08-24 to 2026-08-30*\n\n## Performance\n\nThe portfolio ended the week at 1037407.24, down -0.07% from 1038100.89. The benchmark returned 0.34%, resulting in -0.41% alpha.\n\n## Winners\n\n- MSFT rose 6.23% this week; it is up 20.28% since the position was opened.\n- META gained 5.86% this week; it is up 1.60% since the position was opened.\n- V advanced 4.39% this week; it is up 20.38% since the position was opened.\n\n## Losers\n\n- HD fell -4.10% this week; it is up 2.49% since the position was opened.\n- JNJ declined -1.48% this week; it is up 12.82% since the position was opened.\n\n## Portfolio Changes\n\nNo trades were made during the week.\n\n## Outlook\n\nThis week\u2019s result reflected uneven position-level performance: gains in MSFT, META and V were offset by declines in HD and JNJ. We remain focused on the existing portfolio.\n",
+  "markdown": "# Portfolio gained 0.55% for the week ended 2026-09-06, trailing the benchmark\u2019s 1.03% return by -0.48%.\n\n*Week of 2026-08-31 to 2026-09-06*\n\n## Performance\n\nPortfolio value rose from 1038297.01 to 1044042.09. The 0.55% weekly return was positive, though below the benchmark\u2019s 1.03%.\n\n## Winners\n\n- NVDA rose 9.87% this week; it is up 13.49% since the position was opened.\n- META gained 7.05% this week; it is up 8.56% since the position was opened.\n- AAPL advanced 2.08% this week; it is up 7.32% since the position was opened.\n\n## Losers\n\n- HD declined -3.41% this week; it is down -1.94% since the position was opened.\n- MA declined -3.22% this week; it is up 19.15% since the position was opened.\n- V declined -2.30% this week; it is up 17.28% since the position was opened.\n\n## Portfolio Changes\n\nSold 75 shares of AMZN on 2026-09-04.\n\n## Outlook\n\nThis was a constructive but benchmark-lagging week. Strong gains in NVDA and META helped offset weakness in HD, MA, and V; we remain focused on the portfolio\u2019s existing positions and their respective risk profiles.\n",
   "grounding": {
     "status": "ok",
     "grounded": true,
