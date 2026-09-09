@@ -1,22 +1,22 @@
 {
   "metrics": {
-    "total": 448,
-    "resolved": 380,
+    "total": 449,
+    "resolved": 381,
     "open": 68,
-    "accuracy_pct": 53.4
+    "accuracy_pct": 53.3
   },
   "calibration": {
-    "sample_size": 380,
-    "brier_score": 0.2664,
-    "mean_confidence": 0.6314,
-    "win_rate": 0.5342,
+    "sample_size": 381,
+    "brier_score": 0.2667,
+    "mean_confidence": 0.6313,
+    "win_rate": 0.5328,
     "buckets": [
       {
         "lower": 0.5,
         "upper": 0.6,
-        "predicted": 0.5713,
-        "actual": 0.5745,
-        "count": 188
+        "predicted": 0.5714,
+        "actual": 0.5714,
+        "count": 189
       },
       {
         "lower": 0.6,
@@ -446,26 +446,6 @@
     }
   ],
   "upcoming_predictions": [
-    {
-      "id": "c1147700",
-      "date": "2026-08-10",
-      "symbol": "^VIX",
-      "prediction": "^VIX will underperform SPY over 30 days",
-      "thesis": "The declining VIX trend is consistent with continued risk appetite and lower volatility demand.",
-      "horizon_days": 30,
-      "confidence": 0.59,
-      "start_price": 15.390000343322754,
-      "spy_start_price": 772.4099731445312,
-      "due_date": "2026-09-09",
-      "status": "open",
-      "scored_date": null,
-      "symbol_return": null,
-      "spy_return": null,
-      "outperformed": null,
-      "correct": null,
-      "alpha_pct": null,
-      "edge_pct": null
-    },
     {
       "id": "0b956f0e",
       "date": "2026-09-07",
@@ -1797,6 +1777,26 @@
       "start_price": 159.47000122070312,
       "spy_start_price": 770.1900024414062,
       "due_date": "2026-10-07",
+      "status": "open",
+      "scored_date": null,
+      "symbol_return": null,
+      "spy_return": null,
+      "outperformed": null,
+      "correct": null,
+      "alpha_pct": null,
+      "edge_pct": null
+    },
+    {
+      "id": "ca616616",
+      "date": "2026-09-09",
+      "symbol": "^VIX",
+      "prediction": "^VIX will outperform SPY over 30 days",
+      "thesis": "Rising rates, elevated oil, and broad equity weakness create a modest probability of further volatility-index strength.",
+      "horizon_days": 30,
+      "confidence": 0.56,
+      "start_price": 16.270000457763672,
+      "spy_start_price": 763.0700073242188,
+      "due_date": "2026-10-09",
       "status": "open",
       "scored_date": null,
       "symbol_return": null,
