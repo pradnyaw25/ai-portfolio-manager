@@ -1,12 +1,12 @@
 {
-  "ingested_at": "2026-09-05T16:07:43.354835Z",
+  "ingested_at": "2026-09-12T16:22:37.527922Z",
   "ingestion": {
     "status": "ok",
-    "created": 2875,
+    "created": 2870,
     "updated": 0,
     "skipped": 0,
     "errors": [],
-    "total_processed": 2875
+    "total_processed": 2870
   },
   "processed": [
     {
@@ -211,8 +211,8 @@
     {
       "symbol": "AVGO",
       "form": "10-Q",
-      "accession_number": "0001730168-26-000054",
-      "filing_date": "2026-06-09",
+      "accession_number": "0001730168-26-000080",
+      "filing_date": "2026-09-10",
       "sections": [
         "item_2",
         "item_3"
@@ -327,19 +327,19 @@
     {
       "symbol": "ORCL",
       "form": "10-Q",
-      "accession_number": "0001193125-26-101045",
-      "filing_date": "2026-03-11",
+      "accession_number": "0001193125-26-389274",
+      "filing_date": "2026-09-11",
       "sections": [
         "item_2",
         "item_3"
       ],
-      "records": 43
+      "records": 38
     },
     {
       "symbol": "ORCL",
       "form": "8-K",
-      "accession_number": "0001193125-26-265848",
-      "filing_date": "2026-06-10",
+      "accession_number": "0001193125-26-387905",
+      "filing_date": "2026-09-10",
       "records": 30
     },
     {
