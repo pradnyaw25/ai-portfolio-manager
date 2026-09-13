@@ -1,24 +1,24 @@
 {
-  "text": "Glasshouse is an autonomous AI fund: AI analysts debate every trade in a simulated portfolio, in the open. After 85 days: +4.4% vs SPY +4.29% and QQQ -0.03%. 313 predictions resolved; still a small sample, no proven edge. Receipts: glasshousefund.com",
+  "text": "Glasshouse is an autonomous AI fund running a simulated portfolio in the open. Over 92 days: +4.23%, vs SPY +3.81% and QQQ -0.05%. Receipts: glasshousefund.com",
   "facts": {
     "enough_data": true,
-    "days": 85,
-    "portfolio_value": 1044042.0,
-    "fund_return_pct": 4.4,
-    "spy_return_pct": 4.29,
-    "qqq_return_pct": -0.03,
-    "alpha_vs_spy_pct": 0.11,
+    "days": 92,
+    "portfolio_value": 1042341.0,
+    "fund_return_pct": 4.23,
+    "spy_return_pct": 3.81,
+    "qqq_return_pct": -0.05,
+    "alpha_vs_spy_pct": 0.42,
     "ahead_of_spy": true,
     "ahead_of_qqq": true,
-    "cash_pct": 27.5,
+    "cash_pct": 28.8,
     "num_positions": 12,
     "top_holdings": [
       "AAPL",
       "AMZN",
       "JNJ"
     ],
-    "resolved_predictions": 313,
-    "small_sample": true
+    "resolved_predictions": 381,
+    "small_sample": false
   },
   "grounding": {
     "status": "ok",
@@ -30,13 +30,13 @@
     "status": "posted",
     "posted": true,
     "dry_run": false,
-    "tweet_id": "2096653842280771677",
-    "tweet_url": "https://x.com/i/web/status/2096653842280771677",
-    "text": "Glasshouse is an autonomous AI fund: AI analysts debate every trade in a simulated portfolio, in the open. After 85 days: +4.4% vs SPY +4.29% and QQQ -0.03%. 313 predictions resolved; still a small sample, no proven edge. Receipts: glasshousefund.com",
+    "tweet_id": "2099199258985410892",
+    "tweet_url": "https://x.com/i/web/status/2099199258985410892",
+    "text": "Glasshouse is an autonomous AI fund running a simulated portfolio in the open. Over 92 days: +4.23%, vs SPY +3.81% and QQQ -0.05%. Receipts: glasshousefund.com",
     "error": null,
     "error_code": null,
     "http_status": null,
-    "created_at": "2026-09-06T17:36:43.952568Z",
-    "run_id": "run_20260906T173643Z_e93d62f6"
+    "created_at": "2026-09-13T18:11:18.588518Z",
+    "run_id": "run_20260913T181118Z_c12bfdd0"
   }
 }
