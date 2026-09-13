@@ -1,27 +1,27 @@
-# Portfolio gained 0.55% for the week ended 2026-09-06, trailing the benchmark’s 1.03% return by -0.48%.
+# Modest weekly decline, but positive relative performance versus the benchmark.
 
-*Week of 2026-08-31 to 2026-09-06*
+*Week of 2026-09-07 to 2026-09-13*
 
 ## Performance
 
-Portfolio value rose from 1038297.01 to 1044042.09. The 0.55% weekly return was positive, though below the benchmark’s 1.03%.
+For the week ended 2026-09-13, the portfolio declined -0.09%, from 1043332.12 to 1042340.98. The benchmark returned -0.56%, producing 0.47% of alpha.
 
 ## Winners
 
-- NVDA rose 9.87% this week; it is up 13.49% since the position was opened.
-- META gained 7.05% this week; it is up 8.56% since the position was opened.
-- AAPL advanced 2.08% this week; it is up 7.32% since the position was opened.
+- META gained 9.31% this week; its return since the position was opened is 14.15%.
+- AAPL rose 2.25% this week; its return since the position was opened is 11.41%.
+- AMZN advanced 0.71% this week; its return since the position was opened is 6.62%.
 
 ## Losers
 
-- HD declined -3.41% this week; it is down -1.94% since the position was opened.
-- MA declined -3.22% this week; it is up 19.15% since the position was opened.
-- V declined -2.30% this week; it is up 17.28% since the position was opened.
+- UNH fell -5.15% this week; its return since the position was opened is -6.67%.
+- JNJ declined -3.50% this week; its return since the position was opened is 10.95%.
+- MA fell -3.22% this week; its return since the position was opened is 17.41%.
 
 ## Portfolio Changes
 
-Sold 75 shares of AMZN on 2026-09-04.
+On 2026-09-11, the fund sold 50 shares of AMZN.
 
 ## Outlook
 
-This was a constructive but benchmark-lagging week. Strong gains in NVDA and META helped offset weakness in HD, MA, and V; we remain focused on the portfolio’s existing positions and their respective risk profiles.
+This was a slightly negative week in absolute terms, but the portfolio outperformed the benchmark. We will continue to monitor position-level performance and portfolio changes.
