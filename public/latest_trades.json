@@ -1,1 +1,62 @@
-[]
+[
+  {
+    "run_id": "run_20260915T182723Z_cf7aa9f0",
+    "date": "2026-09-15",
+    "symbol": "AMZN",
+    "action": "SELL",
+    "shares": 75,
+    "price": 248.6649932861328,
+    "total": 18649.87449645996,
+    "reasoning": "Trim a large concentrated holding after a 6.9% 30-day decline and 1.3% five-day decline, while it remains only modestly above average cost. The sale reduces consumer and large-growth concentration without abandoning the long-term franchise."
+  },
+  {
+    "run_id": "run_20260915T182723Z_cf7aa9f0",
+    "date": "2026-09-15",
+    "symbol": "PG",
+    "action": "BUY",
+    "shares": 81,
+    "price": 146.97999572753906,
+    "total": 11905.379653930664,
+    "reasoning": "Defensive consumer-staples exposure adds portfolio balance against the existing technology-heavy holdings. Procter & Gamble's recurring demand profile is comparatively resilient during periods of rising yields and broader market volatility."
+  },
+  {
+    "run_id": "run_20260915T182723Z_cf7aa9f0",
+    "date": "2026-09-15",
+    "symbol": "WMT",
+    "action": "BUY",
+    "shares": 109,
+    "price": 108.74500274658203,
+    "total": 11853.205299377441,
+    "reasoning": "Adds defensive retail exposure with a large, diversified consumer base. Walmart can provide a more resilient earnings profile than cyclical growth holdings if elevated Treasury yields pressure equity valuations."
+  },
+  {
+    "run_id": "run_20260915T182723Z_cf7aa9f0",
+    "date": "2026-09-15",
+    "symbol": "XOM",
+    "action": "BUY",
+    "shares": 70,
+    "price": 168.8699951171875,
+    "total": 11820.899658203125,
+    "reasoning": "Energy exposure diversifies the portfolio and can help offset inflation and interest-rate risk. Exxon Mobil adds a cash-generative large-cap value component not currently represented in the holdings."
+  },
+  {
+    "run_id": "run_20260915T182723Z_cf7aa9f0",
+    "date": "2026-09-15",
+    "symbol": "GLW",
+    "action": "BUY",
+    "shares": 83,
+    "price": 143.52999877929688,
+    "total": 11912.98989868164,
+    "reasoning": "Provides exposure to communications infrastructure, specialty materials, and data-connectivity demand without adding directly to the portfolio's existing mega-cap software and internet positions."
+  },
+  {
+    "run_id": "run_20260915T182723Z_cf7aa9f0",
+    "date": "2026-09-15",
+    "symbol": "TSM",
+    "action": "BUY",
+    "shares": 28,
+    "price": 414.489990234375,
+    "total": 11605.7197265625,
+    "reasoning": "Adds semiconductor manufacturing exposure rather than another chip designer, complementing existing NVDA exposure. TSMC remains a key supplier to global AI, mobile, and high-performance computing demand."
+  }
+]
