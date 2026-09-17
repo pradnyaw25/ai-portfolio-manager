@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "run_id": "run_20260917T183115Z_b5744e6f",
+    "date": "2026-09-17",
+    "symbol": "HD",
+    "action": "SELL",
+    "shares": 33,
+    "price": 303.3900146484375,
+    "total": 10011.870483398438,
+    "reasoning": "Trim approximately one quarter of HD after a -10.83% 30-day decline and a -7.27% loss from cost. The position has no confirmed positive catalyst in the supplied evidence, and reducing it is consistent with the fund's higher-priority lesson to trim persistent weakening names incrementally rather than wait for a larger loss."
+  }
+]
