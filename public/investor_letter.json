@@ -1,160 +1,230 @@
 {
-  "week_end": "2026-09-13",
-  "week_start": "2026-09-07",
+  "week_end": "2026-09-20",
+  "week_start": "2026-09-14",
   "letter": {
-    "headline": "Modest weekly decline, but positive relative performance versus the benchmark.",
-    "performance": "For the week ended 2026-09-13, the portfolio declined -0.09%, from 1043332.12 to 1042340.98. The benchmark returned -0.56%, producing 0.47% of alpha.",
+    "headline": "Modest gain and benchmark outperformance in a mixed week",
+    "performance": "For the week ended 2026-09-20, the fund rose 0.06%, from 1044613.12 to 1045195.44. The benchmark returned -0.23%, resulting in 0.29% of alpha.",
     "winners": [
-      "META gained 9.31% this week; its return since the position was opened is 14.15%.",
-      "AAPL rose 2.25% this week; its return since the position was opened is 11.41%.",
-      "AMZN advanced 0.71% this week; its return since the position was opened is 6.62%."
+      "AAPL gained 6.59% this week; its return since the position was opened is 12.47%.",
+      "GOOGL rose 5.71% this week; its return since the position was opened is -0.81%.",
+      "PG advanced 2.63% this week; its return since the position was opened is -0.50%."
     ],
     "losers": [
-      "UNH fell -5.15% this week; its return since the position was opened is -6.67%.",
-      "JNJ declined -3.50% this week; its return since the position was opened is 10.95%.",
-      "MA fell -3.22% this week; its return since the position was opened is 17.41%."
+      "GLW declined 10.88% this week, despite a 4.61% return since the position was opened.",
+      "UNH fell 3.52% this week; its return since the position was opened is -7.05%.",
+      "HD declined 3.37% this week; its return since the position was opened is -8.40%."
     ],
-    "portfolio_changes": "On 2026-09-11, the fund sold 50 shares of AMZN.",
-    "outlook": "This was a slightly negative week in absolute terms, but the portfolio outperformed the benchmark. We will continue to monitor position-level performance and portfolio changes."
+    "portfolio_changes": "We sold 75 shares of AMZN on 2026-09-15; bought 81 shares of PG, 109 shares of WMT, 70 shares of XOM, 83 shares of GLW, and 28 shares of TSM on 2026-09-15; and sold 33 shares of HD on 2026-09-17 and 50 shares on 2026-09-18.",
+    "outlook": "The week was mixed: strong gains in AAPL and GOOGL helped offset weakness led by GLW, UNH, and HD. We will continue to monitor both recent price action and position-level returns since entry."
   },
   "facts": {
-    "week_start": "2026-09-07",
-    "week_end": "2026-09-13",
-    "start_value": 1043332.12,
-    "end_value": 1042340.98,
-    "return_pct": -0.0009,
-    "benchmark_return_pct": -0.0056,
-    "alpha": 0.0047,
+    "week_start": "2026-09-14",
+    "week_end": "2026-09-20",
+    "start_value": 1044613.12,
+    "end_value": 1045195.44,
+    "return_pct": 0.0006,
+    "benchmark_return_pct": -0.0023,
+    "alpha": 0.0029,
     "winners": [
       {
-        "symbol": "META",
-        "return_since_entry_pct": 0.1415,
-        "week_return_pct": 0.0931,
-        "market_value": 6488.4
-      },
-      {
         "symbol": "AAPL",
-        "return_since_entry_pct": 0.1141,
-        "week_return_pct": 0.0225,
-        "market_value": 224286.97
+        "return_since_entry_pct": 0.1247,
+        "week_return_pct": 0.0659,
+        "market_value": 226410.09
       },
       {
-        "symbol": "AMZN",
-        "return_since_entry_pct": 0.0662,
-        "week_return_pct": 0.0071,
-        "market_value": 155687.46
+        "symbol": "GOOGL",
+        "return_since_entry_pct": -0.0081,
+        "week_return_pct": 0.0571,
+        "market_value": 53761.4
+      },
+      {
+        "symbol": "PG",
+        "return_since_entry_pct": -0.005,
+        "week_return_pct": 0.0263,
+        "market_value": 11846.25
       }
     ],
     "losers": [
       {
-        "symbol": "MA",
-        "return_since_entry_pct": 0.1741,
-        "week_return_pct": -0.0322,
-        "market_value": 4569.68
-      },
-      {
-        "symbol": "JNJ",
-        "return_since_entry_pct": 0.1095,
-        "week_return_pct": -0.035,
-        "market_value": 144329.39
+        "symbol": "HD",
+        "return_since_entry_pct": -0.084,
+        "week_return_pct": -0.0337,
+        "market_value": 14997.0
       },
       {
         "symbol": "UNH",
-        "return_since_entry_pct": -0.0667,
-        "week_return_pct": -0.0515,
-        "market_value": 1135.56
+        "return_since_entry_pct": -0.0705,
+        "week_return_pct": -0.0352,
+        "market_value": 1130.86
+      },
+      {
+        "symbol": "GLW",
+        "return_since_entry_pct": 0.0461,
+        "week_return_pct": -0.1088,
+        "market_value": 12462.45
       }
     ],
     "positions": [
       {
-        "symbol": "META",
-        "return_since_entry_pct": 0.1415,
-        "week_return_pct": 0.0931,
-        "market_value": 6488.4
-      },
-      {
         "symbol": "AAPL",
-        "return_since_entry_pct": 0.1141,
-        "week_return_pct": 0.0225,
-        "market_value": 224286.97
-      },
-      {
-        "symbol": "AMZN",
-        "return_since_entry_pct": 0.0662,
-        "week_return_pct": 0.0071,
-        "market_value": 155687.46
+        "return_since_entry_pct": 0.1247,
+        "week_return_pct": 0.0659,
+        "market_value": 226410.09
       },
       {
         "symbol": "GOOGL",
-        "return_since_entry_pct": -0.0328,
-        "week_return_pct": 0.0047,
-        "market_value": 52421.68
+        "return_since_entry_pct": -0.0081,
+        "week_return_pct": 0.0571,
+        "market_value": 53761.4
       },
       {
-        "symbol": "JPM",
-        "return_since_entry_pct": 0.1378,
-        "week_return_pct": 0.0,
-        "market_value": 3566.9
+        "symbol": "PG",
+        "return_since_entry_pct": -0.005,
+        "week_return_pct": 0.0263,
+        "market_value": 11846.25
       },
       {
-        "symbol": "MSFT",
-        "return_since_entry_pct": 0.1994,
-        "week_return_pct": -0.0024,
-        "market_value": 67824.59
-      },
-      {
-        "symbol": "V",
-        "return_since_entry_pct": 0.1635,
-        "week_return_pct": -0.021,
-        "market_value": 8166.84
-      },
-      {
-        "symbol": "HD",
-        "return_since_entry_pct": -0.0551,
-        "week_return_pct": -0.0235,
-        "market_value": 41147.54
-      },
-      {
-        "symbol": "NVDA",
-        "return_since_entry_pct": 0.0788,
-        "week_return_pct": -0.0262,
-        "market_value": 32896.71
-      },
-      {
-        "symbol": "MA",
-        "return_since_entry_pct": 0.1741,
-        "week_return_pct": -0.0322,
-        "market_value": 4569.68
+        "symbol": "META",
+        "return_since_entry_pct": 0.17,
+        "week_return_pct": 0.0184,
+        "market_value": 6650.7
       },
       {
         "symbol": "JNJ",
-        "return_since_entry_pct": 0.1095,
-        "week_return_pct": -0.035,
-        "market_value": 144329.39
+        "return_since_entry_pct": 0.1268,
+        "week_return_pct": 0.0109,
+        "market_value": 146590.99
+      },
+      {
+        "symbol": "WMT",
+        "return_since_entry_pct": -0.0185,
+        "week_return_pct": 0.0085,
+        "market_value": 11633.57
+      },
+      {
+        "symbol": "AMZN",
+        "return_since_entry_pct": 0.0533,
+        "week_return_pct": 0.0052,
+        "market_value": 134770.45
+      },
+      {
+        "symbol": "MSFT",
+        "return_since_entry_pct": 0.1955,
+        "week_return_pct": 0.0043,
+        "market_value": 67604.02
+      },
+      {
+        "symbol": "V",
+        "return_since_entry_pct": 0.1506,
+        "week_return_pct": 0.0024,
+        "market_value": 8075.98
+      },
+      {
+        "symbol": "TSM",
+        "return_since_entry_pct": 0.0454,
+        "week_return_pct": 0.0011,
+        "market_value": 12132.4
+      },
+      {
+        "symbol": "MA",
+        "return_since_entry_pct": 0.1598,
+        "week_return_pct": -0.004,
+        "market_value": 4513.88
+      },
+      {
+        "symbol": "XOM",
+        "return_since_entry_pct": -0.0344,
+        "week_return_pct": -0.0042,
+        "market_value": 11413.85
+      },
+      {
+        "symbol": "NVDA",
+        "return_since_entry_pct": 0.0928,
+        "week_return_pct": -0.0051,
+        "market_value": 33324.75
+      },
+      {
+        "symbol": "JPM",
+        "return_since_entry_pct": 0.1131,
+        "week_return_pct": -0.0142,
+        "market_value": 3489.5
+      },
+      {
+        "symbol": "HD",
+        "return_since_entry_pct": -0.084,
+        "week_return_pct": -0.0337,
+        "market_value": 14997.0
       },
       {
         "symbol": "UNH",
-        "return_since_entry_pct": -0.0667,
-        "week_return_pct": -0.0515,
-        "market_value": 1135.56
+        "return_since_entry_pct": -0.0705,
+        "week_return_pct": -0.0352,
+        "market_value": 1130.86
+      },
+      {
+        "symbol": "GLW",
+        "return_since_entry_pct": 0.0461,
+        "week_return_pct": -0.1088,
+        "market_value": 12462.45
       }
     ],
     "trades": [
       {
-        "date": "2026-09-11",
+        "date": "2026-09-15",
         "symbol": "AMZN",
+        "action": "SELL",
+        "shares": "75"
+      },
+      {
+        "date": "2026-09-15",
+        "symbol": "PG",
+        "action": "BUY",
+        "shares": "81"
+      },
+      {
+        "date": "2026-09-15",
+        "symbol": "WMT",
+        "action": "BUY",
+        "shares": "109"
+      },
+      {
+        "date": "2026-09-15",
+        "symbol": "XOM",
+        "action": "BUY",
+        "shares": "70"
+      },
+      {
+        "date": "2026-09-15",
+        "symbol": "GLW",
+        "action": "BUY",
+        "shares": "83"
+      },
+      {
+        "date": "2026-09-15",
+        "symbol": "TSM",
+        "action": "BUY",
+        "shares": "28"
+      },
+      {
+        "date": "2026-09-17",
+        "symbol": "HD",
+        "action": "SELL",
+        "shares": "33"
+      },
+      {
+        "date": "2026-09-18",
+        "symbol": "HD",
         "action": "SELL",
         "shares": "50"
       }
     ]
   },
-  "markdown": "# Modest weekly decline, but positive relative performance versus the benchmark.\n\n*Week of 2026-09-07 to 2026-09-13*\n\n## Performance\n\nFor the week ended 2026-09-13, the portfolio declined -0.09%, from 1043332.12 to 1042340.98. The benchmark returned -0.56%, producing 0.47% of alpha.\n\n## Winners\n\n- META gained 9.31% this week; its return since the position was opened is 14.15%.\n- AAPL rose 2.25% this week; its return since the position was opened is 11.41%.\n- AMZN advanced 0.71% this week; its return since the position was opened is 6.62%.\n\n## Losers\n\n- UNH fell -5.15% this week; its return since the position was opened is -6.67%.\n- JNJ declined -3.50% this week; its return since the position was opened is 10.95%.\n- MA fell -3.22% this week; its return since the position was opened is 17.41%.\n\n## Portfolio Changes\n\nOn 2026-09-11, the fund sold 50 shares of AMZN.\n\n## Outlook\n\nThis was a slightly negative week in absolute terms, but the portfolio outperformed the benchmark. We will continue to monitor position-level performance and portfolio changes.\n",
+  "markdown": "# Modest gain and benchmark outperformance in a mixed week\n\n*Week of 2026-09-14 to 2026-09-20*\n\n## Performance\n\nFor the week ended 2026-09-20, the fund rose 0.06%, from 1044613.12 to 1045195.44. The benchmark returned -0.23%, resulting in 0.29% of alpha.\n\n## Winners\n\n- AAPL gained 6.59% this week; its return since the position was opened is 12.47%.\n- GOOGL rose 5.71% this week; its return since the position was opened is -0.81%.\n- PG advanced 2.63% this week; its return since the position was opened is -0.50%.\n\n## Losers\n\n- GLW declined 10.88% this week, despite a 4.61% return since the position was opened.\n- UNH fell 3.52% this week; its return since the position was opened is -7.05%.\n- HD declined 3.37% this week; its return since the position was opened is -8.40%.\n\n## Portfolio Changes\n\nWe sold 75 shares of AMZN on 2026-09-15; bought 81 shares of PG, 109 shares of WMT, 70 shares of XOM, 83 shares of GLW, and 28 shares of TSM on 2026-09-15; and sold 33 shares of HD on 2026-09-17 and 50 shares on 2026-09-18.\n\n## Outlook\n\nThe week was mixed: strong gains in AAPL and GOOGL helped offset weakness led by GLW, UNH, and HD. We will continue to monitor both recent price action and position-level returns since entry.\n",
   "grounding": {
     "status": "ok",
     "grounded": true,
-    "severity": "minor",
-    "issues": [
-      "In the losers section, 'UNH fell -5.15% this week' uses a double negative phrasing; 'fell -5.15%' is equivalent to 'declined 5.15%', so this is a harmless imprecision."
-    ]
+    "severity": "none",
+    "issues": []
   }
 }

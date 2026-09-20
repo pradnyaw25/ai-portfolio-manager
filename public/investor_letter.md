@@ -1,27 +1,27 @@
-# Modest weekly decline, but positive relative performance versus the benchmark.
+# Modest gain and benchmark outperformance in a mixed week
 
-*Week of 2026-09-07 to 2026-09-13*
+*Week of 2026-09-14 to 2026-09-20*
 
 ## Performance
 
-For the week ended 2026-09-13, the portfolio declined -0.09%, from 1043332.12 to 1042340.98. The benchmark returned -0.56%, producing 0.47% of alpha.
+For the week ended 2026-09-20, the fund rose 0.06%, from 1044613.12 to 1045195.44. The benchmark returned -0.23%, resulting in 0.29% of alpha.
 
 ## Winners
 
-- META gained 9.31% this week; its return since the position was opened is 14.15%.
-- AAPL rose 2.25% this week; its return since the position was opened is 11.41%.
-- AMZN advanced 0.71% this week; its return since the position was opened is 6.62%.
+- AAPL gained 6.59% this week; its return since the position was opened is 12.47%.
+- GOOGL rose 5.71% this week; its return since the position was opened is -0.81%.
+- PG advanced 2.63% this week; its return since the position was opened is -0.50%.
 
 ## Losers
 
-- UNH fell -5.15% this week; its return since the position was opened is -6.67%.
-- JNJ declined -3.50% this week; its return since the position was opened is 10.95%.
-- MA fell -3.22% this week; its return since the position was opened is 17.41%.
+- GLW declined 10.88% this week, despite a 4.61% return since the position was opened.
+- UNH fell 3.52% this week; its return since the position was opened is -7.05%.
+- HD declined 3.37% this week; its return since the position was opened is -8.40%.
 
 ## Portfolio Changes
 
-On 2026-09-11, the fund sold 50 shares of AMZN.
+We sold 75 shares of AMZN on 2026-09-15; bought 81 shares of PG, 109 shares of WMT, 70 shares of XOM, 83 shares of GLW, and 28 shares of TSM on 2026-09-15; and sold 33 shares of HD on 2026-09-17 and 50 shares on 2026-09-18.
 
 ## Outlook
 
-This was a slightly negative week in absolute terms, but the portfolio outperformed the benchmark. We will continue to monitor position-level performance and portfolio changes.
+The week was mixed: strong gains in AAPL and GOOGL helped offset weakness led by GLW, UNH, and HD. We will continue to monitor both recent price action and position-level returns since entry.
