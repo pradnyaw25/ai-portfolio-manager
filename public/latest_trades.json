@@ -1,12 +1,1 @@
-[
-  {
-    "run_id": "run_20260921T194331Z_55bb0ecd",
-    "date": "2026-09-21",
-    "symbol": "HD",
-    "action": "SELL",
-    "shares": 50,
-    "price": 299.1000061035156,
-    "total": 14955.000305175781,
-    "reasoning": "Exit the small HD position: it is down 8.65% versus cost, down 10.56% over 30 days, and down 3.50% over five days. The sustained relative weakness provides a clearer trimming signal than the mixed evidence elsewhere and modestly reduces cyclical consumer exposure."
-  }
-]
+[]
