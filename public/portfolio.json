@@ -1,138 +1,138 @@
 {
-  "run_id": "run_20260924T183901Z_d45648d2",
-  "date": "2026-09-24",
-  "total_value": 1047079.5516052246,
+  "run_id": "run_20260925T185130Z_09a2995c",
+  "date": "2026-09-25",
+  "total_value": 1050900.573348999,
   "cash": 299342.2978897095,
-  "cash_pct": 0.28588305199046526,
-  "invested_value": 747737.2537155151,
+  "cash_pct": 0.28484359556087074,
+  "invested_value": 751558.2754592896,
   "positions": [
     {
       "symbol": "JNJ",
       "shares": 543,
       "avg_cost": 239.57778686186228,
-      "current_price": 271.6300048828125,
-      "market_value": 147495.0926513672,
-      "return_pct": 0.13378626808766358
+      "current_price": 271.07000732421875,
+      "market_value": 147191.01397705078,
+      "return_pct": 0.1314488328607632
     },
     {
       "symbol": "AAPL",
       "shares": 674,
       "avg_cost": 298.6877331913369,
-      "current_price": 337.67999267578125,
-      "market_value": 227596.31506347656,
-      "return_pct": 0.13054523219896078
+      "current_price": 340.2300109863281,
+      "market_value": 229315.02740478516,
+      "return_pct": 0.13908263774722732
     },
     {
       "symbol": "MSFT",
       "shares": 137,
       "avg_cost": 412.76182054951244,
-      "current_price": 496.7099914550781,
-      "market_value": 68049.2688293457,
-      "return_pct": 0.20338162767526552
+      "current_price": 516.9400024414062,
+      "market_value": 70820.78033447266,
+      "return_pct": 0.2523929702441974
     },
     {
       "symbol": "NVDA",
       "shares": 150,
       "avg_cost": 203.29896344360853,
-      "current_price": 224.27999877929688,
-      "market_value": 33641.99981689453,
-      "return_pct": 0.10320286429550891
+      "current_price": 224.0500030517578,
+      "market_value": 33607.50045776367,
+      "return_pct": 0.10207154653744833
     },
     {
       "symbol": "UNH",
       "shares": 3,
       "avg_cost": 405.54998779296875,
-      "current_price": 375.04998779296875,
-      "market_value": 1125.1499633789062,
-      "return_pct": -0.07520651194192637
+      "current_price": 377.82501220703125,
+      "market_value": 1133.4750366210938,
+      "return_pct": -0.06836389204896479
     },
     {
       "symbol": "AMZN",
       "shares": 531,
       "avg_cost": 240.96075193141618,
-      "current_price": 250.36000061035156,
-      "market_value": 132941.16032409668,
-      "return_pct": 0.039007384412589594
+      "current_price": 249.52499389648438,
+      "market_value": 132497.7717590332,
+      "return_pct": 0.035542061918472985
     },
     {
       "symbol": "GOOGL",
       "shares": 154,
       "avg_cost": 351.9579836362368,
-      "current_price": 342.4100036621094,
-      "market_value": 52731.140563964844,
-      "return_pct": -0.027128181254713828
+      "current_price": 343.9800109863281,
+      "market_value": 52972.92169189453,
+      "return_pct": -0.022667400714950825
     },
     {
       "symbol": "JPM",
       "shares": 10,
       "avg_cost": 313.489990234375,
-      "current_price": 337.6300048828125,
-      "market_value": 3376.300048828125,
-      "return_pct": 0.07700410029165418
+      "current_price": 341.8800048828125,
+      "market_value": 3418.800048828125,
+      "return_pct": 0.09056115197557738
     },
     {
       "symbol": "V",
       "shares": 22,
       "avg_cost": 319.04998779296875,
-      "current_price": 366.510009765625,
-      "market_value": 8063.22021484375,
-      "return_pct": 0.14875418833569432
+      "current_price": 367.79998779296875,
+      "market_value": 8091.5997314453125,
+      "return_pct": 0.15279737302993984
     },
     {
       "symbol": "MA",
       "shares": 8,
       "avg_cost": 486.510009765625,
-      "current_price": 562.375,
-      "market_value": 4499.0,
-      "return_pct": 0.1559371620553558
+      "current_price": 568.0800170898438,
+      "market_value": 4544.64013671875,
+      "return_pct": 0.16766357461692288
     },
     {
       "symbol": "META",
       "shares": 10,
       "avg_cost": 568.4299926757812,
-      "current_price": 776.3900146484375,
-      "market_value": 7763.900146484375,
-      "return_pct": 0.3658498401777185
+      "current_price": 752.885009765625,
+      "market_value": 7528.85009765625,
+      "return_pct": 0.3244990930572737
     },
     {
       "symbol": "PG",
       "shares": 81,
       "avg_cost": 146.97999572753906,
-      "current_price": 147.31500244140625,
-      "market_value": 11932.515197753906,
-      "return_pct": 0.0022792674078464313
+      "current_price": 145.88499450683594,
+      "market_value": 11816.684555053711,
+      "return_pct": -0.007450001718145097
     },
     {
       "symbol": "WMT",
       "shares": 109,
       "avg_cost": 108.74500274658203,
-      "current_price": 108.51000213623047,
-      "market_value": 11827.590232849121,
-      "return_pct": -0.0021610244555256017
+      "current_price": 107.98999786376953,
+      "market_value": 11770.909767150879,
+      "return_pct": -0.00694289267316452
     },
     {
       "symbol": "XOM",
       "shares": 70,
       "avg_cost": 168.8699951171875,
-      "current_price": 161.25,
-      "market_value": 11287.5,
-      "return_pct": -0.04512344014636583
+      "current_price": 160.44000244140625,
+      "market_value": 11230.800170898438,
+      "return_pct": -0.04992001491994625
     },
     {
       "symbol": "GLW",
       "shares": 83,
       "avg_cost": 143.52999877929688,
-      "current_price": 154.52000427246094,
-      "market_value": 12825.160354614258,
-      "return_pct": 0.07656939724540211
+      "current_price": 156.36000061035156,
+      "market_value": 12977.88005065918,
+      "return_pct": 0.0893889914315621
     },
     {
       "symbol": "TSM",
       "shares": 28,
       "avg_cost": 414.489990234375,
-      "current_price": 449.3550109863281,
-      "market_value": 12581.940307617188,
-      "return_pct": 0.08411547099663025
+      "current_price": 451.4150085449219,
+      "market_value": 12639.620239257812,
+      "return_pct": 0.08908542831074757
     }
   ]
 }
