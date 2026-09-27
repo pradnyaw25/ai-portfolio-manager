@@ -1,27 +1,27 @@
-# Modest gain and benchmark outperformance in a mixed week
+# Modest decline, relative resilience
 
-*Week of 2026-09-14 to 2026-09-20*
+*Week of 2026-09-21 to 2026-09-27*
 
 ## Performance
 
-For the week ended 2026-09-20, the fund rose 0.06%, from 1044613.12 to 1045195.44. The benchmark returned -0.23%, resulting in 0.29% of alpha.
+For the week ended 2026-09-27, the portfolio declined -0.34%, versus -0.46% for the benchmark, producing 0.12% of alpha. Portfolio value moved from 1054477.64 to 1050900.57.
 
 ## Winners
 
-- AAPL gained 6.59% this week; its return since the position was opened is 12.47%.
-- GOOGL rose 5.71% this week; its return since the position was opened is -0.81%.
-- PG advanced 2.63% this week; its return since the position was opened is -0.50%.
+- META gained 11.72% this week; its return since the position was opened is 32.45%.
+- GLW gained 8.73% this week; its return since the position was opened is 8.94%.
+- TSM gained 7.87% this week; its return since the position was opened is 8.91%.
 
 ## Losers
 
-- GLW declined 10.88% this week, despite a 4.61% return since the position was opened.
-- UNH fell 3.52% this week; its return since the position was opened is -7.05%.
-- HD declined 3.37% this week; its return since the position was opened is -8.40%.
+- JPM declined -1.68% this week; its return since the position was opened is 9.06%.
+- XOM declined -1.67% this week; its return since the position was opened is -4.99%.
+- V declined -0.96% this week; its return since the position was opened is 15.28%.
 
 ## Portfolio Changes
 
-We sold 75 shares of AMZN on 2026-09-15; bought 81 shares of PG, 109 shares of WMT, 70 shares of XOM, 83 shares of GLW, and 28 shares of TSM on 2026-09-15; and sold 33 shares of HD on 2026-09-17 and 50 shares on 2026-09-18.
+We sold 50 shares of HD on 2026-09-21.
 
 ## Outlook
 
-The week was mixed: strong gains in AAPL and GOOGL helped offset weakness led by GLW, UNH, and HD. We will continue to monitor both recent price action and position-level returns since entry.
+The portfolio finished modestly lower but outperformed the benchmark. Weekly strength in META, GLW, and TSM contrasted with declines in JPM, XOM, and V.
