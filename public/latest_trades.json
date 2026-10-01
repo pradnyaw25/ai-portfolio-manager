@@ -1,1 +1,62 @@
-[]
+[
+  {
+    "run_id": "run_20261001T194714Z_9239ded3",
+    "date": "2026-10-01",
+    "symbol": "AAPL",
+    "action": "SELL",
+    "shares": 75,
+    "price": 329.8299865722656,
+    "total": 24737.248992919922,
+    "reasoning": "Trim the largest position by roughly $24,700 to reduce single-name concentration. AAPL remains above cost and has outperformed over 30 days, but its 5-day return is negative, the portfolio already has substantial technology exposure, and fund memory prioritizes incremental concentration reduction over adding to large winners."
+  },
+  {
+    "run_id": "run_20261001T194714Z_9239ded3",
+    "date": "2026-10-01",
+    "symbol": "AMD",
+    "action": "BUY",
+    "shares": 21,
+    "price": 617.1699829101562,
+    "total": 12960.569641113281,
+    "reasoning": "Adds a new semiconductor position with meaningful AI and data-center exposure. The recent pullback after strong 30-day performance offers a more measured entry while industry momentum has improved following Micron-related semiconductor strength."
+  },
+  {
+    "run_id": "run_20261001T194714Z_9239ded3",
+    "date": "2026-10-01",
+    "symbol": "ORCL",
+    "action": "BUY",
+    "shares": 94,
+    "price": 138.0,
+    "total": 12972.0,
+    "reasoning": "Adds enterprise software and cloud infrastructure exposure, diversifying the existing mega-cap consumer/internet holdings. Oracle is positioned to benefit from continuing AI infrastructure and cloud demand."
+  },
+  {
+    "run_id": "run_20261001T194714Z_9239ded3",
+    "date": "2026-10-01",
+    "symbol": "HD",
+    "action": "BUY",
+    "shares": 45,
+    "price": 282.4100036621094,
+    "total": 12708.450164794922,
+    "reasoning": "Introduces home-improvement and housing-related exposure, broadening the portfolio beyond technology and communication services. This is a quality large-cap allocation with a different economic driver than existing AI-heavy holdings."
+  },
+  {
+    "run_id": "run_20261001T194714Z_9239ded3",
+    "date": "2026-10-01",
+    "symbol": "V",
+    "action": "BUY",
+    "shares": 36,
+    "price": 360.4200134277344,
+    "total": 12975.120483398438,
+    "reasoning": "Builds the currently modest Visa position in a high-quality payments franchise. Visa provides durable fee-based cash flows and financial-sector diversification without adding significant credit-cycle exposure."
+  },
+  {
+    "run_id": "run_20261001T194714Z_9239ded3",
+    "date": "2026-10-01",
+    "symbol": "UNH",
+    "action": "BUY",
+    "shares": 35,
+    "price": 365.0199890136719,
+    "total": 12775.699615478516,
+    "reasoning": "Builds the very small existing healthcare position to improve sector balance. UnitedHealth adds defensive healthcare-services exposure and reduces the portfolio's reliance on technology-led market performance."
+  }
+]
