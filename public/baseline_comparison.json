@@ -1,38 +1,38 @@
 {
   "start_date": "2026-06-11",
-  "end_date": "2026-10-01",
+  "end_date": "2026-10-02",
   "start_capital": 1000000.0,
   "variants": [
     {
       "name": "Glasshouse Fund",
       "start_value": 1000000.0,
-      "end_value": 1036628.9,
-      "return_pct": 0.036629,
-      "alpha_vs_spy": -3.6e-05,
+      "end_value": 1040541.67,
+      "return_pct": 0.040542,
+      "alpha_vs_spy": -0.002426,
       "detail": "the live AI fund"
     },
     {
       "name": "Buy & hold SPY",
       "start_value": 1000000.0,
-      "end_value": 1036665.02,
-      "return_pct": 0.036665,
+      "end_value": 1042967.92,
+      "return_pct": 0.042968,
       "alpha_vs_spy": 0.0,
       "detail": "100% SPY at inception"
     },
     {
       "name": "Buy & hold QQQ",
       "start_value": 1000000.0,
-      "end_value": 1036549.0,
-      "return_pct": 0.036549,
-      "alpha_vs_spy": -0.000116,
+      "end_value": 1045069.18,
+      "return_pct": 0.045069,
+      "alpha_vs_spy": 0.002101,
       "detail": "100% QQQ at inception"
     },
     {
       "name": "Random from watchlist",
       "start_value": 1000000.0,
-      "end_value": 975713.25,
-      "return_pct": -0.024287,
-      "alpha_vs_spy": -0.060952,
+      "end_value": 978299.83,
+      "return_pct": -0.0217,
+      "alpha_vs_spy": -0.064668,
       "detail": "mean of 500 random 5-name equal-weight portfolios"
     }
   ]
