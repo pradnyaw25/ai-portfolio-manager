@@ -2,30 +2,36 @@ name: Daily Portfolio Run
 
 on:
   schedule:
-    # Twice on weekdays. These times budget for GitHub's scheduler delay, which is the
-    # binding constraint here — NOT the nominal clock time.
+    # Twice on weekdays, serving the 14:40 and 17:50 UTC slots - but each cron fires
+    # 4.5 HOURS EARLY and the "Wait for the slot" step sleeps until the slot time.
     #
-    # Scheduled runs on this repo have started 59-101 minutes late, every single run,
-    # with no exceptions. The market-hours guard aborts the WHOLE run (tweet, journal,
-    # and site update included) outside 9:30am-4:00pm America/New_York, so a cron time
-    # without room for that delay silently kills the run. An earlier attempt to post
-    # "just before the close" (19:47 UTC = 3:47pm ET, 13 minutes of margin) meant every
-    # afternoon run landed past 4:00pm and was skipped.
+    # Why: GitHub's scheduler is the binding constraint, not the clock. Through July
+    # it started this repo's runs 59-101 minutes late and the cron times budgeted for
+    # that. From late August the delay drifted to a median of ~105 min, p90 ~220 min,
+    # max 476 min - past the budget - and the market-hours guard (which aborts the
+    # WHOLE run outside 9:30am-4:00pm America/New_York) silently skipped the result:
+    # four whole trading days lost (08-27, 08-28, 08-31, 09-28) and, from 09-01, the
+    # afternoon slot skipped on 21 of 23 days. See docs/incidents.md.
     #
-    # So: pick times where the run lands in-hours whether it fires on time OR ~1.5h
-    # late, in BOTH DST seasons (in-hours for both = 14:30-20:00 UTC).
-    #   14:40 UTC -> fires 14:40-16:20 UTC = 9:40am-12:20pm ET. Always in hours.
-    #   17:50 UTC -> fires 17:50-19:30 UTC = 1:50pm-3:30pm ET. Always in hours, and
-    #                the usual delay puts it near the close, which was the intent.
-    # Tolerates a delay up to ~2h before the afternoon run risks the close.
+    # Firing early and sleeping absorbs the delay instead of budgeting for it: on time
+    # means a 4.5h wait, 3h late means a 1.5h wait, past the slot means no wait (the
+    # guard then decides, exactly as before). Runner minutes are free on a public repo.
+    # The slots themselves are unchanged and still land in-hours in both DST seasons
+    # (14:30-20:00 UTC), on their side of RECEIPTS_MORNING_CUTOFF_HOUR_UTC (17): the
+    # morning run posts receipts, the afternoon run the spotlight.
     #
-    # Keep the morning run before and the afternoon run after 17:00 UTC even when
-    # delayed — RECEIPTS_MORNING_CUTOFF_HOUR_UTC uses that boundary to post receipts on
-    # the morning run and the spotlight on the afternoon one.
-    - cron: "40 14 * * 1-5"
-    - cron: "50 17 * * 1-5"
+    # Each cron MUST have a matching entry in SLOT_TARGETS below, or the wait step
+    # fails rather than guess. Delays beyond the headroom still lose the slot; the
+    # run-health watchdog pages on a missing slot now, so that is no longer silent.
+    - cron: "10 10 * * 1-5"   # serves the 14:40 UTC slot
+    - cron: "20 13 * * 1-5"   # serves the 17:50 UTC slot
 
   workflow_dispatch:
+
+env:
+  # cron -> the UTC slot it serves. Read by scripts/wait_for_slot.py; pinned by
+  # tests/test_daily_schedule.py.
+  SLOT_TARGETS: "10 10 * * 1-5=14:40,20 13 * * 1-5=17:50"
 
 permissions:
   contents: write
@@ -47,7 +53,8 @@ permissions:
 # delay in one can no longer evict the other. workflow_dispatch has no
 # github.event.schedule, so it falls back to a per-run group and never queues.
 #
-# The cost: morning and afternoon can now overlap if the scheduler is >3h late. The
+# The cost: the two slots' jobs now overlap routinely (each sleeps for hours before
+# its slot), so a late morning run can race the afternoon one to the branch. The
 # push step below rebases and retries to stay safe under that.
 concurrency:
   group: daily-run-${{ github.event.schedule || github.run_id }}
@@ -66,6 +73,22 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.14"
+
+      # Stdlib only, runs before pip install. Sleeps until this cron's slot time; a
+      # manual dispatch has no slot and doesn't wait.
+      - name: Wait for the slot
+        env:
+          GITHUB_EVENT_SCHEDULE: ${{ github.event.schedule }}
+        run: |
+          python scripts/wait_for_slot.py
+
+      # The checkout above is up to 4.5h old by now and the OTHER slot has usually
+      # pushed in between. Running the cycle on a stale checkout would re-decide the
+      # morning's trades on yesterday's state, so fast-forward before anything reads
+      # data/. ff-only: if this can't fast-forward something is genuinely wrong.
+      - name: Refresh checkout
+        run: |
+          git pull --ff-only origin main
 
       - name: Check market hours
         id: market-hours
