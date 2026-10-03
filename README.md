@@ -26,7 +26,7 @@ An LLM-agent portfolio system with a hardened gateway, a deterministic risk engi
 
 The interesting part is not the trading. It is what is built around an unreliable component — a language model — to make it produce an auditable record: a gateway that validates and retries, guardrails the model cannot argue past, a grounding check that blocks unsupported claims, and a scoreboard that grades its own predictions in public whether they were right or not.
 
-**As of 2026-08-07, after 34 trading days:** 177 scored predictions, a **58.2%** hit rate and a **Brier score of 0.2464** — against 0.25 for a coin flip. Every confidence bucket above 0.6 is overconfident. That result is the point of the project, and it is published whether or not it flatters the model. See [prediction accuracy](https://glasshousefund.com/predictions.html) for the live curve.
+**As of 2026-10-02, after 70 trading days:** 483 scored predictions, a **51.1%** hit rate and a **Brier score of 0.2686** — worse than the 0.25 a coin flip scores. Every confidence bucket above 0.6 is overconfident. Two things the aggregate hides, both published on the [prediction accuracy](https://glasshousefund.com/predictions.html) page: the fund swapped models on 2026-08-08 and **the newer, pricier model calibrates worse** (gpt-4.1-mini: 55.7% hit, Brier 0.2550 over 237 calls; gpt-5.6-terra: 46.4%, Brier 0.2815 over 239), and **neither model beat the constant call for its own window** — "always say underperform" would have hit 59% in July and 52% from mid-August. That result is the point of the project, and it is published whether or not it flatters the model.
 
 ## Features
 
