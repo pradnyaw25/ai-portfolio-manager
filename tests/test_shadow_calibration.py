@@ -53,15 +53,25 @@ def test_shadow_routes_are_empty_by_default():
     assert config.CALIBRATION_SHADOW_ROUTES == []
 
 
-def test_compat_provider_is_registered_only_when_its_key_is_present():
+def test_compat_provider_is_registered_only_when_its_key_is_present(monkeypatch):
+    # Fake the provider class: the real one builds an OpenAI SDK client, which refuses
+    # to construct without OPENAI_API_KEY — and CI has none. The registry logic is
+    # what is under test, not the SDK.
+    class _FakeProvider:
+        def __init__(self, client=None, *, name="openai", base_url=None, api_key=None):
+            self.name, self.base_url, self.api_key = name, base_url, api_key
+
+    monkeypatch.setattr("src.llm.providers.openai_provider.OpenAIProvider", _FakeProvider)
     compat = {"groq": "https://api.groq.com/openai/v1"}
 
-    without = build_default_providers(compat=compat, environ={"OPENAI_API_KEY": "x"})
-    with_key = build_default_providers(compat=compat, environ={"OPENAI_API_KEY": "x", "GROQ_API_KEY": "k"})
+    without = build_default_providers(compat=compat, environ={})
+    with_key = build_default_providers(compat=compat, environ={"GROQ_API_KEY": "k"})
 
     assert set(without) == {"openai"}
     assert set(with_key) == {"openai", "groq"}
     assert with_key["groq"].name == "groq"
+    assert with_key["groq"].base_url == "https://api.groq.com/openai/v1"
+    assert with_key["groq"].api_key == "k"
 
 
 def test_config_rejects_a_shadow_route_on_an_unknown_provider(monkeypatch):
