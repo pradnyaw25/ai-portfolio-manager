@@ -79,7 +79,32 @@ The system uses LLM agents to analyze markets, make trade decisions, and manage 
 - [ ] **Backtest framework** — `scripts/backfill.py:25` is still `# TODO: implement historical
   simulation` inside an empty date loop. Note `src/experiments/comparison.py` is *not* this: it
   compares the live fund to baselines over recorded history (post-hoc attribution, not a backtest).
-- [ ] **Multi-model live calibration** *(high leverage for the launch; owner has Groq credits, will
+### Low Priority
+- [ ] **Slack/Discord notifications** — Post daily summaries to a channel. The only outbound
+  channel today is X/Twitter (`src/social/twitter.py`).
+- [ ] **Memory retrieval reaches only the alphabetically-early names** — `extract_memory_symbols`
+  (`src/main.py`) takes every holding plus `research["symbols"][:12]`, and that list is sorted, so
+  the slice is an alphabetical prefix. 13 of the 34 universe names are unreachable by memory today
+  and all 13 are unheld. Holdings get guaranteed inclusion; everything else plays a lottery on its
+  ticker. Found 2026-08-07 while tracing why the fund almost never opens a new position — see the
+  incumbency findings in `docs/`.
+
+### Recently Completed
+
+- [x] **Multi-model live calibration** *(2026-10-02)* — `shadow_market_calls` node (optional, right
+  after `decide_trades`, before anything executes) re-sends the PM's identical prompt — same
+  snapshot, same debate transcript — to every `CALIBRATION_SHADOW_ROUTES` entry via a pinned
+  gateway route (no fallback), keeps only `market_calls`, and writes them as shadow predictions
+  to `data/predictions_shadow/<provider>__<model>.jsonl`, one file per model so the
+  one-open-window guard needs no new keying and no reader needs a filter. Scored by the same
+  scorer; copied to `public/predictions_shadow/`. Groq ships as an OpenAI-compatible provider,
+  registered only when `GROQ_API_KEY` is present. **Off until the repo variable
+  `CALIBRATION_SHADOW_ROUTES` is set** (suggested: `groq:llama-3.3-70b-versatile,openai:gpt-5.6-luna`)
+  and the `GROQ_API_KEY` secret added; run `make probe-models` on a new route first. Follow-up
+  once the per-model page (#124) is in: feed `shadow_stores()` rows into `by_model`. Then ~4
+  weeks of live calls gate article piece 5. Original rationale kept below in the item's history.
+
+  *Original item (2026-08):* **Multi-model live calibration** *(high leverage for the launch; owner has Groq credits, will
   plug in providers)* — Run the same `market_calls` prompt through several providers each cycle
   (Claude, Groq/Llama, the current gpt-5.6-luna), tag each prediction with the model that made it,
   and publish one calibration curve per model. Turns the launch artifact from "I scored an LLM's
@@ -92,18 +117,6 @@ The system uses LLM agents to analyze markets, make trade decisions, and manage 
   *comparison across models*, NOT on making the single fund smarter — `make eval-compare` already
   measured that bigger models don't move decision quality on this eval set (`src/config.py:69-72`),
   so extra reasoning calls for one fund are low-ROI.
-
-### Low Priority
-- [ ] **Slack/Discord notifications** — Post daily summaries to a channel. The only outbound
-  channel today is X/Twitter (`src/social/twitter.py`).
-- [ ] **Memory retrieval reaches only the alphabetically-early names** — `extract_memory_symbols`
-  (`src/main.py`) takes every holding plus `research["symbols"][:12]`, and that list is sorted, so
-  the slice is an alphabetical prefix. 13 of the 34 universe names are unreachable by memory today
-  and all 13 are unheld. Holdings get guaranteed inclusion; everything else plays a lottery on its
-  ticker. Found 2026-08-07 while tracing why the fund almost never opens a new position — see the
-  incumbency findings in `docs/`.
-
-### Recently Completed
 
 - [x] **No same-day rebuy of a just-sold name** *(2026-07-09, #74)* — the rebalancer was blind to the
   PM's sells and could redeploy cash straight back into a name just trimmed (self-contradictory
