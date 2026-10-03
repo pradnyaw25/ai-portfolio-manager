@@ -579,9 +579,9 @@ def publish_tweet_node(state: DailyGraphState) -> DailyGraphState:
 def _is_morning_run(started_at: str) -> bool:
     """Whether a run that started at ``started_at`` (ISO-8601 UTC) is the day's
     morning run — i.e. it started before RECEIPTS_MORNING_CUTOFF_HOUR_UTC. The daily
-    cycle is scheduled for 14:40 and 17:50 UTC and, with GitHub's ~1h scheduler delay,
-    starts around 15:40-16:20 and 18:50-19:30; the cutoff (17) puts the earlier run in the
-    morning. Unparseable timestamps default to True so receipts are never silently
+    cycle serves two slots, 14:40 and 17:50 UTC (the workflow fires early and sleeps to
+    the slot, so a late scheduler no longer shifts them); the cutoff (17) puts the earlier
+    run in the morning. Unparseable timestamps default to True so receipts are never silently
     lost to a formatting quirk (a duplicate is prevented anyway by scored_predictions
     only holding this run's resolutions)."""
     try:
