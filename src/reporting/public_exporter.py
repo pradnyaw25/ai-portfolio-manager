@@ -238,6 +238,13 @@ class PublicExporter:
             src = DATA_DIR / filename
             if src.exists():
                 shutil.copy(src, PUBLIC_DIR / filename)
+        # The comparison models' calls are published raw, one file per model, so the
+        # multi-model claim can be checked against the same dated receipts.
+        shadow_dir = DATA_DIR / "predictions_shadow"
+        if shadow_dir.exists():
+            (PUBLIC_DIR / "predictions_shadow").mkdir(exist_ok=True)
+            for src in sorted(shadow_dir.glob("*.jsonl")):
+                shutil.copy(src, PUBLIC_DIR / "predictions_shadow" / src.name)
 
     def _write_decision_pages(self) -> None:
         """Prerender the journal to /decisions/*.html, the weekly investor letters to

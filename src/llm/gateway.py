@@ -115,12 +115,17 @@ class LLMGateway:
         tier: str = "strong",
         temperature: float | None = None,
         prompt_version: str = "unversioned",
+        route: Route | None = None,
     ) -> TModel:
         """Call the model in JSON mode and validate against ``schema``.
 
         Performs one repair retry: if the response is not valid JSON or fails
         schema validation, the model is re-prompted with the error and asked to
         fix it. Raises :class:`LLMValidationError` if that also fails.
+
+        ``route`` pins an explicit (provider, model) instead of resolving ``tier``,
+        with no fallback: it exists for the multi-model calibration shadows, where
+        silently answering from another model would corrupt the comparison.
         """
         convo: list[Message] = list(messages)
 
@@ -132,6 +137,7 @@ class LLMGateway:
                 temperature=temperature,
                 prompt_version=prompt_version,
                 response_format={"type": "json_object"},
+                route=route,
             )
             try:
                 return schema.model_validate_json(content)
@@ -255,9 +261,12 @@ class LLMGateway:
         prompt_version: str,
         response_format: dict[str, Any] | None = None,
         max_tokens: int | None = None,
+        route: Route | None = None,
     ) -> str:
-        """Resolve the tier's route and call it, falling back if the primary fails."""
-        route = resolve_route(tier)
+        """Resolve the tier's route and call it, falling back if the primary fails.
+        An explicit ``route`` is used as given and never falls back."""
+        pinned = route is not None
+        route = route if pinned else resolve_route(tier)
         chat_kwargs: dict[str, Any] = {
             "messages": messages,
             "temperature": LLM_TEMPERATURE if temperature is None else temperature,
@@ -266,7 +275,10 @@ class LLMGateway:
         }
 
         started = time.monotonic()
-        response, served, fell_back = self._request_with_fallback(route, chat_kwargs)
+        if pinned:
+            response, served, fell_back = self._request_with_backoff(route, chat_kwargs), route, False
+        else:
+            response, served, fell_back = self._request_with_fallback(route, chat_kwargs)
         latency_ms = (time.monotonic() - started) * 1000
 
         self._log_call(
@@ -417,6 +429,7 @@ def complete_structured(
     schema: type[TModel],
     *,
     tier: str = "strong",
+    route: Route | None = None,
     temperature: float | None = None,
     prompt_version: str = "unversioned",
 ) -> TModel:
@@ -424,6 +437,7 @@ def complete_structured(
         messages,
         schema,
         tier=tier,
+        route=route,
         temperature=temperature,
         prompt_version=prompt_version,
     )
