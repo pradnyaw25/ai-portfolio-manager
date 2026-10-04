@@ -125,11 +125,67 @@ def test_weekends_and_holidays_never_alert():
 
 def test_a_late_evening_run_still_counts_for_that_day():
     """Runs are stamped UTC; 2026-08-07T23:30Z is still Aug 7 in market time."""
-    runs = [_run("2026-08-07T23:30:00Z")]
+    runs = [_run("2026-08-07T15:30:00Z", run_id="r_am"), _run("2026-08-07T23:30:00Z")]
 
     healthy, _ = check(runs, _date("2026-08-07"))
 
     assert healthy is True
+
+
+# --- the September 2026 half days ------------------------------------------
+
+
+def test_a_day_with_both_slots_is_healthy():
+    runs = [_run("2026-09-15T14:41:00Z", run_id="r_am"), _run("2026-09-15T17:51:00Z")]
+
+    healthy, message = check(runs, _date("2026-09-15"))
+
+    assert healthy is True
+    assert "2 run(s)" in message
+
+
+def test_only_an_afternoon_run_alerts_for_the_missing_morning():
+    """2026-09-15 as it actually happened: one run at 18:51Z, no morning slot, no
+    receipts tweet, and the watchdog said OK."""
+    runs = [_run("2026-09-15T18:51:00Z")]
+
+    healthy, message = check(runs, _date("2026-09-15"))
+
+    assert healthy is False
+    assert "HALF A DAY" in message
+    assert "morning slot never ran" in message
+
+
+def test_only_a_morning_run_alerts_for_the_missing_afternoon():
+    runs = [_run("2026-09-15T15:02:00Z")]
+
+    healthy, message = check(runs, _date("2026-09-15"))
+
+    assert healthy is False
+    assert "afternoon slot never ran" in message
+
+
+def test_two_runs_in_the_same_slot_do_not_cover_the_other():
+    """Two morning runs (a failure and its retry) are still half a day."""
+    runs = [
+        _run("2026-09-15T14:41:00Z", status="failed", run_id="r_am"),
+        _run("2026-09-15T15:30:00Z", run_id="r_am2"),
+    ]
+
+    healthy, message = check(runs, _date("2026-09-15"))
+
+    assert healthy is False
+    assert "afternoon slot never ran" in message
+
+
+def test_a_failed_latest_run_outranks_a_missing_slot():
+    """The louder failure wins the message: a failed day is worse than a half day."""
+    runs = [_run("2026-09-15T18:51:00Z", status="failed", errors=["boom"])]
+
+    healthy, message = check(runs, _date("2026-09-15"))
+
+    assert healthy is False
+    assert "RUN FAILED" in message
 
 
 # --- the watchdog's own lateness -------------------------------------------

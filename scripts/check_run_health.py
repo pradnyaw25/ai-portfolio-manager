@@ -22,7 +22,7 @@ the fund was supposed to run and either didn't or failed.
 import argparse
 import json
 import sys
-from datetime import date, datetime, time, timedelta
+from datetime import date, datetime, time, timedelta, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -37,6 +37,15 @@ MARKET_TZ = ZoneInfo("America/New_York")
 MARKET_OPEN = time(9, 30)
 
 RUN_HISTORY = DATA_DIR / "run_history.jsonl"
+
+# The fund owes two runs per trading day: one before and one after this UTC hour.
+# Mirrors src.config.RECEIPTS_MORNING_CUTOFF_HOUR_UTC (17), the same boundary the
+# cycle uses to decide whether it is the morning run (receipts) or the afternoon one
+# (spotlight). Keep in step. From 2026-09-01 the afternoon slot landed after the
+# close on 21 of 23 days and this check passed every one of them, because it only
+# asked whether the fund ran at all.
+MORNING_CUTOFF_HOUR_UTC = 17
+EXPECTED_SLOTS = ("morning", "afternoon")
 
 # NYSE full-day closures. Only weekdays are listed — a weekend is already handled.
 #
@@ -107,6 +116,18 @@ def _started_on(run: dict) -> date | None:
     return stamp.astimezone(MARKET_TZ).date()
 
 
+def _slot(run: dict) -> str | None:
+    """Which of the day's two slots a run served, by its UTC start hour."""
+    raw = str(run.get("started_at") or "")
+    try:
+        stamp = datetime.fromisoformat(raw.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    if stamp.tzinfo is not None:
+        stamp = stamp.astimezone(timezone.utc)
+    return "morning" if stamp.hour < MORNING_CUTOFF_HOUR_UTC else "afternoon"
+
+
 def check(runs: list[dict], today: date) -> tuple[bool, str]:
     """Return (healthy, message).
 
@@ -116,6 +137,12 @@ def check(runs: list[dict], today: date) -> tuple[bool, str]:
     Paging on a recovered failure would be noise, and an alert people learn to ignore
     is worse than no alert. Recovered failures are still named in the OK message so
     they don't vanish — the individual run is already red in CI from #92.
+
+    Both slots must have STARTED, though. A slot that never starts is the one failure
+    this check exists for, and a half day is the same failure at half size: in
+    September 2026 the afternoon slot was lost on 21 of 23 trading days and nothing
+    said so. Since the daily run now absorbs the scheduler delay instead of budgeting
+    for it, a missing slot is rare enough to page on.
     """
     if not is_trading_day(today):
         return True, f"{today} is not a trading day — nothing expected."
@@ -140,6 +167,18 @@ def check(runs: list[dict], today: date) -> tuple[bool, str]:
         return False, (
             f"RUN FAILED on {today} (run_id={latest.get('run_id')}, status={status}): "
             f"{detail}. This is the 2026-08-05 failure mode."
+        )
+
+    served = {_slot(r) for r in todays}
+    missing = [slot for slot in EXPECTED_SLOTS if slot not in served]
+    if missing:
+        return False, (
+            f"HALF A DAY on {today}: the {missing[0]} slot never ran "
+            f"({len(todays)} run(s), all {next(iter(served))}). The fund did trade, but "
+            f"the second decision and its tweet are gone. The usual cause is GitHub's "
+            f"scheduler firing the slot after the close so the market-hours guard "
+            f"skipped it (every day in September 2026) - check the 'Daily Portfolio "
+            f"Run' start times in the Actions tab against the slots in daily-run.yml."
         )
 
     failed_earlier = [r for r in todays if str(r.get("status") or "") != "success"]

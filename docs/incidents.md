@@ -15,6 +15,51 @@ Entry template:
 
 ---
 
+## 2026-08-27 → 2026-10-02 · The scheduler drifted to 2–5 hours late and the fund quietly halved
+
+- **Symptom.** Four whole trading days with no run at all (08-27, 08-28, 08-31, 09-28),
+  and from 09-01 the fund ran **once** a day on 21 of 23 trading days — zero morning
+  runs in September, so no receipts tweet posted for a month and every day had one
+  decision instead of two. Every one of those workflow runs shows green: the
+  market-hours guard skipped them cleanly and `exit 0`'d. `portfolio_history.csv`
+  simply has four fewer rows and the site looked normal throughout.
+- **Root cause.** The cron times were *budgeted* for GitHub's scheduler delay. Through
+  July that delay was 59–101 min on every run, so 14:40 and 17:50 UTC were chosen to
+  land in-hours up to ~2h late. From 2026-08-26 the distribution moved: median ~105
+  min, p90 ~220 min, max 476 min, and both slots on a given day late by similar
+  amounts (31 of 74 slots fired >130 min late). The afternoon slot — 2h10m from the
+  close in EDT — landed after 16:00 ET almost every day; the morning slot only when
+  the delay passed ~5h20m. #92 had made lateness *non-fatal* (slots can no longer
+  evict each other) without touching the fragility it named: "the scheduler is still
+  1–5h late, we just no longer die of it." Then it got later.
+- **Fix.** Stop budgeting for the delay and absorb it. Each cron now fires 4.5 hours
+  *early* (10:10 and 13:20 UTC) and a stdlib-only step (`scripts/wait_for_slot.py`)
+  sleeps until the slot it serves (14:40 / 17:50 UTC). On time means a 4.5h sleep;
+  3h late means 1.5h; later than the headroom means no wait, the guard decides as
+  before. The job then fast-forwards its by-then-stale checkout before reading any
+  data — the other slot has usually pushed in between, and running on yesterday's
+  state would re-decide the morning's trades. Runner minutes are free on a public
+  repo, so a sleeping job costs nothing. `tests/test_daily_schedule.py` pins the
+  cron→slot mapping, the headroom against the 6h job limit, and the slot landing
+  in-hours on its side of the receipts/spotlight boundary for delays up to 270 min.
+- **Detection gap.** The run-health watchdog (#92, #120) asked exactly one question —
+  *did the fund run today?* — and a half day answers yes. It paged correctly on the
+  four lost days, and the emails were not acted on for five weeks; that is a process
+  gap, not a tooling one. The half days were found on 2026-10-02 by reconstructing
+  fire-time-minus-cron-time for every run since August. The watchdog now expects
+  **both** slots (`MORNING_CUTOFF_HOUR_UTC`, mirroring the cycle's own
+  morning/afternoon boundary) and pages on a missing one: "HALF A DAY on … the morning
+  slot never ran".
+- **Article angle.** *A budget tuned to the observed distribution is a bet that the
+  distribution holds.* The first fix measured the delay carefully and then hard-coded
+  the measurement into the cron times; when the platform's behaviour changed, the
+  system degraded by exactly the amount the budget was short, and every surface said
+  success. Second lesson, same shape as 2026-08-06: a guard that *skips* converts
+  lateness into loss just as surely as a crash does, only quieter. And a watchdog is
+  only as good as the question it asks — "did it run?" passed a month of half days.
+  The durable move is to make timing a property the job controls (fire early, sleep
+  to the slot) rather than one it hopes for.
+
 ## 2026-08-10 (second run) · The same model swap broke a second parameter, three hours later
 
 - **Symptom.** The afternoon run got much further — research follow-up succeeded (the
