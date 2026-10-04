@@ -1,27 +1,27 @@
-# Modest decline, relative resilience
+# A modestly positive week, but behind the benchmark.
 
-*Week of 2026-09-21 to 2026-09-27*
+*Week of 2026-09-28 to 2026-10-04*
 
 ## Performance
 
-For the week ended 2026-09-27, the portfolio declined -0.34%, versus -0.46% for the benchmark, producing 0.12% of alpha. Portfolio value moved from 1054477.64 to 1050900.57.
+For the week ended 2026-10-04, portfolio value moved from 1040200.05 to 1040541.67, a 0.03% return versus 0.63% for the benchmark. Alpha was -0.60%.
 
 ## Winners
 
-- META gained 11.72% this week; its return since the position was opened is 32.45%.
-- GLW gained 8.73% this week; its return since the position was opened is 8.94%.
-- TSM gained 7.87% this week; its return since the position was opened is 8.91%.
+- GLW gained 6.29% this week; its return since the position was opened is 14.44%.
+- TSM gained 5.87% this week; its return since the position was opened is 14.18%.
+- NVDA gained 3.74% this week; its return since the position was opened is 14.98%.
 
 ## Losers
 
-- JPM declined -1.68% this week; its return since the position was opened is 9.06%.
-- XOM declined -1.67% this week; its return since the position was opened is -4.99%.
-- V declined -0.96% this week; its return since the position was opened is 15.28%.
+- WMT declined -5.67% this week; its return since the position was opened is -4.24%.
+- JNJ declined -4.88% this week; its return since the position was opened is 6.57%.
+- META declined -2.15% this week; its return since the position was opened is 27.90%.
 
 ## Portfolio Changes
 
-We sold 50 shares of HD on 2026-09-21.
+On 2026-10-01, we sold 75 shares of AAPL and bought 21 shares of AMD, 94 shares of ORCL, 45 shares of HD, 36 shares of V, and 35 shares of UNH. On 2026-10-02, we sold 45 shares of HD.
 
 ## Outlook
 
-The portfolio finished modestly lower but outperformed the benchmark. Weekly strength in META, GLW, and TSM contrasted with declines in JPM, XOM, and V.
+The week’s positive absolute result did not keep pace with the benchmark. We will remain focused on position-level performance and disciplined portfolio adjustments.
