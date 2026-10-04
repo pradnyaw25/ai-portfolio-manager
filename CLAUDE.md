@@ -53,9 +53,10 @@ The system uses LLM agents to analyze markets, make trade decisions, and manage 
 ## Future Tasks
 
 > Reconciled against the code on 2026-07-07; SEO section + prediction/letter status re-reconciled
-> 2026-07-17; **prediction counts re-reconciled against `data/predictions.jsonl` on 2026-08-07**
-> (the launch gate is cleared — see "Recently Completed" under Distribution & SEO). Completed items
-> moved to "Recently Completed" below rather than deleted, so the backlog keeps its history.
+> 2026-07-17; prediction counts re-reconciled against `data/predictions.jsonl` on 2026-08-07 and
+> **again on 2026-10-02** (N=483; the August numbers below are kept as history, the correction sits
+> on top of them). Completed items moved to "Recently Completed" below rather than deleted, so the
+> backlog keeps its history.
 
 ### High Priority
 - [ ] **Correlation-aware diversification** — Sector concentration *is* enforced
@@ -195,6 +196,29 @@ All four shipped 2026-07-09 (PRs #69, #70, #71). Kept as a record.
   `model-context-protocol`, `evals`, `calibration`, `ai-engineering`, `langgraph`, `llm`,
   `paper-trading`, `agentic-ai`, `qdrant`, `python`). Live now — the repo is public. Reword with
   `gh repo edit --description "…"` if the launch framing shifts.
+
+- [x] **Calibration re-read at N=483** *(2026-10-02)* — **551 predictions, 483 scored, 68 open;
+  247 correct = 51.1%, Brier 0.2686**, worse than a coin flip. The August story below did not
+  survive the extra N, in two ways that make it a *better* story:
+
+  | model | window | n | hit | Brier | best constant call |
+  |---|---|---|---|---|---|
+  | gpt-4.1-mini | 2026-07-08 → 08-07 | 237 | 55.7% | 0.2550 | 59.1% (always UNDERPERFORM) |
+  | gpt-5.6-terra | 2026-08-10 → 09-21 | 239 | 46.4% | 0.2815 | 52.3% |
+
+  1. **The model swap (#112, 2026-08-08) made calibration worse.** terra's 0.6–0.7 bucket hit 37.4%
+     on 91 calls. The predictions page now publishes one curve per model (`by_model` in
+     `predictions.json`, `compute_calibration_by_model`).
+  2. **Neither model beat the constant call for its own window.** 59% of names lagged SPY in July
+     and the model mostly said UNDERPERFORM, which is where August's "good at spotting laggards"
+     finding came from — a regime artifact, not skill. Under terra the base rate flipped to 52% and
+     the laggard edge vanished (UNDERPERFORM 44.5%). The page now publishes the constant-call
+     baseline (`constant_call_baseline`) next to the hit rate. **Never quote the hit rate without
+     it.**
+
+  The two windows don't overlap, so this is a sequential A/B confounded by regime — which is the
+  argument for the same-day [Multi-model live calibration] build, not a substitute for it.
+  `became_trade` is true for 3 scored calls; the traded-only curve is still not viable.
 
 - [x] **Wait for resolved predictions before launching** *(gate cleared 2026-08-07)* — the target was
   ~50–100 resolved. **As of 2026-08-07: 244 predictions, 177 scored, 67 open; 103 correct = 58.2%
