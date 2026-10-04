@@ -48,7 +48,11 @@ def _resolved(predictions: list[dict]) -> list[dict]:
 
 
 def _bucket_index(confidence: float, bucket_size: float, num_buckets: int) -> int:
-    index = int(confidence / bucket_size)
+    # Round before truncating: 0.7 / 0.1 is 6.999999999999999 in floating point, so a
+    # bare int() filed every confidence sitting exactly on a bucket boundary (0.6,
+    # 0.7 — the model's favourite values) into the bucket BELOW it. On the live store
+    # that moved 78 of 483 calls and mislabelled the published curve.
+    index = int(round(confidence / bucket_size, 9))
     return max(0, min(index, num_buckets - 1))  # confidence == 1.0 → last bucket
 
 
