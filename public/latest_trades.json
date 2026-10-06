@@ -1,12 +1,1 @@
-[
-  {
-    "run_id": "run_20261002T192956Z_2fe00593",
-    "date": "2026-10-02",
-    "symbol": "HD",
-    "action": "SELL",
-    "shares": 45,
-    "price": 283.5899963378906,
-    "total": 12761.549835205078,
-    "reasoning": "Exit the small HD position because its -13.8% 30-day return is the portfolio's clearest sustained momentum failure, while the position is only marginally above cost. The sale simplifies the portfolio, avoids averaging into weakness, and modestly increases an already useful liquidity buffer."
-  }
-]
+[]
