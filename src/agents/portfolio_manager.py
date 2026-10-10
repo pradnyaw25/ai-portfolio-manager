@@ -7,7 +7,25 @@ PROMPT_VERSION = "portfolio_manager/v1"
 
 
 class PortfolioManagerAgent:
-    def decide(self, portfolio, research, benchmark, memory=None, analysts=None):
+    def decide(self, portfolio, research, benchmark, memory=None, analysts=None, *, route=None):
+        """The fund's decision. ``route`` pins a specific (provider, model) instead of
+        the strong tier — used by the calibration shadows, which must see the
+        *identical* prompt so their market calls are comparable to the fund's."""
+        context = self.build_prompt(portfolio, research, benchmark, memory=memory, analysts=analysts)
+
+        decision = complete_structured(
+            [{"role": "user", "content": context}],
+            DecisionResponse,
+            tier="strong",
+            route=route,
+            prompt_version=PROMPT_VERSION,
+        )
+
+        # Return a plain dict — the risk manager, memory/citation layers, and
+        # decision journal all consume the decision as a dict.
+        return decision.model_dump()
+
+    def build_prompt(self, portfolio, research, benchmark, memory=None, analysts=None) -> str:
         memory_block = ""
         if memory:
             memory_block = (
@@ -97,14 +115,4 @@ Return ONLY valid JSON in this format:
   "summary": "..."
 }}
 """
-
-        decision = complete_structured(
-            [{"role": "user", "content": context}],
-            DecisionResponse,
-            tier="strong",
-            prompt_version=PROMPT_VERSION,
-        )
-
-        # Return a plain dict — the risk manager, memory/citation layers, and
-        # decision journal all consume the decision as a dict.
-        return decision.model_dump()
+        return context

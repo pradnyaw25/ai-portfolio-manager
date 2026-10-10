@@ -40,6 +40,7 @@ The interesting part is not the trading. It is what is built around an unreliabl
 ### Checking its own work
 
 - **Prediction calibration**: Every run records a directional "beat/lag SPY" call for *every* researched name — holdings and watchlist alike, whether or not the fund trades it — at 5- and 30-day horizons, so the sample covers the model's full confidence distribution rather than only high-conviction names that became trades. Non-overlapping windows per (symbol, horizon) keep samples independent. Scored automatically into a Brier score and a calibration curve.
+- **Multi-model live calibration**: Every cycle, the portfolio manager's *exact* prompt (same snapshot, same market context, same debate transcript) is also sent to each comparison model in `CALIBRATION_SHADOW_ROUTES`, and only its market calls are kept, as shadow predictions in `data/predictions_shadow/<provider>__<model>.jsonl`. They are scored by the same scorer against the same prices, never trade or tweet, and never enter the fund's own calibration page. This replaces the sequential comparison (gpt-4.1-mini in July vs gpt-5.6-terra in August–September), which was confounded by the market regime changing between the two windows: the question "whose stated confidence is honest?" is answered on the same questions on the same day. Groq is wired as an OpenAI-compatible provider; any other such host is one `LLM_COMPAT_PROVIDERS` entry away.
 - **Grounding check**: Daily decisions and weekly letters are both checked against the facts they were given before anything publishes. Its limits are documented too — it verifies a number *came from* the fact base, not that the fact was *labelled* correctly.
 - **Evals in CI**: A golden decision set, an ablation harness scoring the full system against no-memory and no-debate variants, plus chunking and grounding evals. Temperature 0, no network, run on every pull request.
 - **Baselines**: Compared against buy-and-hold SPY, 100% QQQ, and the mean of 500 random equal-weight portfolios drawn from its own watchlist.
@@ -170,6 +171,8 @@ public/            - The published site: dashboard, decisions, letters, symbols,
 ## Configuration
 
 All configuration is managed via environment variables. See `.env.example` for required keys.
+
+**Comparison models.** `CALIBRATION_SHADOW_ROUTES=groq:llama-3.3-70b-versatile,openai:gpt-5.6-luna` turns on the multi-model calibration shadows (off when empty). Each `provider:model` route needs a registered provider: `openai`, or any OpenAI-compatible host listed in `LLM_COMPAT_PROVIDERS` as `name=base_url` (default: `groq=https://api.groq.com/openai/v1`) with its key in `<NAME>_API_KEY`. A provider whose key is missing is simply not registered, and a route that fails is reported as a run warning without touching the others. In production both are repository settings — the `CALIBRATION_SHADOW_ROUTES` variable and the `GROQ_API_KEY` secret — so no commit is needed to switch models. Probe a new route for API quirks first: `python scripts/probe_model_compat.py --models groq:llama-3.3-70b-versatile`.
 
 ## Automation
 

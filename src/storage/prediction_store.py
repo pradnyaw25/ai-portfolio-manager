@@ -1,6 +1,7 @@
 import json
 import uuid
 from datetime import date, timedelta
+from pathlib import Path
 
 from src.config import DATA_DIR
 from src.utils.logger import get_logger
@@ -8,6 +9,14 @@ from src.utils.logger import get_logger
 logger = get_logger(__name__)
 
 PREDICTIONS_FILE = DATA_DIR / "predictions.jsonl"
+
+# Shadow calls — the same PM prompt answered by a comparison model — live in one
+# file per (provider, model), NOT in predictions.jsonl. The fund's own file is the
+# calibration artifact the site, the tweets, the weekly reflection and the MCP
+# server all read; keeping the shadows out of it means none of those readers needs
+# a filter, and the one-open-window-per-(symbol, horizon) guard works per file, so
+# each model gets its own independent sample without any new keying.
+SHADOW_DIR = DATA_DIR / "predictions_shadow"
 
 # Namespace for deterministic prediction IDs. Keying the id on (run_id, symbol)
 # means re-running a run recreates the same id, so upsert leaves an identical row.
@@ -25,7 +34,28 @@ def _prediction_id(
     return str(uuid.uuid4())[:8]
 
 
+def shadow_store_path(provider: str, model: str) -> Path:
+    safe = "".join(ch if ch.isalnum() or ch in "-._" else "_" for ch in model)
+    return SHADOW_DIR / f"{provider}__{safe}.jsonl"
+
+
+def shadow_stores() -> list["PredictionStore"]:
+    """One store per shadow file on disk, in a stable order."""
+    if not SHADOW_DIR.exists():
+        return []
+    return [PredictionStore(path) for path in sorted(SHADOW_DIR.glob("*.jsonl"))]
+
+
 class PredictionStore:
+    def __init__(self, path: Path | None = None):
+        # None means the fund's own file, resolved at access time so tests that
+        # monkeypatch PREDICTIONS_FILE keep working.
+        self._path = path
+
+    @property
+    def path(self) -> Path:
+        return self._path if self._path is not None else PREDICTIONS_FILE
+
     def save(self, prediction: dict) -> None:
         if "id" not in prediction:
             prediction["id"] = _prediction_id(
@@ -53,10 +83,10 @@ class PredictionStore:
         logger.info("Saved prediction: %s %s", prediction["symbol"], prediction["prediction"])
 
     def load_all(self) -> list[dict]:
-        if not PREDICTIONS_FILE.exists():
+        if not self.path.exists():
             return []
         entries = []
-        for line in PREDICTIONS_FILE.read_text().splitlines():
+        for line in self.path.read_text().splitlines():
             if line.strip():
                 entries.append(json.loads(line))
         return entries
@@ -65,7 +95,8 @@ class PredictionStore:
         return [p for p in self.load_all() if p.get("status") == "open"]
 
     def save_all(self, predictions: list[dict]) -> None:
-        with open(PREDICTIONS_FILE, "w") as f:
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        with open(self.path, "w") as f:
             for p in predictions:
                 f.write(json.dumps(p) + "\n")
 
@@ -137,6 +168,8 @@ class PredictionStore:
         horizon: int,
         became_trade: bool = False,
         model: str | None = None,
+        provider: str | None = None,
+        role: str | None = None,
     ) -> dict | None:
         # Independence guard: one OPEN prediction per (symbol, horizon). A fresh
         # window only opens once the prior one for that horizon has resolved, so
@@ -169,5 +202,10 @@ class PredictionStore:
             "status": "open",
             "result": None,
         }
+        if role is not None:
+            # Shadow rows say so explicitly, and carry the host that served the
+            # model — the same model name can be served by more than one provider.
+            prediction["role"] = role
+            prediction["provider"] = provider
         self.save(prediction)
         return prediction

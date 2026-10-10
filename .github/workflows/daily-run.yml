@@ -90,6 +90,12 @@ jobs:
         continue-on-error: true
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          # Multi-model live calibration. Turn on from repository settings, no commit
+          # needed: set the CALIBRATION_SHADOW_ROUTES variable (e.g.
+          # "groq:llama-3.3-70b-versatile,openai:gpt-5.6-luna") and the GROQ_API_KEY
+          # secret. Empty = off. A missing key just leaves that provider unregistered.
+          CALIBRATION_SHADOW_ROUTES: ${{ vars.CALIBRATION_SHADOW_ROUTES }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           LANGFUSE_PUBLIC_KEY: ${{ secrets.LANGFUSE_PUBLIC_KEY }}
           LANGFUSE_SECRET_KEY: ${{ secrets.LANGFUSE_SECRET_KEY }}
           LANGFUSE_BASE_URL: ${{ secrets.LANGFUSE_BASE_URL }}
