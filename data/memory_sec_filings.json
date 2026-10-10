@@ -1,12 +1,12 @@
 {
-  "ingested_at": "2026-10-03T17:20:07.110104Z",
+  "ingested_at": "2026-10-10T17:54:40.984297Z",
   "ingestion": {
     "status": "ok",
-    "created": 2871,
+    "created": 2846,
     "updated": 0,
     "skipped": 0,
     "errors": [],
-    "total_processed": 2871
+    "total_processed": 2846
   },
   "processed": [
     {
@@ -229,8 +229,8 @@
     {
       "symbol": "MU",
       "form": "10-K",
-      "accession_number": "0000723125-25-000028",
-      "filing_date": "2025-10-03",
+      "accession_number": "0000723125-26-000023",
+      "filing_date": "2026-10-09",
       "sections": [
         "item_1",
         "item_1a",
@@ -425,13 +425,13 @@
     {
       "symbol": "APLD",
       "form": "10-Q",
-      "accession_number": "0001144879-26-000030",
-      "filing_date": "2026-04-08",
+      "accession_number": "0001144879-26-000059",
+      "filing_date": "2026-10-07",
       "sections": [
         "item_2",
         "item_3"
       ],
-      "records": 60
+      "records": 35
     },
     {
       "symbol": "GLW",
