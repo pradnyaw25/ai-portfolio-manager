@@ -27,12 +27,12 @@
   <script src="analytics.js" defer></script>
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <link rel="canonical" href="https://glasshousefund.com/predictions.html" />
-  <meta name="description" content="Does an LLM know when it is right? Every BUY spawns a 30-day &quot;beat SPY&quot; prediction, scored with a Brier score and a confidence-calibration curve of predicted confidence vs. observed win rate." />
+  <meta name="description" content="Does an LLM know when it is right? Every run records a &quot;beat or lag SPY&quot; call for every researched name at 5- and 30-day horizons, scored with a Brier score, a confidence-calibration curve per model, and the constant-call base rate it has to beat." />
   <meta name="author" content="Pradnya Wakchaure" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://glasshousefund.com/predictions.html" />
   <meta property="og:title" content="Prediction Accuracy | Glasshouse Fund" />
-  <meta property="og:description" content="Does an LLM know when it is right? Brier score and confidence calibration for an AI fund's 30-day stock predictions." />
+  <meta property="og:description" content="Does an LLM know when it is right? Brier score and per-model confidence calibration for an AI fund's 5- and 30-day stock calls, against the base rate." />
   <meta property="og:image" content="https://glasshousefund.com/og-cover.png" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@GlassHouseFund" />
@@ -407,6 +407,7 @@
     <section class="section">
       <h2>Confidence Calibration</h2>
       <p class="updated-at" id="calibration-summary">Loading...</p>
+      <p class="updated-at" id="constant-call"></p>
       <div style="max-width: 520px; margin: 0 auto 1.5rem;">
         <canvas id="calibration-chart"></canvas>
       </div>
@@ -421,6 +422,27 @@
             </tr>
           </thead>
           <tbody id="calibration-buckets"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>By Model</h2>
+      <p class="updated-at">The fund swapped models mid-history, so the aggregate curve blends two models over two market regimes. Each row is one model's own window, scored against the constant call that would have done best on the same questions.</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Model</th>
+              <th>Window</th>
+              <th class="num">Resolved</th>
+              <th class="num">Hit Rate</th>
+              <th class="num">Best Constant Call</th>
+              <th class="num">Brier</th>
+              <th class="num">Mean Confidence</th>
+            </tr>
+          </thead>
+          <tbody id="by-model"></tbody>
         </table>
       </div>
     </section>
@@ -659,6 +681,8 @@
           accuracy_pct: resolved.length ? Number(((wins.length / resolved.length) * 100).toFixed(1)) : null,
         },
         calibration: computeCalibration(resolved),
+        constant_call: null,
+        by_model: [],
         best_predictions: ranked.slice(0, 10),
         worst_predictions: [...ranked].reverse().slice(0, 10),
         upcoming_predictions: open.map(serialize).sort((a, b) => String(a.due_date).localeCompare(String(b.due_date))),
@@ -707,8 +731,48 @@
       };
     }
 
+    const MODEL_COLORS = ["#f2a541", "#3ec9a7", "#c084fc", "#f06c7a", "#8ab4f8"];
+
+    function renderConstantCall(baseline, calibration) {
+      const el = document.getElementById("constant-call");
+      if (!el) return;
+      if (!baseline || !baseline.sample_size || !calibration || !calibration.sample_size) {
+        el.textContent = "";
+        return;
+      }
+      const call = String(baseline.best_call || "").toLowerCase();
+      el.textContent =
+        `Base rate: on the same questions, always calling "${call}" would have hit ` +
+        `${(baseline.hit_rate * 100).toFixed(0)}% — the model hit ${(calibration.win_rate * 100).toFixed(0)}%.`;
+    }
+
+    function renderByModel(blocks) {
+      const body = document.getElementById("by-model");
+      if (!body) return;
+      if (!blocks || !blocks.length) {
+        body.innerHTML = '<tr><td colspan="7" style="text-align:center; opacity:0.6;">Per-model split appears once the next export runs.</td></tr>';
+        return;
+      }
+      body.innerHTML = blocks.map(b => {
+        const base = b.constant_call || {};
+        const baseText = base.best_call
+          ? `${(base.hit_rate * 100).toFixed(0)}% (${escapeHtml(String(base.best_call).toLowerCase())})`
+          : "-";
+        return `
+          <tr>
+            <td>${escapeHtml(b.model)}</td>
+            <td>${escapeHtml(b.first_date)} → ${escapeHtml(b.last_date)}</td>
+            <td class="num">${b.sample_size}</td>
+            <td class="num">${(b.win_rate * 100).toFixed(1)}%</td>
+            <td class="num">${baseText}</td>
+            <td class="num">${b.brier_score}</td>
+            <td class="num">${(b.mean_confidence * 100).toFixed(0)}%</td>
+          </tr>`;
+      }).join("");
+    }
+
     let calibrationChart;
-    function renderCalibration(calibration) {
+    function renderCalibration(calibration, byModel = []) {
       calibration = calibration || { sample_size: 0, buckets: [] };
       const summary = document.getElementById("calibration-summary");
       const buckets = calibration.buckets || [];
@@ -742,13 +806,23 @@
         data: {
           datasets: [
             {
-              label: "Model (predicted vs actual)",
+              label: "All models (predicted vs actual)",
               data: buckets.map(b => ({ x: b.predicted, y: b.actual })),
               backgroundColor: "#4f8ef7",
               pointRadius: 6,
               showLine: true,
               borderColor: "#4f8ef7",
             },
+            // Chart only models with enough calls for a curve; the table shows them all.
+            ...(byModel || []).filter(b => b.sample_size >= 30).map((b, i) => ({
+              label: `${b.model} (n=${b.sample_size})`,
+              data: (b.buckets || []).map(k => ({ x: k.predicted, y: k.actual })),
+              borderColor: MODEL_COLORS[i % MODEL_COLORS.length],
+              backgroundColor: MODEL_COLORS[i % MODEL_COLORS.length],
+              borderDash: [3, 3],
+              pointRadius: 4,
+              showLine: true,
+            })),
             {
               label: "Perfect calibration",
               data: [{ x: 0, y: 0 }, { x: 1, y: 1 }],
@@ -796,7 +870,9 @@
         <div class="stat-box"><div class="stat-value">${pct(metrics.accuracy_pct, 1)}</div><div class="stat-label">Accuracy</div></div>
       `;
 
-      renderCalibration(dashboard.calibration);
+      renderCalibration(dashboard.calibration, dashboard.by_model || []);
+      renderConstantCall(dashboard.constant_call, dashboard.calibration);
+      renderByModel(dashboard.by_model || []);
 
       document.getElementById("best-predictions").innerHTML =
         renderResolvedRows(dashboard.best_predictions || [], "No resolved predictions yet.");

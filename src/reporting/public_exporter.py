@@ -6,7 +6,12 @@ from pathlib import Path
 from src.config import DATA_DIR
 from src.models.portfolio import PortfolioSnapshot
 from src.models.trade import Trade
-from src.scoring.calibration import compute_calibration, was_correct
+from src.scoring.calibration import (
+    compute_calibration,
+    compute_calibration_by_model,
+    constant_call_baseline,
+    was_correct,
+)
 from src.reporting.decision_pages import strip_em_dashes
 from src.utils.logger import get_logger
 
@@ -162,6 +167,11 @@ class PublicExporter:
                 "accuracy_pct": round((len(wins) / len(resolved)) * 100, 1) if resolved else None,
             },
             "calibration": compute_calibration(predictions),
+            # The hit rate only means something against the window's base rate, and
+            # the aggregate curve blends two models over two regimes. Both are
+            # published so the page can't quote a flattering blur.
+            "constant_call": constant_call_baseline(predictions),
+            "by_model": compute_calibration_by_model(predictions),
             "best_predictions": self._rank_resolved_predictions(resolved, reverse=True)[:10],
             "worst_predictions": self._rank_resolved_predictions(resolved, reverse=False)[:10],
             # Show every open bet (one per symbol), not a top-10 slice — this is the

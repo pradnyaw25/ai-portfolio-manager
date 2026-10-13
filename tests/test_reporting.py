@@ -159,6 +159,14 @@ def test_public_exporter_writes_prediction_dashboard(tmp_path, monkeypatch):
     assert payload["worst_predictions"][0]["alpha_pct"] == -7.0
     assert payload["upcoming_predictions"][0]["id"] == "open"
 
+    # The page can't quote a flattering blur: the base rate and the per-model split
+    # ship with the aggregate curve.
+    assert payload["constant_call"]["sample_size"] == 2
+    assert payload["constant_call"]["best_call"] in {"OUTPERFORM", "UNDERPERFORM"}
+    assert [b["model"] for b in payload["by_model"]] == ["untagged"]
+    assert payload["by_model"][0]["sample_size"] == 2
+    assert payload["by_model"][0]["constant_call"] == payload["constant_call"]
+
     # Calibration is computed over the 2 resolved predictions (one win, one loss).
     calibration = payload["calibration"]
     assert calibration["sample_size"] == 2
