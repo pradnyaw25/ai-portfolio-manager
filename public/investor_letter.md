@@ -1,27 +1,27 @@
-# Modest decline, relative resilience
+# The portfolio advanced 0.62% for the week ended 2026-10-11, outperforming the benchmark by 0.72%.
 
-*Week of 2026-09-21 to 2026-09-27*
+*Week of 2026-10-05 to 2026-10-11*
 
 ## Performance
 
-For the week ended 2026-09-27, the portfolio declined -0.34%, versus -0.46% for the benchmark, producing 0.12% of alpha. Portfolio value moved from 1054477.64 to 1050900.57.
+Portfolio value rose from 1050615.72 to 1057123.89. The benchmark returned -0.10%, versus the portfolio’s 0.62%.
 
 ## Winners
 
-- META gained 11.72% this week; its return since the position was opened is 32.45%.
-- GLW gained 8.73% this week; its return since the position was opened is 8.94%.
-- TSM gained 7.87% this week; its return since the position was opened is 8.91%.
+- V gained 7.27% this week; since the position was opened, it is up 12.04%.
+- WMT gained 7.15% this week; since the position was opened, it is up 2.26%.
+- MA gained 6.99% this week; since the position was opened, it is up 21.36%.
 
 ## Losers
 
-- JPM declined -1.68% this week; its return since the position was opened is 9.06%.
-- XOM declined -1.67% this week; its return since the position was opened is -4.99%.
-- V declined -0.96% this week; its return since the position was opened is 15.28%.
+- JNJ declined -1.25% this week; since the position was opened, it is up 8.84%.
+- META declined -0.90% this week; since the position was opened, it is up 26.60%.
+- TSM declined -0.63% this week; since the position was opened, it is up 9.05%.
 
 ## Portfolio Changes
 
-We sold 50 shares of HD on 2026-09-21.
+No trades were made during the week.
 
 ## Outlook
 
-The portfolio finished modestly lower but outperformed the benchmark. Weekly strength in META, GLW, and TSM contrasted with declines in JPM, XOM, and V.
+This was a constructive week, with broad gains across several holdings outweighing modest declines in JNJ, META, and TSM. We remain focused on disciplined position monitoring and relative performance versus the benchmark.
