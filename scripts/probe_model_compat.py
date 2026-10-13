@@ -23,6 +23,7 @@ fails for a reason the provider does not already work around.
 """
 
 import argparse
+import os
 import sys
 
 from openai import OpenAI
@@ -83,10 +84,27 @@ def probe(client: OpenAI, model: str) -> list[tuple[str, str | None, str | None]
     return results
 
 
-def verify_provider(model: str) -> str | None:
+def client_for(provider_name: str) -> OpenAI:
+    """An SDK client for 'openai' or any name in config.LLM_COMPAT_PROVIDERS."""
+    if provider_name == "openai":
+        return OpenAI(timeout=LLM_REQUEST_TIMEOUT)
+    from src.llm.providers import compat_api_key_env
+
+    base_url = config.LLM_COMPAT_PROVIDERS.get(provider_name)
+    if base_url is None:
+        raise SystemExit(
+            f"unknown provider '{provider_name}' (known: openai, {', '.join(config.LLM_COMPAT_PROVIDERS) or 'none'})"
+        )
+    api_key = os.environ.get(compat_api_key_env(provider_name))
+    if not api_key:
+        raise SystemExit(f"{compat_api_key_env(provider_name)} is not set")
+    return OpenAI(timeout=LLM_REQUEST_TIMEOUT, base_url=base_url, api_key=api_key)
+
+
+def verify_provider(model: str, provider_name: str = "openai") -> str | None:
     """Run the same shapes through OpenAIProvider, which should absorb every known
     quirk. Returns an error string if it cannot."""
-    provider = OpenAIProvider()
+    provider = OpenAIProvider(client_for(provider_name), name=provider_name)
     try:
         provider.chat(model=model, messages=_ASK, temperature=0, max_tokens=64)
         provider.chat(model=model, messages=_TOOL_ASK, temperature=0, tools=_TOOLS)
@@ -99,16 +117,26 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--models",
-        default=",".join(dict.fromkeys([config.LLM_STRONG_MODEL, config.LLM_CHEAP_MODEL])),
-        help="comma-separated models (default: the configured strong and cheap tiers)",
+        default=",".join(
+            dict.fromkeys(
+                [config.LLM_STRONG_MODEL, config.LLM_CHEAP_MODEL]
+                + [f"{p}:{m}" for p, m in config.CALIBRATION_SHADOW_ROUTES]
+            )
+        ),
+        help=(
+            "comma-separated models, optionally provider-prefixed as provider:model "
+            "(default: the configured strong and cheap tiers, plus any shadow routes)"
+        ),
     )
     args = parser.parse_args()
 
-    client = OpenAI(timeout=LLM_REQUEST_TIMEOUT)
     unhandled = 0
 
-    for model in [m.strip() for m in args.models.split(",") if m.strip()]:
-        print(f"\n=== {model} ===")
+    for spec in [m.strip() for m in args.models.split(",") if m.strip()]:
+        provider_name, sep, model = spec.rpartition(":")
+        provider_name = provider_name if sep else "openai"
+        client = client_for(provider_name)
+        print(f"\n=== {provider_name}:{model} ===")
         for label, handled_by, error in probe(client, model):
             if error is None:
                 print(f"  ok      {label}")
@@ -118,7 +146,7 @@ def main() -> int:
                 unhandled += 1
                 print(f"  FAIL    {label}: {error[:160]}")
 
-        provider_error = verify_provider(model)
+        provider_error = verify_provider(model, provider_name)
         if provider_error:
             unhandled += 1
             print(f"  FAIL    via OpenAIProvider: {provider_error[:160]}")

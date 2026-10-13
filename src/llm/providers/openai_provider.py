@@ -57,10 +57,29 @@ class OpenAIProvider(LLMProvider):
     # family rejects the old name outright, so this is a rename, not a fallback.
     _RENAMED_MAX_TOKENS: set[str] = set()
 
-    def __init__(self, client: OpenAI | None = None):
+    def __init__(
+        self,
+        client: OpenAI | None = None,
+        *,
+        name: str = "openai",
+        base_url: str | None = None,
+        api_key: str | None = None,
+    ):
+        # One class serves every OpenAI-compatible endpoint (Groq, and others that
+        # speak chat.completions): `name` is the routing key, `base_url`/`api_key`
+        # point the SDK elsewhere. The per-model quirk sets are class-level on
+        # purpose — a quirk belongs to a model, not to the host serving it.
+        self.name = name
         # Cap the per-request timeout so a stalled connection fails fast and lets the
         # gateway's retry/backoff recover, instead of hanging on the SDK's 600s default.
-        self._client = client or OpenAI(timeout=LLM_REQUEST_TIMEOUT)
+        if client is None:
+            kwargs: dict[str, Any] = {"timeout": LLM_REQUEST_TIMEOUT}
+            if base_url:
+                kwargs["base_url"] = base_url
+            if api_key:
+                kwargs["api_key"] = api_key
+            client = OpenAI(**kwargs)
+        self._client = client
 
     def chat(
         self,

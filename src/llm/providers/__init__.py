@@ -58,8 +58,33 @@ class LLMProvider(Protocol):
     ) -> ProviderResponse: ...
 
 
-def build_default_providers() -> dict[str, LLMProvider]:
-    """The provider registry used by the gateway (name → instance)."""
+def compat_api_key_env(name: str) -> str:
+    """The env var that authenticates an OpenAI-compatible provider: GROQ_API_KEY."""
+    return f"{name.upper().replace('-', '_')}_API_KEY"
+
+
+def build_default_providers(
+    *, compat: dict[str, str] | None = None, environ: dict | None = None
+) -> dict[str, LLMProvider]:
+    """The provider registry used by the gateway (name → instance).
+
+    OpenAI is always present. Each OpenAI-compatible provider from
+    ``config.LLM_COMPAT_PROVIDERS`` is registered only when its API key is in the
+    environment — a missing key means "not configured", never a crash, because the
+    comparison models must not be able to take the fund's own calls down with them.
+    """
+    import os
+
+    from src import config
     from src.llm.providers.openai_provider import OpenAIProvider
 
-    return {"openai": OpenAIProvider()}
+    environ = os.environ if environ is None else environ
+    compat = config.LLM_COMPAT_PROVIDERS if compat is None else compat
+
+    providers: dict[str, LLMProvider] = {"openai": OpenAIProvider()}
+    for name, base_url in compat.items():
+        api_key = environ.get(compat_api_key_env(name))
+        if not api_key:
+            continue
+        providers[name] = OpenAIProvider(name=name, base_url=base_url, api_key=api_key)
+    return providers

@@ -30,7 +30,10 @@ logger = get_logger(__name__)
 # The bar for this set: the fund must be able to decide without the node's output.
 # Anything that produces or validates a trade, moves money, or writes the audit
 # trail stays fatal.
-OPTIONAL_NODES = frozenset({"research_followup"})
+#
+# `shadow_market_calls` is the multi-model calibration comparison: extra LLM calls
+# whose output never reaches a trade. The fund decides exactly the same without it.
+OPTIONAL_NODES = frozenset({"research_followup", "shadow_market_calls"})
 
 
 class DailyGraphState(TypedDict):
@@ -57,6 +60,7 @@ def build_daily_cycle_graph():
         ("retrieve_memory", retrieve_memory_node),
         ("research_followup", research_followup_node),
         ("decide_trades", decide_trades_node),
+        ("shadow_market_calls", shadow_market_calls_node),
         ("check_grounding", check_grounding_node),
         ("review_risk", review_risk_node),
         ("check_rebalance", check_rebalance_node),
@@ -326,6 +330,29 @@ def decide_trades_node(state: DailyGraphState) -> DailyGraphState:
     )
     if not (run.decisions or {}).get("trades"):
         run.diagnostics["decision"] = "empty: model proposed no trades"
+    return {"run": run}
+
+
+def shadow_market_calls_node(state: DailyGraphState) -> DailyGraphState:
+    """Right after the decision and before anything executes, so the comparison
+    models see the same pre-trade snapshot the fund's own PM saw."""
+    run = state["run"]
+    if not config.CALIBRATION_SHADOW_ROUTES:
+        run.diagnostics["shadow_market_calls"] = "disabled: CALIBRATION_SHADOW_ROUTES is empty"
+        return {"run": run}
+    run.shadow_calls = steps.shadow_market_calls(
+        run.decisions,
+        run.research,
+        run.engine,
+        run.benchmark_client,
+        run.memory_groups,
+        run.market_data,
+        run.run_id,
+    )
+    for key, outcome in run.shadow_calls.items():
+        if isinstance(outcome, dict) and outcome.get("error"):
+            run.warnings.append(f"shadow_market_calls: {key} failed: {outcome['error']}")
+    run.diagnostics["shadow_market_calls"] = run.shadow_calls
     return {"run": run}
 
 

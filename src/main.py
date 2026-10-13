@@ -30,7 +30,8 @@ from src.simulator.portfolio_engine import PortfolioEngine
 from src.simulator.performance import PerformanceTracker
 from src.reporting.markdown_report import MarkdownReportGenerator
 from src.reporting.public_exporter import PublicExporter
-from src.storage.prediction_store import PredictionStore
+from src.storage.prediction_store import PredictionStore, shadow_store_path
+from src.llm.routing import shadow_routes
 from src.scoring.prediction_scorer import PredictionScorer
 from src.utils.logger import get_logger
 from src.utils.run_id import utc_now_iso
@@ -261,6 +262,39 @@ def record_market_calls(decisions, trades, approved_trades, research, market_dat
         return
 
     executed_buys = {t.symbol for t in (trades or []) if t.action.value == "BUY"}
+    recorded = _record_calls(
+        store,
+        calls,
+        research=research,
+        market_data=market_data,
+        spy_price=spy_price,
+        run_id=run_id,
+        # Market calls are a strong-tier product: they come out of the portfolio
+        # manager's decision. Records the configured route rather than the served
+        # one, so a fallback (unset today) would not show.
+        model=LLM_STRONG_MODEL,
+        executed_buys=executed_buys,
+    )
+    logger.info(
+        "Recorded %d market-call prediction(s) across %d horizon(s) from %d call(s)",
+        recorded, len(PredictionStore.HORIZONS), len(calls),
+    )
+
+
+def _record_calls(
+    store,
+    calls,
+    *,
+    research,
+    market_data,
+    spy_price,
+    run_id,
+    model,
+    executed_buys=frozenset(),
+    provider=None,
+    role=None,
+):
+    """Write one prediction per (call, horizon) into ``store``; returns how many opened."""
     prices = extract_prices(research or {})
     recorded = 0
     for call in calls:
@@ -286,17 +320,71 @@ def record_market_calls(decisions, trades, approved_trades, research, market_dat
                 spy_price=spy_price,
                 horizon=horizon,
                 became_trade=symbol in executed_buys,
-                # Market calls are a strong-tier product: they come out of the
-                # portfolio manager's decision. Records the configured route rather
-                # than the served one, so a fallback (unset today) would not show.
-                model=LLM_STRONG_MODEL,
+                model=model,
+                provider=provider,
+                role=role,
             )
             if created is not None:
                 recorded += 1
-    logger.info(
-        "Recorded %d market-call prediction(s) across %d horizon(s) from %d call(s)",
-        recorded, len(PredictionStore.HORIZONS), len(calls),
-    )
+    return recorded
+
+
+def shadow_market_calls(decisions, research, engine, benchmark_client, memory_groups, market_data, run_id):
+    """Multi-model live calibration: send the portfolio manager's *exact* prompt —
+    same snapshot, same market context, same debate transcript — to every configured
+    comparison route and record only their ``market_calls`` as shadow predictions,
+    one file per model. Nothing here trades, tweets, or touches the fund's own file.
+
+    Returns a per-route summary for run_status. A route that fails is reported and
+    skipped; the others still run. Disabled (empty summary) when no routes are set.
+    """
+    routes = shadow_routes()
+    if not routes:
+        return {}
+    if not (decisions or {}).get("market_calls"):
+        # The fund's own prompt produced no calls (older prompt); a comparison
+        # against nothing is not a comparison.
+        return {"status": "skipped: the fund recorded no market calls this run"}
+
+    try:
+        spy_price = market_data.get_price("SPY")
+    except Exception:
+        spy_price = 0
+    if spy_price <= 0:
+        return {"status": "skipped: no SPY price"}
+
+    portfolio = engine.get_snapshot()
+    benchmark = benchmark_client.get_sp500_performance()
+    # The live PM decides *after* the debate and sees its transcript; the shadows
+    # must see the same transcript or the prompts differ and the comparison is void.
+    analysts = (decisions or {}).get("debate") or None
+    manager = PortfolioManagerAgent()
+
+    summary = {}
+    for route in routes:
+        key = f"{route.provider}:{route.model}"
+        try:
+            decision = manager.decide(
+                portfolio, research, benchmark, memory=memory_groups, analysts=analysts, route=route
+            )
+            calls = decision.get("market_calls") or []
+            recorded = _record_calls(
+                PredictionStore(shadow_store_path(route.provider, route.model)),
+                calls,
+                research=research,
+                market_data=market_data,
+                spy_price=spy_price,
+                run_id=run_id,
+                model=route.model,
+                provider=route.provider,
+                role="shadow",
+            )
+            summary[key] = {"calls": len(calls), "recorded": recorded}
+            logger.info("Shadow %s: %d call(s), %d prediction(s) opened", key, len(calls), recorded)
+        except Exception as exc:  # one provider's outage must not cost the others
+            summary[key] = {"error": f"{type(exc).__name__}: {str(exc)[:200]}"}
+            logger.warning("Shadow %s failed: %s", key, exc)
+    return summary
 
 
 def run_grounding_check(decisions, research, memory_context, snapshot):

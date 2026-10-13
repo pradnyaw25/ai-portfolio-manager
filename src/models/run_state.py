@@ -19,6 +19,9 @@ class PortfolioRunState:
     memory_groups: dict[str, list[dict]] = field(default_factory=dict)
     research_brief: dict | None = None
     decisions: dict = field(default_factory=dict)
+    # Per-route outcome of the multi-model calibration shadows ("provider:model" ->
+    # recorded count or error). Surfaced in run_status; never feeds a trade.
+    shadow_calls: dict = field(default_factory=dict)
     grounding: dict | None = None
     risk_review: Any | None = None
     rebalance_result: Any | None = None

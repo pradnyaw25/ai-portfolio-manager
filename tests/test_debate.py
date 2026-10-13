@@ -24,7 +24,7 @@ def test_analyst_stamps_authoritative_role(monkeypatch):
 def test_each_analyst_uses_its_prompt_version(monkeypatch):
     seen = {}
 
-    def fake(messages, schema, *, tier, prompt_version):
+    def fake(messages, schema, *, tier, prompt_version, route=None):
         seen[prompt_version] = tier
         return AnalystThesis(thesis="x")
 
@@ -144,7 +144,7 @@ def test_conviction_spread_excludes_rebuttal_and_needs_two():
 def test_pm_requests_bear_case_response_when_given_analysts(monkeypatch):
     captured = {}
 
-    def fake(messages, schema, *, tier, prompt_version):
+    def fake(messages, schema, *, tier, prompt_version, route=None):
         captured["prompt"] = messages[0]["content"]
         captured["tier"] = tier
         return DecisionResponse(outlook="BULLISH", bear_case_response="rebutted")

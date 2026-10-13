@@ -138,7 +138,66 @@ LLM_MAX_RETRIES = int(os.getenv("LLM_MAX_RETRIES", "2"))
 LLM_REQUEST_TIMEOUT = float(os.getenv("LLM_REQUEST_TIMEOUT", "60"))
 LLM_CALL_LOG = DATA_DIR / "llm_calls.jsonl"
 
-SUPPORTED_LLM_PROVIDERS = {"openai"}
+# OpenAI-compatible providers beyond OpenAI itself, as "name=base_url" pairs. Each
+# is served by OpenAIProvider pointed at that base_url and authenticated with the
+# env var <NAME>_API_KEY (GROQ_API_KEY for groq). A provider whose key is missing is
+# simply not registered, so an unconfigured comparison model can never break the
+# fund's own calls. Groq ships by default because that is where the Llama
+# comparison runs; Anthropic's OpenAI-compatible endpoint can be added the same way
+# (run `make probe-models` first — the gateway's structured-output path assumes
+# json_object mode, and compatibility layers differ on it).
+def _parse_compat_providers(raw: str) -> dict[str, str]:
+    providers: dict[str, str] = {}
+    for item in raw.split(","):
+        item = item.strip()
+        if not item:
+            continue
+        name, sep, base_url = item.partition("=")
+        name, base_url = name.strip().lower(), base_url.strip()
+        if not sep or not name or not base_url:
+            raise ConfigError(
+                f"LLM_COMPAT_PROVIDERS entry {item!r} must look like name=https://host/v1"
+            )
+        providers[name] = base_url
+    return providers
+
+
+LLM_COMPAT_PROVIDERS: dict[str, str] = _parse_compat_providers(
+    os.getenv("LLM_COMPAT_PROVIDERS", "groq=https://api.groq.com/openai/v1")
+)
+
+SUPPORTED_LLM_PROVIDERS = {"openai"} | set(LLM_COMPAT_PROVIDERS)
+
+# Multi-model live calibration. Every cycle, the portfolio manager's prompt — the
+# exact prompt, same debate transcript, same market context — is also sent to each
+# of these "provider:model" routes, and only their `market_calls` are kept, as
+# shadow predictions in data/predictions_shadow/<provider>__<model>.jsonl. They
+# never trade, tweet, or reach the fund's own calibration page; they exist so the
+# question "whose stated confidence is honest?" gets answered on the same questions
+# on the same day, instead of across a model swap in different market regimes
+# (gpt-4.1-mini vs gpt-5.6-terra, Jul vs Aug–Sep 2026, was exactly that confound).
+# Empty by default: nothing runs and nothing costs until a route is configured —
+# in production via the CALIBRATION_SHADOW_ROUTES repository variable.
+def _parse_routes(raw: str) -> list[tuple[str, str]]:
+    routes: list[tuple[str, str]] = []
+    for item in raw.split(","):
+        item = item.strip()
+        if not item:
+            continue
+        provider, sep, model = item.partition(":")
+        provider, model = provider.strip().lower(), model.strip()
+        if not sep or not provider or not model:
+            raise ConfigError(
+                f"CALIBRATION_SHADOW_ROUTES entry {item!r} must look like provider:model"
+            )
+        if (provider, model) not in routes:
+            routes.append((provider, model))
+    return routes
+
+
+CALIBRATION_SHADOW_ROUTES: list[tuple[str, str]] = _parse_routes(
+    os.getenv("CALIBRATION_SHADOW_ROUTES", "")
+)
 
 # Observability. Langfuse tracing is optional: enabled only when both keys are
 # set, otherwise all tracing is a no-op. Run history is a durable record of every
@@ -303,6 +362,20 @@ def validate_config() -> None:
                 f"LLM_FALLBACK_PROVIDER '{LLM_FALLBACK_PROVIDER}' is not supported "
                 f"(supported: {sorted(SUPPORTED_LLM_PROVIDERS)})"
             )
+    for provider, model in CALIBRATION_SHADOW_ROUTES:
+        if provider not in SUPPORTED_LLM_PROVIDERS:
+            errors.append(
+                f"CALIBRATION_SHADOW_ROUTES provider '{provider}' is not supported "
+                f"(supported: {sorted(SUPPORTED_LLM_PROVIDERS)}; add it to LLM_COMPAT_PROVIDERS)"
+            )
+        if (provider, model) == (LLM_STRONG_PROVIDER, LLM_STRONG_MODEL):
+            errors.append(
+                f"CALIBRATION_SHADOW_ROUTES includes the strong tier itself ({provider}:{model}); "
+                "the fund's own calls are already recorded"
+            )
+    for name, base_url in LLM_COMPAT_PROVIDERS.items():
+        if not base_url.startswith(("http://", "https://")):
+            errors.append(f"LLM_COMPAT_PROVIDERS base_url for '{name}' must be an http(s) URL")
     if not LLM_STRONG_MODEL.strip():
         errors.append("LLM_STRONG_MODEL must not be empty")
     if not LLM_CHEAP_MODEL.strip():
