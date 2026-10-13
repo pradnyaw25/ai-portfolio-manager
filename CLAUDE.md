@@ -171,6 +171,15 @@ All four shipped 2026-07-09 (PRs #69, #70, #71). Kept as a record.
 
 ### Recently Completed
 
+- [x] **Daily runs fire early and wait for their slot** *(2026-10-02)* — GitHub's scheduler
+  drifted from ~1h late to a median ~105 min / max 476 min in late August; the cron times
+  had *budgeted* ~2h, so four trading days were lost outright and the afternoon slot was
+  skipped on 21 of 23 days in September (zero morning runs, no receipts tweets). Crons now
+  fire at 10:10 / 13:20 UTC and `scripts/wait_for_slot.py` sleeps to 14:40 / 17:50; the
+  job fast-forwards its checkout after the wait. The watchdog pages on a missing slot.
+  Delay distribution per slot is reconstructable from `gh run list` createdAt minus the
+  cron time — do that before touching the schedule again. `docs/incidents.md` has the entry.
+
 - [x] **Rate limit handling** *(2026-08-08, #109)* — yfinance and the news client both caught bare
   `Exception` and returned empty, so a 429 was indistinguishable from a delisted ticker and the fund
   decided on partial data while reporting success. Raised errors now retry with exponential backoff;

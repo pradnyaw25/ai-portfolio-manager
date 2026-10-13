@@ -43,7 +43,7 @@ The interesting part is not the trading. It is what is built around an unreliabl
 - **Grounding check**: Daily decisions and weekly letters are both checked against the facts they were given before anything publishes. Its limits are documented too — it verifies a number *came from* the fact base, not that the fact was *labelled* correctly.
 - **Evals in CI**: A golden decision set, an ablation harness scoring the full system against no-memory and no-debate variants, plus chunking and grounding evals. Temperature 0, no network, run on every pull request.
 - **Baselines**: Compared against buy-and-hold SPY, 100% QQQ, and the mean of 500 random equal-weight portfolios drawn from its own watchlist.
-- **Run health watchdog**: An independent scheduled check that the fund actually ran and succeeded on each trading day. A run cancelled before its first step writes no row anywhere, so only an outside observer can notice the gap.
+- **Run health watchdog**: An independent scheduled check that the fund actually ran, in both daily slots, and succeeded on each trading day. A run cancelled before its first step writes no row anywhere, so only an outside observer can notice the gap.
 
 ### What it publishes
 
@@ -173,11 +173,11 @@ All configuration is managed via environment variables. See `.env.example` for r
 
 ## Automation
 
-GitHub Actions runs the portfolio cycle twice each weekday (`.github/workflows/daily-run.yml`, at 14:40 and 17:50 UTC). Those times budget for GitHub's scheduler, which on this repo has started runs 59–101 minutes late as a rule and once by ~4h45m; a market-hours guard aborts a run that lands outside regular US market hours (9:30am–4:00pm America/New_York), so the cron times are chosen to stay in-hours even when late. Manual workflow dispatches always run.
+GitHub Actions runs the portfolio cycle twice each weekday (`.github/workflows/daily-run.yml`), serving two slots: 14:40 and 17:50 UTC. A market-hours guard aborts any run that lands outside regular US market hours (9:30am–4:00pm America/New_York), and GitHub's scheduler fires this repo's crons late — 59–101 minutes through July 2026, then a median of ~105 minutes and up to ~8 hours from late August. So each cron fires **4.5 hours early** and the job sleeps until its slot (`scripts/wait_for_slot.py`): a delay up to that headroom changes nothing, and a longer one starts the run immediately for the guard to judge. The job fast-forwards its checkout after the wait, because the other slot has usually pushed in between. Manual workflow dispatches never wait and always run.
 
 Each cron slot has its own concurrency group. They previously shared one, and on 2026-08-06 a late morning run was still queued when the afternoon run arrived and evicted it — the fund lost a whole trading day.
 
-**Run health check** (`.github/workflows/run-health.yml`) — a separate watchdog at 22:15 UTC on weekdays that verifies the fund actually ran and succeeded that trading day, and fails (emailing the owner) if not. It is deliberately independent of the daily run: a run cancelled before its first step writes no `run_history` row, so the pipeline cannot detect its own absence. It stays quiet on weekends, on the market holidays listed in `scripts/check_run_health.py`, and when a failed run was recovered by the day's second slot. Run it by hand for any date:
+**Run health check** (`.github/workflows/run-health.yml`) — a separate watchdog at 22:15 UTC on weekdays that verifies the fund actually ran, in **both** slots, and succeeded that trading day, and fails (emailing the owner) if not. It is deliberately independent of the daily run: a run cancelled before its first step writes no `run_history` row, so the pipeline cannot detect its own absence — and in September 2026 the afternoon slot was lost on 21 of 23 days while a check that only asked "did it run?" passed every one. It stays quiet on weekends, on the market holidays listed in `scripts/check_run_health.py`, and when a failed run was recovered by the day's second slot. Run it by hand for any date:
 
 ```bash
 python scripts/check_run_health.py --date 2026-08-06
