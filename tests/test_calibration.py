@@ -102,3 +102,20 @@ def test_was_correct_prefers_correct_over_outperformed():
 def test_was_correct_is_none_when_unresolved():
     assert was_correct({"result": None}) is None
     assert was_correct({}) is None
+
+
+def test_a_confidence_on_a_bucket_boundary_lands_in_the_bucket_it_names():
+    """0.7 / 0.1 is 6.999999999999999, so int() put a 0.7 call in the 60–70% bucket
+    and a 0.6 call in the 50–60% one. Those are the model's two most common values:
+    78 of 483 live calls were in the wrong row of the published table."""
+    rows = [
+        {"status": "scored", "confidence": 0.6, "result": {"correct": True}},
+        {"status": "scored", "confidence": 0.7, "result": {"correct": False}},
+    ]
+
+    buckets = compute_calibration(rows)["buckets"]
+
+    assert [(b["lower"], b["upper"], b["count"]) for b in buckets] == [
+        (0.6, 0.7, 1),
+        (0.7, 0.8, 1),
+    ]
