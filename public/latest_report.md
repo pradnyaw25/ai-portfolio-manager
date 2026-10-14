@@ -1,10 +1,10 @@
 # Portfolio Report, 2026-10-14
 
 ## Summary
-- **Run ID:** `run_20261014T150520Z_2904d147`
-- **Total Value:** $1,052,640.45
-- **Cash:** $272,449.26 (25.9%)
-- **Invested:** $780,191.20
+- **Run ID:** `run_20261014T180231Z_282fa473`
+- **Total Value:** $1,047,682.60
+- **Cash:** $272,449.26 (26.0%)
+- **Invested:** $775,233.34
 - **Positions:** 18
 - **Outlook:** NEUTRAL
 
@@ -12,24 +12,24 @@
 
 | Symbol | Shares | Avg Cost | Current | P&L % |
 |--------|--------|----------|---------|-------|
-| AAPL | 599 | $298.69 | $345.21 | 15.6% |
-| JNJ | 543 | $239.58 | $251.64 | 5.0% |
-| AMZN | 531 | $240.96 | $255.34 | 6.0% |
-| MSFT | 137 | $412.76 | $538.78 | 30.5% |
-| GOOGL | 154 | $351.96 | $353.50 | 0.4% |
-| NVDA | 150 | $203.30 | $223.82 | 10.1% |
-| V | 58 | $344.73 | $392.05 | 13.7% |
-| UNH | 38 | $368.22 | $387.20 | 5.2% |
-| ORCL | 94 | $138.00 | $133.95 | -2.9% |
-| PG | 81 | $146.98 | $154.82 | 5.3% |
-| WMT | 109 | $108.75 | $114.24 | 5.1% |
-| XOM | 70 | $168.87 | $175.49 | 3.9% |
-| AMD | 21 | $617.17 | $582.65 | -5.6% |
-| TSM | 28 | $414.49 | $435.96 | 5.2% |
-| GLW | 83 | $143.53 | $144.76 | 0.9% |
-| META | 10 | $568.43 | $743.70 | 30.8% |
-| MA | 8 | $486.51 | $603.28 | 24.0% |
-| JPM | 10 | $313.49 | $331.76 | 5.8% |
+| AAPL | 599 | $298.69 | $342.08 | 14.5% |
+| JNJ | 543 | $239.58 | $252.86 | 5.5% |
+| AMZN | 531 | $240.96 | $253.29 | 5.1% |
+| MSFT | 137 | $412.76 | $535.11 | 29.6% |
+| GOOGL | 154 | $351.96 | $347.65 | -1.2% |
+| NVDA | 150 | $203.30 | $220.61 | 8.5% |
+| V | 58 | $344.73 | $392.84 | 14.0% |
+| UNH | 38 | $368.22 | $390.75 | 6.1% |
+| PG | 81 | $146.98 | $155.52 | 5.8% |
+| WMT | 109 | $108.75 | $115.41 | 6.1% |
+| XOM | 70 | $168.87 | $177.15 | 4.9% |
+| ORCL | 94 | $138.00 | $130.33 | -5.6% |
+| TSM | 28 | $414.49 | $429.69 | 3.7% |
+| AMD | 21 | $617.17 | $570.81 | -7.5% |
+| GLW | 83 | $143.53 | $139.76 | -2.6% |
+| META | 10 | $568.43 | $734.71 | 29.3% |
+| MA | 8 | $486.51 | $603.83 | 24.1% |
+| JPM | 10 | $313.49 | $333.01 | 6.2% |
 
 ## Today's Trades
 
@@ -37,8 +37,8 @@ No trades executed today.
 
 ## Analysis
 
-No transactions are warranted. Maintain core holdings, preserve the 25.9% cash reserve, do not chase strong winners, and do not average down into the weakest technology and infrastructure names. The portfolio should prioritize concentration control and confirmation of broader market breadth.
+Maintain a neutral, low-turnover posture: hold core leaders, do not add to concentrated winners or weak laggards, avoid all severely deteriorating watchlist candidates, and preserve the 26% cash reserve until market breadth and inflation/rate conditions improve.
 
 ## Risk Assessment
 
-The principal risk is concentration, not insufficient equity exposure. AAPL, JNJ and AMZN dominate invested capital, while technology-related exposures across AAPL, MSFT, NVDA, TSM, AMD, ORCL, GLW and GOOGL remain sensitive to yields, AI-spending expectations and valuation compression. AAPL and AMZN are profitable but large; MSFT and META are strong but extended; AMD, ORCL and GLW have unfavorable relative momentum. The cash reserve reduces total-portfolio beta but does not diversify the invested sleeve.
+The primary risk is not insufficient equity exposure but concentrated invested exposure. AAPL is approximately 19.6% of total portfolio value, while AAPL, JNJ and AMZN collectively represent a large share of invested assets. Technology-linked holdings remain correlated to AI spending, rates and momentum reversals. ORCL, GLW and AMD are below cost, and JNJ, JPM and UNH have negative 30-day momentum. Retaining cash and avoiding additions to weak names are appropriate mitigants, though cash cannot fully protect against drawdowns in the concentrated core sleeve.
