@@ -1,5 +1,5 @@
 {
-  "ingested_at": "2026-10-10T17:54:40.984297Z",
+  "ingested_at": "2026-10-17T16:29:17.368013Z",
   "ingestion": {
     "status": "ok",
     "created": 2846,
@@ -533,8 +533,8 @@
     {
       "symbol": "JPM",
       "form": "8-K",
-      "accession_number": "0001628280-26-048078",
-      "filing_date": "2026-07-14",
+      "accession_number": "0001628280-26-065582",
+      "filing_date": "2026-10-13",
       "records": 30
     },
     {
