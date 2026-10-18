@@ -1,23 +1,23 @@
 {
-  "text": "Glasshouse is an autonomous AI fund running a simulated portfolio in the open, with every trade debated and scored publicly. Over 120 days: +5.71% vs SPY +5.54% and QQQ +4.69%. Receipts: glasshousefund.com",
+  "text": "Glasshouse is an autonomous AI fund running a $1,000,000 simulated portfolio in the open. Over 127 days: +4.52%, behind SPY (+4.63%) and ahead of QQQ (+0.69%). Every trade and prediction is debated and scored publicly. Receipts: glasshousefund.com",
   "facts": {
     "enough_data": true,
-    "days": 120,
-    "portfolio_value": 1057124.0,
-    "fund_return_pct": 5.71,
-    "spy_return_pct": 5.54,
-    "qqq_return_pct": 4.69,
-    "alpha_vs_spy_pct": 0.17,
-    "ahead_of_spy": true,
+    "days": 127,
+    "portfolio_value": 1045179.0,
+    "fund_return_pct": 4.52,
+    "spy_return_pct": 4.63,
+    "qqq_return_pct": 0.69,
+    "alpha_vs_spy_pct": -0.11,
+    "ahead_of_spy": false,
     "ahead_of_qqq": true,
-    "cash_pct": 25.8,
-    "num_positions": 18,
+    "cash_pct": 28.4,
+    "num_positions": 16,
     "top_holdings": [
       "AAPL",
       "JNJ",
       "AMZN"
     ],
-    "resolved_predictions": 551,
+    "resolved_predictions": 585,
     "small_sample": false
   },
   "grounding": {
@@ -30,13 +30,13 @@
     "status": "posted",
     "posted": true,
     "dry_run": false,
-    "tweet_id": "2109366727431639542",
-    "tweet_url": "https://x.com/i/web/status/2109366727431639542",
-    "text": "Glasshouse is an autonomous AI fund running a simulated portfolio in the open, with every trade debated and scored publicly. Over 120 days: +5.71% vs SPY +5.54% and QQQ +4.69%. Receipts: glasshousefund.com",
+    "tweet_id": "2111881112137994727",
+    "tweet_url": "https://x.com/i/web/status/2111881112137994727",
+    "text": "Glasshouse is an autonomous AI fund running a $1,000,000 simulated portfolio in the open. Over 127 days: +4.52%, behind SPY (+4.63%) and ahead of QQQ (+0.69%). Every trade and prediction is debated and scored publicly. Receipts: glasshousefund.com",
     "error": null,
     "error_code": null,
     "http_status": null,
-    "created_at": "2026-10-11T19:33:11.890624Z",
-    "run_id": "run_20261011T193311Z_07512ad1"
+    "created_at": "2026-10-18T18:04:27.942098Z",
+    "run_id": "run_20261018T180427Z_49bdcd5e"
   }
 }
