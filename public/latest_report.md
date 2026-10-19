@@ -1,10 +1,10 @@
-# Portfolio Report, 2026-10-16
+# Portfolio Report, 2026-10-19
 
 ## Summary
-- **Run ID:** `run_20261016T175043Z_920fe60b`
-- **Total Value:** $1,045,178.78
-- **Cash:** $296,333.44 (28.4%)
-- **Invested:** $748,845.34
+- **Run ID:** `run_20261019T165856Z_7a848864`
+- **Total Value:** $1,052,403.99
+- **Cash:** $296,333.44 (28.2%)
+- **Invested:** $756,070.54
 - **Positions:** 16
 - **Outlook:** NEUTRAL
 
@@ -12,22 +12,22 @@
 
 | Symbol | Shares | Avg Cost | Current | P&L % |
 |--------|--------|----------|---------|-------|
-| AAPL | 599 | $298.69 | $342.62 | 14.7% |
-| JNJ | 543 | $239.58 | $255.51 | 6.7% |
-| AMZN | 531 | $240.96 | $249.76 | 3.6% |
-| MSFT | 137 | $412.76 | $527.29 | 27.7% |
-| GOOGL | 154 | $351.96 | $342.02 | -2.8% |
-| NVDA | 150 | $203.30 | $215.55 | 6.0% |
-| V | 58 | $344.73 | $401.52 | 16.5% |
-| UNH | 38 | $368.22 | $400.92 | 8.9% |
-| WMT | 109 | $108.75 | $118.88 | 9.3% |
-| PG | 81 | $146.98 | $158.70 | 8.0% |
-| XOM | 70 | $168.87 | $178.00 | 5.4% |
-| TSM | 28 | $414.49 | $413.85 | -0.2% |
-| AMD | 21 | $617.17 | $534.22 | -13.4% |
-| META | 10 | $568.43 | $710.05 | 24.9% |
-| MA | 8 | $486.51 | $614.80 | 26.4% |
-| JPM | 10 | $313.49 | $338.88 | 8.1% |
+| AAPL | 599 | $298.69 | $341.63 | 14.4% |
+| AMZN | 531 | $240.96 | $262.69 | 9.0% |
+| JNJ | 543 | $239.58 | $253.57 | 5.8% |
+| MSFT | 137 | $412.76 | $533.26 | 29.2% |
+| GOOGL | 154 | $351.96 | $344.97 | -2.0% |
+| NVDA | 150 | $203.30 | $218.00 | 7.2% |
+| V | 58 | $344.73 | $402.99 | 16.9% |
+| UNH | 38 | $368.22 | $402.58 | 9.3% |
+| WMT | 109 | $108.75 | $118.77 | 9.2% |
+| PG | 81 | $146.98 | $157.42 | 7.1% |
+| XOM | 70 | $168.87 | $178.07 | 5.5% |
+| TSM | 28 | $414.49 | $422.21 | 1.9% |
+| AMD | 21 | $617.17 | $543.70 | -11.9% |
+| META | 10 | $568.43 | $701.62 | 23.4% |
+| MA | 8 | $486.51 | $614.78 | 26.4% |
+| JPM | 10 | $313.49 | $336.75 | 7.4% |
 
 ## Today's Trades
 
@@ -35,8 +35,8 @@ No trades executed today.
 
 ## Analysis
 
-Maintain a neutral, low-turnover stance: make no trades, retain the 28.4% cash reserve, hold established leaders, and avoid adding to concentrated winners or weak semiconductor and AI-infrastructure exposures. Sources used include current 5-day and 30-day returns, market and symbol news, risk_lesson:run_20260729T184341Z_54100baf:report_risk, risk_lesson:run_20260803T191113Z_b5f11a59:report_risk, trade:run_20261001T194714Z_9239ded3:AAPL:SELL, and report_summary:run_20260929T193720Z_dac933f3.
+Maintain a neutral, low-turnover posture: hold existing relative-strength leaders, avoid adding to laggards or speculative declines, and retain the 28.2% cash reserve until market breadth and weaker technology groups show durable stabilization.
 
 ## Risk Assessment
 
-The primary risk is concentration, not insufficient equity exposure. AAPL, JNJ, and AMZN represent a large portion of deployed capital, while AAPL, AMZN, MSFT, NVDA, GOOGL, TSM, and AMD share technology, cloud, AI-spending, and valuation-factor sensitivity. AMD is down 13.4% from cost, GOOGL is below cost, and the semiconductor complex has weak recent momentum. Conversely, several winners including AAPL, MSFT, META, V, and MA carry profit-taking and event-risk exposure after substantial gains. Cash reduces total-portfolio drawdown sensitivity but does not remove risk in the concentrated invested sleeve.
+AAPL is approximately 19.4% of total portfolio value, while AAPL, AMZN, and JNJ together dominate invested capital. Technology and AI/cloud exposure remains correlated across AAPL, MSFT, NVDA, AMD, TSM, AMZN, GOOGL, and META. The principal downside risks are a continued semiconductor/AI de-rating, disappointment in upcoming earnings or guidance, and reversals in concentrated winners. The cash reserve moderates total-portfolio drawdown but cannot eliminate losses in the concentrated equity sleeve.
