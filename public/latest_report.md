@@ -1,42 +1,41 @@
-# Portfolio Report, 2026-10-21
+# Portfolio Report, 2026-10-22
 
 ## Summary
-- **Run ID:** `run_20261021T180517Z_f2f99d04`
-- **Total Value:** $1,056,216.52
-- **Cash:** $296,333.44 (28.1%)
-- **Invested:** $759,883.08
-- **Positions:** 16
+- **Run ID:** `run_20261022T151342Z_aed9e76b`
+- **Total Value:** $1,050,946.63
+- **Cash:** $307,036.51 (29.2%)
+- **Invested:** $743,910.11
+- **Positions:** 15
 - **Outlook:** NEUTRAL
 
 ## Holdings
 
 | Symbol | Shares | Avg Cost | Current | P&L % |
 |--------|--------|----------|---------|-------|
-| AAPL | 599 | $298.69 | $344.68 | 15.4% |
-| AMZN | 531 | $240.96 | $263.68 | 9.4% |
-| JNJ | 543 | $239.58 | $256.05 | 6.9% |
-| MSFT | 137 | $412.76 | $532.71 | 29.1% |
-| GOOGL | 154 | $351.96 | $334.33 | -5.0% |
-| NVDA | 150 | $203.30 | $221.54 | 9.0% |
-| V | 58 | $344.73 | $408.80 | 18.6% |
-| UNH | 38 | $368.22 | $416.73 | 13.2% |
-| WMT | 109 | $108.75 | $117.79 | 8.3% |
-| PG | 81 | $146.98 | $157.61 | 7.2% |
-| XOM | 70 | $168.87 | $177.65 | 5.2% |
-| TSM | 28 | $414.49 | $429.66 | 3.7% |
-| AMD | 21 | $617.17 | $554.31 | -10.2% |
-| META | 10 | $568.43 | $707.84 | 24.5% |
-| MA | 8 | $486.51 | $623.18 | 28.1% |
-| JPM | 10 | $313.49 | $334.96 | 6.8% |
+| AAPL | 599 | $298.69 | $345.02 | 15.5% |
+| JNJ | 543 | $239.58 | $264.74 | 10.5% |
+| AMZN | 531 | $240.96 | $251.77 | 4.5% |
+| MSFT | 137 | $412.76 | $526.68 | 27.6% |
+| GOOGL | 154 | $351.96 | $326.77 | -7.2% |
+| NVDA | 150 | $203.30 | $213.10 | 4.8% |
+| V | 58 | $344.73 | $412.11 | 19.5% |
+| UNH | 38 | $368.22 | $424.96 | 15.4% |
+| PG | 81 | $146.98 | $166.01 | 13.0% |
+| WMT | 109 | $108.75 | $120.02 | 10.4% |
+| XOM | 70 | $168.87 | $175.89 | 4.2% |
+| TSM | 28 | $414.49 | $412.94 | -0.4% |
+| META | 10 | $568.43 | $655.11 | 15.2% |
+| MA | 8 | $486.51 | $627.67 | 29.0% |
+| JPM | 10 | $313.49 | $332.60 | 6.1% |
 
 ## Today's Trades
 
-No trades executed today.
+- **SELL** 21 AMD @ $509.67, stop-loss: AMD down -17% from cost basis
 
 ## Analysis
 
-No trades. Hold proven leaders, avoid additions to concentrated or weakening positions, and retain 28.1% cash until breadth improves or a better risk-adjusted entry emerges. Sources influencing this decision include risk_lesson:run_20260729T184341Z_54100baf:report_risk, risk_lesson:run_20260803T191113Z_b5f11a59:report_risk, trade:run_20260812T183945Z_0d1bf062:AAPL:SELL, trade:run_20261001T194714Z_9239ded3:AAPL:SELL, and trade:run_20260731T185916Z_e4b0cfaf:NVDA:SELL.
+Maintain a neutral, low-turnover posture. Hold the established core positions, do not add to concentrated winners or semiconductor laggards, retain the 28.2% cash reserve, and monitor GOOGL, AMD and TSM for stabilization or renewed deterioration.
 
 ## Risk Assessment
 
-The principal risk is concentration, not insufficient equity exposure. AAPL is approximately 19.5% of total portfolio value, while AAPL, AMZN and JNJ together account for roughly 46% of total assets and about 64% of invested assets. Technology and AI/cloud-sensitive holdings remain correlated through AAPL, MSFT, NVDA, AMZN, GOOGL, TSM, AMD and META. AAPL downgrade headlines, GOOGL's position loss, AMD's 5-day decline, and event risk around large technology holdings warrant restraint. The cash reserve moderates, but does not eliminate, drawdown risk in the invested sleeve.
+Primary risks are concentration in AAPL, JNJ and AMZN, correlated technology and AI-spending exposure through AAPL, MSFT, NVDA, AMD, TSM, AMZN and GOOGL, and the possibility that current leadership reverses as volatility rises. GOOGL's negative 5-day and 30-day returns and AMD's 17.4% loss versus cost require monitoring, while semiconductor news includes China-demand skepticism and supply-chain constraints. The elevated cash balance mitigates total-portfolio drawdown but does not eliminate risk inside the invested sleeve. This follows the concentration and incremental-risk-management constraints in risk_lesson:run_20260729T184341Z_54100baf:report_risk, risk_lesson:run_20260803T191113Z_b5f11a59:report_risk, and risk_lesson:run_20260730T161151Z_1b5d1b4c:report_risk.
