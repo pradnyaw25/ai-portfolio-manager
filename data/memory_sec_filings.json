@@ -1,5 +1,5 @@
 {
-  "ingested_at": "2026-10-17T16:29:17.368013Z",
+  "ingested_at": "2026-10-24T16:38:51.714847Z",
   "ingestion": {
     "status": "ok",
     "created": 2846,
@@ -142,8 +142,8 @@
     {
       "symbol": "META",
       "form": "10-Q",
-      "accession_number": "0001628280-26-050705",
-      "filing_date": "2026-07-30",
+      "accession_number": "0001628280-26-066773",
+      "filing_date": "2026-10-22",
       "sections": [
         "item_2",
         "item_3"
@@ -475,16 +475,16 @@
     {
       "symbol": "BE",
       "form": "10-Q",
-      "accession_number": "0001628280-26-050325",
-      "filing_date": "2026-07-29",
+      "accession_number": "0001628280-26-066931",
+      "filing_date": "2026-10-22",
       "sections": [],
       "records": 0
     },
     {
       "symbol": "BE",
       "form": "8-K",
-      "accession_number": "0001628280-26-050150",
-      "filing_date": "2026-07-28",
+      "accession_number": "0001628280-26-066890",
+      "filing_date": "2026-10-22",
       "records": 30
     },
     {
@@ -498,8 +498,8 @@
     {
       "symbol": "TSLA",
       "form": "10-Q",
-      "accession_number": "0001628280-26-049270",
-      "filing_date": "2026-07-23",
+      "accession_number": "0001628280-26-066775",
+      "filing_date": "2026-10-22",
       "sections": [
         "item_2",
         "item_3"
@@ -624,8 +624,8 @@
     {
       "symbol": "JNJ",
       "form": "10-Q",
-      "accession_number": "0000200406-26-000153",
-      "filing_date": "2026-07-23",
+      "accession_number": "0000200406-26-000197",
+      "filing_date": "2026-10-21",
       "sections": [],
       "records": 0
     },
@@ -669,8 +669,8 @@
     {
       "symbol": "PG",
       "form": "10-Q",
-      "accession_number": "0000080424-26-000060",
-      "filing_date": "2026-04-24",
+      "accession_number": "0000080424-26-000256",
+      "filing_date": "2026-10-22",
       "sections": [
         "item_2",
         "item_3"
