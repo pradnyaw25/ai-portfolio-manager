@@ -1,46 +1,45 @@
 # Portfolio Report, 2026-10-27
 
 ## Summary
-- **Run ID:** `run_20261027T155213Z_b2a88997`
-- **Total Value:** $1,055,134.80
-- **Cash:** $262,619.05 (24.9%)
-- **Invested:** $792,515.75
-- **Positions:** 20
+- **Run ID:** `run_20261027T184353Z_1b4f3eb2`
+- **Total Value:** $1,055,228.95
+- **Cash:** $274,833.61 (26.0%)
+- **Invested:** $780,395.34
+- **Positions:** 19
 - **Outlook:** NEUTRAL
 
 ## Holdings
 
 | Symbol | Shares | Avg Cost | Current | P&L % |
 |--------|--------|----------|---------|-------|
-| AAPL | 599 | $298.69 | $347.13 | 16.2% |
-| JNJ | 543 | $239.58 | $267.85 | 11.8% |
-| AMZN | 531 | $240.96 | $252.07 | 4.6% |
-| MSFT | 137 | $412.76 | $534.22 | 29.4% |
-| GOOGL | 104 | $351.96 | $320.21 | -9.0% |
-| NVDA | 150 | $203.30 | $219.04 | 7.7% |
-| V | 58 | $344.73 | $401.31 | 16.4% |
-| UNH | 38 | $368.22 | $411.59 | 11.8% |
-| WMT | 109 | $108.75 | $119.28 | 9.7% |
-| PG | 81 | $146.98 | $158.87 | 8.1% |
-| XOM | 70 | $168.87 | $181.31 | 7.4% |
-| AVGO | 37 | $328.75 | $342.17 | 4.1% |
-| ORCL | 97 | $125.76 | $130.21 | 3.5% |
-| TSM | 28 | $414.49 | $437.70 | 5.6% |
-| GLW | 96 | $126.65 | $127.32 | 0.5% |
-| HD | 38 | $317.96 | $319.12 | 0.4% |
-| CAT | 17 | $691.26 | $710.68 | 2.8% |
-| META | 10 | $568.43 | $625.52 | 10.0% |
-| MA | 8 | $486.51 | $610.78 | 25.5% |
-| JPM | 10 | $313.49 | $335.83 | 7.1% |
+| AAPL | 599 | $298.69 | $345.83 | 15.8% |
+| JNJ | 543 | $239.58 | $268.74 | 12.2% |
+| AMZN | 531 | $240.96 | $254.23 | 5.5% |
+| MSFT | 137 | $412.76 | $530.68 | 28.6% |
+| GOOGL | 104 | $351.96 | $321.83 | -8.6% |
+| NVDA | 150 | $203.30 | $217.55 | 7.0% |
+| V | 58 | $344.73 | $398.29 | 15.5% |
+| UNH | 38 | $368.22 | $410.10 | 11.4% |
+| WMT | 109 | $108.75 | $118.89 | 9.3% |
+| PG | 81 | $146.98 | $158.85 | 8.1% |
+| ORCL | 97 | $125.76 | $131.88 | 4.9% |
+| AVGO | 37 | $328.75 | $342.05 | 4.0% |
+| XOM | 70 | $168.87 | $180.48 | 6.9% |
+| TSM | 28 | $414.49 | $437.29 | 5.5% |
+| HD | 38 | $317.96 | $319.09 | 0.4% |
+| CAT | 17 | $691.26 | $711.91 | 3.0% |
+| META | 10 | $568.43 | $622.70 | 9.5% |
+| MA | 8 | $486.51 | $607.35 | 24.8% |
+| JPM | 10 | $313.49 | $336.14 | 7.2% |
 
 ## Today's Trades
 
-No trades executed today.
+- **SELL** 96 GLW @ $127.24. Exit the small GLW position. It is only marginally above cost but has declined 20.0% over 30 days versus a nearly flat SPY, and its disclosed risks around demand, customer financing/concentration, capital spending, margins, technology change, litigation, and regulation reinforce the weak price trend. This is a targeted risk-control sale rather than a broad portfolio reduction.
 
 ## Analysis
 
-Maintain a neutral, low-turnover posture. Hold proven relative-strength positions, do not add to concentrated leaders, do not average into GOOGL or the weaker semiconductor and AI-infrastructure cohort, and retain the substantial cash reserve until market breadth and relative-strength evidence improve.
+Maintain a neutral, defensive, low-turnover stance. Sell GLW as a targeted exit from a small position with sustained relative weakness and material documented operating risks. Hold the stronger core and defensive leaders, do not add to concentrated positions, avoid averaging into GOOGL or weak AI/semiconductor infrastructure names, and preserve cash until market breadth improves.
 
 ## Risk Assessment
 
-The principal risk is structural concentration: AAPL, JNJ and AMZN represent 61.5% of invested capital, while the top five holdings represent roughly 74.7%. Technology, health care and consumer discretionary dominate the invested sleeve, leaving correlated downside risk despite the cash buffer. GOOGL is below cost and has weak 30-day momentum, while GLW, CAT, META, ORCL, AVGO, NVDA, TSM and AMZN have negative 30-day returns. Cash moderates total-portfolio drawdown but does not remove the risk of losses in the concentrated equity sleeve.
+The key risk is concentration, not lack of equity exposure. AAPL, JNJ, and AMZN comprise roughly 61.5% of invested assets, while the largest five holdings represent approximately 84.9%. Technology-linked holdings also retain correlated exposure to AI spending, valuation compression, and a possible continuation of growth-stock de-risking. The cash reserve cushions total-portfolio volatility but does not diversify the concentrated equity sleeve.
