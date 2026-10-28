@@ -1,10 +1,10 @@
-# Portfolio Report, 2026-10-27
+# Portfolio Report, 2026-10-28
 
 ## Summary
-- **Run ID:** `run_20261027T184353Z_1b4f3eb2`
-- **Total Value:** $1,055,228.95
+- **Run ID:** `run_20261028T163624Z_f7ac1816`
+- **Total Value:** $1,055,829.40
 - **Cash:** $274,833.61 (26.0%)
-- **Invested:** $780,395.34
+- **Invested:** $780,995.79
 - **Positions:** 19
 - **Outlook:** NEUTRAL
 
@@ -12,34 +12,34 @@
 
 | Symbol | Shares | Avg Cost | Current | P&L % |
 |--------|--------|----------|---------|-------|
-| AAPL | 599 | $298.69 | $345.83 | 15.8% |
-| JNJ | 543 | $239.58 | $268.74 | 12.2% |
-| AMZN | 531 | $240.96 | $254.23 | 5.5% |
-| MSFT | 137 | $412.76 | $530.68 | 28.6% |
-| GOOGL | 104 | $351.96 | $321.83 | -8.6% |
-| NVDA | 150 | $203.30 | $217.55 | 7.0% |
-| V | 58 | $344.73 | $398.29 | 15.5% |
-| UNH | 38 | $368.22 | $410.10 | 11.4% |
-| WMT | 109 | $108.75 | $118.89 | 9.3% |
-| PG | 81 | $146.98 | $158.85 | 8.1% |
-| ORCL | 97 | $125.76 | $131.88 | 4.9% |
-| AVGO | 37 | $328.75 | $342.05 | 4.0% |
-| XOM | 70 | $168.87 | $180.48 | 6.9% |
-| TSM | 28 | $414.49 | $437.29 | 5.5% |
-| HD | 38 | $317.96 | $319.09 | 0.4% |
-| CAT | 17 | $691.26 | $711.91 | 3.0% |
-| META | 10 | $568.43 | $622.70 | 9.5% |
-| MA | 8 | $486.51 | $607.35 | 24.8% |
-| JPM | 10 | $313.49 | $336.14 | 7.2% |
+| AAPL | 599 | $298.69 | $345.55 | 15.7% |
+| JNJ | 543 | $239.58 | $270.78 | 13.0% |
+| AMZN | 531 | $240.96 | $252.81 | 4.9% |
+| MSFT | 137 | $412.76 | $527.59 | 27.8% |
+| GOOGL | 104 | $351.96 | $323.45 | -8.1% |
+| NVDA | 150 | $203.30 | $217.10 | 6.8% |
+| V | 58 | $344.73 | $402.02 | 16.6% |
+| UNH | 38 | $368.22 | $412.35 | 12.0% |
+| WMT | 109 | $108.75 | $118.70 | 9.2% |
+| PG | 81 | $146.98 | $159.43 | 8.5% |
+| AVGO | 37 | $328.75 | $347.32 | 5.6% |
+| XOM | 70 | $168.87 | $183.38 | 8.6% |
+| ORCL | 97 | $125.76 | $130.72 | 3.9% |
+| TSM | 28 | $414.49 | $438.71 | 5.8% |
+| CAT | 17 | $691.26 | $716.64 | 3.7% |
+| HD | 38 | $317.96 | $319.57 | 0.5% |
+| META | 10 | $568.43 | $613.26 | 7.9% |
+| MA | 8 | $486.51 | $612.96 | 26.0% |
+| JPM | 10 | $313.49 | $339.93 | 8.4% |
 
 ## Today's Trades
 
-- **SELL** 96 GLW @ $127.24. Exit the small GLW position. It is only marginally above cost but has declined 20.0% over 30 days versus a nearly flat SPY, and its disclosed risks around demand, customer financing/concentration, capital spending, margins, technology change, litigation, and regulation reinforce the weak price trend. This is a targeted risk-control sale rather than a broad portfolio reduction.
+No trades executed today.
 
 ## Analysis
 
-Maintain a neutral, defensive, low-turnover stance. Sell GLW as a targeted exit from a small position with sustained relative weakness and material documented operating risks. Hold the stronger core and defensive leaders, do not add to concentrated positions, avoid averaging into GOOGL or weak AI/semiconductor infrastructure names, and preserve cash until market breadth improves.
+Maintain a neutral, low-turnover posture. Hold the profitable diversified core, do not add to concentrated leaders ahead of macro and earnings events, do not average into GOOGL or the weak AI/semiconductor cohort, and preserve the 26% cash reserve as deliberate risk control.
 
 ## Risk Assessment
 
-The key risk is concentration, not lack of equity exposure. AAPL, JNJ, and AMZN comprise roughly 61.5% of invested assets, while the largest five holdings represent approximately 84.9%. Technology-linked holdings also retain correlated exposure to AI spending, valuation compression, and a possible continuation of growth-stock de-risking. The cash reserve cushions total-portfolio volatility but does not diversify the concentrated equity sleeve.
+Primary risk is concentration, not lack of market exposure: AAPL, JNJ, AMZN, and MSFT dominate the portfolio, while technology-linked positions remain correlated to AI spending, valuation compression, regulation, and risk-off moves. GOOGL is below cost and weak over 30 days; META, CAT, ORCL, NVDA, AVGO, and TSM also lag SPY over that horizon. Rising VIX adds reversal risk to recent winners. Cash mitigates total-portfolio drawdown but does not eliminate losses from concentrated holdings.
