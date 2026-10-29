@@ -1,45 +1,44 @@
-# Portfolio Report, 2026-10-28
+# Portfolio Report, 2026-10-29
 
 ## Summary
-- **Run ID:** `run_20261028T185305Z_af253f11`
-- **Total Value:** $1,056,676.99
-- **Cash:** $274,833.61 (26.0%)
-- **Invested:** $781,843.37
-- **Positions:** 19
+- **Run ID:** `run_20261029T165409Z_9d510b43`
+- **Total Value:** $1,052,472.23
+- **Cash:** $304,428.89 (28.9%)
+- **Invested:** $748,043.33
+- **Positions:** 18
 - **Outlook:** NEUTRAL
 
 ## Holdings
 
 | Symbol | Shares | Avg Cost | Current | P&L % |
 |--------|--------|----------|---------|-------|
-| AAPL | 599 | $298.69 | $344.20 | 15.2% |
-| JNJ | 543 | $239.58 | $271.18 | 13.2% |
-| AMZN | 531 | $240.96 | $253.17 | 5.1% |
-| MSFT | 137 | $412.76 | $528.12 | 27.9% |
-| GOOGL | 104 | $351.96 | $324.51 | -7.8% |
-| NVDA | 150 | $203.30 | $216.06 | 6.3% |
-| V | 58 | $344.73 | $402.66 | 16.8% |
-| UNH | 38 | $368.22 | $407.63 | 10.7% |
-| ORCL | 97 | $125.76 | $145.96 | 16.1% |
-| AVGO | 37 | $328.75 | $350.11 | 6.5% |
-| WMT | 109 | $108.75 | $118.82 | 9.3% |
-| PG | 81 | $146.98 | $158.32 | 7.7% |
-| XOM | 70 | $168.87 | $182.79 | 8.2% |
-| TSM | 28 | $414.49 | $438.39 | 5.8% |
-| CAT | 17 | $691.26 | $717.69 | 3.8% |
-| HD | 38 | $317.96 | $316.98 | -0.3% |
-| META | 10 | $568.43 | $612.72 | 7.8% |
-| MA | 8 | $486.51 | $613.01 | 26.0% |
-| JPM | 10 | $313.49 | $339.48 | 8.3% |
+| AAPL | 599 | $298.69 | $350.04 | 17.2% |
+| JNJ | 543 | $239.58 | $274.38 | 14.5% |
+| AMZN | 531 | $240.96 | $246.37 | 2.2% |
+| MSFT | 137 | $412.76 | $524.62 | 27.1% |
+| NVDA | 150 | $203.30 | $213.37 | 5.0% |
+| V | 58 | $344.73 | $409.68 | 18.8% |
+| UNH | 38 | $368.22 | $406.83 | 10.5% |
+| ORCL | 97 | $125.76 | $137.95 | 9.7% |
+| WMT | 109 | $108.75 | $121.09 | 11.4% |
+| PG | 81 | $146.98 | $159.02 | 8.2% |
+| XOM | 70 | $168.87 | $182.25 | 7.9% |
+| AVGO | 37 | $328.75 | $344.57 | 4.8% |
+| HD | 38 | $317.96 | $324.63 | 2.1% |
+| TSM | 28 | $414.49 | $432.77 | 4.4% |
+| CAT | 17 | $691.26 | $657.58 | -4.9% |
+| META | 10 | $568.43 | $633.62 | 11.5% |
+| MA | 8 | $486.51 | $636.27 | 30.8% |
+| JPM | 10 | $313.49 | $343.41 | 9.5% |
 
 ## Today's Trades
 
-No trades executed today.
+- **SELL** 104 GOOGL @ $284.57, stop-loss: GOOGL down -19% from cost basis
 
 ## Analysis
 
-Maintain a neutral, defensive low-turnover stance. Hold proven leaders and diversified defensive exposures, make no trade today, avoid adding to concentrated core positions or weak technology and AI-linked names, and retain the 26% cash reserve pending stronger breadth or clearer catalysts.
+Maintain a neutral, low-turnover posture: hold the profitable diversified core, avoid adding to concentrated leaders or weakening technology themes, monitor GOOGL and CAT closely, and retain the 26.1% cash reserve until market breadth and relative-strength evidence improve.
 
 ## Risk Assessment
 
-The central risk is concentration, not insufficient equity exposure. AAPL is the largest holding, and AAPL, JNJ and AMZN represent a dominant share of invested capital; the four largest positions including MSFT account for roughly 71.7% of invested assets. Technology-linked exposure also remains correlated to AI spending, valuation compression and risk-off conditions. GOOGL, META, ORCL, CAT, NVDA, AVGO and TSM show varying degrees of negative 30-day momentum. The cash reserve mitigates total-portfolio drawdown but does not eliminate single-name or sector correlation risk within the invested sleeve.
+The primary risk is concentration rather than insufficient equity exposure. AAPL is about 27.0% of invested assets, JNJ about 19.2%, and AMZN about 16.8%; the portfolio is also heavily allocated to technology, healthcare and consumer discretionary. GOOGL's post-earnings weakness, META's -21.2% 30-day return, CAT's -11.2% 30-day return, and weaker 30-day performance in NVDA and TSM create downside risk within the growth sleeve. Cash dampens portfolio-level volatility but does not eliminate single-stock or sector risk in the invested capital.

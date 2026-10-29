@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "run_id": "run_20261029T165409Z_9d510b43",
+    "date": "2026-10-29",
+    "symbol": "GOOGL",
+    "action": "SELL",
+    "shares": 104,
+    "price": 284.57000732421875,
+    "total": 29595.28076171875,
+    "reasoning": "stop-loss: GOOGL down -19% from cost basis"
+  }
+]
