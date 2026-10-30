@@ -1,1 +1,72 @@
-[]
+[
+  {
+    "run_id": "run_20261030T164120Z_031be35e",
+    "date": "2026-10-30",
+    "symbol": "CAT",
+    "action": "SELL",
+    "shares": 17,
+    "price": 629.4105224609375,
+    "total": 10699.978881835938,
+    "reasoning": "Exit the small position because CAT is down 21.0% over 30 days, down 5.5% over five days, and 8.9% below average cost. This is the portfolio's clearest ongoing momentum failure, and there is no confirmed catalyst in the supplied data to support retaining it."
+  },
+  {
+    "run_id": "run_20261030T164120Z_031be35e",
+    "date": "2026-10-30",
+    "symbol": "AMZN",
+    "action": "SELL",
+    "shares": 100,
+    "price": 240.63499450683594,
+    "total": 24063.499450683594,
+    "reasoning": "Trim, rather than exit, a very large position after the reported earnings-related decline. AMZN is marginally below cost, down 2.4% over 30 days and 1.7% over five days, while its approximately $128,000 value remains a major source of concentrated consumer-discretionary and technology-related risk."
+  },
+  {
+    "run_id": "run_20261030T164120Z_031be35e",
+    "date": "2026-10-30",
+    "symbol": "GOOGL",
+    "action": "BUY",
+    "shares": 55,
+    "price": 280.45001220703125,
+    "total": 15424.750671386719,
+    "reasoning": "Adds a high-quality mega-cap platform business not currently held, with diversified advertising, cloud, and AI exposure."
+  },
+  {
+    "run_id": "run_20261030T164120Z_031be35e",
+    "date": "2026-10-30",
+    "symbol": "GLW",
+    "action": "BUY",
+    "shares": 126,
+    "price": 122.6500015258789,
+    "total": 15453.900192260742,
+    "reasoning": "Introduces materials and connectivity-infrastructure exposure, diversifying the portfolio beyond its current concentration in mega-cap technology and healthcare."
+  },
+  {
+    "run_id": "run_20261030T164120Z_031be35e",
+    "date": "2026-10-30",
+    "symbol": "INTC",
+    "action": "BUY",
+    "shares": 240,
+    "price": 64.91500091552734,
+    "total": 15579.600219726562,
+    "reasoning": "Provides semiconductor and domestic manufacturing exposure at a position size consistent with the deployment mandate; confidence is moderated by execution and recent earnings-related volatility."
+  },
+  {
+    "run_id": "run_20261030T164120Z_031be35e",
+    "date": "2026-10-30",
+    "symbol": "PG",
+    "action": "BUY",
+    "shares": 95,
+    "price": 163.16000366210938,
+    "total": 15500.20034790039,
+    "reasoning": "Adds to a defensive consumer-staples holding with resilient demand characteristics, helping balance cyclical and technology exposure during a choppy market."
+  },
+  {
+    "run_id": "run_20261030T164120Z_031be35e",
+    "date": "2026-10-30",
+    "symbol": "WMT",
+    "action": "BUY",
+    "shares": 125,
+    "price": 124.05999755859375,
+    "total": 15507.499694824219,
+    "reasoning": "Expands defensive retail exposure through a scaled operator with consumer-staples demand, e-commerce growth, and relative resilience in uncertain macro conditions."
+  }
+]
