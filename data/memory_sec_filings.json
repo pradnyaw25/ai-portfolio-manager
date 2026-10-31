@@ -1,12 +1,12 @@
 {
-  "ingested_at": "2026-10-24T16:38:51.714847Z",
+  "ingested_at": "2026-10-31T17:47:58.157218Z",
   "ingestion": {
     "status": "ok",
-    "created": 2846,
+    "created": 2821,
     "updated": 0,
     "skipped": 0,
     "errors": [],
-    "total_processed": 2846
+    "total_processed": 2821
   },
   "processed": [
     {
@@ -56,8 +56,8 @@
     {
       "symbol": "MSFT",
       "form": "10-Q",
-      "accession_number": "0001193125-26-191507",
-      "filing_date": "2026-04-29",
+      "accession_number": "0001193125-26-436133",
+      "filing_date": "2026-10-28",
       "sections": [
         "item_2",
         "item_3"
@@ -67,9 +67,9 @@
     {
       "symbol": "MSFT",
       "form": "8-K",
-      "accession_number": "0001193125-26-323632",
-      "filing_date": "2026-07-29",
-      "records": 29
+      "accession_number": "0001193125-26-436122",
+      "filing_date": "2026-10-28",
+      "records": 25
     },
     {
       "symbol": "GOOGL",
@@ -87,13 +87,13 @@
     {
       "symbol": "GOOGL",
       "form": "10-Q",
-      "accession_number": "0001652044-26-000071",
-      "filing_date": "2026-07-23",
+      "accession_number": "0001652044-26-000084",
+      "filing_date": "2026-10-29",
       "sections": [
         "item_2",
         "item_3"
       ],
-      "records": 58
+      "records": 60
     },
     {
       "symbol": "AMZN",
@@ -111,8 +111,8 @@
     {
       "symbol": "AMZN",
       "form": "10-Q",
-      "accession_number": "0001018724-26-000026",
-      "filing_date": "2026-07-31",
+      "accession_number": "0001018724-26-000040",
+      "filing_date": "2026-10-30",
       "sections": [
         "item_2",
         "item_3"
@@ -122,8 +122,8 @@
     {
       "symbol": "AMZN",
       "form": "8-K",
-      "accession_number": "0001018724-26-000024",
-      "filing_date": "2026-07-30",
+      "accession_number": "0001018724-26-000038",
+      "filing_date": "2026-10-29",
       "records": 30
     },
     {
@@ -272,8 +272,8 @@
     {
       "symbol": "INTC",
       "form": "10-Q",
-      "accession_number": "0000050863-26-000157",
-      "filing_date": "2026-07-24",
+      "accession_number": "0000050863-26-000191",
+      "filing_date": "2026-10-30",
       "sections": [
         "item_2",
         "item_3"
@@ -296,19 +296,19 @@
     {
       "symbol": "SNDK",
       "form": "10-Q",
-      "accession_number": "0001628280-26-029401",
-      "filing_date": "2026-05-01",
+      "accession_number": "0001628280-26-068601",
+      "filing_date": "2026-10-30",
       "sections": [
         "item_2",
         "item_3"
       ],
-      "records": 60
+      "records": 37
     },
     {
       "symbol": "SNDK",
       "form": "8-K",
-      "accession_number": "0001628280-26-053346",
-      "filing_date": "2026-08-05",
+      "accession_number": "0001628280-26-068243",
+      "filing_date": "2026-10-29",
       "records": 30
     },
     {
@@ -449,8 +449,8 @@
     {
       "symbol": "GLW",
       "form": "10-Q",
-      "accession_number": "0000024741-26-000255",
-      "filing_date": "2026-07-29",
+      "accession_number": "0000024741-26-000279",
+      "filing_date": "2026-10-29",
       "sections": [
         "item_2",
         "item_3"
@@ -460,8 +460,8 @@
     {
       "symbol": "GLW",
       "form": "8-K",
-      "accession_number": "0000024741-26-000253",
-      "filing_date": "2026-07-28",
+      "accession_number": "0000024741-26-000273",
+      "filing_date": "2026-10-27",
       "records": 30
     },
     {
@@ -577,8 +577,8 @@
     {
       "symbol": "MA",
       "form": "10-Q",
-      "accession_number": "0001141391-26-000083",
-      "filing_date": "2026-07-30",
+      "accession_number": "0001141391-26-000124",
+      "filing_date": "2026-10-29",
       "sections": [
         "item_2",
         "item_3"
@@ -752,8 +752,8 @@
     {
       "symbol": "CAT",
       "form": "8-K",
-      "accession_number": "0000018230-26-000040",
-      "filing_date": "2026-08-04",
+      "accession_number": "0000018230-26-000052",
+      "filing_date": "2026-10-29",
       "records": 30
     }
   ],
