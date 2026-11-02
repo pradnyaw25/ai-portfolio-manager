@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "run_id": "run_20261102T202030Z_ca3a42c4",
+    "date": "2026-11-02",
+    "symbol": "INTC",
+    "action": "SELL",
+    "shares": 240,
+    "price": 60.244998931884766,
+    "total": 14458.799743652344,
+    "reasoning": "Exit the small INTC position. It has the portfolio's most severe documented momentum failure, falling 43.3% over 30 days and 27.3% over five days while remaining 7.2% below cost. There is no supplied catalyst to counter the downtrend, and exiting follows the fund-memory discipline of trimming weakening names before losses deepen."
+  }
+]
