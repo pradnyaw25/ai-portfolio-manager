@@ -1,44 +1,43 @@
-# Portfolio Report, 2026-11-03
+# Portfolio Report, 2026-11-04
 
 ## Summary
-- **Run ID:** `run_20261103T200846Z_c7832465`
-- **Total Value:** $1,034,246.71
-- **Cash:** $292,076.97 (28.2%)
-- **Invested:** $742,169.73
-- **Positions:** 18
+- **Run ID:** `run_20261104T175855Z_b7df126b`
+- **Total Value:** $1,067,558.97
+- **Cash:** $303,233.01 (28.4%)
+- **Invested:** $764,325.96
+- **Positions:** 17
 - **Outlook:** NEUTRAL
 
 ## Holdings
 
 | Symbol | Shares | Avg Cost | Current | P&L % |
 |--------|--------|----------|---------|-------|
-| AAPL | 599 | $298.69 | $330.45 | 10.6% |
-| JNJ | 543 | $239.58 | $267.13 | 11.5% |
-| AMZN | 431 | $240.96 | $251.26 | 4.3% |
-| MSFT | 137 | $412.76 | $522.76 | 26.6% |
-| NVDA | 150 | $203.30 | $206.66 | 1.7% |
-| WMT | 234 | $116.93 | $124.79 | 6.7% |
-| PG | 176 | $155.71 | $162.01 | 4.0% |
-| V | 58 | $344.73 | $421.65 | 22.3% |
-| UNH | 38 | $368.22 | $402.52 | 9.3% |
-| GOOGL | 55 | $280.45 | $278.08 | -0.8% |
-| HD | 38 | $317.96 | $331.32 | 4.2% |
-| XOM | 70 | $168.87 | $178.15 | 5.5% |
-| AVGO | 37 | $328.75 | $331.92 | 1.0% |
-| ORCL | 97 | $125.76 | $124.84 | -0.7% |
-| TSM | 28 | $414.49 | $403.95 | -2.5% |
-| META | 10 | $568.43 | $618.78 | 8.9% |
-| MA | 8 | $486.51 | $647.73 | 33.1% |
-| JPM | 10 | $313.49 | $337.75 | 7.7% |
+| AAPL | 599 | $298.69 | $353.95 | 18.5% |
+| JNJ | 543 | $239.58 | $274.12 | 14.4% |
+| AMZN | 431 | $240.96 | $269.03 | 11.6% |
+| MSFT | 137 | $412.76 | $552.70 | 33.9% |
+| NVDA | 150 | $203.30 | $203.69 | 0.2% |
+| WMT | 234 | $116.93 | $129.96 | 11.1% |
+| PG | 176 | $155.71 | $167.23 | 7.4% |
+| V | 58 | $344.73 | $431.79 | 25.3% |
+| GOOGL | 55 | $280.45 | $292.04 | 4.1% |
+| UNH | 38 | $368.22 | $408.33 | 10.9% |
+| HD | 38 | $317.96 | $350.55 | 10.2% |
+| ORCL | 97 | $125.76 | $126.22 | 0.4% |
+| AVGO | 37 | $328.75 | $329.90 | 0.4% |
+| XOM | 70 | $168.87 | $167.81 | -0.6% |
+| META | 10 | $568.43 | $639.96 | 12.6% |
+| MA | 8 | $486.51 | $667.43 | 37.2% |
+| JPM | 10 | $313.49 | $351.52 | 12.1% |
 
 ## Today's Trades
 
-- **SELL** 126 GLW @ $126.12. Exit GLW because its 22.4% 30-day decline is among the portfolio's clearest sustained momentum failures, while the position is only modestly above cost. The portfolio already has meaningful technology-linked exposure, and there is no supplied catalyst strong enough to justify retaining or averaging into this weakness.
+- **SELL** 28 TSM @ $398.43. Exit the small TSM position because it is below its average cost and down 7.9% over five days and 11.3% over 30 days. The weakness is corroborated by broad semiconductor underperformance, and there is no supplied positive catalyst sufficient to justify retaining or averaging into the position.
 
 ## Analysis
 
-Maintain a neutral, low-turnover stance. Sell GLW as the clearest remaining sustained momentum failure, hold existing relative-strength leaders without adding to concentration, avoid dip-buying weak semiconductor and AI-infrastructure names, and preserve the elevated cash reserve pending broader market stabilization.
+Sell TSM as the single targeted risk reduction, hold the remaining portfolio, preserve the elevated cash reserve, and do not add to concentrated leaders or weakening semiconductor and AI-related positions until market breadth improves.
 
 ## Risk Assessment
 
-The dominant risk is concentration rather than inadequate market exposure. AAPL, JNJ, and AMZN account for 59.5% of invested assets, while information technology, health care, and consumer discretionary account for 83.6% of invested exposure. Technology weakness is correlated across NVDA, AVGO, TSM, ORCL, GOOGL, META, and GLW. Elevated cash reduces total-portfolio beta but cannot diversify the concentrated invested sleeve. Memory also emphasizes disciplined, incremental trims in weakening positions and avoiding repeated averaging-down behavior.
+The primary risk is concentration, not insufficient exposure. AAPL is approximately 27.3% of invested assets, and AAPL, JNJ, and AMZN collectively account for about 61.5% of invested assets. Technology-linked exposure also has common sensitivity to valuation compression, AI capital-spending expectations, regulation, and declining semiconductor momentum. The cash reserve reduces total-portfolio volatility but cannot prevent drawdowns in the large existing positions. The targeted TSM exit follows prior fund lessons favoring early, incremental reductions in sustained weak momentum rather than averaging down.

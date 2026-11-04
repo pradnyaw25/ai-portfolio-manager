@@ -1,12 +1,12 @@
 [
   {
-    "run_id": "run_20261103T200846Z_c7832465",
-    "date": "2026-11-03",
-    "symbol": "GLW",
+    "run_id": "run_20261104T175855Z_b7df126b",
+    "date": "2026-11-04",
+    "symbol": "TSM",
     "action": "SELL",
-    "shares": 126,
-    "price": 126.125,
-    "total": 15891.75,
-    "reasoning": "Exit GLW because its 22.4% 30-day decline is among the portfolio's clearest sustained momentum failures, while the position is only modestly above cost. The portfolio already has meaningful technology-linked exposure, and there is no supplied catalyst strong enough to justify retaining or averaging into this weakness."
+    "shares": 28,
+    "price": 398.42999267578125,
+    "total": 11156.039794921875,
+    "reasoning": "Exit the small TSM position because it is below its average cost and down 7.9% over five days and 11.3% over 30 days. The weakness is corroborated by broad semiconductor underperformance, and there is no supplied positive catalyst sufficient to justify retaining or averaging into the position."
   }
 ]
