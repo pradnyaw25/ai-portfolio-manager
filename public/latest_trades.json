@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "run_id": "run_20261105T204208Z_ea249c13",
+    "date": "2026-11-05",
+    "symbol": "NVDA",
+    "action": "SELL",
+    "shares": 50,
+    "price": 181.73500061035156,
+    "total": 9086.750030517578,
+    "reasoning": "Trim one-third of NVDA to reduce semiconductor-theme risk: the position is 10.4% below cost, the stock is down 13.3% over 30 days and 6.3% over five days, and the market reports a chip-stock wipeout. Retain 100 shares because the position is already modest and no fresh company-specific evidence supports a full exit."
+  }
+]
