@@ -1,10 +1,10 @@
-# Portfolio Report, 2026-11-04
+# Portfolio Report, 2026-11-05
 
 ## Summary
-- **Run ID:** `run_20261104T202717Z_130a25c9`
-- **Total Value:** $1,068,425.24
-- **Cash:** $303,233.01 (28.4%)
-- **Invested:** $765,192.23
+- **Run ID:** `run_20261105T175928Z_515b622e`
+- **Total Value:** $1,049,797.10
+- **Cash:** $303,233.01 (28.9%)
+- **Invested:** $746,564.09
 - **Positions:** 17
 - **Outlook:** NEUTRAL
 
@@ -12,23 +12,23 @@
 
 | Symbol | Shares | Avg Cost | Current | P&L % |
 |--------|--------|----------|---------|-------|
-| AAPL | 599 | $298.69 | $352.37 | 18.0% |
-| JNJ | 543 | $239.58 | $276.83 | 15.5% |
-| AMZN | 431 | $240.96 | $268.05 | 11.2% |
-| MSFT | 137 | $412.76 | $558.58 | 35.3% |
-| WMT | 234 | $116.93 | $130.04 | 11.2% |
-| NVDA | 150 | $203.30 | $202.16 | -0.6% |
-| PG | 176 | $155.71 | $167.23 | 7.4% |
-| V | 58 | $344.73 | $434.23 | 26.0% |
-| GOOGL | 55 | $280.45 | $290.73 | 3.7% |
-| UNH | 38 | $368.22 | $414.91 | 12.7% |
-| HD | 38 | $317.96 | $354.72 | 11.6% |
-| ORCL | 97 | $125.76 | $124.29 | -1.2% |
-| AVGO | 37 | $328.75 | $325.67 | -0.9% |
-| XOM | 70 | $168.87 | $169.32 | 0.3% |
-| META | 10 | $568.43 | $630.77 | 11.0% |
-| MA | 8 | $486.51 | $671.03 | 37.9% |
-| JPM | 10 | $313.49 | $350.96 | 12.0% |
+| AAPL | 599 | $298.69 | $343.80 | 15.1% |
+| JNJ | 543 | $239.58 | $275.76 | 15.1% |
+| AMZN | 431 | $240.96 | $260.83 | 8.2% |
+| MSFT | 137 | $412.76 | $539.85 | 30.8% |
+| WMT | 234 | $116.93 | $128.91 | 10.2% |
+| PG | 176 | $155.71 | $167.56 | 7.6% |
+| NVDA | 150 | $203.30 | $182.67 | -10.1% |
+| V | 58 | $344.73 | $427.39 | 24.0% |
+| GOOGL | 55 | $280.45 | $284.29 | 1.4% |
+| UNH | 38 | $368.22 | $398.20 | 8.1% |
+| HD | 38 | $317.96 | $349.18 | 9.8% |
+| XOM | 70 | $168.87 | $169.48 | 0.4% |
+| ORCL | 97 | $125.76 | $113.99 | -9.4% |
+| AVGO | 37 | $328.75 | $296.79 | -9.7% |
+| META | 10 | $568.43 | $604.48 | 6.3% |
+| MA | 8 | $486.51 | $662.08 | 36.1% |
+| JPM | 10 | $313.49 | $339.22 | 8.2% |
 
 ## Today's Trades
 
@@ -36,8 +36,8 @@ No trades executed today.
 
 ## Analysis
 
-No trades. Hold proven leaders, avoid averaging into weak technology and AI-linked positions, and preserve the 28.4% cash reserve until breadth and momentum improve. Sources used: 5-day and 30-day return data, market and symbol news, research brief, risk_lesson:run_20260729T184341Z_54100baf:report_risk, risk_lesson:run_20260803T191113Z_b5f11a59:report_risk, risk_lesson:run_20260730T161151Z_1b5d1b4c:report_risk, trade:run_20260812T183945Z_0d1bf062:AAPL:SELL, trade:run_20261002T192956Z_2fe00593:HD:SELL, trade:run_20261030T164120Z_031be35e:CAT:SELL, report_summary:run_20261027T155213Z_b2a88997, and report_summary:run_20261028T163624Z_f7ac1816.
+No transactions. Hold proven relative-strength leaders, retain the substantial cash reserve, and avoid adding to weakening AI, semiconductor, and infrastructure exposures until relative momentum and market breadth improve.
 
 ## Risk Assessment
 
-The primary risk is concentration rather than lack of equity exposure. AAPL is approximately 19.8% of total portfolio value, while JNJ, AMZN, and MSFT add substantial single-name exposure. Technology and AI-related holdings remain sensitive to valuation compression, regulation, AI-capex expectations, and a continuation of the Nasdaq decline. NVDA, AVGO, ORCL, GOOGL, and META show meaningful negative 30-day momentum; prior fund risk lessons favor avoiding averaging into such weakness and using incremental trims only when deterioration becomes persistent. The cash reserve reduces total-portfolio beta but does not eliminate drawdown risk in the concentrated invested sleeve.
+The primary risk is concentration, not insufficient equity exposure. AAPL, JNJ, and AMZN represent a large share of invested capital, while technology-linked holdings remain exposed to a broad de-rating in chips, AI infrastructure, and cloud-spending expectations. NVDA, AVGO, and ORCL are below cost; NVDA, GOOGL, META, ORCL, and AVGO have negative 30-day momentum. Cash reduces overall portfolio beta but does not eliminate drawdown risk in the concentrated invested sleeve.
