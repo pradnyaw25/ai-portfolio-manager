@@ -1,26 +1,26 @@
 {
-  "ingested_at": "2026-10-31T17:47:58.157218Z",
+  "ingested_at": "2026-11-07T18:05:22.474901Z",
   "ingestion": {
     "status": "ok",
-    "created": 2821,
+    "created": 2830,
     "updated": 0,
     "skipped": 0,
     "errors": [],
-    "total_processed": 2821
+    "total_processed": 2830
   },
   "processed": [
     {
       "symbol": "AAPL",
       "form": "10-K",
-      "accession_number": "0000320193-25-000079",
-      "filing_date": "2025-10-31",
+      "accession_number": "0000320193-26-000026",
+      "filing_date": "2026-11-03",
       "sections": [
         "item_1",
         "item_1a",
         "item_7",
         "item_7a"
       ],
-      "records": 51
+      "records": 59
     },
     {
       "symbol": "AAPL",
@@ -36,9 +36,9 @@
     {
       "symbol": "AAPL",
       "form": "8-K",
-      "accession_number": "0000320193-26-000018",
-      "filing_date": "2026-07-30",
-      "records": 14
+      "accession_number": "0000320193-26-000024",
+      "filing_date": "2026-11-02",
+      "records": 15
     },
     {
       "symbol": "MSFT",
@@ -187,8 +187,8 @@
     {
       "symbol": "AMD",
       "form": "10-Q",
-      "accession_number": "0000002488-26-000123",
-      "filing_date": "2026-08-05",
+      "accession_number": "0000002488-26-000191",
+      "filing_date": "2026-11-04",
       "sections": [
         "item_2",
         "item_3"
@@ -382,8 +382,8 @@
     {
       "symbol": "IREN",
       "form": "10-Q",
-      "accession_number": "0001878848-26-000026",
-      "filing_date": "2026-05-08",
+      "accession_number": "0001878848-26-000066",
+      "filing_date": "2026-11-05",
       "sections": [
         "item_2",
         "item_3"
@@ -401,8 +401,8 @@
     {
       "symbol": "CORZ",
       "form": "10-Q",
-      "accession_number": "0001839341-26-000014",
-      "filing_date": "2026-07-28",
+      "accession_number": "0001839341-26-000030",
+      "filing_date": "2026-11-05",
       "sections": [
         "item_2",
         "item_3"
@@ -522,8 +522,8 @@
     {
       "symbol": "JPM",
       "form": "10-Q",
-      "accession_number": "0001628280-26-054343",
-      "filing_date": "2026-08-06",
+      "accession_number": "0001628280-26-069523",
+      "filing_date": "2026-11-03",
       "sections": [
         "item_2",
         "item_3"
@@ -540,8 +540,8 @@
     {
       "symbol": "V",
       "form": "10-K",
-      "accession_number": "0001403161-25-000089",
-      "filing_date": "2025-11-06",
+      "accession_number": "0001403161-26-000134",
+      "filing_date": "2026-11-05",
       "sections": [
         "item_1",
         "item_1a",
@@ -601,8 +601,8 @@
     {
       "symbol": "UNH",
       "form": "10-Q",
-      "accession_number": "0000731766-26-000197",
-      "filing_date": "2026-08-10",
+      "accession_number": "0000731766-26-000266",
+      "filing_date": "2026-11-03",
       "sections": [
         "item_2",
         "item_3"
@@ -741,8 +741,8 @@
     {
       "symbol": "CAT",
       "form": "10-Q",
-      "accession_number": "0000018230-26-000046",
-      "filing_date": "2026-08-05",
+      "accession_number": "0000018230-26-000057",
+      "filing_date": "2026-11-04",
       "sections": [
         "item_2",
         "item_3"
