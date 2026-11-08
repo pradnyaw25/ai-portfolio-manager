@@ -1,27 +1,27 @@
-# A difficult week, but modest relative resilience versus the benchmark.
+# Positive week with the portfolio up 0.73% while the benchmark declined -2.02%.
 
-*Week of 2026-10-26 to 2026-11-01*
+*Week of 2026-11-02 to 2026-11-08*
 
 ## Performance
 
-For the week ended 2026-11-01, portfolio value declined from 1048239.29 to 1040232.31, a return of -0.76%, versus -0.89% for the benchmark. Alpha was 0.13%.
+Portfolio value rose from 1039168.19 to 1046774.59, a 0.73% return and 2.75% alpha versus the benchmark.
 
 ## Winners
 
-- JNJ gained 5.98% this week; its return since the position was opened is 14.94%.
-- XOM rose 5.14% this week; its return since the position was opened is 10.32%.
-- WMT advanced 4.85% this week; its return since the position was opened is 5.90%.
+- HD gained 8.16% this week; its return since the position was opened is 7.88%.
+- MA gained 6.95% this week; its return since the position was opened is 34.70%.
+- WMT gained 5.68% this week; its return since the position was opened is 7.36%.
 
 ## Losers
 
-- INTC fell -29.26% this week; its return since the position was opened is -2.17%.
-- GOOGL declined -16.41% this week; its return since the position was opened is -0.98%.
-- META fell -11.83% this week, while its return since the position was opened remains 7.94%.
+- ORCL declined -19.68% this week; its return since the position was opened is -8.51%.
+- AVGO declined -16.52% this week; its return since the position was opened is -11.04%.
+- NVDA declined -13.34% this week; its return since the position was opened is -7.54%.
 
 ## Portfolio Changes
 
-Activity included sales of GOOGL, GLW, CAT, and AMZN, alongside purchases of HD, CAT, GLW, AVGO, ORCL, GOOGL, INTC, PG, and WMT. Notably, GOOGL and GLW were both sold and repurchased during the week.
+We sold 240 shares of INTC on 2026-11-02, 126 shares of GLW on 2026-11-03, 28 shares of TSM on 2026-11-04, and 50 shares of NVDA on 2026-11-05.
 
 ## Outlook
 
-The portfolio finished below its starting value, although it outperformed the benchmark by 0.13%. This week’s dispersion was pronounced: strength in JNJ, XOM, and WMT was offset by sharp declines in INTC, GOOGL, and META. We remain focused on the existing positions and the changes executed during the week.
+The portfolio outperformed this week despite sharp declines in several holdings. We remain attentive to position-level dispersion and the effects of the week's sales.
