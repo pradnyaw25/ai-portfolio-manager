@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "run_id": "run_20261109T204118Z_958126f7",
+    "date": "2026-11-09",
+    "symbol": "NVDA",
+    "action": "SELL",
+    "shares": 25,
+    "price": 177.4199981689453,
+    "total": 4435.499954223633,
+    "reasoning": "Trim one-quarter of the small NVDA position rather than add to it. NVDA is below cost, down 21.9% over 30 days and 7.6% over five days, while the supplied news includes a current scrutiny-related headline. The sale is a measured reduction of impaired semiconductor exposure, not a full thesis exit."
+  }
+]
