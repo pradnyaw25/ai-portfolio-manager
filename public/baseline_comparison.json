@@ -6,9 +6,9 @@
     {
       "name": "Glasshouse Fund",
       "start_value": 1000000.0,
-      "end_value": 1056373.99,
-      "return_pct": 0.056374,
-      "alpha_vs_spy": 0.045476,
+      "end_value": 1059855.8,
+      "return_pct": 0.059856,
+      "alpha_vs_spy": 0.048958,
       "detail": "the live AI fund"
     },
     {
@@ -30,7 +30,7 @@
     {
       "name": "Random from watchlist",
       "start_value": 1000000.0,
-      "end_value": 876950.18,
+      "end_value": 876950.17,
       "return_pct": -0.12305,
       "alpha_vs_spy": -0.133948,
       "detail": "mean of 500 random 5-name equal-weight portfolios"

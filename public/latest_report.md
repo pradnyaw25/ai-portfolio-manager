@@ -1,51 +1,44 @@
 # Portfolio Report, 2026-11-10
 
 ## Summary
-- **Run ID:** `run_20261110T174553Z_5dbc3e87`
-- **Total Value:** $1,056,373.99
-- **Cash:** $264,634.08 (25.1%)
-- **Invested:** $791,739.91
-- **Positions:** 19
+- **Run ID:** `run_20261110T202923Z_1f986213`
+- **Total Value:** $1,059,855.80
+- **Cash:** $295,234.51 (27.9%)
+- **Invested:** $764,621.29
+- **Positions:** 17
 - **Outlook:** NEUTRAL
 
 ## Holdings
 
 | Symbol | Shares | Avg Cost | Current | P&L % |
 |--------|--------|----------|---------|-------|
-| AAPL | 599 | $298.69 | $347.54 | 16.4% |
-| JNJ | 543 | $239.58 | $282.03 | 17.7% |
-| AMZN | 431 | $240.96 | $267.65 | 11.1% |
-| MSFT | 137 | $412.76 | $526.98 | 27.7% |
-| PG | 266 | $160.38 | $169.52 | 5.7% |
-| WMT | 234 | $116.93 | $126.18 | 7.9% |
-| V | 58 | $344.73 | $423.84 | 22.9% |
-| GOOGL | 55 | $280.45 | $285.97 | 2.0% |
-| GLW | 138 | $110.93 | $110.93 | 0.0% |
-| UNH | 38 | $368.22 | $402.27 | 9.2% |
-| TSM | 39 | $388.84 | $388.84 | 0.0% |
-| AMD | 30 | $504.59 | $504.59 | 0.0% |
-| CAT | 26 | $578.10 | $578.10 | 0.0% |
-| HD | 38 | $317.96 | $352.05 | 10.7% |
-| AVGO | 37 | $328.75 | $324.82 | -1.2% |
-| XOM | 70 | $168.87 | $164.43 | -2.6% |
-| META | 10 | $568.43 | $638.85 | 12.4% |
-| MA | 8 | $486.51 | $661.00 | 35.9% |
-| JPM | 10 | $313.49 | $342.74 | 9.3% |
+| AAPL | 599 | $298.69 | $348.77 | 16.8% |
+| JNJ | 543 | $239.58 | $280.48 | 17.1% |
+| AMZN | 431 | $240.96 | $271.78 | 12.8% |
+| MSFT | 137 | $412.76 | $533.32 | 29.2% |
+| PG | 266 | $160.38 | $168.64 | 5.1% |
+| WMT | 234 | $116.93 | $125.57 | 7.4% |
+| V | 58 | $344.73 | $423.00 | 22.7% |
+| GOOGL | 55 | $280.45 | $287.49 | 2.5% |
+| AMD | 30 | $504.59 | $517.66 | 2.6% |
+| TSM | 39 | $388.84 | $396.83 | 2.1% |
+| UNH | 38 | $368.22 | $403.19 | 9.5% |
+| HD | 38 | $317.96 | $350.34 | 10.2% |
+| AVGO | 37 | $328.75 | $332.75 | 1.2% |
+| XOM | 70 | $168.87 | $164.70 | -2.5% |
+| META | 10 | $568.43 | $644.76 | 13.4% |
+| MA | 8 | $486.51 | $658.72 | 35.4% |
+| JPM | 10 | $313.49 | $342.33 | 9.2% |
 
 ## Today's Trades
 
-- **SELL** 75 NVDA @ $167.01, stop-loss: NVDA down -18% from cost basis
-- **SELL** 97 ORCL @ $115.99. Exit ORCL because it is down 16.9% over 30 days, down 5.1% over five days, and 8.0% below cost. The supplied research brief identifies an unresolved earnings-risk backdrop and provides no confirmed near-term catalyst supporting continued ownership.
-- **BUY** 90 PG @ $169.52. Adds defensive consumer-staples exposure with pricing power and dividend support, helping balance the portfolio's sizable technology exposure amid renewed inflation concerns.
-- **BUY** 26 CAT @ $578.10. Adds industrial and infrastructure exposure, diversifying away from mega-cap technology while retaining participation in capital-spending and construction demand.
-- **BUY** 138 GLW @ $110.93. Provides differentiated exposure to optical communications, connectivity, display, and specialty materials, with secular demand drivers outside the portfolio's existing holdings.
-- **BUY** 39 TSM @ $388.84. Adds leading semiconductor foundry exposure and diversified global chip demand participation, complementing existing AI beneficiaries without adding to excluded NVDA or ORCL.
-- **BUY** 30 AMD @ $504.59. Adds a second major compute and data-center semiconductor platform with potential AI and server-share upside, sized as a diversified allocation rather than a concentrated semiconductor bet.
+- **SELL** 26 CAT @ $582.77. Exit the remaining small CAT position. It is down 4.0% over five days and 30.5% over 30 days, materially underperforming SPY, while the stock is only slightly above average cost. This follows the prior decision to trim CAT for sustained momentum failure and avoids reversing that risk discipline without a supplied catalyst.
+- **SELL** 138 GLW @ $111.94. Exit GLW because it is down 8.1% over five days and 31.4% over 30 days, the most severe sustained decline among current holdings. The position is only marginally above cost, no positive catalyst is supplied, and disclosed risks around customer concentration, financing, execution, and technology change reinforce the case not to average into weakness.
 
 ## Analysis
 
-Maintain a neutral, low-turnover stance. Sell NVDA and ORCL as the clearest unresolved weak exposures, retain proven leaders without increasing concentration, avoid the weak semiconductor and AI-infrastructure watchlist, and preserve the 30% cash reserve until market breadth improves.
+Maintain a neutral, low-turnover posture: sell CAT and GLW as the clearest momentum failures, hold profitable relative-strength leaders without adding to concentration, avoid semiconductor and speculative dip-buying, and preserve the substantial cash reserve pending broader market stabilization.
 
 ## Risk Assessment
 
-The principal risk is concentration: AAPL, JNJ, and AMZN represent 64.4% of invested assets, with MSFT adding further large-cap technology exposure. The portfolio is also exposed to a bifurcated market in which defensive winners may be vulnerable if selling broadens, while the technology and semiconductor sleeve faces valuation, China/regulatory, AI-spending, and momentum risks. The elevated cash reserve reduces total-portfolio beta but does not eliminate concentrated single-name risk in the invested sleeve.
+The main risk is concentration rather than a lack of equity exposure. AAPL alone is about 19.7% of total portfolio value, while AAPL, JNJ, AMZN, and MSFT dominate the invested sleeve. Technology and technology-adjacent exposures remain correlated to higher rates, AI capital-spending expectations, and momentum reversals. The portfolio also contains positions with materially negative 30-day momentum, including AMD, TSM, AVGO, GOOGL, META, CAT, and GLW. Retaining cash, avoiding additions to concentrated leaders, and exiting the most damaged small holdings are the primary controls.
