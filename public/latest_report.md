@@ -1,43 +1,51 @@
-# Portfolio Report, 2026-11-09
+# Portfolio Report, 2026-11-10
 
 ## Summary
-- **Run ID:** `run_20261109T204118Z_958126f7`
-- **Total Value:** $1,062,456.24
-- **Cash:** $316,755.26 (29.8%)
-- **Invested:** $745,700.98
-- **Positions:** 17
+- **Run ID:** `run_20261110T174553Z_5dbc3e87`
+- **Total Value:** $1,056,373.99
+- **Cash:** $264,634.08 (25.1%)
+- **Invested:** $791,739.91
+- **Positions:** 19
 - **Outlook:** NEUTRAL
 
 ## Holdings
 
 | Symbol | Shares | Avg Cost | Current | P&L % |
 |--------|--------|----------|---------|-------|
-| AAPL | 599 | $298.69 | $350.69 | 17.4% |
-| JNJ | 543 | $239.58 | $282.04 | 17.7% |
-| AMZN | 431 | $240.96 | $268.56 | 11.5% |
-| MSFT | 137 | $412.76 | $547.23 | 32.6% |
-| PG | 176 | $155.71 | $168.46 | 8.2% |
-| WMT | 234 | $116.93 | $125.78 | 7.6% |
-| V | 58 | $344.73 | $423.48 | 22.8% |
-| GOOGL | 55 | $280.45 | $289.35 | 3.2% |
-| UNH | 38 | $368.22 | $397.73 | 8.0% |
-| HD | 38 | $317.96 | $355.56 | 11.8% |
-| NVDA | 75 | $203.30 | $177.42 | -12.7% |
-| AVGO | 37 | $328.75 | $322.45 | -1.9% |
-| ORCL | 97 | $125.76 | $120.10 | -4.5% |
-| XOM | 70 | $168.87 | $164.87 | -2.4% |
-| META | 10 | $568.43 | $646.63 | 13.8% |
-| MA | 8 | $486.51 | $658.11 | 35.3% |
-| JPM | 10 | $313.49 | $342.89 | 9.4% |
+| AAPL | 599 | $298.69 | $347.54 | 16.4% |
+| JNJ | 543 | $239.58 | $282.03 | 17.7% |
+| AMZN | 431 | $240.96 | $267.65 | 11.1% |
+| MSFT | 137 | $412.76 | $526.98 | 27.7% |
+| PG | 266 | $160.38 | $169.52 | 5.7% |
+| WMT | 234 | $116.93 | $126.18 | 7.9% |
+| V | 58 | $344.73 | $423.84 | 22.9% |
+| GOOGL | 55 | $280.45 | $285.97 | 2.0% |
+| GLW | 138 | $110.93 | $110.93 | 0.0% |
+| UNH | 38 | $368.22 | $402.27 | 9.2% |
+| TSM | 39 | $388.84 | $388.84 | 0.0% |
+| AMD | 30 | $504.59 | $504.59 | 0.0% |
+| CAT | 26 | $578.10 | $578.10 | 0.0% |
+| HD | 38 | $317.96 | $352.05 | 10.7% |
+| AVGO | 37 | $328.75 | $324.82 | -1.2% |
+| XOM | 70 | $168.87 | $164.43 | -2.6% |
+| META | 10 | $568.43 | $638.85 | 12.4% |
+| MA | 8 | $486.51 | $661.00 | 35.9% |
+| JPM | 10 | $313.49 | $342.74 | 9.3% |
 
 ## Today's Trades
 
-- **SELL** 25 NVDA @ $177.42. Trim one-quarter of the small NVDA position rather than add to it. NVDA is below cost, down 21.9% over 30 days and 7.6% over five days, while the supplied news includes a current scrutiny-related headline. The sale is a measured reduction of impaired semiconductor exposure, not a full thesis exit.
+- **SELL** 75 NVDA @ $167.01, stop-loss: NVDA down -18% from cost basis
+- **SELL** 97 ORCL @ $115.99. Exit ORCL because it is down 16.9% over 30 days, down 5.1% over five days, and 8.0% below cost. The supplied research brief identifies an unresolved earnings-risk backdrop and provides no confirmed near-term catalyst supporting continued ownership.
+- **BUY** 90 PG @ $169.52. Adds defensive consumer-staples exposure with pricing power and dividend support, helping balance the portfolio's sizable technology exposure amid renewed inflation concerns.
+- **BUY** 26 CAT @ $578.10. Adds industrial and infrastructure exposure, diversifying away from mega-cap technology while retaining participation in capital-spending and construction demand.
+- **BUY** 138 GLW @ $110.93. Provides differentiated exposure to optical communications, connectivity, display, and specialty materials, with secular demand drivers outside the portfolio's existing holdings.
+- **BUY** 39 TSM @ $388.84. Adds leading semiconductor foundry exposure and diversified global chip demand participation, complementing existing AI beneficiaries without adding to excluded NVDA or ORCL.
+- **BUY** 30 AMD @ $504.59. Adds a second major compute and data-center semiconductor platform with potential AI and server-share upside, sized as a diversified allocation rather than a concentrated semiconductor bet.
 
 ## Analysis
 
-Maintain a neutral, low-turnover portfolio posture. Preserve the elevated cash reserve, retain holdings with proven relative strength, do not average into weak AI and semiconductor names, and execute only a modest NVDA trim to reduce the clearest ongoing momentum risk.
+Maintain a neutral, low-turnover stance. Sell NVDA and ORCL as the clearest unresolved weak exposures, retain proven leaders without increasing concentration, avoid the weak semiconductor and AI-infrastructure watchlist, and preserve the 30% cash reserve until market breadth improves.
 
 ## Risk Assessment
 
-The principal risk is concentration rather than lack of equity exposure. AAPL, JNJ, and AMZN account for a large share of invested capital, with additional concentration in MSFT. Technology-linked holdings are vulnerable to further valuation compression and AI-spending concerns; NVDA, AVGO, ORCL, GOOGL, and META have weak 30-day trends. The cash buffer mitigates, but does not eliminate, losses from the concentrated equity sleeve. A modest NVDA trim follows prior risk lessons favoring incremental action on sustained momentum failures rather than averaging down.
+The principal risk is concentration: AAPL, JNJ, and AMZN represent 64.4% of invested assets, with MSFT adding further large-cap technology exposure. The portfolio is also exposed to a bifurcated market in which defensive winners may be vulnerable if selling broadens, while the technology and semiconductor sleeve faces valuation, China/regulatory, AI-spending, and momentum risks. The elevated cash reserve reduces total-portfolio beta but does not eliminate concentrated single-name risk in the invested sleeve.
