@@ -1,10 +1,10 @@
-# Portfolio Report, 2026-11-10
+# Portfolio Report, 2026-11-11
 
 ## Summary
-- **Run ID:** `run_20261110T202923Z_1f986213`
-- **Total Value:** $1,059,855.80
+- **Run ID:** `run_20261111T175235Z_a35b797f`
+- **Total Value:** $1,060,031.84
 - **Cash:** $295,234.51 (27.9%)
-- **Invested:** $764,621.29
+- **Invested:** $764,797.33
 - **Positions:** 17
 - **Outlook:** NEUTRAL
 
@@ -12,33 +12,32 @@
 
 | Symbol | Shares | Avg Cost | Current | P&L % |
 |--------|--------|----------|---------|-------|
-| AAPL | 599 | $298.69 | $348.77 | 16.8% |
-| JNJ | 543 | $239.58 | $280.48 | 17.1% |
-| AMZN | 431 | $240.96 | $271.78 | 12.8% |
-| MSFT | 137 | $412.76 | $533.32 | 29.2% |
-| PG | 266 | $160.38 | $168.64 | 5.1% |
-| WMT | 234 | $116.93 | $125.57 | 7.4% |
-| V | 58 | $344.73 | $423.00 | 22.7% |
-| GOOGL | 55 | $280.45 | $287.49 | 2.5% |
-| AMD | 30 | $504.59 | $517.66 | 2.6% |
-| TSM | 39 | $388.84 | $396.83 | 2.1% |
-| UNH | 38 | $368.22 | $403.19 | 9.5% |
-| HD | 38 | $317.96 | $350.34 | 10.2% |
-| AVGO | 37 | $328.75 | $332.75 | 1.2% |
-| XOM | 70 | $168.87 | $164.70 | -2.5% |
-| META | 10 | $568.43 | $644.76 | 13.4% |
-| MA | 8 | $486.51 | $658.72 | 35.4% |
-| JPM | 10 | $313.49 | $342.33 | 9.2% |
+| AAPL | 599 | $298.69 | $354.70 | 18.8% |
+| JNJ | 543 | $239.58 | $277.83 | 16.0% |
+| AMZN | 431 | $240.96 | $265.95 | 10.4% |
+| MSFT | 137 | $412.76 | $521.31 | 26.3% |
+| PG | 266 | $160.38 | $166.81 | 4.0% |
+| WMT | 234 | $116.93 | $124.39 | 6.4% |
+| V | 58 | $344.73 | $422.73 | 22.6% |
+| AMD | 30 | $504.59 | $560.40 | 11.1% |
+| TSM | 39 | $388.84 | $415.77 | 6.9% |
+| GOOGL | 55 | $280.45 | $293.89 | 4.8% |
+| UNH | 38 | $368.22 | $398.66 | 8.3% |
+| HD | 38 | $317.96 | $348.49 | 9.6% |
+| AVGO | 37 | $328.75 | $355.15 | 8.0% |
+| XOM | 70 | $168.87 | $165.68 | -1.9% |
+| META | 10 | $568.43 | $643.12 | 13.1% |
+| MA | 8 | $486.51 | $655.41 | 34.7% |
+| JPM | 10 | $313.49 | $343.62 | 9.6% |
 
 ## Today's Trades
 
-- **SELL** 26 CAT @ $582.77. Exit the remaining small CAT position. It is down 4.0% over five days and 30.5% over 30 days, materially underperforming SPY, while the stock is only slightly above average cost. This follows the prior decision to trim CAT for sustained momentum failure and avoids reversing that risk discipline without a supplied catalyst.
-- **SELL** 138 GLW @ $111.94. Exit GLW because it is down 8.1% over five days and 31.4% over 30 days, the most severe sustained decline among current holdings. The position is only marginally above cost, no positive catalyst is supplied, and disclosed risks around customer concentration, financing, execution, and technology change reinforce the case not to average into weakness.
+No trades executed today.
 
 ## Analysis
 
-Maintain a neutral, low-turnover posture: sell CAT and GLW as the clearest momentum failures, hold profitable relative-strength leaders without adding to concentration, avoid semiconductor and speculative dip-buying, and preserve the substantial cash reserve pending broader market stabilization.
+Maintain a neutral, low-turnover stance: execute no trades, retain the 27.9% cash reserve, hold demonstrated relative-strength positions, and avoid adding to the weak technology, AI, and semiconductor cohort. Sources used include current five-day and 30-day returns, supplied news, benchmark data, and memory IDs risk_lesson:run_20260729T184341Z_54100baf:report_risk, risk_lesson:run_20260803T191113Z_b5f11a59:report_risk, risk_lesson:run_20260730T161151Z_1b5d1b4c:report_risk, trade:run_20260812T183945Z_0d1bf062:AAPL:SELL, and report_summary:run_20261028T163624Z_f7ac1816.
 
 ## Risk Assessment
 
-The main risk is concentration rather than a lack of equity exposure. AAPL alone is about 19.7% of total portfolio value, while AAPL, JNJ, AMZN, and MSFT dominate the invested sleeve. Technology and technology-adjacent exposures remain correlated to higher rates, AI capital-spending expectations, and momentum reversals. The portfolio also contains positions with materially negative 30-day momentum, including AMD, TSM, AVGO, GOOGL, META, CAT, and GLW. Retaining cash, avoiding additions to concentrated leaders, and exiting the most damaged small holdings are the primary controls.
+Primary risk is concentration rather than insufficient equity exposure. AAPL is approximately 20.0% of total portfolio value, while JNJ and AMZN add substantial single-name exposure. Technology and AI-related holdings face correlated downside amid weak QQQ performance, falling semiconductor momentum, valuation sensitivity, and elevated VIX. AMD, GOOGL, TSM, AVGO and META have negative 30-day momentum despite some positions remaining above cost. The cash reserve cushions portfolio volatility but does not eliminate the impact of a large adverse move in the leading holdings.
