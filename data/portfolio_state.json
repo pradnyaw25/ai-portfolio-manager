@@ -6,103 +6,103 @@
       "symbol": "JNJ",
       "shares": 543,
       "avg_cost": 239.57778686186228,
-      "current_price": 284.6499938964844
+      "current_price": 283.8949890136719
     },
     {
       "symbol": "AAPL",
       "shares": 599,
       "avg_cost": 298.6877331913369,
-      "current_price": 355.5400085449219
+      "current_price": 354.875
     },
     {
       "symbol": "MSFT",
       "shares": 137,
       "avg_cost": 412.76182054951244,
-      "current_price": 528.1998291015625
+      "current_price": 521.9400024414062
     },
     {
       "symbol": "UNH",
       "shares": 38,
       "avg_cost": 368.21972575940583,
-      "current_price": 405.2900085449219
+      "current_price": 404.739990234375
     },
     {
       "symbol": "AMZN",
       "shares": 431,
       "avg_cost": 240.96075193141618,
-      "current_price": 269.0899963378906
+      "current_price": 267.364990234375
     },
     {
       "symbol": "JPM",
       "shares": 10,
       "avg_cost": 313.489990234375,
-      "current_price": 344.0299987792969
+      "current_price": 343.3450012207031
     },
     {
       "symbol": "V",
       "shares": 58,
       "avg_cost": 344.72793473868535,
-      "current_price": 424.4700012207031
+      "current_price": 420.9800109863281
     },
     {
       "symbol": "MA",
       "shares": 8,
       "avg_cost": 486.510009765625,
-      "current_price": 658.2550048828125
+      "current_price": 653.7100219726562
     },
     {
       "symbol": "META",
       "shares": 10,
       "avg_cost": 568.4299926757812,
-      "current_price": 625.0
+      "current_price": 620.155029296875
     },
     {
       "symbol": "PG",
       "shares": 266,
       "avg_cost": 160.38491964698733,
-      "current_price": 168.75999450683594
+      "current_price": 168.2100067138672
     },
     {
       "symbol": "WMT",
       "shares": 234,
       "avg_cost": 116.92608971881052,
-      "current_price": 125.88500213623047
+      "current_price": 126.23999786376953
     },
     {
       "symbol": "XOM",
       "shares": 70,
       "avg_cost": 168.8699951171875,
-      "current_price": 170.11000061035156
+      "current_price": 169.7899932861328
     },
     {
       "symbol": "HD",
       "shares": 38,
       "avg_cost": 317.9649963378906,
-      "current_price": 349.19000244140625
+      "current_price": 348.3800048828125
     },
     {
       "symbol": "AVGO",
       "shares": 37,
       "avg_cost": 328.75,
-      "current_price": 363.635009765625
+      "current_price": 362.2900085449219
     },
     {
       "symbol": "GOOGL",
       "shares": 55,
       "avg_cost": 280.45001220703125,
-      "current_price": 301.20001220703125
+      "current_price": 298.3599853515625
     },
     {
       "symbol": "TSM",
       "shares": 39,
       "avg_cost": 388.8399963378906,
-      "current_price": 407.2149963378906
+      "current_price": 405.4599914550781
     },
     {
       "symbol": "AMD",
       "shares": 30,
       "avg_cost": 504.58990478515625,
-      "current_price": 578.407470703125
+      "current_price": 582.1199951171875
     }
   ]
 }
