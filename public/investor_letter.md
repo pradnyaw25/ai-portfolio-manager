@@ -1,27 +1,27 @@
-# Positive week with the portfolio up 0.73% while the benchmark declined -2.02%.
+# Positive week with the portfolio ahead of its benchmark.
 
-*Week of 2026-11-02 to 2026-11-08*
+*Week of 2026-11-09 to 2026-11-15*
 
 ## Performance
 
-Portfolio value rose from 1039168.19 to 1046774.59, a 0.73% return and 2.75% alpha versus the benchmark.
+For the week ended 2026-11-15, portfolio value rose from 1062456.24 to 1066765.76, a 0.41% return versus -0.32% for the benchmark, producing 0.73% alpha.
 
 ## Winners
 
-- HD gained 8.16% this week; its return since the position was opened is 7.88%.
-- MA gained 6.95% this week; its return since the position was opened is 34.70%.
-- WMT gained 5.68% this week; its return since the position was opened is 7.36%.
+- AMD rose 9.26% this week; its return since the position was opened is 5.50%.
+- AVGO gained 6.61% this week; its return since the position was opened is 5.05%.
+- JNJ advanced 3.41% this week; its return since the position was opened is 19.60%.
 
 ## Losers
 
-- ORCL declined -19.68% this week; its return since the position was opened is -8.51%.
-- AVGO declined -16.52% this week; its return since the position was opened is -11.04%.
-- NVDA declined -13.34% this week; its return since the position was opened is -7.54%.
+- MSFT declined -5.74% this week; its return since the position was opened is 27.12%.
+- V fell -2.30% this week; its return since the position was opened is 23.35%.
+- HD declined -1.90% this week; its return since the position was opened is 9.35%.
 
 ## Portfolio Changes
 
-We sold 240 shares of INTC on 2026-11-02, 126 shares of GLW on 2026-11-03, 28 shares of TSM on 2026-11-04, and 50 shares of NVDA on 2026-11-05.
+We sold 25 NVDA shares on 2026-11-09, then sold 75 NVDA shares and 97 ORCL shares on 2026-11-10. We bought 90 PG shares, 39 TSM shares, and 30 AMD shares on 2026-11-10. We also bought and sold 26 CAT shares and 138 GLW shares on 2026-11-10.
 
 ## Outlook
 
-The portfolio outperformed this week despite sharp declines in several holdings. We remain attentive to position-level dispersion and the effects of the week's sales.
+The week’s result was constructive: gains in AMD, AVGO, and JNJ outweighed weakness in MSFT, V, and HD, leaving the portfolio ahead of the benchmark. We remain focused on the current holdings and the portfolio changes completed during the week.
