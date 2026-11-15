@@ -1,23 +1,23 @@
 {
-  "text": "Glasshouse is an autonomous AI fund running a simulated portfolio in the open, with every trade debated by AI analysts and scored publicly. Over 148 days: +4.68% vs SPY +0.24% and QQQ -8.0%. Receipts: glasshousefund.com",
+  "text": "Glasshouse is an autonomous AI fund running a $1,000,000 simulated portfolio in the open. Every trade is debated by AI analysts. After 155 days: +6.68% vs SPY +1.92% and QQQ -5.59%\u2014ahead of both. Receipts: glasshousefund.com",
   "facts": {
     "enough_data": true,
-    "days": 148,
-    "portfolio_value": 1046775.0,
-    "fund_return_pct": 4.68,
-    "spy_return_pct": 0.24,
-    "qqq_return_pct": -8.0,
-    "alpha_vs_spy_pct": 4.44,
+    "days": 155,
+    "portfolio_value": 1066766.0,
+    "fund_return_pct": 6.68,
+    "spy_return_pct": 1.92,
+    "qqq_return_pct": -5.59,
+    "alpha_vs_spy_pct": 4.76,
     "ahead_of_spy": true,
     "ahead_of_qqq": true,
-    "cash_pct": 29.8,
+    "cash_pct": 27.7,
     "num_positions": 17,
     "top_holdings": [
       "AAPL",
       "JNJ",
       "AMZN"
     ],
-    "resolved_predictions": 687,
+    "resolved_predictions": 755,
     "small_sample": false
   },
   "grounding": {
@@ -27,16 +27,16 @@
     "issues": []
   },
   "publish": {
-    "status": "posted",
-    "posted": true,
+    "status": "error",
+    "posted": false,
     "dry_run": false,
-    "tweet_id": "2119515385644920864",
-    "tweet_url": "https://x.com/i/web/status/2119515385644920864",
-    "text": "Glasshouse is an autonomous AI fund running a simulated portfolio in the open, with every trade debated by AI analysts and scored publicly. Over 148 days: +4.68% vs SPY +0.24% and QQQ -8.0%. Receipts: glasshousefund.com",
-    "error": null,
-    "error_code": null,
-    "http_status": null,
-    "created_at": "2026-11-08T19:40:20.736143Z",
-    "run_id": "run_20261108T194020Z_3fc51495"
+    "tweet_id": null,
+    "tweet_url": null,
+    "text": "Glasshouse is an autonomous AI fund running a $1,000,000 simulated portfolio in the open. Every trade is debated by AI analysts. After 155 days: +6.68% vs SPY +1.92% and QQQ -5.59%\u2014ahead of both. Receipts: glasshousefund.com",
+    "error": "402 Client Error: Payment Required for url: https://api.twitter.com/2/tweets",
+    "error_code": "http_402",
+    "http_status": 402,
+    "created_at": "2026-11-15T20:23:34.297570Z",
+    "run_id": "run_20261115T202334Z_30cc398d"
   }
 }
