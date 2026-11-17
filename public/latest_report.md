@@ -1,10 +1,10 @@
-# Portfolio Report, 2026-11-16
+# Portfolio Report, 2026-11-17
 
 ## Summary
-- **Run ID:** `run_20261116T202424Z_931b2e28`
-- **Total Value:** $1,055,290.46
-- **Cash:** $295,234.51 (28.0%)
-- **Invested:** $760,055.95
+- **Run ID:** `run_20261117T190944Z_882e2e01`
+- **Total Value:** $1,047,244.34
+- **Cash:** $295,234.51 (28.2%)
+- **Invested:** $752,009.83
 - **Positions:** 17
 - **Outlook:** NEUTRAL
 
@@ -12,23 +12,23 @@
 
 | Symbol | Shares | Avg Cost | Current | P&L % |
 |--------|--------|----------|---------|-------|
-| AAPL | 599 | $298.69 | $351.70 | 17.7% |
-| JNJ | 543 | $239.58 | $283.45 | 18.3% |
-| AMZN | 431 | $240.96 | $257.59 | 6.9% |
-| MSFT | 137 | $412.76 | $517.63 | 25.4% |
-| PG | 266 | $160.38 | $172.81 | 7.7% |
-| WMT | 234 | $116.93 | $128.20 | 9.6% |
-| V | 58 | $344.73 | $426.05 | 23.6% |
-| GOOGL | 55 | $280.45 | $284.33 | 1.4% |
-| UNH | 38 | $368.22 | $409.96 | 11.3% |
-| AMD | 30 | $504.59 | $502.15 | -0.5% |
-| TSM | 39 | $388.84 | $372.85 | -4.1% |
-| HD | 38 | $317.96 | $346.80 | 9.1% |
-| AVGO | 37 | $328.75 | $331.79 | 0.9% |
-| XOM | 70 | $168.87 | $166.56 | -1.4% |
-| META | 10 | $568.43 | $625.52 | 10.0% |
-| MA | 8 | $486.51 | $662.12 | 36.1% |
-| JPM | 10 | $313.49 | $337.25 | 7.6% |
+| AAPL | 599 | $298.69 | $350.28 | 17.3% |
+| JNJ | 543 | $239.58 | $278.69 | 16.3% |
+| AMZN | 431 | $240.96 | $256.89 | 6.6% |
+| MSFT | 137 | $412.76 | $505.15 | 22.4% |
+| PG | 266 | $160.38 | $172.33 | 7.4% |
+| WMT | 234 | $116.93 | $127.49 | 9.0% |
+| V | 58 | $344.73 | $419.13 | 21.6% |
+| GOOGL | 55 | $280.45 | $281.30 | 0.3% |
+| UNH | 38 | $368.22 | $392.47 | 6.6% |
+| AMD | 30 | $504.59 | $490.25 | -2.8% |
+| TSM | 39 | $388.84 | $360.17 | -7.4% |
+| HD | 38 | $317.96 | $340.43 | 7.1% |
+| AVGO | 37 | $328.75 | $337.41 | 2.6% |
+| XOM | 70 | $168.87 | $167.12 | -1.0% |
+| META | 10 | $568.43 | $620.78 | 9.2% |
+| MA | 8 | $486.51 | $649.30 | 33.5% |
+| JPM | 10 | $313.49 | $329.60 | 5.1% |
 
 ## Today's Trades
 
@@ -36,8 +36,8 @@ No trades executed today.
 
 ## Analysis
 
-No purchases or sales are warranted today. Hold profitable relative-strength leaders, preserve the elevated cash reserve, and avoid adding to concentrated AAPL or weak technology and semiconductor exposures until market breadth improves.
+No transactions are warranted today. Maintain core positions, do not add to concentrated winners or weak technology holdings, avoid severely declining watchlist names, and preserve the elevated cash reserve until market breadth and semiconductor momentum improve. Memory applied: risk_lesson:run_20260729T184341Z_54100baf:report_risk, risk_lesson:run_20260803T191113Z_b5f11a59:report_risk, risk_lesson:run_20260730T161151Z_1b5d1b4c:report_risk, trade:run_20260812T183945Z_0d1bf062:AAPL:SELL.
 
 ## Risk Assessment
 
-The principal risk is concentration rather than a lack of equity exposure. AAPL, JNJ, and AMZN are the largest exposures, while technology-linked holdings remain vulnerable to continued valuation compression and AI-capex sentiment deterioration. JNJ also represents a large healthcare-specific concentration despite favorable momentum. TSM, AMD, GOOGL, META, AVGO, and MSFT add correlated technology risk, though their portfolio weights vary materially. Elevated cash cushions total portfolio drawdown but does not eliminate losses in the concentrated invested sleeve.
+The dominant risk is concentration rather than insufficient equity exposure. AAPL alone is approximately 20.0% of total portfolio value; JNJ and AMZN add substantial single-name exposure. Technology, health care, and consumer discretionary are the major sector exposures. Correlated weakness across MSFT, GOOGL, META, AVGO, TSM, and AMD could impair the invested sleeve simultaneously. The cash reserve reduces, but does not eliminate, this drawdown risk. TSM and AMD are below cost and have materially weaker 30-day momentum, while AAPL, JNJ, and AMZN remain large enough that idiosyncratic developments could materially affect results.
