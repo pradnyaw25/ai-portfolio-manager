@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "run_id": "run_20261118T185013Z_f2249448",
+    "date": "2026-11-18",
+    "symbol": "TSM",
+    "action": "SELL",
+    "shares": 39,
+    "price": 360.70001220703125,
+    "total": 14067.300476074219,
+    "reasoning": "Exit the small TSM position. It is 7.1% below cost, down 13.0% over five days and 16.4% over 30 days, while semiconductor breadth is broadly weak. There is no supplied catalyst supporting an average-down, and the sale follows the fund's higher-priority lesson to trim weakening technology exposure incrementally."
+  }
+]

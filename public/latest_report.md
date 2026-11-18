@@ -1,43 +1,42 @@
-# Portfolio Report, 2026-11-17
+# Portfolio Report, 2026-11-18
 
 ## Summary
-- **Run ID:** `run_20261117T190944Z_882e2e01`
-- **Total Value:** $1,047,244.34
-- **Cash:** $295,234.51 (28.2%)
-- **Invested:** $752,009.83
-- **Positions:** 17
+- **Run ID:** `run_20261118T185013Z_f2249448`
+- **Total Value:** $1,052,275.64
+- **Cash:** $309,301.81 (29.4%)
+- **Invested:** $742,973.83
+- **Positions:** 16
 - **Outlook:** NEUTRAL
 
 ## Holdings
 
 | Symbol | Shares | Avg Cost | Current | P&L % |
 |--------|--------|----------|---------|-------|
-| AAPL | 599 | $298.69 | $350.28 | 17.3% |
-| JNJ | 543 | $239.58 | $278.69 | 16.3% |
-| AMZN | 431 | $240.96 | $256.89 | 6.6% |
-| MSFT | 137 | $412.76 | $505.15 | 22.4% |
-| PG | 266 | $160.38 | $172.33 | 7.4% |
-| WMT | 234 | $116.93 | $127.49 | 9.0% |
-| V | 58 | $344.73 | $419.13 | 21.6% |
-| GOOGL | 55 | $280.45 | $281.30 | 0.3% |
-| UNH | 38 | $368.22 | $392.47 | 6.6% |
-| AMD | 30 | $504.59 | $490.25 | -2.8% |
-| TSM | 39 | $388.84 | $360.17 | -7.4% |
-| HD | 38 | $317.96 | $340.43 | 7.1% |
-| AVGO | 37 | $328.75 | $337.41 | 2.6% |
-| XOM | 70 | $168.87 | $167.12 | -1.0% |
-| META | 10 | $568.43 | $620.78 | 9.2% |
-| MA | 8 | $486.51 | $649.30 | 33.5% |
-| JPM | 10 | $313.49 | $329.60 | 5.1% |
+| AAPL | 599 | $298.69 | $354.00 | 18.5% |
+| JNJ | 543 | $239.58 | $275.60 | 15.0% |
+| AMZN | 431 | $240.96 | $267.53 | 11.0% |
+| MSFT | 137 | $412.76 | $509.30 | 23.4% |
+| PG | 266 | $160.38 | $170.81 | 6.5% |
+| WMT | 234 | $116.93 | $127.62 | 9.1% |
+| V | 58 | $344.73 | $416.88 | 20.9% |
+| AMD | 30 | $504.59 | $522.54 | 3.6% |
+| GOOGL | 55 | $280.45 | $284.03 | 1.3% |
+| UNH | 38 | $368.22 | $353.94 | -3.9% |
+| AVGO | 37 | $328.75 | $356.06 | 8.3% |
+| HD | 38 | $317.96 | $340.29 | 7.0% |
+| XOM | 70 | $168.87 | $161.15 | -4.6% |
+| META | 10 | $568.43 | $617.59 | 8.6% |
+| MA | 8 | $486.51 | $643.96 | 32.4% |
+| JPM | 10 | $313.49 | $326.42 | 4.1% |
 
 ## Today's Trades
 
-No trades executed today.
+- **SELL** 39 TSM @ $360.70. Exit the small TSM position. It is 7.1% below cost, down 13.0% over five days and 16.4% over 30 days, while semiconductor breadth is broadly weak. There is no supplied catalyst supporting an average-down, and the sale follows the fund's higher-priority lesson to trim weakening technology exposure incrementally.
 
 ## Analysis
 
-No transactions are warranted today. Maintain core positions, do not add to concentrated winners or weak technology holdings, avoid severely declining watchlist names, and preserve the elevated cash reserve until market breadth and semiconductor momentum improve. Memory applied: risk_lesson:run_20260729T184341Z_54100baf:report_risk, risk_lesson:run_20260803T191113Z_b5f11a59:report_risk, risk_lesson:run_20260730T161151Z_1b5d1b4c:report_risk, trade:run_20260812T183945Z_0d1bf062:AAPL:SELL.
+Maintain a neutral, low-turnover posture. Sell TSM as the portfolio's clearest small-position semiconductor momentum failure, retain proven defensive and quality leaders without adding to concentration, avoid all weak semiconductor and AI-infrastructure candidates, and preserve elevated cash until market breadth improves.
 
 ## Risk Assessment
 
-The dominant risk is concentration rather than insufficient equity exposure. AAPL alone is approximately 20.0% of total portfolio value; JNJ and AMZN add substantial single-name exposure. Technology, health care, and consumer discretionary are the major sector exposures. Correlated weakness across MSFT, GOOGL, META, AVGO, TSM, and AMD could impair the invested sleeve simultaneously. The cash reserve reduces, but does not eliminate, this drawdown risk. TSM and AMD are below cost and have materially weaker 30-day momentum, while AAPL, JNJ, and AMZN remain large enough that idiosyncratic developments could materially affect results.
+The primary risk is structural concentration rather than insufficient equity exposure. AAPL is approximately 20.1% of total assets, while JNJ and AMZN are also substantial positions. Technology-linked holdings remain vulnerable to continued AI-spending, valuation, and momentum de-rating, especially TSM, AMD, GOOGL, META, and MSFT. The cash reserve reduces total-portfolio beta but does not eliminate losses from concentrated holdings. This assessment follows prior risk lessons emphasizing incremental action, avoidance of averaging into weakness, and maintenance of liquidity.
