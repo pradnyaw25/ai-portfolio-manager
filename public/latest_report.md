@@ -1,42 +1,51 @@
-# Portfolio Report, 2026-11-18
+# Portfolio Report, 2026-11-19
 
 ## Summary
-- **Run ID:** `run_20261118T185013Z_f2249448`
-- **Total Value:** $1,052,275.64
-- **Cash:** $309,301.81 (29.4%)
-- **Invested:** $742,973.83
-- **Positions:** 16
-- **Outlook:** NEUTRAL
+- **Run ID:** `run_20261119T185840Z_74c0e6d2`
+- **Total Value:** $1,035,806.20
+- **Cash:** $259,456.89 (25.0%)
+- **Invested:** $776,349.32
+- **Positions:** 20
+- **Outlook:** BEARISH
 
 ## Holdings
 
 | Symbol | Shares | Avg Cost | Current | P&L % |
 |--------|--------|----------|---------|-------|
-| AAPL | 599 | $298.69 | $354.00 | 18.5% |
-| JNJ | 543 | $239.58 | $275.60 | 15.0% |
-| AMZN | 431 | $240.96 | $267.53 | 11.0% |
-| MSFT | 137 | $412.76 | $509.30 | 23.4% |
-| PG | 266 | $160.38 | $170.81 | 6.5% |
-| WMT | 234 | $116.93 | $127.62 | 9.1% |
-| V | 58 | $344.73 | $416.88 | 20.9% |
-| AMD | 30 | $504.59 | $522.54 | 3.6% |
-| GOOGL | 55 | $280.45 | $284.03 | 1.3% |
-| UNH | 38 | $368.22 | $353.94 | -3.9% |
-| AVGO | 37 | $328.75 | $356.06 | 8.3% |
-| HD | 38 | $317.96 | $340.29 | 7.0% |
-| XOM | 70 | $168.87 | $161.15 | -4.6% |
-| META | 10 | $568.43 | $617.59 | 8.6% |
-| MA | 8 | $486.51 | $643.96 | 32.4% |
-| JPM | 10 | $313.49 | $326.42 | 4.1% |
+| AAPL | 599 | $298.69 | $349.47 | 17.0% |
+| JNJ | 543 | $239.58 | $267.17 | 11.5% |
+| AMZN | 431 | $240.96 | $259.33 | 7.6% |
+| MSFT | 137 | $412.76 | $502.96 | 21.9% |
+| PG | 266 | $160.38 | $168.73 | 5.2% |
+| WMT | 234 | $116.93 | $126.42 | 8.1% |
+| V | 58 | $344.73 | $402.81 | 16.8% |
+| GOOGL | 55 | $280.45 | $279.20 | -0.4% |
+| AMD | 30 | $504.59 | $481.01 | -4.7% |
+| AVGO | 37 | $328.75 | $348.24 | 5.9% |
+| HD | 38 | $317.96 | $337.65 | 6.2% |
+| NVDA | 85 | $148.25 | $148.25 | 0.0% |
+| ORCL | 113 | $111.35 | $111.35 | 0.0% |
+| GLW | 117 | $107.08 | $107.08 | 0.0% |
+| TSM | 35 | $355.68 | $355.68 | 0.0% |
+| CAT | 23 | $539.95 | $539.95 | 0.0% |
+| XOM | 70 | $168.87 | $158.79 | -6.0% |
+| META | 10 | $568.43 | $600.54 | 5.6% |
+| MA | 8 | $486.51 | $628.83 | 29.3% |
+| JPM | 10 | $313.49 | $320.64 | 2.3% |
 
 ## Today's Trades
 
-- **SELL** 39 TSM @ $360.70. Exit the small TSM position. It is 7.1% below cost, down 13.0% over five days and 16.4% over 30 days, while semiconductor breadth is broadly weak. There is no supplied catalyst supporting an average-down, and the sale follows the fund's higher-priority lesson to trim weakening technology exposure incrementally.
+- **SELL** 38 UNH @ $335.12. Exit the small UNH position because it is down 13.6% over five days and 14.0% over 30 days, is 8.8% below cost, and has a reported CMS anti-fraud-rule concern. This is a sustained momentum failure with no supplied evidence of stabilization.
+- **BUY** 85 NVDA @ $148.25. Adds a liquid AI-compute leader at a roughly $12.6k position size, complementing existing semiconductor exposure while retaining high-quality earnings and infrastructure demand exposure.
+- **BUY** 35 TSM @ $355.68. Adds foundry exposure distinct from current chip holdings, with broad participation in advanced-node demand across AI, mobile, and data-center customers.
+- **BUY** 113 ORCL @ $111.35. Introduces enterprise software and cloud-infrastructure exposure, diversifying the portfolio’s technology allocation beyond consumer platforms and device companies.
+- **BUY** 117 GLW @ $107.08. Adds connectivity, optical, and specialty-materials exposure that can benefit from data-center networking and broader communications infrastructure spending.
+- **BUY** 23 CAT @ $539.95. Adds industrial and infrastructure diversification to a portfolio concentrated in large-cap technology, consumer, healthcare, and financial holdings.
 
 ## Analysis
 
-Maintain a neutral, low-turnover posture. Sell TSM as the portfolio's clearest small-position semiconductor momentum failure, retain proven defensive and quality leaders without adding to concentration, avoid all weak semiconductor and AI-infrastructure candidates, and preserve elevated cash until market breadth improves.
+Sell UNH to remove the portfolio's clearest sustained deterioration. Hold the remaining core positions, make no purchases, and maintain the substantial cash reserve until volatility subsides and breadth improves.
 
 ## Risk Assessment
 
-The primary risk is structural concentration rather than insufficient equity exposure. AAPL is approximately 20.1% of total assets, while JNJ and AMZN are also substantial positions. Technology-linked holdings remain vulnerable to continued AI-spending, valuation, and momentum de-rating, especially TSM, AMD, GOOGL, META, and MSFT. The cash reserve reduces total-portfolio beta but does not eliminate losses from concentrated holdings. This assessment follows prior risk lessons emphasizing incremental action, avoidance of averaging into weakness, and maintenance of liquidity.
+The largest risks are concentration in AAPL, JNJ, AMZN, and MSFT; correlated technology and AI exposure; and worsening momentum in GOOGL, AMD, META, MSFT, XOM, JPM, and UNH. The portfolio should not add to its largest winners or average down into weak technology and semiconductor names. Elevated cash reduces total-portfolio beta but cannot fully protect against adverse moves in the concentrated invested sleeve.
