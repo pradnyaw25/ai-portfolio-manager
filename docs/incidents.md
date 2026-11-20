@@ -15,6 +15,78 @@ Entry template:
 
 ---
 
+## 2026-10-01 → 2026-10-12 · The fix was written and sat unmerged for ten days; four more days lost
+
+- **Symptom.** `data/run_history.jsonl` has no run of any kind on 10-05, 10-07, 10-08 and
+  10-12, and exactly one run on 10-01, 10-02, 10-06 and 10-09. From 10-13 both slots run.
+  `gh run list --workflow daily-run.yml` shows **two green runs on every weekday 10-01 →
+  10-16** — nothing was dropped, cancelled or failed.
+- **Root cause.** Every missing run *fired* and was skipped by the market-hours guard,
+  because GitHub's scheduler started the cron 4–7.5 hours late. The fix for exactly this
+  (cron fires early, `wait_for_slot.py` sleeps: PR #123) was opened 2026-10-03, but **merged
+  2026-10-13 02:34 UTC** (`a98db43`, committed 2026-10-12 22:34 ET). Until then `main` still
+  ran the old 14:40 / 17:50 UTC crons with no headroom. Fire time minus cron time (the two
+  runs per day pair unambiguously by order; the API doesn't expose which cron fired):
+
+  | day | 14:40 cron fired | 17:50 cron fired | outcome |
+  |---|---|---|---|
+  | 10-01 | 19:46 (+5h06) | 22:00 (+4h10) | first in-hours, ran; second after close, skipped |
+  | 10-02 | 19:29 (+4h49) | 21:26 (+3h36) | same |
+  | **10-05** | 21:35 (+6h55) | 23:22 (+5h32) | **both after close, both skipped** |
+  | 10-06 | 19:47 (+5h07) | 21:54 (+4h04) | first ran, second skipped |
+  | **10-07** | 20:06 (+5h26) | 22:16 (+4h26) | **both skipped** |
+  | **10-08** | 20:04 (+5h24) | 22:29 (+4h39) | **both skipped** |
+  | 10-09 | 19:41 (+5h01) | 21:52 (+4h02) | first ran, second skipped |
+  | **10-12** | 22:13 (+7h33) | 23:46 (+5h56) | **both skipped** |
+
+  Close is 20:00 UTC (EDT), so the 14:40 cron survives only if it is under 5h20 late.
+  Stopping points, from the run logs: every skipped run reached "Check market hours" and
+  printed `should_run=false (outside regular market hours)`, then skipped all later steps
+  and finished in 12–18 s with conclusion `success`. No `wait_for_slot`, concurrency or
+  job error was involved (the old workflow had no wait step; all concurrency groups were
+  per-cron, no run was `cancelled`). The four "one run" days are the **14:40 cron firing
+  late enough to land at 19:29–19:47 UTC, 13–31 minutes before the close**; the history
+  labels it "afternoon" only because the labelling is by UTC hour (≥ 17). Their real
+  afternoon-cron run fired at 21:26–22:00 and was skipped. The scheduler delay on the
+  morning cron was 4h49–7h33 on every day in the window — well above the "median ~105 min"
+  the previous entry and `daily-run.yml` still quote.
+- **Fix.** In repo: #123 (already described in the entry below) is the fix, and it is
+  what ended the losses — but it was merged ten days late. It is **not sufficient on its
+  own**: post-merge delays were +7h23 / +6h32 on 10-13 and +4h06 → +4h54 on 10-14..10-16,
+  against a 4h30 headroom. Slots now run, but late: 10-13's "morning" run started 17:34 UTC
+  and its "afternoon" run **19:52 UTC, eight minutes before the close** (cycle finished
+  19:55), and four of the six slots on 10-14..10-16 started 8–24 min past the slot time
+  without waiting at all. Proposed follow-up: (1) fire each slot from several crons at
+  staggered offsets (e.g. every 90 min from 05:10 UTC), each of which runs
+  `wait_for_slot.py` and then exits early if `run_history.jsonl` already has a row for that
+  `(date, slot)` — runner minutes are free, a single sleeping job cannot cover a 7.5h delay
+  inside the 6h job limit, and redundancy does; (2) have the cycle write `slot` (derived
+  from `github.event.schedule`) into each `run_history` row, and make `check_run_health.py`
+  read it instead of inferring from the UTC start hour; (3) have the guard emit a
+  `::warning::` plus a step summary naming fire time and delay when it skips a scheduled
+  run, so a green-but-skipped run is distinguishable from a real one in the Actions list.
+- **Detection gap.** The watchdog (`run-health.yml`) **did fire and did go red** on all four
+  lost days (10-05, 10-07, 10-08, 10-12: `NO RUN RECORDED`), so the page was sent; the
+  gap is that the previous entry's fix was in review while those pages arrived. Its text
+  was also wrong: "the cycle never started" — it started and was skipped, and nothing
+  told the reader to look at fire times. On the four half days the watchdog was the
+  pre-#123 version, which only asked whether *a* run existed, and reported `OK — 1 run(s)`
+  (10-01, 10-06, 10-09; 10-02's check was also green). The "expects both slots" check came
+  in with #123 on 10-12 — `CLAUDE.md` says the fund-runs-early fix was done on 2026-10-02,
+  which is the PR's open date, not when it reached `main`. The first post-merge check
+  already misfires: on 10-13 it paged `HALF A DAY ... morning slot never ran` although
+  both crons ran — the 14:40-slot run started at 17:34 UTC and was labelled "afternoon".
+  `data/trades.csv`, `portfolio_state.json` and `decisions.jsonl` agree with each other;
+  these days are missing rows, not corrupt ones.
+- **Article angle.** *"Fixed" is a statement about `main`, not about a branch.* The previous
+  entry's root cause was found and the fix written within a day; the fund then lost
+  another four trading days and four half days while it waited to merge, with the
+  watchdog paging correctly the whole time. And the same shape recurs: the repair is a
+  second budget (4.5h) tuned to the observed delay (≈5h and rising), so it already runs
+  late half the time. Make the schedule redundant rather than predictive.
+
+---
+
 ## 2026-08-27 → 2026-10-02 · The scheduler drifted to 2–5 hours late and the fund quietly halved
 
 - **Symptom.** Four whole trading days with no run at all (08-27, 08-28, 08-31, 09-28),
