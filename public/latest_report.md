@@ -1,51 +1,45 @@
-# Portfolio Report, 2026-11-19
+# Portfolio Report, 2026-11-20
 
 ## Summary
-- **Run ID:** `run_20261119T185840Z_74c0e6d2`
-- **Total Value:** $1,035,806.20
-- **Cash:** $259,456.89 (25.0%)
-- **Invested:** $776,349.32
-- **Positions:** 20
+- **Run ID:** `run_20261120T183516Z_f39d276a`
+- **Total Value:** $1,024,143.32
+- **Cash:** $282,569.92 (27.6%)
+- **Invested:** $741,573.40
+- **Positions:** 18
 - **Outlook:** BEARISH
 
 ## Holdings
 
 | Symbol | Shares | Avg Cost | Current | P&L % |
 |--------|--------|----------|---------|-------|
-| AAPL | 599 | $298.69 | $349.47 | 17.0% |
-| JNJ | 543 | $239.58 | $267.17 | 11.5% |
-| AMZN | 431 | $240.96 | $259.33 | 7.6% |
-| MSFT | 137 | $412.76 | $502.96 | 21.9% |
-| PG | 266 | $160.38 | $168.73 | 5.2% |
-| WMT | 234 | $116.93 | $126.42 | 8.1% |
-| V | 58 | $344.73 | $402.81 | 16.8% |
-| GOOGL | 55 | $280.45 | $279.20 | -0.4% |
-| AMD | 30 | $504.59 | $481.01 | -4.7% |
-| AVGO | 37 | $328.75 | $348.24 | 5.9% |
-| HD | 38 | $317.96 | $337.65 | 6.2% |
-| NVDA | 85 | $148.25 | $148.25 | 0.0% |
-| ORCL | 113 | $111.35 | $111.35 | 0.0% |
-| GLW | 117 | $107.08 | $107.08 | 0.0% |
-| TSM | 35 | $355.68 | $355.68 | 0.0% |
-| CAT | 23 | $539.95 | $539.95 | 0.0% |
-| XOM | 70 | $168.87 | $158.79 | -6.0% |
-| META | 10 | $568.43 | $600.54 | 5.6% |
-| MA | 8 | $486.51 | $628.83 | 29.3% |
-| JPM | 10 | $313.49 | $320.64 | 2.3% |
+| AAPL | 599 | $298.69 | $345.94 | 15.8% |
+| JNJ | 543 | $239.58 | $271.38 | 13.3% |
+| AMZN | 431 | $240.96 | $250.79 | 4.1% |
+| MSFT | 137 | $412.76 | $490.52 | 18.8% |
+| PG | 266 | $160.38 | $170.33 | 6.2% |
+| WMT | 234 | $116.93 | $129.85 | 11.1% |
+| V | 58 | $344.73 | $407.56 | 18.2% |
+| GOOGL | 55 | $280.45 | $273.60 | -2.4% |
+| AMD | 30 | $504.59 | $436.86 | -13.4% |
+| HD | 38 | $317.96 | $343.82 | 8.1% |
+| ORCL | 113 | $111.35 | $103.16 | -7.4% |
+| NVDA | 85 | $148.25 | $136.09 | -8.2% |
+| AVGO | 37 | $328.75 | $307.83 | -6.4% |
+| TSM | 35 | $355.68 | $324.70 | -8.7% |
+| XOM | 70 | $168.87 | $161.13 | -4.6% |
+| META | 10 | $568.43 | $569.27 | 0.1% |
+| MA | 8 | $486.51 | $632.78 | 30.1% |
+| JPM | 10 | $313.49 | $314.35 | 0.3% |
 
 ## Today's Trades
 
-- **SELL** 38 UNH @ $335.12. Exit the small UNH position because it is down 13.6% over five days and 14.0% over 30 days, is 8.8% below cost, and has a reported CMS anti-fraud-rule concern. This is a sustained momentum failure with no supplied evidence of stabilization.
-- **BUY** 85 NVDA @ $148.25. Adds a liquid AI-compute leader at a roughly $12.6k position size, complementing existing semiconductor exposure while retaining high-quality earnings and infrastructure demand exposure.
-- **BUY** 35 TSM @ $355.68. Adds foundry exposure distinct from current chip holdings, with broad participation in advanced-node demand across AI, mobile, and data-center customers.
-- **BUY** 113 ORCL @ $111.35. Introduces enterprise software and cloud-infrastructure exposure, diversifying the portfolio’s technology allocation beyond consumer platforms and device companies.
-- **BUY** 117 GLW @ $107.08. Adds connectivity, optical, and specialty-materials exposure that can benefit from data-center networking and broader communications infrastructure spending.
-- **BUY** 23 CAT @ $539.95. Adds industrial and infrastructure diversification to a portfolio concentrated in large-cap technology, consumer, healthcare, and financial holdings.
+- **SELL** 23 CAT @ $516.77. Exit the remaining small CAT position. It is down 26.3% over 30 days, down 10.5% over five days and 4.3% below cost, making it a persistent momentum failure in a broad risk-off market. This is consistent with the prior CAT trim and avoids repeating the mistake of retaining or rebuilding a weak cyclical position without a confirmed catalyst.
+- **SELL** 117 GLW @ $95.96. Exit GLW because it is down 19.5% over 30 days, down 7.1% over five days and 10.4% below cost. Fund memory identifies ongoing risks around customer demand, margins, technology change, customer financing and customer concentration. There is no supplied catalyst sufficient to justify averaging down or retaining this weak position.
 
 ## Analysis
 
-Sell UNH to remove the portfolio's clearest sustained deterioration. Hold the remaining core positions, make no purchases, and maintain the substantial cash reserve until volatility subsides and breadth improves.
+Maintain a defensive, low-turnover posture: sell CAT and GLW, hold the resilient core without adding, avoid averaging into semiconductors or speculative AI names, and retain the 25.3% cash reserve until breadth and volatility improve.
 
 ## Risk Assessment
 
-The largest risks are concentration in AAPL, JNJ, AMZN, and MSFT; correlated technology and AI exposure; and worsening momentum in GOOGL, AMD, META, MSFT, XOM, JPM, and UNH. The portfolio should not add to its largest winners or average down into weak technology and semiconductor names. Elevated cash reduces total-portfolio beta but cannot fully protect against adverse moves in the concentrated invested sleeve.
+The principal risk is concentration within the invested sleeve. AAPL, JNJ, AMZN and MSFT are large exposures, and technology-linked holdings remain correlated through AI spending, valuation compression and risk-off sentiment. Semiconductor exposure is especially challenged: AMD, NVDA and TSM are below cost and materially weak over 30 days, while AVGO is also below cost despite better recent relative strength. The portfolio should avoid adding to weak technology positions and preserve liquidity. This follows the higher-priority fund risk lessons favoring selective trimming of weakening holdings rather than averaging down.

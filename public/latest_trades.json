@@ -1,62 +1,22 @@
 [
   {
-    "run_id": "run_20261119T185840Z_74c0e6d2",
-    "date": "2026-11-19",
-    "symbol": "UNH",
-    "action": "SELL",
-    "shares": 38,
-    "price": 335.125,
-    "total": 12734.75,
-    "reasoning": "Exit the small UNH position because it is down 13.6% over five days and 14.0% over 30 days, is 8.8% below cost, and has a reported CMS anti-fraud-rule concern. This is a sustained momentum failure with no supplied evidence of stabilization."
-  },
-  {
-    "run_id": "run_20261119T185840Z_74c0e6d2",
-    "date": "2026-11-19",
-    "symbol": "NVDA",
-    "action": "BUY",
-    "shares": 85,
-    "price": 148.25,
-    "total": 12601.25,
-    "reasoning": "Adds a liquid AI-compute leader at a roughly $12.6k position size, complementing existing semiconductor exposure while retaining high-quality earnings and infrastructure demand exposure."
-  },
-  {
-    "run_id": "run_20261119T185840Z_74c0e6d2",
-    "date": "2026-11-19",
-    "symbol": "TSM",
-    "action": "BUY",
-    "shares": 35,
-    "price": 355.6755065917969,
-    "total": 12448.64273071289,
-    "reasoning": "Adds foundry exposure distinct from current chip holdings, with broad participation in advanced-node demand across AI, mobile, and data-center customers."
-  },
-  {
-    "run_id": "run_20261119T185840Z_74c0e6d2",
-    "date": "2026-11-19",
-    "symbol": "ORCL",
-    "action": "BUY",
-    "shares": 113,
-    "price": 111.34500122070312,
-    "total": 12581.985137939453,
-    "reasoning": "Introduces enterprise software and cloud-infrastructure exposure, diversifying the portfolio\u2019s technology allocation beyond consumer platforms and device companies."
-  },
-  {
-    "run_id": "run_20261119T185840Z_74c0e6d2",
-    "date": "2026-11-19",
-    "symbol": "GLW",
-    "action": "BUY",
-    "shares": 117,
-    "price": 107.08499908447266,
-    "total": 12528.9448928833,
-    "reasoning": "Adds connectivity, optical, and specialty-materials exposure that can benefit from data-center networking and broader communications infrastructure spending."
-  },
-  {
-    "run_id": "run_20261119T185840Z_74c0e6d2",
-    "date": "2026-11-19",
+    "run_id": "run_20261120T183516Z_f39d276a",
+    "date": "2026-11-20",
     "symbol": "CAT",
-    "action": "BUY",
+    "action": "SELL",
     "shares": 23,
-    "price": 539.9500122070312,
-    "total": 12418.850280761719,
-    "reasoning": "Adds industrial and infrastructure diversification to a portfolio concentrated in large-cap technology, consumer, healthcare, and financial holdings."
+    "price": 516.77001953125,
+    "total": 11885.71044921875,
+    "reasoning": "Exit the remaining small CAT position. It is down 26.3% over 30 days, down 10.5% over five days and 4.3% below cost, making it a persistent momentum failure in a broad risk-off market. This is consistent with the prior CAT trim and avoids repeating the mistake of retaining or rebuilding a weak cyclical position without a confirmed catalyst."
+  },
+  {
+    "run_id": "run_20261120T183516Z_f39d276a",
+    "date": "2026-11-20",
+    "symbol": "GLW",
+    "action": "SELL",
+    "shares": 117,
+    "price": 95.95999908447266,
+    "total": 11227.3198928833,
+    "reasoning": "Exit GLW because it is down 19.5% over 30 days, down 7.1% over five days and 10.4% below cost. Fund memory identifies ongoing risks around customer demand, margins, technology change, customer financing and customer concentration. There is no supplied catalyst sufficient to justify averaging down or retaining this weak position."
   }
 ]
