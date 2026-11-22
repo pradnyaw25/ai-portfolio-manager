@@ -1,238 +1,231 @@
 {
-  "week_end": "2026-11-15",
-  "week_start": "2026-11-09",
+  "week_end": "2026-11-22",
+  "week_start": "2026-11-16",
   "letter": {
-    "headline": "Positive week with the portfolio ahead of its benchmark.",
-    "performance": "For the week ended 2026-11-15, portfolio value rose from 1062456.24 to 1066765.76, a 0.41% return versus -0.32% for the benchmark, producing 0.73% alpha.",
+    "headline": "Portfolio declined -2.95% for the week, outperforming the benchmark by 2.10%.",
+    "performance": "Portfolio value moved from 1055290.46 to 1024143.32 during the week ended 2026-11-22. The benchmark returned -5.05%.",
     "winners": [
-      "AMD rose 9.26% this week; its return since the position was opened is 5.50%.",
-      "AVGO gained 6.61% this week; its return since the position was opened is 5.05%.",
-      "JNJ advanced 3.41% this week; its return since the position was opened is 19.60%."
+      "WMT gained 1.81% this week; its return since the position was opened is 11.05%.",
+      "PG gained 1.01% this week; its return since the position was opened is 6.20%."
     ],
     "losers": [
-      "MSFT declined -5.74% this week; its return since the position was opened is 27.12%.",
-      "V fell -2.30% this week; its return since the position was opened is 23.35%.",
-      "HD declined -1.90% this week; its return since the position was opened is 9.35%."
+      "NVDA fell -27.74% this week; its return since the position was opened is -8.20%.",
+      "AMD fell -23.24% this week; its return since the position was opened is -13.42%.",
+      "TSM fell -22.90% this week; its return since the position was opened is -8.71%."
     ],
-    "portfolio_changes": "We sold 25 NVDA shares on 2026-11-09, then sold 75 NVDA shares and 97 ORCL shares on 2026-11-10. We bought 90 PG shares, 39 TSM shares, and 30 AMD shares on 2026-11-10. We also bought and sold 26 CAT shares and 138 GLW shares on 2026-11-10.",
-    "outlook": "The week\u2019s result was constructive: gains in AMD, AVGO, and JNJ outweighed weakness in MSFT, V, and HD, leaving the portfolio ahead of the benchmark. We remain focused on the current holdings and the portfolio changes completed during the week."
+    "portfolio_changes": "We sold 39 TSM shares on 2026-11-18. On 2026-11-19, we sold 38 UNH shares and bought 85 NVDA, 35 TSM, 113 ORCL, 117 GLW, and 23 CAT shares. On 2026-11-20, we sold 23 CAT shares and 117 GLW shares.",
+    "outlook": "The week demonstrated meaningful dispersion: WMT and PG advanced while several technology-related positions declined sharply. We will remain disciplined in reviewing position-level risk and the portfolio\u2019s evolving exposures."
   },
   "facts": {
-    "week_start": "2026-11-09",
-    "week_end": "2026-11-15",
-    "start_value": 1062456.24,
-    "end_value": 1066765.76,
-    "return_pct": 0.0041,
-    "benchmark_return_pct": -0.0032,
-    "alpha": 0.0073,
+    "week_start": "2026-11-16",
+    "week_end": "2026-11-22",
+    "start_value": 1055290.46,
+    "end_value": 1024143.32,
+    "return_pct": -0.0295,
+    "benchmark_return_pct": -0.0505,
+    "alpha": 0.021,
     "winners": [
       {
-        "symbol": "AMD",
-        "return_since_entry_pct": 0.055,
-        "week_return_pct": 0.0926,
-        "market_value": 15969.9
+        "symbol": "WMT",
+        "return_since_entry_pct": 0.1105,
+        "week_return_pct": 0.0181,
+        "market_value": 30384.9
       },
       {
-        "symbol": "AVGO",
-        "return_since_entry_pct": 0.0505,
-        "week_return_pct": 0.0661,
-        "market_value": 12778.32
-      },
-      {
-        "symbol": "JNJ",
-        "return_since_entry_pct": 0.196,
-        "week_return_pct": 0.0341,
-        "market_value": 155591.22
+        "symbol": "PG",
+        "return_since_entry_pct": 0.062,
+        "week_return_pct": 0.0101,
+        "market_value": 45307.78
       }
     ],
     "losers": [
       {
-        "symbol": "HD",
-        "return_since_entry_pct": 0.0935,
-        "week_return_pct": -0.019,
-        "market_value": 13212.98
+        "symbol": "TSM",
+        "return_since_entry_pct": -0.0871,
+        "week_return_pct": -0.229,
+        "market_value": 11364.5
       },
       {
-        "symbol": "V",
-        "return_since_entry_pct": 0.2335,
-        "week_return_pct": -0.023,
-        "market_value": 24662.18
+        "symbol": "AMD",
+        "return_since_entry_pct": -0.1342,
+        "week_return_pct": -0.2324,
+        "market_value": 13105.8
       },
       {
-        "symbol": "MSFT",
-        "return_since_entry_pct": 0.2712,
-        "week_return_pct": -0.0574,
-        "market_value": 71885.27
+        "symbol": "NVDA",
+        "return_since_entry_pct": -0.082,
+        "week_return_pct": -0.2774,
+        "market_value": 11567.47
       }
     ],
     "positions": [
       {
-        "symbol": "AMD",
-        "return_since_entry_pct": 0.055,
-        "week_return_pct": 0.0926,
-        "market_value": 15969.9
-      },
-      {
-        "symbol": "AVGO",
-        "return_since_entry_pct": 0.0505,
-        "week_return_pct": 0.0661,
-        "market_value": 12778.32
-      },
-      {
-        "symbol": "JNJ",
-        "return_since_entry_pct": 0.196,
-        "week_return_pct": 0.0341,
-        "market_value": 155591.22
-      },
-      {
-        "symbol": "GOOGL",
-        "return_since_entry_pct": 0.0525,
-        "week_return_pct": 0.0237,
-        "market_value": 16234.35
-      },
-      {
-        "symbol": "AAPL",
-        "return_since_entry_pct": 0.1934,
-        "week_return_pct": 0.0201,
-        "market_value": 213519.53
-      },
-      {
-        "symbol": "META",
-        "return_since_entry_pct": 0.1285,
-        "week_return_pct": 0.0186,
-        "market_value": 6415.0
+        "symbol": "WMT",
+        "return_since_entry_pct": 0.1105,
+        "week_return_pct": 0.0181,
+        "market_value": 30384.9
       },
       {
         "symbol": "PG",
-        "return_since_entry_pct": 0.0588,
-        "week_return_pct": 0.0148,
-        "market_value": 45172.12
+        "return_since_entry_pct": 0.062,
+        "week_return_pct": 0.0101,
+        "market_value": 45307.78
       },
       {
         "symbol": "XOM",
-        "return_since_entry_pct": 0.007,
-        "week_return_pct": 0.0078,
-        "market_value": 11904.2
-      },
-      {
-        "symbol": "TSM",
-        "return_since_entry_pct": 0.0255,
-        "week_return_pct": 0.0075,
-        "market_value": 15551.64
-      },
-      {
-        "symbol": "AMZN",
-        "return_since_entry_pct": 0.1028,
-        "week_return_pct": 0.0024,
-        "market_value": 114525.32
-      },
-      {
-        "symbol": "UNH",
-        "return_since_entry_pct": 0.1087,
-        "week_return_pct": -0.0047,
-        "market_value": 15512.74
-      },
-      {
-        "symbol": "WMT",
-        "return_since_entry_pct": 0.0917,
-        "week_return_pct": -0.0084,
-        "market_value": 29870.1
-      },
-      {
-        "symbol": "JPM",
-        "return_since_entry_pct": 0.099,
-        "week_return_pct": -0.0168,
-        "market_value": 3445.4
-      },
-      {
-        "symbol": "MA",
-        "return_since_entry_pct": 0.3568,
-        "week_return_pct": -0.0171,
-        "market_value": 5280.96
+        "return_since_entry_pct": -0.0458,
+        "week_return_pct": -0.0343,
+        "market_value": 11279.1
       },
       {
         "symbol": "HD",
-        "return_since_entry_pct": 0.0935,
-        "week_return_pct": -0.019,
-        "market_value": 13212.98
+        "return_since_entry_pct": 0.0813,
+        "week_return_pct": -0.0349,
+        "market_value": 13064.97
+      },
+      {
+        "symbol": "JNJ",
+        "return_since_entry_pct": 0.1327,
+        "week_return_pct": -0.0354,
+        "market_value": 147359.29
+      },
+      {
+        "symbol": "AAPL",
+        "return_since_entry_pct": 0.1582,
+        "week_return_pct": -0.036,
+        "market_value": 207216.62
+      },
+      {
+        "symbol": "MA",
+        "return_since_entry_pct": 0.3007,
+        "week_return_pct": -0.0532,
+        "market_value": 5062.24
       },
       {
         "symbol": "V",
-        "return_since_entry_pct": 0.2335,
-        "week_return_pct": -0.023,
-        "market_value": 24662.18
+        "return_since_entry_pct": 0.1823,
+        "week_return_pct": -0.0556,
+        "market_value": 23638.48
       },
       {
         "symbol": "MSFT",
-        "return_since_entry_pct": 0.2712,
-        "week_return_pct": -0.0574,
-        "market_value": 71885.27
+        "return_since_entry_pct": 0.1884,
+        "week_return_pct": -0.0685,
+        "market_value": 67201.24
+      },
+      {
+        "symbol": "AMZN",
+        "return_since_entry_pct": 0.0408,
+        "week_return_pct": -0.0727,
+        "market_value": 108090.49
+      },
+      {
+        "symbol": "JPM",
+        "return_since_entry_pct": 0.0027,
+        "week_return_pct": -0.0957,
+        "market_value": 3143.5
+      },
+      {
+        "symbol": "GOOGL",
+        "return_since_entry_pct": -0.0244,
+        "week_return_pct": -0.096,
+        "market_value": 15047.73
+      },
+      {
+        "symbol": "META",
+        "return_since_entry_pct": 0.0015,
+        "week_return_pct": -0.108,
+        "market_value": 5692.7
+      },
+      {
+        "symbol": "AVGO",
+        "return_since_entry_pct": -0.0637,
+        "week_return_pct": -0.1182,
+        "market_value": 11389.53
+      },
+      {
+        "symbol": "ORCL",
+        "return_since_entry_pct": -0.0735,
+        "week_return_pct": -0.2118,
+        "market_value": 11657.07
+      },
+      {
+        "symbol": "TSM",
+        "return_since_entry_pct": -0.0871,
+        "week_return_pct": -0.229,
+        "market_value": 11364.5
+      },
+      {
+        "symbol": "AMD",
+        "return_since_entry_pct": -0.1342,
+        "week_return_pct": -0.2324,
+        "market_value": 13105.8
+      },
+      {
+        "symbol": "NVDA",
+        "return_since_entry_pct": -0.082,
+        "week_return_pct": -0.2774,
+        "market_value": 11567.47
       }
     ],
     "trades": [
       {
-        "date": "2026-11-09",
-        "symbol": "NVDA",
-        "action": "SELL",
-        "shares": "25"
-      },
-      {
-        "date": "2026-11-10",
-        "symbol": "NVDA",
-        "action": "SELL",
-        "shares": "75"
-      },
-      {
-        "date": "2026-11-10",
-        "symbol": "ORCL",
-        "action": "SELL",
-        "shares": "97"
-      },
-      {
-        "date": "2026-11-10",
-        "symbol": "PG",
-        "action": "BUY",
-        "shares": "90"
-      },
-      {
-        "date": "2026-11-10",
-        "symbol": "CAT",
-        "action": "BUY",
-        "shares": "26"
-      },
-      {
-        "date": "2026-11-10",
-        "symbol": "GLW",
-        "action": "BUY",
-        "shares": "138"
-      },
-      {
-        "date": "2026-11-10",
+        "date": "2026-11-18",
         "symbol": "TSM",
-        "action": "BUY",
+        "action": "SELL",
         "shares": "39"
       },
       {
-        "date": "2026-11-10",
-        "symbol": "AMD",
-        "action": "BUY",
-        "shares": "30"
+        "date": "2026-11-19",
+        "symbol": "UNH",
+        "action": "SELL",
+        "shares": "38"
       },
       {
-        "date": "2026-11-10",
+        "date": "2026-11-19",
+        "symbol": "NVDA",
+        "action": "BUY",
+        "shares": "85"
+      },
+      {
+        "date": "2026-11-19",
+        "symbol": "TSM",
+        "action": "BUY",
+        "shares": "35"
+      },
+      {
+        "date": "2026-11-19",
+        "symbol": "ORCL",
+        "action": "BUY",
+        "shares": "113"
+      },
+      {
+        "date": "2026-11-19",
+        "symbol": "GLW",
+        "action": "BUY",
+        "shares": "117"
+      },
+      {
+        "date": "2026-11-19",
+        "symbol": "CAT",
+        "action": "BUY",
+        "shares": "23"
+      },
+      {
+        "date": "2026-11-20",
         "symbol": "CAT",
         "action": "SELL",
-        "shares": "26"
+        "shares": "23"
       },
       {
-        "date": "2026-11-10",
+        "date": "2026-11-20",
         "symbol": "GLW",
         "action": "SELL",
-        "shares": "138"
+        "shares": "117"
       }
     ]
   },
-  "markdown": "# Positive week with the portfolio ahead of its benchmark.\n\n*Week of 2026-11-09 to 2026-11-15*\n\n## Performance\n\nFor the week ended 2026-11-15, portfolio value rose from 1062456.24 to 1066765.76, a 0.41% return versus -0.32% for the benchmark, producing 0.73% alpha.\n\n## Winners\n\n- AMD rose 9.26% this week; its return since the position was opened is 5.50%.\n- AVGO gained 6.61% this week; its return since the position was opened is 5.05%.\n- JNJ advanced 3.41% this week; its return since the position was opened is 19.60%.\n\n## Losers\n\n- MSFT declined -5.74% this week; its return since the position was opened is 27.12%.\n- V fell -2.30% this week; its return since the position was opened is 23.35%.\n- HD declined -1.90% this week; its return since the position was opened is 9.35%.\n\n## Portfolio Changes\n\nWe sold 25 NVDA shares on 2026-11-09, then sold 75 NVDA shares and 97 ORCL shares on 2026-11-10. We bought 90 PG shares, 39 TSM shares, and 30 AMD shares on 2026-11-10. We also bought and sold 26 CAT shares and 138 GLW shares on 2026-11-10.\n\n## Outlook\n\nThe week\u2019s result was constructive: gains in AMD, AVGO, and JNJ outweighed weakness in MSFT, V, and HD, leaving the portfolio ahead of the benchmark. We remain focused on the current holdings and the portfolio changes completed during the week.\n",
+  "markdown": "# Portfolio declined -2.95% for the week, outperforming the benchmark by 2.10%.\n\n*Week of 2026-11-16 to 2026-11-22*\n\n## Performance\n\nPortfolio value moved from 1055290.46 to 1024143.32 during the week ended 2026-11-22. The benchmark returned -5.05%.\n\n## Winners\n\n- WMT gained 1.81% this week; its return since the position was opened is 11.05%.\n- PG gained 1.01% this week; its return since the position was opened is 6.20%.\n\n## Losers\n\n- NVDA fell -27.74% this week; its return since the position was opened is -8.20%.\n- AMD fell -23.24% this week; its return since the position was opened is -13.42%.\n- TSM fell -22.90% this week; its return since the position was opened is -8.71%.\n\n## Portfolio Changes\n\nWe sold 39 TSM shares on 2026-11-18. On 2026-11-19, we sold 38 UNH shares and bought 85 NVDA, 35 TSM, 113 ORCL, 117 GLW, and 23 CAT shares. On 2026-11-20, we sold 23 CAT shares and 117 GLW shares.\n\n## Outlook\n\nThe week demonstrated meaningful dispersion: WMT and PG advanced while several technology-related positions declined sharply. We will remain disciplined in reviewing position-level risk and the portfolio\u2019s evolving exposures.\n",
   "grounding": {
     "status": "ok",
     "grounded": true,

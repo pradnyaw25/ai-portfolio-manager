@@ -1,27 +1,26 @@
-# Positive week with the portfolio ahead of its benchmark.
+# Portfolio declined -2.95% for the week, outperforming the benchmark by 2.10%.
 
-*Week of 2026-11-09 to 2026-11-15*
+*Week of 2026-11-16 to 2026-11-22*
 
 ## Performance
 
-For the week ended 2026-11-15, portfolio value rose from 1062456.24 to 1066765.76, a 0.41% return versus -0.32% for the benchmark, producing 0.73% alpha.
+Portfolio value moved from 1055290.46 to 1024143.32 during the week ended 2026-11-22. The benchmark returned -5.05%.
 
 ## Winners
 
-- AMD rose 9.26% this week; its return since the position was opened is 5.50%.
-- AVGO gained 6.61% this week; its return since the position was opened is 5.05%.
-- JNJ advanced 3.41% this week; its return since the position was opened is 19.60%.
+- WMT gained 1.81% this week; its return since the position was opened is 11.05%.
+- PG gained 1.01% this week; its return since the position was opened is 6.20%.
 
 ## Losers
 
-- MSFT declined -5.74% this week; its return since the position was opened is 27.12%.
-- V fell -2.30% this week; its return since the position was opened is 23.35%.
-- HD declined -1.90% this week; its return since the position was opened is 9.35%.
+- NVDA fell -27.74% this week; its return since the position was opened is -8.20%.
+- AMD fell -23.24% this week; its return since the position was opened is -13.42%.
+- TSM fell -22.90% this week; its return since the position was opened is -8.71%.
 
 ## Portfolio Changes
 
-We sold 25 NVDA shares on 2026-11-09, then sold 75 NVDA shares and 97 ORCL shares on 2026-11-10. We bought 90 PG shares, 39 TSM shares, and 30 AMD shares on 2026-11-10. We also bought and sold 26 CAT shares and 138 GLW shares on 2026-11-10.
+We sold 39 TSM shares on 2026-11-18. On 2026-11-19, we sold 38 UNH shares and bought 85 NVDA, 35 TSM, 113 ORCL, 117 GLW, and 23 CAT shares. On 2026-11-20, we sold 23 CAT shares and 117 GLW shares.
 
 ## Outlook
 
-The week’s result was constructive: gains in AMD, AVGO, and JNJ outweighed weakness in MSFT, V, and HD, leaving the portfolio ahead of the benchmark. We remain focused on the current holdings and the portfolio changes completed during the week.
+The week demonstrated meaningful dispersion: WMT and PG advanced while several technology-related positions declined sharply. We will remain disciplined in reviewing position-level risk and the portfolio’s evolving exposures.
