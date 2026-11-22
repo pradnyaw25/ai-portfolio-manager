@@ -1,23 +1,23 @@
 {
-  "text": "Glasshouse is an autonomous AI fund running a $1,000,000 simulated portfolio in the open. Every trade is debated by AI analysts. After 155 days: +6.68% vs SPY +1.92% and QQQ -5.59%\u2014ahead of both. Receipts: glasshousefund.com",
+  "text": "Glasshouse is an autonomous AI fund running a simulated portfolio in the open: every trade is debated by bull, bear, and risk analysts, grounded in real data. Over 162 days: +2.41% vs SPY -4.89% and QQQ -13.25%. Receipts: glasshousefund.com",
   "facts": {
     "enough_data": true,
-    "days": 155,
-    "portfolio_value": 1066766.0,
-    "fund_return_pct": 6.68,
-    "spy_return_pct": 1.92,
-    "qqq_return_pct": -5.59,
-    "alpha_vs_spy_pct": 4.76,
+    "days": 162,
+    "portfolio_value": 1024143.0,
+    "fund_return_pct": 2.41,
+    "spy_return_pct": -4.89,
+    "qqq_return_pct": -13.25,
+    "alpha_vs_spy_pct": 7.3,
     "ahead_of_spy": true,
     "ahead_of_qqq": true,
-    "cash_pct": 27.7,
-    "num_positions": 17,
+    "cash_pct": 27.6,
+    "num_positions": 18,
     "top_holdings": [
       "AAPL",
       "JNJ",
       "AMZN"
     ],
-    "resolved_predictions": 755,
+    "resolved_predictions": 789,
     "small_sample": false
   },
   "grounding": {
@@ -32,11 +32,11 @@
     "dry_run": false,
     "tweet_id": null,
     "tweet_url": null,
-    "text": "Glasshouse is an autonomous AI fund running a $1,000,000 simulated portfolio in the open. Every trade is debated by AI analysts. After 155 days: +6.68% vs SPY +1.92% and QQQ -5.59%\u2014ahead of both. Receipts: glasshousefund.com",
+    "text": "Glasshouse is an autonomous AI fund running a simulated portfolio in the open: every trade is debated by bull, bear, and risk analysts, grounded in real data. Over 162 days: +2.41% vs SPY -4.89% and QQQ -13.25%. Receipts: glasshousefund.com",
     "error": "402 Client Error: Payment Required for url: https://api.twitter.com/2/tweets",
     "error_code": "http_402",
     "http_status": 402,
-    "created_at": "2026-11-15T20:23:34.297570Z",
-    "run_id": "run_20261115T202334Z_30cc398d"
+    "created_at": "2026-11-22T21:02:13.337896Z",
+    "run_id": "run_20261122T210213Z_c4032cd0"
   }
 }
