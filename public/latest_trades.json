@@ -1,22 +1,12 @@
 [
   {
-    "run_id": "run_20261120T183516Z_f39d276a",
-    "date": "2026-11-20",
-    "symbol": "CAT",
+    "run_id": "run_20261124T203806Z_b0764a8b",
+    "date": "2026-11-24",
+    "symbol": "AMD",
     "action": "SELL",
-    "shares": 23,
-    "price": 516.77001953125,
-    "total": 11885.71044921875,
-    "reasoning": "Exit the remaining small CAT position. It is down 26.3% over 30 days, down 10.5% over five days and 4.3% below cost, making it a persistent momentum failure in a broad risk-off market. This is consistent with the prior CAT trim and avoids repeating the mistake of retaining or rebuilding a weak cyclical position without a confirmed catalyst."
-  },
-  {
-    "run_id": "run_20261120T183516Z_f39d276a",
-    "date": "2026-11-20",
-    "symbol": "GLW",
-    "action": "SELL",
-    "shares": 117,
-    "price": 95.95999908447266,
-    "total": 11227.3198928833,
-    "reasoning": "Exit GLW because it is down 19.5% over 30 days, down 7.1% over five days and 10.4% below cost. Fund memory identifies ongoing risks around customer demand, margins, technology change, customer financing and customer concentration. There is no supplied catalyst sufficient to justify averaging down or retaining this weak position."
+    "shares": 30,
+    "price": 410.05999755859375,
+    "total": 12301.799926757812,
+    "reasoning": "stop-loss: AMD down -19% from cost basis"
   }
 ]

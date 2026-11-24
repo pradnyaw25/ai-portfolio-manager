@@ -1,45 +1,43 @@
-# Portfolio Report, 2026-11-20
+# Portfolio Report, 2026-11-24
 
 ## Summary
-- **Run ID:** `run_20261120T183516Z_f39d276a`
-- **Total Value:** $1,024,143.32
-- **Cash:** $282,569.92 (27.6%)
-- **Invested:** $741,573.40
-- **Positions:** 18
-- **Outlook:** BEARISH
+- **Run ID:** `run_20261124T203806Z_b0764a8b`
+- **Total Value:** $1,034,733.31
+- **Cash:** $294,871.72 (28.5%)
+- **Invested:** $739,861.59
+- **Positions:** 17
+- **Outlook:** NEUTRAL
 
 ## Holdings
 
 | Symbol | Shares | Avg Cost | Current | P&L % |
 |--------|--------|----------|---------|-------|
-| AAPL | 599 | $298.69 | $345.94 | 15.8% |
-| JNJ | 543 | $239.58 | $271.38 | 13.3% |
-| AMZN | 431 | $240.96 | $250.79 | 4.1% |
-| MSFT | 137 | $412.76 | $490.52 | 18.8% |
-| PG | 266 | $160.38 | $170.33 | 6.2% |
-| WMT | 234 | $116.93 | $129.85 | 11.1% |
-| V | 58 | $344.73 | $407.56 | 18.2% |
-| GOOGL | 55 | $280.45 | $273.60 | -2.4% |
-| AMD | 30 | $504.59 | $436.86 | -13.4% |
-| HD | 38 | $317.96 | $343.82 | 8.1% |
-| ORCL | 113 | $111.35 | $103.16 | -7.4% |
-| NVDA | 85 | $148.25 | $136.09 | -8.2% |
-| AVGO | 37 | $328.75 | $307.83 | -6.4% |
-| TSM | 35 | $355.68 | $324.70 | -8.7% |
-| XOM | 70 | $168.87 | $161.13 | -4.6% |
-| META | 10 | $568.43 | $569.27 | 0.1% |
-| MA | 8 | $486.51 | $632.78 | 30.1% |
-| JPM | 10 | $313.49 | $314.35 | 0.3% |
+| AAPL | 599 | $298.69 | $352.02 | 17.9% |
+| JNJ | 543 | $239.58 | $276.46 | 15.4% |
+| AMZN | 431 | $240.96 | $250.74 | 4.1% |
+| MSFT | 137 | $412.76 | $493.59 | 19.6% |
+| PG | 266 | $160.38 | $172.29 | 7.4% |
+| WMT | 234 | $116.93 | $131.62 | 12.6% |
+| V | 58 | $344.73 | $415.79 | 20.6% |
+| GOOGL | 55 | $280.45 | $277.35 | -1.1% |
+| HD | 38 | $317.96 | $352.83 | 11.0% |
+| NVDA | 85 | $148.25 | $152.51 | 2.9% |
+| ORCL | 113 | $111.35 | $108.40 | -2.6% |
+| TSM | 35 | $355.68 | $347.00 | -2.4% |
+| AVGO | 37 | $328.75 | $300.59 | -8.6% |
+| XOM | 70 | $168.87 | $158.57 | -6.1% |
+| META | 10 | $568.43 | $587.82 | 3.4% |
+| MA | 8 | $486.51 | $645.51 | 32.7% |
+| JPM | 10 | $313.49 | $316.01 | 0.8% |
 
 ## Today's Trades
 
-- **SELL** 23 CAT @ $516.77. Exit the remaining small CAT position. It is down 26.3% over 30 days, down 10.5% over five days and 4.3% below cost, making it a persistent momentum failure in a broad risk-off market. This is consistent with the prior CAT trim and avoids repeating the mistake of retaining or rebuilding a weak cyclical position without a confirmed catalyst.
-- **SELL** 117 GLW @ $95.96. Exit GLW because it is down 19.5% over 30 days, down 7.1% over five days and 10.4% below cost. Fund memory identifies ongoing risks around customer demand, margins, technology change, customer financing and customer concentration. There is no supplied catalyst sufficient to justify averaging down or retaining this weak position.
+- **SELL** 30 AMD @ $410.06, stop-loss: AMD down -19% from cost basis
 
 ## Analysis
 
-Maintain a defensive, low-turnover posture: sell CAT and GLW, hold the resilient core without adding, avoid averaging into semiconductors or speculative AI names, and retain the 25.3% cash reserve until breadth and volatility improve.
+Maintain a defensive, low-turnover stance: sell AMD as the portfolio's clearest persistent momentum failure, hold proven relative-strength leaders, avoid additions to concentrated holdings or weak technology names, and retain the 27.3% cash reserve until breadth and technology momentum improve.
 
 ## Risk Assessment
 
-The principal risk is concentration within the invested sleeve. AAPL, JNJ, AMZN and MSFT are large exposures, and technology-linked holdings remain correlated through AI spending, valuation compression and risk-off sentiment. Semiconductor exposure is especially challenged: AMD, NVDA and TSM are below cost and materially weak over 30 days, while AVGO is also below cost despite better recent relative strength. The portfolio should avoid adding to weak technology positions and preserve liquidity. This follows the higher-priority fund risk lessons favoring selective trimming of weakening holdings rather than averaging down.
+The principal risks are concentration and correlated technology downside. AAPL alone is approximately 20% of total portfolio value, while AAPL, JNJ, and AMZN together remain a material exposure despite the cash reserve. Semiconductor positions have collectively weakened, with AMD, AVGO, TSM, and NVDA exposed to the same AI-spending and valuation-reset risk. The cash balance moderates total-portfolio drawdown, but it does not eliminate risk in the concentrated invested sleeve. Prior fund risk lessons support disciplined trimming of persistent momentum failures and avoiding averaging down into weakening technology positions.
