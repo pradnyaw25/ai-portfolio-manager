@@ -1,12 +1,1 @@
-[
-  {
-    "run_id": "run_20261124T203806Z_b0764a8b",
-    "date": "2026-11-24",
-    "symbol": "AMD",
-    "action": "SELL",
-    "shares": 30,
-    "price": 410.05999755859375,
-    "total": 12301.799926757812,
-    "reasoning": "stop-loss: AMD down -19% from cost basis"
-  }
-]
+[]
