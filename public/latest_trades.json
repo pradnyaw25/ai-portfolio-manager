@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "run_id": "run_20261126T193521Z_3e914bd8",
+    "date": "2026-11-26",
+    "symbol": "ORCL",
+    "action": "SELL",
+    "shares": 113,
+    "price": 103.87999725341797,
+    "total": 11738.43968963623,
+    "reasoning": "Exit the small ORCL position. It is 6.70% below average cost and down 17.25% over 30 days, materially weaker than SPY, with a further 6.05% decline over five days and no tool-confirmed catalyst supporting retention. This follows the fund's higher-priority discipline of trimming sustained momentum failures rather than averaging down."
+  }
+]
