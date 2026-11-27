@@ -34,12 +34,26 @@ SEC_USER_AGENT = os.getenv(
 POST_TWEET = os.getenv("POST_TWEET", "false").lower() in {"1", "true", "yes"}
 # Optional: post the weekly investor letter as an X thread. Off by default.
 POST_INVESTOR_LETTER = os.getenv("POST_INVESTOR_LETTER", "false").lower() in {"1", "true", "yes"}
-# The daily cycle runs twice on weekdays (cron 14:40 and 17:50 UTC; GitHub delays
-# scheduled runs ~1h, so they actually start ~15:40-16:20 and ~18:50-19:30). Receipts tweets
-# (prediction scorecards) post only on the morning run — a run that starts at or
-# after this UTC hour is the afternoon run and skips them, so the fund posts at most
-# one receipts tweet a day. Keep this between the two run hours (see daily-run.yml).
+# The daily cycle runs twice on weekdays, serving the 14:40 ("morning") and 17:50
+# ("afternoon") UTC slots. Receipts tweets (prediction scorecards) post only on the
+# morning run, the spotlight only on the afternoon one, so the fund posts at most one
+# of each a day. Which run this is comes from the workflow: RUN_SLOT is derived from
+# the cron that fired (daily-run.yml) and is authoritative, so a morning run that
+# GitHub's scheduler lands at 19:00 UTC is still the morning run. Only when RUN_SLOT
+# is unset (manual dispatch, local `make run`) is the run's UTC start hour compared
+# against this cutoff; keep it between the two slot times.
 RECEIPTS_MORNING_CUTOFF_HOUR_UTC = int(os.getenv("RECEIPTS_MORNING_CUTOFF_HOUR_UTC", "17"))
+RUN_SLOTS = ("morning", "afternoon")
+_run_slot = os.getenv("RUN_SLOT", "").strip().lower()
+RUN_SLOT = _run_slot if _run_slot in RUN_SLOTS else None
+# The rest of the scheduling context, recorded on the run_history row so the
+# scheduler-delay distribution can be read straight from data/ instead of being
+# reconstructed from `gh run list`. All optional; empty outside GitHub Actions.
+RUN_SLOT_TIME = os.getenv("RUN_SLOT_TIME", "").strip() or None
+RUN_CRON = os.getenv("RUN_CRON", "").strip() or None
+RUN_FIRED_AT = os.getenv("RUN_FIRED_AT", "").strip() or None
+_delay = os.getenv("RUN_SCHEDULER_DELAY_MIN", "").strip()
+RUN_SCHEDULER_DELAY_MIN = int(_delay) if _delay.lstrip("-").isdigit() else None
 # A symbol tweeted within this many days is "on cooldown" and deprioritized when the
 # daily tweet picks which name to lead with, so the feed doesn't repeat the same call
 # day after day (variety engine — roadmap W02).

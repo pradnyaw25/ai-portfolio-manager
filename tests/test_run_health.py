@@ -178,6 +178,42 @@ def test_two_runs_in_the_same_slot_do_not_cover_the_other():
     assert "afternoon slot never ran" in message
 
 
+def test_an_explicit_slot_field_outranks_the_start_hour():
+    """November 2026: the scheduler landed every morning run after the 17Z cutoff, so
+    the hour heuristic called them afternoon runs and paged HALF A DAY on days both
+    crons had run. Rows now say which slot they served; that wins."""
+    runs = [
+        _run("2026-11-20T18:35:00Z", run_id="r_am") | {"slot": "morning"},
+        _run("2026-11-20T20:10:00Z", run_id="r_pm") | {"slot": "afternoon"},
+    ]
+
+    healthy, message = check(runs, _date("2026-11-20"))
+
+    assert healthy is True, message
+
+
+def test_rows_without_a_slot_field_still_use_the_start_hour():
+    """Pre-field rows, and manual dispatches, which have no slot."""
+    runs = [_run("2026-09-15T14:41:00Z", run_id="r_am"), _run("2026-09-15T17:51:00Z")]
+    runs[0]["slot"] = None
+
+    healthy, _ = check(runs, _date("2026-09-15"))
+
+    assert healthy is True
+
+
+def test_two_explicit_morning_rows_are_still_half_a_day():
+    runs = [
+        _run("2026-11-20T14:41:00Z", run_id="r1") | {"slot": "morning"},
+        _run("2026-11-20T19:00:00Z", run_id="r2") | {"slot": "morning"},
+    ]
+
+    healthy, message = check(runs, _date("2026-11-20"))
+
+    assert healthy is False
+    assert "afternoon slot never ran" in message
+
+
 def test_a_failed_latest_run_outranks_a_missing_slot():
     """The louder failure wins the message: a failed day is worse than a half day."""
     runs = [_run("2026-09-15T18:51:00Z", status="failed", errors=["boom"])]

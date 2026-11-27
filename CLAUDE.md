@@ -185,6 +185,19 @@ All four shipped 2026-07-09 (PRs #69, #70, #71). Kept as a record.
 
 ### Recently Completed
 
+- [x] **Each slot fires every 2h from 10h out; the run knows its slot** *(2026-11-27)* — the
+  single early cron per slot (4.5h headroom) was outrun in November 2026 (median delay
+  ~8.5h, max 710 min): the PM run was skipped after the close most days, the AM run landed
+  after the 17Z receipts cutoff and was treated as the PM run (no receipts tweet all
+  month), and 2026-11-23 was lost outright. Now one multi-hour cron expression per slot
+  (`40 4,6,8,10,12` / `50 7,9,11,13,15`), every fire sleeps to the slot, and the first
+  to arrive runs while the rest find the slot served in `run_history` and exit green
+  (`scripts/slot_already_served.py`). One expression per slot is what keeps the fires in
+  one concurrency group — don't split them into separate crons. `RUN_SLOT` is passed into
+  the cycle and written as `slot` on the `run_history` row; `_is_morning_run` and the
+  watchdog's `_slot` prefer it. Any delay up to 10h is absorbed; `tests/test_daily_schedule.py`
+  simulates every delay in 15-min steps.
+
 - [x] **Daily runs fire early and wait for their slot** *(2026-10-02)* — GitHub's scheduler
   drifted from ~1h late to a median ~105 min / max 476 min in late August; the cron times
   had *budgeted* ~2h, so four trading days were lost outright and the afternoon slot was

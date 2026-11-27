@@ -38,12 +38,14 @@ MARKET_OPEN = time(9, 30)
 
 RUN_HISTORY = DATA_DIR / "run_history.jsonl"
 
-# The fund owes two runs per trading day: one before and one after this UTC hour.
-# Mirrors src.config.RECEIPTS_MORNING_CUTOFF_HOUR_UTC (17), the same boundary the
-# cycle uses to decide whether it is the morning run (receipts) or the afternoon one
-# (spotlight). Keep in step. From 2026-09-01 the afternoon slot landed after the
-# close on 21 of 23 days and this check passed every one of them, because it only
-# asked whether the fund ran at all.
+# The fund owes two runs per trading day, the "morning" (14:40 UTC) and "afternoon"
+# (17:50 UTC) slots. Rows record which slot they served (`slot`); for rows older than
+# that field, the slot is inferred from the UTC start hour against this cutoff, which
+# mirrors src.config.RECEIPTS_MORNING_CUTOFF_HOUR_UTC (17) - the boundary the cycle
+# itself used to tell the morning run (receipts) from the afternoon one (spotlight).
+# Keep in step. From 2026-09-01 the afternoon slot landed after the close on 21 of 23
+# days and this check passed every one of them, because it only asked whether the
+# fund ran at all.
 MORNING_CUTOFF_HOUR_UTC = 17
 EXPECTED_SLOTS = ("morning", "afternoon")
 
@@ -117,7 +119,19 @@ def _started_on(run: dict) -> date | None:
 
 
 def _slot(run: dict) -> str | None:
-    """Which of the day's two slots a run served, by its UTC start hour."""
+    """Which of the day's two slots a run served.
+
+    Rows written since 2026-11 carry it explicitly as ``slot`` - the workflow derives
+    it from the cron that fired and passes it into the cycle - and that is
+    authoritative: a morning run that the scheduler lands at 19:00 UTC is still the
+    morning run. Older rows (and manual dispatches, which have no slot) fall back to
+    the UTC start hour against the receipts cutoff, which is what mis-read every
+    November 2026 morning run as an afternoon one and paged "HALF A DAY" on days both
+    crons had run.
+    """
+    explicit = str(run.get("slot") or "").strip().lower()
+    if explicit in EXPECTED_SLOTS:
+        return explicit
     raw = str(run.get("started_at") or "")
     try:
         stamp = datetime.fromisoformat(raw.replace("Z", "+00:00"))
@@ -153,8 +167,11 @@ def check(runs: list[dict], today: date) -> tuple[bool, str]:
         return False, (
             f"NO RUN RECORDED for {today}, a trading day. The cycle never started, or "
             f"was cancelled before its first step (a cancelled run writes no "
-            f"run_history row — this is the 2026-08-06 failure). Check the Actions tab "
-            f"for a cancelled or missing 'Daily Portfolio Run'. "
+            f"run_history row — this is the 2026-08-06 failure), or every fire of both "
+            f"slots landed outside market hours and was skipped (2026-11-23). Check the "
+            f"'Daily Portfolio Run' entries in the Actions tab: a few cancelled BACKUP "
+            f"fires per slot are normal since 2026-11, a skipped run carries a "
+            f"::warning:: with its fire time and delay. "
             f"If {today} was a market holiday, add it to MARKET_HOLIDAYS in "
             f"scripts/check_run_health.py."
         )
@@ -176,9 +193,10 @@ def check(runs: list[dict], today: date) -> tuple[bool, str]:
             f"HALF A DAY on {today}: the {missing[0]} slot never ran "
             f"({len(todays)} run(s), all {next(iter(served))}). The fund did trade, but "
             f"the second decision and its tweet are gone. The usual cause is GitHub's "
-            f"scheduler firing the slot after the close so the market-hours guard "
-            f"skipped it (every day in September 2026) - check the 'Daily Portfolio "
-            f"Run' start times in the Actions tab against the slots in daily-run.yml."
+            f"scheduler landing every fire of that slot after the close so the "
+            f"market-hours guard skipped them all (every day in September 2026, most "
+            f"of November) - look for the ::warning:: on the skipped 'Daily Portfolio "
+            f"Run' entries in the Actions tab; it names the slot, fire time and delay."
         )
 
     failed_earlier = [r for r in todays if str(r.get("status") or "") != "success"]

@@ -2,43 +2,55 @@ name: Daily Portfolio Run
 
 on:
   schedule:
-    # Twice on weekdays, serving the 14:40 and 17:50 UTC slots - but each cron fires
-    # 4.5 HOURS EARLY and the "Wait for the slot" step sleeps until the slot time.
+    # Twice on weekdays, serving the 14:40 and 17:50 UTC slots. Each slot is ONE cron
+    # expression that fires every two hours from ~10 hours before the slot; every fire
+    # sleeps until the slot ("Wait for the slot" below), and the first fire to reach
+    # it runs the cycle while the rest find the slot already served and exit green.
     #
     # Why: GitHub's scheduler is the binding constraint, not the clock. Through July
-    # it started this repo's runs 59-101 minutes late and the cron times budgeted for
-    # that. From late August the delay drifted to a median of ~105 min, p90 ~220 min,
-    # max 476 min - past the budget - and the market-hours guard (which aborts the
-    # WHOLE run outside 9:30am-4:00pm America/New_York) silently skipped the result:
-    # four whole trading days lost (08-27, 08-28, 08-31, 09-28) and, from 09-01, the
-    # afternoon slot skipped on 21 of 23 days. See docs/incidents.md.
+    # 2026 it started this repo's runs 59-101 minutes late; from late August the
+    # median was ~105 min (max 476); in November 2026 the median was ~8.5 HOURS (AM
+    # p90 627 min, max 710). The single early cron per slot (10:10 / 13:20, 4.5h of
+    # headroom) that fixed the September incident was outrun by the November one: the
+    # afternoon run landed after the close on most days and was skipped, the morning
+    # run landed after the receipts cutoff and was mistaken for the afternoon one (no
+    # receipts tweet all month), and on 2026-11-23 both landed after the close and the
+    # day was lost. See docs/incidents.md.
     #
-    # Firing early and sleeping absorbs the delay instead of budgeting for it: on time
-    # means a 4.5h wait, 3h late means a 1.5h wait, past the slot means no wait (the
-    # guard then decides, exactly as before). Runner minutes are free on a public repo.
-    # The slots themselves are unchanged and still land in-hours in both DST seasons
-    # (14:30-20:00 UTC), on their side of RECEIPTS_MORNING_CUTOFF_HOUR_UTC (17): the
-    # morning run posts receipts, the afternoon run the spotlight.
+    # Firing many times absorbs the delay instead of budgeting for it. A fire more than
+    # MAX_WAIT_MINUTES (5h) before its slot starts at once, lands before the open and
+    # is skipped by the market-hours guard; a fire inside the 5h window sleeps to the
+    # slot; a fire after the slot starts at once and runs if the slot is still unserved
+    # and the market is open. Fires are 2h apart, so for any delay from 0 to 10h at
+    # least two fires land inside the window. Runner minutes are free on a public repo.
     #
-    # Each cron MUST have a matching entry in SLOT_TARGETS below, or the wait step
-    # fails rather than guess. Delays beyond the headroom still lose the slot; the
-    # run-health watchdog pages on a missing slot now, so that is no longer silent.
-    - cron: "10 10 * * 1-5"   # serves the 14:40 UTC slot
-    - cron: "20 13 * * 1-5"   # serves the 17:50 UTC slot
+    # One EXPRESSION per slot, not one cron per fire: the concurrency group below is
+    # keyed on github.event.schedule, so all fires of a slot share a group and GitHub
+    # serializes them - two fires sleeping to the same slot can never both run the
+    # cycle. (A group holds one running + one pending job and cancels an older pending
+    # one when a newer arrives, so a few "cancelled" backup fires per day are normal.)
+    #
+    # Each expression MUST have a matching entry in SLOT_TARGETS below, or the wait
+    # step fails rather than guess. The slots themselves are unchanged and land
+    # in-hours in both DST seasons, on their side of RECEIPTS_MORNING_CUTOFF_HOUR_UTC
+    # (17): the morning run posts receipts, the afternoon run the spotlight. The run
+    # also records WHICH slot it served, so a late morning run is still the morning run.
+    - cron: "40 4,6,8,10,12 * * 1-5"    # serves the 14:40 UTC slot
+    - cron: "50 7,9,11,13,15 * * 1-5"   # serves the 17:50 UTC slot
 
   workflow_dispatch:
 
 env:
-  # cron -> the UTC slot it serves. Read by scripts/wait_for_slot.py; pinned by
-  # tests/test_daily_schedule.py.
-  SLOT_TARGETS: "10 10 * * 1-5=14:40,20 13 * * 1-5=17:50"
+  # cron expression -> the UTC slot it serves, ';'-separated (the expressions contain
+  # commas). Read by scripts/wait_for_slot.py; pinned by tests/test_daily_schedule.py.
+  SLOT_TARGETS: "40 4,6,8,10,12 * * 1-5=14:40;50 7,9,11,13,15 * * 1-5=17:50"
 
 permissions:
   contents: write
   pages: write
   id-token: write
 
-# One group per cron slot, NOT a single shared "pages" group.
+# One group per cron EXPRESSION, i.e. per slot - NOT a single shared "pages" group.
 #
 # Both daily runs used to sit in the same group as each other (and as deploy-pages).
 # A group holds at most one in-progress plus one pending run: when a third enters, the
@@ -48,14 +60,15 @@ permissions:
 # whole trading day (the afternoon retry then landed after the close and the
 # market-hours guard correctly skipped it).
 #
-# Keying on the cron expression keeps each slot serialized against itself — a second
-# morning run still waits for the first — while making the two slots independent, so a
-# delay in one can no longer evict the other. workflow_dispatch has no
-# github.event.schedule, so it falls back to a per-run group and never queues.
+# Keying on the cron expression keeps each slot serialized against itself - every
+# backup fire of a slot queues behind the fire that is sleeping to it, then finds the
+# slot served and exits - while making the two slots independent, so a delay in one
+# can never evict the other. workflow_dispatch has no github.event.schedule, so it
+# falls back to a per-run group and never queues.
 #
-# The cost: the two slots' jobs now overlap routinely (each sleeps for hours before
-# its slot), so a late morning run can race the afternoon one to the branch. The
-# push step below rebases and retries to stay safe under that.
+# The cost: the two slots' jobs overlap routinely (each sleeps for hours before its
+# slot), so a late morning run can race the afternoon one to the branch. The push
+# step below rebases and retries to stay safe under that.
 concurrency:
   group: daily-run-${{ github.event.schedule || github.run_id }}
   cancel-in-progress: false
@@ -75,25 +88,49 @@ jobs:
           python-version: "3.14"
 
       # Stdlib only, runs before pip install. Sleeps until this cron's slot time; a
-      # manual dispatch has no slot and doesn't wait.
+      # manual dispatch has no slot and doesn't wait. Also resolves WHICH slot this
+      # fire serves (morning/afternoon) and how late the scheduler was, as step
+      # outputs that the steps below and the run_history row carry.
       - name: Wait for the slot
+        id: wait
         env:
           GITHUB_EVENT_SCHEDULE: ${{ github.event.schedule }}
         run: |
           python scripts/wait_for_slot.py
 
-      # The checkout above is up to 4.5h old by now and the OTHER slot has usually
-      # pushed in between. Running the cycle on a stale checkout would re-decide the
-      # morning's trades on yesterday's state, so fast-forward before anything reads
-      # data/. ff-only: if this can't fast-forward something is genuinely wrong.
+      # The checkout above is up to 5h old by now and the OTHER slot - or an earlier
+      # fire of THIS one - has usually pushed in between. Running the cycle on a stale
+      # checkout would re-decide the morning's trades on yesterday's state, so
+      # fast-forward before anything reads data/. ff-only: if this can't fast-forward
+      # something is genuinely wrong.
       - name: Refresh checkout
         run: |
           git pull --ff-only origin main
 
+      # Stdlib only. A slot is served once per trading day: if data/run_history.jsonl
+      # already holds a row for today's market date and this slot, this is a backup
+      # fire and the job ends here, green, with no cycle. Manual dispatches skip this.
+      - name: Check slot already served
+        id: slot-check
+        env:
+          RUN_SLOT: ${{ steps.wait.outputs.slot }}
+          RUN_SLOT_TIME: ${{ steps.wait.outputs.slot_time }}
+        run: |
+          python scripts/slot_already_served.py
+
+      # Prints a ::warning:: naming the slot, the fire time and the scheduler delay
+      # when it skips a scheduled run, so a green-but-skipped run can be told apart
+      # from a green run in the Actions list.
       - name: Check market hours
         id: market-hours
+        if: steps.slot-check.outputs.already_served != 'true'
         env:
           GITHUB_EVENT_NAME: ${{ github.event_name }}
+          RUN_SLOT: ${{ steps.wait.outputs.slot }}
+          RUN_SLOT_TIME: ${{ steps.wait.outputs.slot_time }}
+          RUN_CRON: ${{ steps.wait.outputs.cron }}
+          RUN_FIRED_AT: ${{ steps.wait.outputs.fired_at }}
+          RUN_SCHEDULER_DELAY_MIN: ${{ steps.wait.outputs.delay_min }}
         run: |
           python scripts/market_hours_guard.py
 
@@ -112,6 +149,15 @@ jobs:
         if: steps.market-hours.outputs.should_run == 'true'
         continue-on-error: true
         env:
+          # Which slot this run serves, from the cron that fired (empty on manual
+          # dispatch). Written to the run_history row as `slot` and used to pick the
+          # morning (receipts) vs afternoon (spotlight) behaviour, so a late morning
+          # run is still the morning run whatever the clock says.
+          RUN_SLOT: ${{ steps.wait.outputs.slot }}
+          RUN_SLOT_TIME: ${{ steps.wait.outputs.slot_time }}
+          RUN_CRON: ${{ steps.wait.outputs.cron }}
+          RUN_FIRED_AT: ${{ steps.wait.outputs.fired_at }}
+          RUN_SCHEDULER_DELAY_MIN: ${{ steps.wait.outputs.delay_min }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           # Multi-model live calibration. Turn on from repository settings, no commit
           # needed: set the CALIBRATION_SHADOW_ROUTES variable (e.g.
@@ -145,7 +191,7 @@ jobs:
           git diff --staged --quiet || \
           git commit -m "Daily portfolio update"
 
-      # Retry with a rebase: the two cron slots are no longer serialized against each
+      # Retry with a rebase: the two cron slots are not serialized against each
       # other, so a badly delayed run can race a later one to the same branch. The
       # data files are append-mostly and each run's writes are idempotent, so replaying
       # this run's commit on top of the other one is the correct resolution.
