@@ -55,12 +55,12 @@ EXPECTED_SLOTS = ("morning", "afternoon")
 # exactly how to fix it. Extend before each January.
 #
 # The source of truth is src.utils.market_hours.MARKET_HOLIDAYS (the guard and the
-# execution gate read that one); tests/test_market_hours_guard.py fails if this copy
-# drifts from it. Early closes are deliberately absent here: the fund still owes two
-# runs on a 13:00 ET day. Both slots (14:40 / 17:50 UTC = 09:40 / 12:50 EST) land
-# before that bell, with ten minutes to spare on the afternoon one, so a late fire
-# that the guard skips as "after the early close" is a genuinely lost slot and the
-# page is correct.
+# execution gate read that one); tests/test_market_hours.py fails if this copy drifts.
+# Early closes are not modelled here. The listed ones (late Nov / Dec 24) fall in EST,
+# where both slots (14:40 / 17:50 UTC = 09:40 / 12:50 ET) precede the 13:00 bell, so
+# a skipped afternoon slot is a real miss. A July 3 early close (next: 2028) is in EDT,
+# where 13:00 ET = 17:00 UTC is BEFORE the 17:50 slot: the guard would skip it rightly
+# and this check would page falsely. Consult market_hours.is_early_close before 2028.
 MARKET_HOLIDAYS = {
     # 2026
     "2026-01-01", "2026-01-19", "2026-02-16", "2026-04-03", "2026-05-25",
