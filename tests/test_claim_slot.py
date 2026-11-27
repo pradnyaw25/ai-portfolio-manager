@@ -53,7 +53,7 @@ def test_the_claim_is_what_the_served_check_reads(tmp_path):
 def test_old_claims_are_pruned_so_the_directory_stays_small(tmp_path):
     root = tmp_path / "claims"
     root.mkdir()
-    old = root / f"2026-09-01-morning.json"
+    old = root / "2026-09-01-morning.json"
     recent = root / "2026-11-19-afternoon.json"
     stray = root / "README.json"
     for f in (old, recent, stray):
