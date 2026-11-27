@@ -232,14 +232,36 @@ def test_the_job_waits_refreshes_then_checks_the_slot_before_the_guard_and_the_c
     refresh = names.index("Refresh checkout")
     served = names.index("Check slot already served")
     guard = names.index("Check market hours")
+    claim = names.index("Claim the slot")
+    install = names.index("Install dependencies")
     cycle = names.index("Run portfolio manager")
-    assert wait < refresh < served < guard < cycle
+    assert wait < refresh < served < guard < claim < install < cycle
 
     assert "--ff-only" in steps[refresh]["run"]
     assert "GITHUB_EVENT_SCHEDULE" in steps[wait]["env"]
     assert steps[wait]["id"] == "wait"
     assert steps[served]["env"]["RUN_SLOT"] == "${{ steps.wait.outputs.slot }}"
+    assert steps[served]["env"]["RUN_SLOT_AT"] == "${{ steps.wait.outputs.slot_at }}"
     assert "steps.slot-check.outputs.already_served != 'true'" in steps[guard]["if"]
+    assert steps[guard]["env"]["RUN_LAST_FIRE"] == "${{ steps.wait.outputs.last_fire }}"
+
+
+def test_the_slot_is_claimed_on_origin_before_anything_irreversible():
+    """The run_history row is pushed LAST. If that push fails the trades and the tweet
+    are already out and origin has no row - so without a claim the next backup fire
+    would run the whole cycle again. The claim is pushed before the cycle, only when
+    the guard said run, and a failed claim push fails the job right there."""
+    steps = _steps()
+    claim = steps[_names(steps).index("Claim the slot")]
+
+    assert claim["if"] == "steps.market-hours.outputs.should_run == 'true'"
+    assert claim["env"]["RUN_SLOT"] == "${{ steps.wait.outputs.slot }}"
+    assert claim["env"]["RUN_SLOT_AT"] == "${{ steps.wait.outputs.slot_at }}"
+    script = claim["run"]
+    assert "python scripts/claim_slot.py" in script
+    assert "git add -f data/slot_claims" in script
+    assert "git push" in script and "git pull --rebase origin main" in script
+    assert "exit 1" in script.split("::error::")[1]  # a failed claim push is a failed job
 
 
 def test_the_cycle_is_told_which_slot_it_serves():

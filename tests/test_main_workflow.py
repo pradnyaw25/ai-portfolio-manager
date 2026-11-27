@@ -109,6 +109,19 @@ def test_run_status_has_no_slot_outside_the_scheduler(monkeypatch):
     assert status["schedule"] is None
 
 
+def test_a_manual_dispatch_is_recorded_as_manual(monkeypatch):
+    """So the watchdog never counts it as the afternoon run by its start hour, and the
+    real afternoon fire never stands down because of it."""
+    from src import config
+
+    monkeypatch.setattr(config, "RUN_SLOT", "manual")
+    for name in ("RUN_SLOT_TIME", "RUN_CRON", "RUN_FIRED_AT", "RUN_SCHEDULER_DELAY_MIN"):
+        monkeypatch.setattr(config, name, None)
+    status = build_failure_run_status(run_id="r", started_at="2026-11-20T19:00:00Z", failed_step=None, errors=[])
+
+    assert status["slot"] == "manual"
+
+
 def test_build_failure_run_status_records_failed_step_and_errors():
     snapshot = PortfolioSnapshot(date=date.today(), cash=25000, positions=[])
     status = build_failure_run_status(

@@ -44,8 +44,12 @@ POST_INVESTOR_LETTER = os.getenv("POST_INVESTOR_LETTER", "false").lower() in {"1
 # against this cutoff; keep it between the two slot times.
 RECEIPTS_MORNING_CUTOFF_HOUR_UTC = int(os.getenv("RECEIPTS_MORNING_CUTOFF_HOUR_UTC", "17"))
 RUN_SLOTS = ("morning", "afternoon")
+# A workflow_dispatch run is recorded as "manual": it is neither slot, so the
+# watchdog never counts it as one and it never stops a scheduled fire from running.
+# Only the two real slots decide receipts vs spotlight; manual falls back to the hour.
+MANUAL_SLOT = "manual"
 _run_slot = os.getenv("RUN_SLOT", "").strip().lower()
-RUN_SLOT = _run_slot if _run_slot in RUN_SLOTS else None
+RUN_SLOT = _run_slot if _run_slot in RUN_SLOTS + (MANUAL_SLOT,) else None
 # The rest of the scheduling context, recorded on the run_history row so the
 # scheduler-delay distribution can be read straight from data/ instead of being
 # reconstructed from `gh run list`. All optional; empty outside GitHub Actions.

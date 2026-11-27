@@ -108,19 +108,24 @@ jobs:
           git pull --ff-only origin main
 
       # Stdlib only. A slot is served once per trading day: if data/run_history.jsonl
-      # already holds a row for today's market date and this slot, this is a backup
-      # fire and the job ends here, green, with no cycle. Manual dispatches skip this.
+      # already holds a row for the slot's market date and this slot, or a run has
+      # claimed the slot in data/slot_claims/ (see "Claim the slot" below), this is a
+      # backup fire and the job ends here, green, with no cycle. Manual dispatches
+      # (slot "manual") skip this.
       - name: Check slot already served
         id: slot-check
         env:
           RUN_SLOT: ${{ steps.wait.outputs.slot }}
           RUN_SLOT_TIME: ${{ steps.wait.outputs.slot_time }}
+          RUN_SLOT_AT: ${{ steps.wait.outputs.slot_at }}
         run: |
           python scripts/slot_already_served.py
 
-      # Prints a ::warning:: naming the slot, the fire time and the scheduler delay
-      # when it skips a scheduled run, so a green-but-skipped run can be told apart
-      # from a green run in the Actions list.
+      # When it skips a scheduled run it prints the slot, the fire time and the
+      # scheduler delay: as a ::notice:: for an early backup fire (those land before
+      # the open by design, several times a day), as a ::warning:: on the cron's LAST
+      # fire of the day, when a skip means the slot is lost. A green-but-skipped run
+      # must read differently from a green run in the Actions list.
       - name: Check market hours
         id: market-hours
         if: steps.slot-check.outputs.already_served != 'true'
@@ -131,8 +136,43 @@ jobs:
           RUN_CRON: ${{ steps.wait.outputs.cron }}
           RUN_FIRED_AT: ${{ steps.wait.outputs.fired_at }}
           RUN_SCHEDULER_DELAY_MIN: ${{ steps.wait.outputs.delay_min }}
+          RUN_LAST_FIRE: ${{ steps.wait.outputs.last_fire }}
         run: |
           python scripts/market_hours_guard.py
+
+      # Claim the slot on origin BEFORE the cycle runs. The run_history row is written
+      # and pushed LAST; if that push failed after its retries, the trades were done
+      # and the tweet was out but origin had no row, and the next backup fire two
+      # hours later would find the slot unserved and run the whole cycle again. The
+      # claim closes that window: data/slot_claims/<date>-<slot>.json is pushed first
+      # and slot_already_served.py honours it like a run_history row. If the claim
+      # itself cannot be pushed the job fails HERE, before anything irreversible, and
+      # the next fire tries again. Stdlib only. A manual dispatch claims nothing.
+      - name: Claim the slot
+        if: steps.market-hours.outputs.should_run == 'true'
+        env:
+          RUN_SLOT: ${{ steps.wait.outputs.slot }}
+          RUN_SLOT_TIME: ${{ steps.wait.outputs.slot_time }}
+          RUN_SLOT_AT: ${{ steps.wait.outputs.slot_at }}
+        run: |
+          python scripts/claim_slot.py
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add -f data/slot_claims
+          if git diff --staged --quiet; then
+            echo "Nothing to claim (manual dispatch)."
+            exit 0
+          fi
+          git commit -m "Claim the ${RUN_SLOT} slot"
+          for attempt in 1 2 3; do
+            if git push; then
+              exit 0
+            fi
+            echo "Claim push failed (attempt $attempt); rebasing on origin/main and retrying"
+            git pull --rebase origin main
+          done
+          echo "::error::Could not claim the ${RUN_SLOT} slot on origin after 3 attempts - not running the cycle; the next fire of this cron will try again"
+          exit 1
 
       - name: Install dependencies
         if: steps.market-hours.outputs.should_run == 'true'
@@ -194,7 +234,9 @@ jobs:
       # Retry with a rebase: the two cron slots are not serialized against each
       # other, so a badly delayed run can race a later one to the same branch. The
       # data files are append-mostly and each run's writes are idempotent, so replaying
-      # this run's commit on top of the other one is the correct resolution.
+      # this run's commit on top of the other one is the correct resolution. If this
+      # still fails the job goes red, and the slot claim pushed above keeps the next
+      # backup fire from re-running the cycle for a slot whose row never landed.
       - name: Push changes
         if: steps.market-hours.outputs.should_run == 'true'
         run: |

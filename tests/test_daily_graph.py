@@ -132,6 +132,9 @@ def test_is_morning_run_prefers_the_slot_the_workflow_supplied():
     # An unknown slot value falls back to the hour rather than guessing.
     assert daily_graph._is_morning_run("2026-11-20T18:35:00Z", "evening") is False
     assert daily_graph._is_morning_run("2026-11-20T18:35:00Z", None) is False
+    # A manual dispatch is neither slot: the clock decides which tweet it posts.
+    assert daily_graph._is_morning_run("2026-11-20T15:00:00Z", "manual") is True
+    assert daily_graph._is_morning_run("2026-11-20T18:35:00Z", "manual") is False
 
 
 def test_receipts_node_follows_the_slot_not_the_clock(monkeypatch):

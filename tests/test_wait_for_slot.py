@@ -12,11 +12,13 @@ import pytest
 from scripts.wait_for_slot import (
     DEFAULT_MAX_WAIT_MINUTES,
     cron_ticks,
+    is_last_tick,
     last_tick_before,
     main,
     parse_slot_targets,
     resolve_target,
     seconds_to_wait,
+    slot_instant,
     slot_name,
 )
 
@@ -116,6 +118,38 @@ def test_the_delay_is_measured_from_the_most_recent_tick():
     assert last_tick_before(_utc(4, 39), AM) == _utc(12, 40) - timedelta(days=1)
 
 
+def test_the_delay_honours_the_day_of_week_field():
+    """A Friday fire delayed into Saturday is measured against Friday's last tick, and
+    Monday's first fire against Monday's own tick - never against a weekend tick the
+    ``1-5`` field would not have produced."""
+    saturday = datetime(2026, 9, 19, 3, 50, tzinfo=UTC)
+    assert last_tick_before(saturday, PM) == datetime(2026, 9, 18, 15, 50, tzinfo=UTC)
+    # Even deep into Saturday, after a would-be 07:50 tick: still Friday's.
+    assert last_tick_before(datetime(2026, 9, 19, 9, 0, tzinfo=UTC), PM) == datetime(
+        2026, 9, 18, 15, 50, tzinfo=UTC
+    )
+    monday = datetime(2026, 9, 21, 4, 41, tzinfo=UTC)
+    assert last_tick_before(monday, AM) == datetime(2026, 9, 21, 4, 40, tzinfo=UTC)
+    # Before Monday's first tick there is no Sunday tick: it is Friday's 12:40.
+    assert last_tick_before(datetime(2026, 9, 21, 4, 0, tzinfo=UTC), AM) == datetime(
+        2026, 9, 18, 12, 40, tzinfo=UTC
+    )
+    # A '*' day field keeps every day.
+    assert last_tick_before(saturday, "50 15 * * *") == datetime(2026, 9, 18, 15, 50, tzinfo=UTC)
+
+
+def test_only_the_crons_last_tick_of_the_day_is_the_last_fire():
+    assert is_last_tick(_utc(12, 40), AM) is True
+    assert is_last_tick(_utc(10, 40), AM) is False
+    assert is_last_tick(_utc(15, 50), PM) is True
+
+
+def test_the_slot_instant_sits_on_the_ticks_date_not_the_fires():
+    # The 15:50 Friday tick fired at 03:50 Saturday still serves FRIDAY's 17:50 slot.
+    due = datetime(2026, 9, 18, 15, 50, tzinfo=UTC)
+    assert slot_instant(due, "17:50") == datetime(2026, 9, 18, 17, 50, tzinfo=UTC)
+
+
 def test_an_unmapped_cron_is_a_configuration_error():
     """Adding a cron without a slot must not silently run with no wait."""
     with pytest.raises(KeyError, match="no entry in SLOT_TARGETS"):
@@ -149,7 +183,8 @@ def test_main_does_not_sleep_on_manual_dispatch(tmp_path):
 
     assert rc == 0
     assert slept == []
-    assert not out.exists()  # no slot outputs: downstream steps see an empty slot
+    # The run is recorded as "manual": neither slot, so it never consumes one.
+    assert out.read_text() == "slot=manual\n"
 
 
 def test_main_releases_immediately_when_the_slot_has_passed(capsys):
@@ -175,10 +210,23 @@ def test_main_writes_the_slot_fire_time_and_delay_as_step_outputs(tmp_path):
     assert lines == {
         "slot": "morning",
         "slot_time": "14:40",
+        "slot_at": "2026-09-15T14:40:00Z",
         "cron": AM,
         "fired_at": "2026-09-15T14:10:00Z",
         "delay_min": "90",
+        "last_fire": "true",
     }
+
+
+def test_an_early_backup_fire_is_not_the_last_fire(tmp_path):
+    """The guard reads this to decide between a quiet ::notice:: (a backup fire that
+    landed pre-open, by design) and a ::warning:: (the slot's last chance, lost)."""
+    out = tmp_path / "out"
+    env = {"SLOT_TARGETS": TARGETS, "GITHUB_EVENT_SCHEDULE": AM, "GITHUB_OUTPUT": str(out)}
+
+    main(now=_utc(4, 41), sleep=lambda s: None, env=env)
+
+    assert "last_fire=false\n" in out.read_text()
 
 
 def test_a_late_morning_fire_is_still_the_morning_slot(tmp_path):

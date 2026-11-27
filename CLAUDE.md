@@ -193,10 +193,16 @@ All four shipped 2026-07-09 (PRs #69, #70, #71). Kept as a record.
   (`40 4,6,8,10,12` / `50 7,9,11,13,15`), every fire sleeps to the slot, and the first
   to arrive runs while the rest find the slot served in `run_history` and exit green
   (`scripts/slot_already_served.py`). One expression per slot is what keeps the fires in
-  one concurrency group — don't split them into separate crons. `RUN_SLOT` is passed into
-  the cycle and written as `slot` on the `run_history` row; `_is_morning_run` and the
-  watchdog's `_slot` prefer it. Any delay up to 10h is absorbed; `tests/test_daily_schedule.py`
-  simulates every delay in 15-min steps.
+  one concurrency group — don't split them into separate crons. Because the `run_history`
+  row is pushed *last*, the serving run first pushes a claim file
+  (`data/slot_claims/<date>-<slot>.json`, `scripts/claim_slot.py`) before its cycle, and
+  the served check honours it — otherwise a failed final push would let the next fire
+  re-decide the day and re-tweet. `RUN_SLOT` is passed into the cycle and written as
+  `slot` on the `run_history` row (`manual` for a workflow_dispatch, which is neither
+  slot); `_is_morning_run` and the watchdog's `_slot` prefer it. The guard's skip is a
+  `::notice::` on an early backup fire and a `::warning::` only on the cron's last fire.
+  Any delay up to 10h is absorbed; `tests/test_daily_schedule.py` simulates every delay
+  in 15-min steps.
 
 - [x] **Daily runs fire early and wait for their slot** *(2026-10-02)* — GitHub's scheduler
   drifted from ~1h late to a median ~105 min / max 476 min in late August; the cron times

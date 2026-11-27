@@ -192,8 +192,23 @@ def test_an_explicit_slot_field_outranks_the_start_hour():
     assert healthy is True, message
 
 
+def test_a_manual_run_is_neither_slot():
+    """A workflow_dispatch at 19:00Z used to be counted as the afternoon run by its
+    start hour. It says "manual" now and covers no slot - the fund still owes both."""
+    runs = [
+        _run("2026-11-20T14:41:00Z", run_id="r_am") | {"slot": "morning"},
+        _run("2026-11-20T19:00:00Z", run_id="r_manual") | {"slot": "manual"},
+    ]
+
+    healthy, message = check(runs, _date("2026-11-20"))
+
+    assert healthy is False
+    assert "afternoon slot never ran" in message
+    assert "slot_claims" in message  # where to look if the row never landed
+
+
 def test_rows_without_a_slot_field_still_use_the_start_hour():
-    """Pre-field rows, and manual dispatches, which have no slot."""
+    """Pre-field rows, which have no slot."""
     runs = [_run("2026-09-15T14:41:00Z", run_id="r_am"), _run("2026-09-15T17:51:00Z")]
     runs[0]["slot"] = None
 

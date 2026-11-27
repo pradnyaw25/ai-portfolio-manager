@@ -6,6 +6,12 @@ cron fired and how late the scheduler was. Every skipped run is green - the job 
 0 - and in September and again in November 2026 that is how weeks of lost slots hid in
 plain sight in the Actions list. The warning is what makes a skipped run look
 different from a run.
+
+Each slot's cron fires several times a day, and the early fires land before the open
+on purpose (see wait_for_slot.py). Those are skipped with a ``::notice::``, not a
+warning: a warning on six routine skips a day is a warning nobody reads. The
+``::warning::`` is reserved for the cron's LAST fire of the day (``RUN_LAST_FIRE``),
+when a skip means the slot is lost.
 """
 
 from __future__ import annotations
@@ -39,7 +45,12 @@ def _fmt(raw: str) -> str:
 
 
 def skip_warning(now: datetime, env: dict[str, str]) -> str:
-    """The ``::warning::`` line for a scheduled run skipped outside market hours."""
+    """The annotation for a scheduled run skipped outside market hours.
+
+    ``::warning::`` when this was the cron's last fire of the day (the slot is lost)
+    or when the wait step gave no scheduling context (be loud when unsure);
+    ``::notice::`` for an earlier fire, which later fires of the same cron back up.
+    """
     slot = env.get("RUN_SLOT", "").strip() or "unknown"
     slot_time = env.get("RUN_SLOT_TIME", "").strip()
     fired_at = env.get("RUN_FIRED_AT", "").strip()
@@ -55,12 +66,22 @@ def skip_warning(now: datetime, env: dict[str, str]) -> str:
         except ValueError:
             fire_desc += f", delay {delay!r}"
     local = now.astimezone(MARKET_TZ)
-    return (
-        f"::warning::Skipped the {slot_desc}: {fire_desc}; reached the guard at "
-        f"{now.astimezone(UTC):%H:%M}Z ({local:%H:%M} {local:%Z}), outside regular market "
-        f"hours. No cycle, no decision, no tweet for this slot unless a later fire "
-        f"lands in-hours."
+    where = (
+        f"reached the guard at {now.astimezone(UTC):%H:%M}Z ({local:%H:%M} {local:%Z}), "
+        f"outside regular market hours."
     )
+    last_fire = env.get("RUN_LAST_FIRE", "").strip().lower()
+    if last_fire == "false":
+        return (
+            f"::notice::Skipped the {slot_desc}: {fire_desc}; {where} Backup fire - a "
+            f"later fire of this cron still serves the slot."
+        )
+    lost = (
+        "This was the cron's last fire of the day: the slot is lost."
+        if last_fire == "true"
+        else "No cycle, no decision, no tweet for this slot unless a later fire lands in-hours."
+    )
+    return f"::warning::Skipped the {slot_desc}: {fire_desc}; {where} {lost}"
 
 
 def main(*, now: datetime | None = None, env: dict[str, str] | None = None) -> None:

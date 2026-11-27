@@ -37,10 +37,14 @@ Environment:
   RECEIPTS_MORNING_CUTOFF_HOUR_UTC
                          slot times before this UTC hour are the "morning" slot, the
                          rest "afternoon" (default 17, mirroring src.config).
-  GITHUB_OUTPUT          when set, the resolved slot (``slot``, ``slot_time``,
-                         ``cron``), the fire time (``fired_at``) and the scheduler
-                         delay in minutes (``delay_min``) are written as step outputs
-                         for the later steps and the run_history row.
+  GITHUB_OUTPUT          when set, the resolved slot (``slot``, ``slot_time``, the
+                         slot instant ``slot_at``, ``cron``), the fire time
+                         (``fired_at``), the scheduler delay in minutes (``delay_min``)
+                         and whether this was the cron's last tick of the day
+                         (``last_fire``) are written as step outputs for the later
+                         steps and the run_history row. A manual dispatch writes
+                         ``slot=manual`` only, so a manual run is recorded as such and
+                         never counts as (or consumes) a scheduled slot.
 """
 
 from __future__ import annotations
@@ -53,6 +57,7 @@ from datetime import UTC, datetime, timedelta
 DEFAULT_MAX_WAIT_MINUTES = 300
 DEFAULT_MORNING_CUTOFF_HOUR_UTC = 17
 SLOT_NAMES = ("morning", "afternoon")
+MANUAL_SLOT = "manual"
 _SLEEP_CHUNK_SECONDS = 600
 
 
@@ -134,21 +139,50 @@ def cron_ticks(cron: str) -> list[tuple[int, int]]:
     )
 
 
+def _cron_weekdays(cron: str) -> set[int]:
+    """The Python ``weekday()`` values (Mon=0) a cron's day-of-week field allows."""
+    fields = cron.split()
+    dow_field = fields[4] if len(fields) >= 5 else "*"
+    # cron: 0 or 7 = Sunday, 1 = Monday ... 6 = Saturday; Python: Monday = 0.
+    return {(d - 1) % 7 for d in _expand_field(dow_field, 0, 7)}
+
+
 def last_tick_before(now: datetime, cron: str) -> datetime:
     """The most recent moment ``cron`` was due at or before ``now`` (UTC).
 
-    Ignores the day-of-week field on purpose: a weekday fire delayed past midnight
-    into Saturday is still Friday's tick, and that is the delay we want to measure.
+    Honours the day-of-week field: a weekday fire delayed past midnight into
+    Saturday is measured against Friday's last tick, never against a Saturday tick
+    the ``1-5`` field would not have produced, and Monday's first fire is never
+    measured against a phantom Sunday tick.
     """
     current = now.astimezone(UTC)
     ticks = cron_ticks(cron)
-    for day_offset in (0, 1):
+    weekdays = _cron_weekdays(cron)
+    for day_offset in range(0, 8):
         day = (current - timedelta(days=day_offset)).replace(second=0, microsecond=0)
+        if day.weekday() not in weekdays:
+            continue
         for hour, minute in reversed(ticks):
             candidate = day.replace(hour=hour, minute=minute)
             if candidate <= current:
                 return candidate
-    raise ValueError(f"cron {cron!r} has no ticks")  # unreachable with a valid field
+    raise ValueError(f"cron {cron!r} has no ticks in the last week")
+
+
+def is_last_tick(due: datetime, cron: str) -> bool:
+    """Whether ``due`` is the cron's final tick of its day - the slot's last chance.
+
+    The market-hours guard warns about a lost slot only on this fire: an earlier
+    fire that lands out of hours still has later fires behind it.
+    """
+    return (due.hour, due.minute) == cron_ticks(cron)[-1]
+
+
+def slot_instant(due: datetime, target_hhmm: str) -> datetime:
+    """The UTC instant of the slot a fire due at ``due`` serves: the slot time on the
+    tick's own date, so a fire delayed past midnight still names yesterday's slot."""
+    hour, minute = _parse_hhmm(target_hhmm)
+    return due.astimezone(UTC).replace(hour=hour, minute=minute, second=0, microsecond=0)
 
 
 def seconds_to_wait(now: datetime, target_hhmm: str, max_wait: timedelta) -> float:
@@ -166,6 +200,10 @@ def seconds_to_wait(now: datetime, target_hhmm: str, max_wait: timedelta) -> flo
     if remaining <= 0 or remaining > max_wait.total_seconds():
         return 0.0
     return remaining
+
+
+def _iso(stamp: datetime) -> str:
+    return stamp.astimezone(UTC).isoformat().replace("+00:00", "Z")
 
 
 def _write_outputs(outputs: dict[str, str], env: dict[str, str]) -> None:
@@ -189,6 +227,7 @@ def main(
     target = resolve_target(schedule, targets)
     if target is None:
         print("No cron slot (manual dispatch) - not waiting.")
+        _write_outputs({"slot": MANUAL_SLOT}, env)
         return 0
 
     cron = " ".join(schedule.split())
@@ -206,9 +245,11 @@ def main(
         {
             "slot": slot,
             "slot_time": target,
+            "slot_at": _iso(slot_instant(due, target)),
             "cron": cron,
-            "fired_at": current.isoformat().replace("+00:00", "Z"),
+            "fired_at": _iso(current),
             "delay_min": str(delay_min),
+            "last_fire": str(is_last_tick(due, cron)).lower(),
         },
         env,
     )

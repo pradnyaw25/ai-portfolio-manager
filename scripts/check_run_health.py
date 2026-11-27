@@ -48,6 +48,10 @@ RUN_HISTORY = DATA_DIR / "run_history.jsonl"
 # fund ran at all.
 MORNING_CUTOFF_HOUR_UTC = 17
 EXPECTED_SLOTS = ("morning", "afternoon")
+# A workflow_dispatch run records this instead. It is neither slot: it must not be
+# counted as the afternoon run because it happened to start after 17 UTC, and it must
+# not stop the real afternoon fire from running (scripts/slot_already_served.py).
+MANUAL_SLOT = "manual"
 
 # NYSE full-day closures. Only weekdays are listed — a weekend is already handled.
 #
@@ -124,13 +128,13 @@ def _slot(run: dict) -> str | None:
     Rows written since 2026-11 carry it explicitly as ``slot`` - the workflow derives
     it from the cron that fired and passes it into the cycle - and that is
     authoritative: a morning run that the scheduler lands at 19:00 UTC is still the
-    morning run. Older rows (and manual dispatches, which have no slot) fall back to
-    the UTC start hour against the receipts cutoff, which is what mis-read every
-    November 2026 morning run as an afternoon one and paged "HALF A DAY" on days both
-    crons had run.
+    morning run, and a manual dispatch is ``manual``, not whichever slot its start hour
+    suggests. Older rows fall back to the UTC start hour against the receipts cutoff,
+    which is what mis-read every November 2026 morning run as an afternoon one and
+    paged "HALF A DAY" on days both crons had run.
     """
     explicit = str(run.get("slot") or "").strip().lower()
-    if explicit in EXPECTED_SLOTS:
+    if explicit in EXPECTED_SLOTS or explicit == MANUAL_SLOT:
         return explicit
     raw = str(run.get("started_at") or "")
     try:
@@ -171,7 +175,8 @@ def check(runs: list[dict], today: date) -> tuple[bool, str]:
             f"slots landed outside market hours and was skipped (2026-11-23). Check the "
             f"'Daily Portfolio Run' entries in the Actions tab: a few cancelled BACKUP "
             f"fires per slot are normal since 2026-11, a skipped run carries a "
-            f"::warning:: with its fire time and delay. "
+            f"::warning:: with its fire time and delay. A file in data/slot_claims/ for "
+            f"{today} means a run started its cycle but its final push never landed. "
             f"If {today} was a market holiday, add it to MARKET_HOLIDAYS in "
             f"scripts/check_run_health.py."
         )
@@ -196,7 +201,9 @@ def check(runs: list[dict], today: date) -> tuple[bool, str]:
             f"scheduler landing every fire of that slot after the close so the "
             f"market-hours guard skipped them all (every day in September 2026, most "
             f"of November) - look for the ::warning:: on the skipped 'Daily Portfolio "
-            f"Run' entries in the Actions tab; it names the slot, fire time and delay."
+            f"Run' entries in the Actions tab; it names the slot, fire time and delay. "
+            f"If data/slot_claims/ has a {today}-{missing[0]}.json, that run DID start "
+            f"its cycle and its final push failed: its trades may be unrecorded."
         )
 
     failed_earlier = [r for r in todays if str(r.get("status") or "") != "success"]

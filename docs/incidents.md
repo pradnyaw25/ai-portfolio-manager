@@ -15,52 +15,37 @@ Entry template:
 
 ---
 
-## 2026-11-02 → 2026-11-27 · The scheduler drifted to ~8.5 hours late and outran the early cron
+## 2026-11-27 · Fix for the November scheduler drift (PR #130)
 
-- **Symptom.** From 2026-11-02 the fund ran once a day on most days, and all 26
-  November rows in `run_history.jsonl` carry `receipts: skipped (afternoon run …)` —
-  the receipts step never ran once. On 2026-11-23 the fund did not run at all. Rows sit
-  at 17:27–20:50 UTC, with the few two-run days no earlier than 17:45 / 20:08. Every
-  workflow run was green. The run-health watchdog paged "HALF A DAY: the morning slot
-  never ran" on days both crons *had* run, because it judged the slot by the start
-  hour too.
-- **Root cause.** The October fix fired each slot's cron once, 4.5 h early (10:10 and
-  13:20 UTC), and slept to the slot. In November GitHub's scheduler delay on this repo
-  moved again: median ~519 min on the morning cron (p90 627, max 710), ~487 on the
-  afternoon one (p90 579, max 694). Past 4.5 h the wait step released immediately, so
-  the afternoon run landed after the 21:00 UTC (EST) close and the guard skipped it, and
-  the morning run landed at 17:30–20:40 UTC — in hours, but past
-  `RECEIPTS_MORNING_CUTOFF_HOUR_UTC` (17), so `_is_morning_run` called it the afternoon
-  run. Two couplings failed at once: *when* a run lands was still decided by the
-  scheduler, and *which* run it was was inferred from when it landed.
-- **Fix.** Stop relying on a single fire. Each slot is now one cron *expression* that
-  fires every two hours from ~10 h before the slot (`40 4,6,8,10,12 * * 1-5` → 14:40;
-  `50 7,9,11,13,15 * * 1-5` → 17:50). Every fire sleeps to the slot (5 h cap; earlier
-  fires land pre-open and are skipped), so for any delay from 0 to 10 h at least two
-  fires reach the slot on time. One expression per slot means all its fires share the
-  concurrency group keyed on `github.event.schedule`, so GitHub serializes them; after
-  the wait and the checkout refresh, `scripts/slot_already_served.py` reads
-  `run_history.jsonl` for a row with today's market date and this slot and ends the job
-  green with no cycle if one exists. The wait step now also resolves the slot name and
-  the scheduler delay, which travel into the cycle as `RUN_SLOT` & co.: the
-  `run_history` row records `slot`, `_is_morning_run` and the watchdog's `_slot` prefer
-  it (hour heuristic only for old rows), and the guard prints a `::warning::` with fire
-  time and delay when it skips a scheduled run. `tests/test_daily_schedule.py` simulates
-  every delay from 0 to 600 min in 15-min steps against both DST seasons.
-- **Detection gap.** The October watchdog asked "did both slots run?" and inferred the
-  slot from the clock, so on a two-run day it saw two afternoon runs and paged for a
-  missing morning — a correct-sounding alert with the wrong cause, indistinguishable
-  from the real half days around it. The skipped-receipts diagnostic sat in
-  `run_history` rows nobody reads, and skipped runs were green with no distinguishing
-  mark in the Actions list. The slot is now an explicit field and a skipped run carries
-  a warning.
-- **Article angle.** The October entry below said the durable move was to make timing
-  "a property the job controls". It controlled the *release* time and left the *fire*
-  time to the platform, with a budget (4.5 h) tuned to the September distribution —
-  the exact mistake that entry named, one level up. Redundancy beats headroom when
-  the tail is unbounded: many cheap fires and an idempotency check ("has this slot run
-  today?") need no estimate of the delay at all. And never derive identity from
-  timing: the run should be told what it is, not work it out from the clock.
+The incident itself - the delay reaching ~8.5 h, the DST close shift, the morning run
+mistaken for the afternoon one, 11-23 lost, the watchdog paging the same sentence for
+19 days - is written up in the *2026-11-02 → 2026-11-26* entry (PR #128). This records
+only what changed:
+
+- **Redundancy instead of headroom.** Each slot is one cron *expression* that fires every
+  two hours from ~10 h before the slot (`40 4,6,8,10,12 * * 1-5` → 14:40, `50 7,9,11,13,15
+  * * 1-5` → 17:50). Every fire sleeps to the slot (5 h cap); fires more than 5 h early
+  land pre-open and are skipped. For any delay from 0 to 10 h at least two fires reach the
+  slot on time. One expression per slot keeps all its fires in the concurrency group keyed
+  on `github.event.schedule`, so GitHub serializes them - two fires can never both run
+  the cycle.
+- **Idempotency, twice.** After the wait and the checkout refresh,
+  `scripts/slot_already_served.py` ends a backup fire green if `run_history.jsonl` has a
+  row for the slot's market date and slot. Because the row is pushed *last*, the serving
+  run first pushes a claim file (`data/slot_claims/<date>-<slot>.json`,
+  `scripts/claim_slot.py`) *before* its cycle; the served check honours the claim, so a
+  failed final push can no longer lead to a second decision and a duplicate tweet. A
+  failed claim push fails the job before anything irreversible.
+- **Identity is told, not inferred.** The wait step resolves the slot name, the slot
+  instant, the fire time, the delay and whether this was the cron's last fire, as step
+  outputs. `RUN_SLOT` reaches the cycle and is written to the `run_history` row;
+  `_is_morning_run` and the watchdog's `_slot` prefer it, and a `workflow_dispatch` is
+  recorded as `manual` so it never counts as - or consumes - a slot.
+- **A skipped run looks different from a run.** The guard prints a `::notice::` when it
+  skips an early backup fire (pre-open by design) and a `::warning::` with fire time and
+  delay on the cron's *last* fire, when a skip means the slot is lost.
+- `tests/test_daily_schedule.py` simulates every delay from 0 to 600 min in 15-min steps
+  against both DST seasons; the failed-push scenario has its own test.
 
 ## 2026-08-27 → 2026-10-02 · The scheduler drifted to 2–5 hours late and the fund quietly halved
 
