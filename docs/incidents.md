@@ -15,6 +15,161 @@ Entry template:
 
 ---
 
+## 2026-11-02 → 2026-11-26 · The delay reached 8.5 hours, the clocks changed, X stopped taking tweets, and the fund traded on Thanksgiving
+
+- **Symptom.** The run-health watchdog went red on **every trading day from 11-03 through
+  11-26** — 19 consecutive pages — while `Daily Portfolio Run` showed two green runs on every
+  weekday. 18 pages read `HALF A DAY … the morning slot never ran`; the 11-24 check read
+  `NO RUN RECORDED for 2026-11-23`. `data/run_history.jsonl` has no row for 11-23, one row
+  on 11-02, 11-09, 11-16..11-20, 11-24 and 11-25 (nine half days), and two rows on
+  11-03..11-06 and 11-10..11-13 (eight full days). All 26 November runs record receipts as
+  `skipped (afternoon run — receipts post on the morning run only)`: **no receipts tweet was
+  even attempted in November.** Independently, every tweet since 11-15 — daily, spotlight
+  and the weekly state-of-fund tweet — carries `402 Client Error: Payment Required` from
+  `api.twitter.com/2/tweets` (one 403 on 11-24); the last post that succeeded was 11-13
+  20:32 UTC. And on 11-26, Thanksgiving, a run started 19:34 UTC, the guard printed
+  `should_run=true (regular market hours)`, and the fund sold ORCL against Wednesday's
+  close.
+- **Root cause.** Three unrelated faults, one of them predicted by the entry below.
+  1. *Scheduler delay, again.* Fire time minus cron time for the 10:10 / 13:20 UTC crons
+     (pairs ordered within the day; the API does not say which cron fired):
+
+     | month | AM median | AM p90 | AM max | PM median | PM p90 | PM max |
+     |---|---|---|---|---|---|---|
+     | Oct | 400 min | 594 | 723 | 350 min | 537 | 627 |
+     | Nov | **519 min** | 627 | 710 | **487 min** | 579 | 694 |
+
+     Against a 270-minute headroom (`wait_for_slot.py` sleeps to 14:40 / 17:50 from a
+     10:10 / 13:20 fire), the wait step printed "slot has passed … starting immediately" on
+     every November run; both runs start between 17:27 and 23:01 UTC. US daylight time
+     ended 11-01, so the close moved from 20:00 to **21:00 UTC** — that extra hour is the
+     only reason the fund ran at all: the 14:40-slot run lands in-hours (17:27–20:41) but
+     past `RECEIPTS_MORNING_CUTOFF_HOUR_UTC` (17), so `_is_morning_run` calls it the
+     afternoon run (spotlight, no receipts), and the 17:50-slot run lands 19:57–23:01,
+     after the close on 10 of 18 days, where the guard skips it. On 11-23 the two runs fired
+     at 22:00 and 00:54 UTC: both skipped, day lost.
+  2. *The watchdog labels slots by UTC hour.* On the eight days both crons ran, both rows
+     have `started_at` ≥ 17 UTC, so `check_run_health.py` counts two afternoon runs and
+     zero morning ones and pages `HALF A DAY`. The page is wrong about the decision (there
+     were two) and right about the tweet (receipts were skipped) — the cycle uses the same
+     hour-based rule, so the two agree with each other and disagree with the crons.
+  3. *X returns 402.* No commit touched `src/social/`, the workflows or the secrets between
+     11-05 and 11-22 (only data and content commits landed on `main`), and the 402 appears
+     identically on the daily, spotlight and weekly paths. This is the X developer plan or
+     credit lapsing, not a code change. The run records it as a *warning*; status stays
+     `success` and the job stays green.
+  4. *No market calendar.* `src/utils/market_hours.py` checks weekday and 09:30–16:00 ET
+     only. Its docstring says it "does not account for market holidays — a holiday just
+     means a no-op run". It was not a no-op: yfinance served Wednesday's close as the
+     current price and the cycle traded on it. 11-27 (a 13:00 ET early close) is equally
+     unknown to it; at 16:54 UTC that day neither run had fired yet, so a fire between
+     18:00 and 21:00 UTC would trade after the close again. The watchdog, by contrast, has
+     its own `MARKET_HOLIDAYS` literal and knew 11-26 was closed — it judged 11-25 that
+     night and never looked at the holiday run.
+- **Fix.** In progress, as two separate PRs, both the follow-ups the entry below proposed:
+  (a) fire each slot from several staggered crons, exit early when `run_history` already
+  has a row for that `(date, slot)`, write `slot` into the row from `github.event.schedule`
+  so neither the cycle nor the watchdog infers it from the hour, and `::warning::` on a
+  guard skip; (b) give `market_hours.py` the NYSE full-day and early-close calendar for
+  2026–2027 and make the watchdog's list agree with it. The 402 is an account action
+  (X developer portal), not a repo change; until it is resolved every tweet will fail.
+  Open: a tweet failure should be at least as visible as a skipped slot — today it is a
+  warning in a JSONL row that nothing reads.
+- **Detection gap.** The watchdog did its job: 19 pages in 19 trading days. They were not
+  acted on until 11-27 — the same process gap as the previous entry, but worse, because the
+  page text never changed. A message that reads identically on a labelling artefact (eight
+  days), a genuine lost slot (nine days) and a lost day (one, different text) teaches the
+  reader it is noise by the second week. Nothing at all watched the tweet path: 12 days of
+  402s produced zero red jobs. Nothing watched for a trade on a closed market: the guard
+  and the watchdog hold different calendars (one, none), and the component that *trades*
+  is the one without. The delay growth itself was visible in `gh run list` from 11-02 — the
+  previous entry says to reconstruct the distribution "before touching the schedule
+  again", and nobody touched it, so nobody looked.
+- **Article angle.** *The second budget failed exactly like the first, on schedule.* The
+  October entry closed with "make the schedule redundant rather than predictive" and the
+  system kept running on the predictive version for six more weeks; the 4.5h headroom was
+  tuned to a ~5h median that became 8.5h. Second lesson: **a watchdog that pages every day
+  with the same sentence is a watchdog nobody reads** — severity and cause have to be in
+  the text, or the alert decays into wallpaper. Third: a side effect downgraded to a
+  warning (tweet → `status=error`, job green) is a silent failure with extra steps; the
+  fund went dark on X for two weeks while every dashboard said success. Fourth, smallest
+  and most embarrassing: two components owned two different definitions of "is the market
+  open", and the one that places trades had the weaker one.
+
+---
+
+## 2026-10-01 → 2026-10-12 · The fix was written and sat unmerged for ten days; four more days lost
+
+- **Symptom.** `data/run_history.jsonl` has no run of any kind on 10-05, 10-07, 10-08 and
+  10-12, and exactly one run on 10-01, 10-02, 10-06 and 10-09. From 10-13 both slots run.
+  `gh run list --workflow daily-run.yml` shows **two green runs on every weekday 10-01 →
+  10-16** — nothing was dropped, cancelled or failed.
+- **Root cause.** Every missing run *fired* and was skipped by the market-hours guard,
+  because GitHub's scheduler started the cron 4–7.5 hours late. The fix for exactly this
+  (cron fires early, `wait_for_slot.py` sleeps: PR #123) was opened 2026-10-03, but **merged
+  2026-10-13 02:34 UTC** (`a98db43`, committed 2026-10-12 22:34 ET). Until then `main` still
+  ran the old 14:40 / 17:50 UTC crons with no headroom. Fire time minus cron time (the two
+  runs per day pair unambiguously by order; the API doesn't expose which cron fired):
+
+  | day | 14:40 cron fired | 17:50 cron fired | outcome |
+  |---|---|---|---|
+  | 10-01 | 19:46 (+5h06) | 22:00 (+4h10) | first in-hours, ran; second after close, skipped |
+  | 10-02 | 19:29 (+4h49) | 21:26 (+3h36) | same |
+  | **10-05** | 21:35 (+6h55) | 23:22 (+5h32) | **both after close, both skipped** |
+  | 10-06 | 19:47 (+5h07) | 21:54 (+4h04) | first ran, second skipped |
+  | **10-07** | 20:06 (+5h26) | 22:16 (+4h26) | **both skipped** |
+  | **10-08** | 20:04 (+5h24) | 22:29 (+4h39) | **both skipped** |
+  | 10-09 | 19:41 (+5h01) | 21:52 (+4h02) | first ran, second skipped |
+  | **10-12** | 22:13 (+7h33) | 23:46 (+5h56) | **both skipped** |
+
+  Close is 20:00 UTC (EDT), so the 14:40 cron survives only if it is under 5h20 late.
+  Stopping points, from the run logs: every skipped run reached "Check market hours" and
+  printed `should_run=false (outside regular market hours)`, then skipped all later steps
+  and finished in 12–18 s with conclusion `success`. No `wait_for_slot`, concurrency or
+  job error was involved (the old workflow had no wait step; all concurrency groups were
+  per-cron, no run was `cancelled`). The four "one run" days are the **14:40 cron firing
+  late enough to land at 19:29–19:47 UTC, 13–31 minutes before the close**; the history
+  labels it "afternoon" only because the labelling is by UTC hour (≥ 17). Their real
+  afternoon-cron run fired at 21:26–22:00 and was skipped. The scheduler delay on the
+  morning cron was 4h49–7h33 on every day in the window — well above the "median ~105 min"
+  the previous entry and `daily-run.yml` still quote.
+- **Fix.** In repo: #123 (already described in the entry below) is the fix, and it is
+  what ended the losses — but it was merged ten days late. It is **not sufficient on its
+  own**: post-merge delays were +7h23 / +6h32 on 10-13 and +4h06 → +4h54 on 10-14..10-16,
+  against a 4h30 headroom. Slots now run, but late: 10-13's "morning" run started 17:34 UTC
+  and its "afternoon" run **19:52 UTC, eight minutes before the close** (cycle finished
+  19:55), and four of the six slots on 10-14..10-16 started 8–24 min past the slot time
+  without waiting at all. Proposed follow-up: (1) fire each slot from several crons at
+  staggered offsets (e.g. every 90 min from 05:10 UTC), each of which runs
+  `wait_for_slot.py` and then exits early if `run_history.jsonl` already has a row for that
+  `(date, slot)` — runner minutes are free, a single sleeping job cannot cover a 7.5h delay
+  inside the 6h job limit, and redundancy does; (2) have the cycle write `slot` (derived
+  from `github.event.schedule`) into each `run_history` row, and make `check_run_health.py`
+  read it instead of inferring from the UTC start hour; (3) have the guard emit a
+  `::warning::` plus a step summary naming fire time and delay when it skips a scheduled
+  run, so a green-but-skipped run is distinguishable from a real one in the Actions list.
+- **Detection gap.** The watchdog (`run-health.yml`) **did fire and did go red** on all four
+  lost days (10-05, 10-07, 10-08, 10-12: `NO RUN RECORDED`), so the page was sent; the
+  gap is that the previous entry's fix was in review while those pages arrived. Its text
+  was also wrong: "the cycle never started" — it started and was skipped, and nothing
+  told the reader to look at fire times. On the four half days the watchdog was the
+  pre-#123 version, which only asked whether *a* run existed, and reported `OK — 1 run(s)`
+  (10-01, 10-06, 10-09; 10-02's check was also green). The "expects both slots" check came
+  in with #123 on 10-12 — `CLAUDE.md` says the fund-runs-early fix was done on 2026-10-02,
+  which is the PR's open date, not when it reached `main`. The first post-merge check
+  already misfires: on 10-13 it paged `HALF A DAY ... morning slot never ran` although
+  both crons ran — the 14:40-slot run started at 17:34 UTC and was labelled "afternoon".
+  `data/trades.csv`, `portfolio_state.json` and `decisions.jsonl` agree with each other;
+  these days are missing rows, not corrupt ones.
+- **Article angle.** *"Fixed" is a statement about `main`, not about a branch.* The previous
+  entry's root cause was found and the fix written within a day; the fund then lost
+  another four trading days and four half days while it waited to merge, with the
+  watchdog paging correctly the whole time. And the same shape recurs: the repair is a
+  second budget (4.5h) tuned to the observed delay (≈5h and rising), so it already runs
+  late half the time. Make the schedule redundant rather than predictive.
+
+---
+
 ## 2026-08-27 → 2026-10-02 · The scheduler drifted to 2–5 hours late and the fund quietly halved
 
 - **Symptom.** Four whole trading days with no run at all (08-27, 08-28, 08-31, 09-28),
