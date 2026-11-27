@@ -603,14 +603,22 @@ def publish_tweet_node(state: DailyGraphState) -> DailyGraphState:
     return {"run": run}
 
 
-def _is_morning_run(started_at: str) -> bool:
-    """Whether a run that started at ``started_at`` (ISO-8601 UTC) is the day's
-    morning run — i.e. it started before RECEIPTS_MORNING_CUTOFF_HOUR_UTC. The daily
-    cycle serves two slots, 14:40 and 17:50 UTC (the workflow fires early and sleeps to
-    the slot, so a late scheduler no longer shifts them); the cutoff (17) puts the earlier
-    run in the morning. Unparseable timestamps default to True so receipts are never silently
-    lost to a formatting quirk (a duplicate is prevented anyway by scored_predictions
-    only holding this run's resolutions)."""
+def _is_morning_run(started_at: str, slot: str | None = None) -> bool:
+    """Whether this is the day's morning run (receipts) rather than the afternoon
+    one (spotlight).
+
+    ``slot`` wins when the workflow supplied it (``RUN_SLOT``, derived from the cron
+    that fired): the scheduler decides WHEN a run lands, not WHICH run it is. In
+    November 2026 every morning run landed after the receipts cutoff and was treated
+    as the afternoon run, so no receipts tweet posted all month.
+
+    Without a slot (manual dispatch, local run, rows older than the field) fall back
+    to the start hour against RECEIPTS_MORNING_CUTOFF_HOUR_UTC (17), which sits
+    between the two slot times. Unparseable timestamps default to True so receipts
+    are never silently lost to a formatting quirk (a duplicate is prevented anyway by
+    scored_predictions only holding this run's resolutions)."""
+    if slot in config.RUN_SLOTS:
+        return slot == "morning"
     try:
         hour = datetime.fromisoformat(str(started_at).replace("Z", "+00:00")).astimezone(UTC).hour
     except (ValueError, TypeError):
@@ -636,7 +644,7 @@ def publish_receipts_tweet_node(state: DailyGraphState) -> DailyGraphState:
     # Receipts post once a day, on the morning run only — the afternoon run skips them
     # so the fund never posts two scorecards in a day (the forward tweet still posts
     # on both runs).
-    if not _is_morning_run(run.started_at):
+    if not _is_morning_run(run.started_at, config.RUN_SLOT):
         run.diagnostics["receipts"] = "skipped (afternoon run — receipts post on the morning run only)"
         run.run_status["diagnostics"] = dict(run.diagnostics)
         return {"run": run}
@@ -672,7 +680,7 @@ def publish_spotlight_tweet_node(state: DailyGraphState) -> DailyGraphState:
 
     # The spotlight is the afternoon run's second tweet — the mirror of receipts on the
     # morning run — so the day's extra posts are spread out rather than clustered.
-    if _is_morning_run(run.started_at):
+    if _is_morning_run(run.started_at, config.RUN_SLOT):
         run.diagnostics["spotlight"] = "skipped (morning run — spotlight posts on the afternoon run)"
         run.run_status["diagnostics"] = dict(run.diagnostics)
         return {"run": run}

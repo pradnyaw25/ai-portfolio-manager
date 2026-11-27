@@ -15,6 +15,38 @@ Entry template:
 
 ---
 
+## 2026-11-27 · Fix for the November scheduler drift (PR #130)
+
+The incident itself - the delay reaching ~8.5 h, the DST close shift, the morning run
+mistaken for the afternoon one, 11-23 lost, the watchdog paging the same sentence for
+19 days - is written up in the *2026-11-02 → 2026-11-26* entry (PR #128). This records
+only what changed:
+
+- **Redundancy instead of headroom.** Each slot is one cron *expression* that fires every
+  two hours from ~10 h before the slot (`40 4,6,8,10,12 * * 1-5` → 14:40, `50 7,9,11,13,15
+  * * 1-5` → 17:50). Every fire sleeps to the slot (5 h cap); fires more than 5 h early
+  land pre-open and are skipped. For any delay from 0 to 10 h at least two fires reach the
+  slot on time. One expression per slot keeps all its fires in the concurrency group keyed
+  on `github.event.schedule`, so GitHub serializes them - two fires can never both run
+  the cycle.
+- **Idempotency, twice.** After the wait and the checkout refresh,
+  `scripts/slot_already_served.py` ends a backup fire green if `run_history.jsonl` has a
+  row for the slot's market date and slot. Because the row is pushed *last*, the serving
+  run first pushes a claim file (`data/slot_claims/<date>-<slot>.json`,
+  `scripts/claim_slot.py`) *before* its cycle; the served check honours the claim, so a
+  failed final push can no longer lead to a second decision and a duplicate tweet. A
+  failed claim push fails the job before anything irreversible.
+- **Identity is told, not inferred.** The wait step resolves the slot name, the slot
+  instant, the fire time, the delay and whether this was the cron's last fire, as step
+  outputs. `RUN_SLOT` reaches the cycle and is written to the `run_history` row;
+  `_is_morning_run` and the watchdog's `_slot` prefer it, and a `workflow_dispatch` is
+  recorded as `manual` so it never counts as - or consumes - a slot.
+- **A skipped run looks different from a run.** The guard prints a `::notice::` when it
+  skips an early backup fire (pre-open by design) and a `::warning::` with fire time and
+  delay on the cron's *last* fire, when a skip means the slot is lost.
+- `tests/test_daily_schedule.py` simulates every delay from 0 to 600 min in 15-min steps
+  against both DST seasons; the failed-push scenario has its own test.
+
 ## 2026-08-27 → 2026-10-02 · The scheduler drifted to 2–5 hours late and the fund quietly halved
 
 - **Symptom.** Four whole trading days with no run at all (08-27, 08-28, 08-31, 09-28),

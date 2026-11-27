@@ -8,6 +8,7 @@ entrypoint for a run (``scripts/daily_run.py``). This module intentionally has n
 orchestration or ``__main__`` of its own.
 """
 
+from src import config
 from src.config import ENABLE_DEBATE, INITIAL_CAPITAL, LLM_STRONG_MODEL
 from src.llm.cost import summarize_run_cost
 from src.storage.run_history_store import RunHistoryStore
@@ -507,6 +508,26 @@ def generate_report_and_tweet(snapshot, trades, research, decisions, approved_tr
     return report_markdown, tweet
 
 
+def schedule_fields() -> dict:
+    """Which slot this run serves and how it was scheduled, for the run_history row.
+
+    ``slot`` is read back by the run-health watchdog and by the already-served check
+    that lets backup fires stand down, so it must be the slot the WORKFLOW derived
+    from the cron, never inferred from the clock here. None on a manual dispatch or a
+    local run; readers then fall back to the start-hour heuristic.
+    """
+    schedule = {
+        "slot_time": config.RUN_SLOT_TIME,
+        "cron": config.RUN_CRON,
+        "fired_at": config.RUN_FIRED_AT,
+        "scheduler_delay_min": config.RUN_SCHEDULER_DELAY_MIN,
+    }
+    return {
+        "slot": config.RUN_SLOT,
+        "schedule": schedule if any(v is not None for v in schedule.values()) else None,
+    }
+
+
 def build_run_status(run_id, started_at, memory_result, memory_context, trades, snapshot):
     warnings = []
     if memory_result.error:
@@ -517,6 +538,7 @@ def build_run_status(run_id, started_at, memory_result, memory_context, trades, 
         "status": "success",
         "started_at": started_at,
         "completed_at": utc_now_iso(),
+        **schedule_fields(),
         "memory_status": memory_result.status,
         "memory_error": memory_result.error,
         "memory_chunks": len(memory_context),
@@ -556,6 +578,7 @@ def build_failure_run_status(
         "status": "failed",
         "started_at": started_at,
         "completed_at": utc_now_iso(),
+        **schedule_fields(),
         "failed_step": failed_step,
         "memory_status": None,
         "memory_error": None,

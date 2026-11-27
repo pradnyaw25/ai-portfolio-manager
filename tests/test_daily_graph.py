@@ -123,6 +123,36 @@ def test_is_morning_run_splits_the_two_daily_runs():
     assert daily_graph._is_morning_run("not-a-date") is True
 
 
+def test_is_morning_run_prefers_the_slot_the_workflow_supplied():
+    """November 2026: GitHub's scheduler landed every 14:40 run after the 17Z cutoff,
+    so the clock said "afternoon" and no receipts tweet posted all month. The slot the
+    cron fired for is authoritative; the clock is only the fallback."""
+    assert daily_graph._is_morning_run("2026-11-20T18:35:00Z", "morning") is True
+    assert daily_graph._is_morning_run("2026-11-20T15:00:00Z", "afternoon") is False
+    # An unknown slot value falls back to the hour rather than guessing.
+    assert daily_graph._is_morning_run("2026-11-20T18:35:00Z", "evening") is False
+    assert daily_graph._is_morning_run("2026-11-20T18:35:00Z", None) is False
+    # A manual dispatch is neither slot: the clock decides which tweet it posts.
+    assert daily_graph._is_morning_run("2026-11-20T15:00:00Z", "manual") is True
+    assert daily_graph._is_morning_run("2026-11-20T18:35:00Z", "manual") is False
+
+
+def test_receipts_node_follows_the_slot_not_the_clock(monkeypatch):
+    calls = []
+    monkeypatch.setattr(
+        daily_graph.steps,
+        "publish_receipts_tweet",
+        lambda preds, run_id, run_status: calls.append(run_id) or {"posted": True},
+    )
+    monkeypatch.setattr(daily_graph.config, "RUN_SLOT", "morning")
+    run = PortfolioRunState(run_id="run_late_am", started_at="2026-11-20T18:35:00Z")
+    run.scored_predictions = [{"symbol": "AAPL", "result": {"correct": True}}]
+
+    daily_graph.publish_receipts_tweet_node({"run": run})
+
+    assert calls == ["run_late_am"]
+
+
 def test_publish_spotlight_node_publishes_on_the_afternoon_run(monkeypatch):
     calls = []
     monkeypatch.setattr(

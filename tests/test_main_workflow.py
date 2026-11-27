@@ -64,6 +64,64 @@ def test_build_run_status_records_memory_warning():
     assert set(status["llm"]) == {"calls", "prompt_tokens", "completion_tokens", "cost_usd", "latency_ms"}
 
 
+def test_run_status_records_the_slot_the_workflow_supplied(monkeypatch):
+    """The run-health watchdog and the already-served check read `slot` back, so it
+    must be the slot the cron fired for, never a guess from the start hour."""
+    from src import config
+
+    monkeypatch.setattr(config, "RUN_SLOT", "morning")
+    monkeypatch.setattr(config, "RUN_SLOT_TIME", "14:40")
+    monkeypatch.setattr(config, "RUN_CRON", "40 4,6,8,10,12 * * 1-5")
+    monkeypatch.setattr(config, "RUN_FIRED_AT", "2026-11-20T13:10:00Z")
+    monkeypatch.setattr(config, "RUN_SCHEDULER_DELAY_MIN", 510)
+    snapshot = PortfolioSnapshot(date=date.today(), cash=25000, positions=[])
+
+    status = build_run_status(
+        run_id="run_123",
+        started_at="2026-11-20T18:35:00Z",  # landed after the cutoff: still morning
+        memory_result=MemoryResult(status="ok"),
+        memory_context=[],
+        trades=[],
+        snapshot=snapshot,
+    )
+    failure = build_failure_run_status(
+        run_id="run_123", started_at="2026-11-20T18:35:00Z", failed_step="x", errors=["boom"]
+    )
+
+    for row in (status, failure):
+        assert row["slot"] == "morning"
+        assert row["schedule"] == {
+            "slot_time": "14:40",
+            "cron": "40 4,6,8,10,12 * * 1-5",
+            "fired_at": "2026-11-20T13:10:00Z",
+            "scheduler_delay_min": 510,
+        }
+
+
+def test_run_status_has_no_slot_outside_the_scheduler(monkeypatch):
+    from src import config
+
+    for name in ("RUN_SLOT", "RUN_SLOT_TIME", "RUN_CRON", "RUN_FIRED_AT", "RUN_SCHEDULER_DELAY_MIN"):
+        monkeypatch.setattr(config, name, None)
+    status = build_failure_run_status(run_id="r", started_at="2026-11-20T18:35:00Z", failed_step=None, errors=[])
+
+    assert status["slot"] is None
+    assert status["schedule"] is None
+
+
+def test_a_manual_dispatch_is_recorded_as_manual(monkeypatch):
+    """So the watchdog never counts it as the afternoon run by its start hour, and the
+    real afternoon fire never stands down because of it."""
+    from src import config
+
+    monkeypatch.setattr(config, "RUN_SLOT", "manual")
+    for name in ("RUN_SLOT_TIME", "RUN_CRON", "RUN_FIRED_AT", "RUN_SCHEDULER_DELAY_MIN"):
+        monkeypatch.setattr(config, name, None)
+    status = build_failure_run_status(run_id="r", started_at="2026-11-20T19:00:00Z", failed_step=None, errors=[])
+
+    assert status["slot"] == "manual"
+
+
 def test_build_failure_run_status_records_failed_step_and_errors():
     snapshot = PortfolioSnapshot(date=date.today(), cash=25000, positions=[])
     status = build_failure_run_status(
