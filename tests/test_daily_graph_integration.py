@@ -39,7 +39,7 @@ EXPECTED_ORDER = [
 def _drive_graph(monkeypatch, raising: dict | None = None):
     """Mock every step function and run the whole graph. ``raising`` maps a step
     function name to an exception it should raise instead of returning."""
-    monkeypatch.setattr(daily_graph, "is_regular_market_hours", lambda: True)
+    monkeypatch.setattr(daily_graph, "market_status", lambda: (True, "regular market hours"))
     calls: list[str] = []
 
     def record(name, ret=None):

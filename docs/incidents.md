@@ -15,6 +15,36 @@ Entry template:
 
 ---
 
+## 2026-11-26 · The fund traded on Thanksgiving
+
+Scoped to the holiday-calendar fault; the November scheduler story around it is its own
+entry (2026-11-02 → 2026-11-26).
+
+- **Symptom.** The 14:40 UTC slot fired 4h54m late (cron 10:10, 9h24m late), started at
+  19:34 UTC = 14:34 ET on Thanksgiving Day with the NYSE closed, passed the market-hours
+  guard with "regular market hours", and sold the whole ORCL position (113 shares at
+  $103.88). The exchange printed nothing that day: the fill was Wednesday's close,
+  which yfinance serves as the latest price because it is. The 17:50 slot fired at
+  22:22 UTC and was correctly skipped as after the close.
+- **Root cause.** `is_regular_market_hours()` knew weekdays and 09:30–16:00 ET only. Its
+  docstring said holidays were ignored because "a holiday just means a no-op run" — true
+  of research, false of execution: a holiday is a weekday on which the data source still
+  answers, so the guard, the in-cycle gate and the price feed all said yes. The next
+  day, 2026-11-27, was a 13:00 ET early close the check did not know either.
+- **Fix.** (#129) `src/utils/market_hours.py` carries the NYSE calendar for 2026–2027:
+  full-day closures (the list `scripts/check_run_health.py` already had; a test keeps
+  the two copies equal, since the watchdog must stay dependency-free) and the 13:00
+  early closes. `market_status()` returns the reason with the verdict; the guard and the
+  execution gate both print it. Tests refuse 19:34 UTC on 11-26 and 18:30 UTC on 11-27.
+- **Detection gap.** Everything checked the clock; nothing checked whether the market had
+  opened. The watchdog knows the holiday list and so stayed quiet on a day it expected no
+  run — right for "did the fund run?", blind to "did it run when it shouldn't have?".
+  Found by reading the trades CSV the next morning.
+- **Article angle.** The stale-price trade from the manual-run stub below, on the
+  *scheduled* path. A data source that answers is not a market that is open, and "this
+  case is a harmless no-op" is a claim about the whole pipeline, not the node you were
+  thinking about when you wrote it.
+
 ## 2026-08-27 → 2026-10-02 · The scheduler drifted to 2–5 hours late and the fund quietly halved
 
 - **Symptom.** Four whole trading days with no run at all (08-27, 08-28, 08-31, 09-28),

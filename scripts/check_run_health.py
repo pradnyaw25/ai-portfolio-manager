@@ -53,6 +53,14 @@ EXPECTED_SLOTS = ("morning", "afternoon")
 # or a new package to decide whether to alarm. If this list goes stale the failure
 # mode is one benign false alarm on an unlisted holiday, and the message below says
 # exactly how to fix it. Extend before each January.
+#
+# The source of truth is src.utils.market_hours.MARKET_HOLIDAYS (the guard and the
+# execution gate read that one); tests/test_market_hours.py fails if this copy drifts.
+# Early closes are not modelled here. The listed ones (late Nov / Dec 24) fall in EST,
+# where both slots (14:40 / 17:50 UTC = 09:40 / 12:50 ET) precede the 13:00 bell, so
+# a skipped afternoon slot is a real miss. A July 3 early close (next: 2028) is in EDT,
+# where 13:00 ET = 17:00 UTC is BEFORE the 17:50 slot: the guard would skip it rightly
+# and this check would page falsely. Consult market_hours.is_early_close before 2028.
 MARKET_HOLIDAYS = {
     # 2026
     "2026-01-01", "2026-01-19", "2026-02-16", "2026-04-03", "2026-05-25",

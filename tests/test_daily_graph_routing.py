@@ -15,7 +15,7 @@ from src.workflows.daily_graph import (
 def _mock_cycle(monkeypatch, *, approved, decision_trades=None, memory_status="ok"):
     """Mock every step so the compiled graph runs end to end in-memory."""
     # Force "market open" so the execution gate doesn't interfere with routing tests.
-    monkeypatch.setattr(daily_graph, "is_regular_market_hours", lambda: True)
+    monkeypatch.setattr(daily_graph, "market_status", lambda: (True, "regular market hours"))
     snap = SimpleNamespace(total_value=1_000_000.0, cash_pct=0.1)
     engine = SimpleNamespace(get_snapshot=lambda: snap)
     memres = SimpleNamespace(status=memory_status, error=None)
@@ -57,7 +57,7 @@ def _mock_cycle(monkeypatch, *, approved, decision_trades=None, memory_status="o
 
 
 def test_route_after_rebalance_branches(monkeypatch):
-    monkeypatch.setattr(daily_graph, "is_regular_market_hours", lambda: True)
+    monkeypatch.setattr(daily_graph, "market_status", lambda: (True, "regular market hours"))
     assert route_after_rebalance({"run": SimpleNamespace(errors=["x"], approved_trades=[])}) == "failed"
     skip_state = SimpleNamespace(errors=[], approved_trades=[], diagnostics={})
     assert route_after_rebalance({"run": skip_state}) == "skip_execution"
@@ -68,15 +68,15 @@ def test_route_after_rebalance_branches(monkeypatch):
 
 def test_route_skips_execution_when_market_closed(monkeypatch):
     monkeypatch.setattr(config, "EXECUTE_OUTSIDE_MARKET_HOURS", False)
-    monkeypatch.setattr(daily_graph, "is_regular_market_hours", lambda: False)
+    monkeypatch.setattr(daily_graph, "market_status", lambda: (False, "market holiday (2026-11-26)"))
     state = SimpleNamespace(errors=[], approved_trades=["A", "B"], diagnostics={})
     assert route_after_rebalance({"run": state}) == "skip_execution"
-    assert "market closed" in state.diagnostics["execution"]
+    assert state.diagnostics["execution"] == "skipped: market closed (market holiday (2026-11-26))"
 
 
 def test_route_executes_when_market_closed_but_overridden(monkeypatch):
     monkeypatch.setattr(config, "EXECUTE_OUTSIDE_MARKET_HOURS", True)
-    monkeypatch.setattr(daily_graph, "is_regular_market_hours", lambda: False)
+    monkeypatch.setattr(daily_graph, "market_status", lambda: (False, "market holiday (2026-11-26)"))
     state = SimpleNamespace(errors=[], approved_trades=["A"], diagnostics={})
     assert route_after_rebalance({"run": state}) == "execute"
 

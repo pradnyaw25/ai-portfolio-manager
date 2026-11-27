@@ -9,7 +9,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.utils.market_hours import is_regular_market_hours
+from src.utils.market_hours import is_regular_market_hours, market_status  # noqa: F401
 
 
 def _write_github_output(should_run: bool, reason: str) -> None:
@@ -25,11 +25,13 @@ def _write_github_output(should_run: bool, reason: str) -> None:
 def main() -> None:
     event_name = os.getenv("GITHUB_EVENT_NAME", "")
     manual_run = event_name == "workflow_dispatch"
-    should_run = manual_run or is_regular_market_hours()
-    reason = "manual dispatch" if manual_run else "regular market hours"
+    # One read: the verdict and the reason (holiday / early close / outside hours).
+    market_open, why = market_status()
+    should_run = manual_run or market_open
+    reason = "manual dispatch" if manual_run else why
 
     if not should_run:
-        reason = "outside regular market hours"
+        reason = f"market closed: {why}"
 
     _write_github_output(should_run, reason)
     print(f"should_run={str(should_run).lower()} ({reason})")
