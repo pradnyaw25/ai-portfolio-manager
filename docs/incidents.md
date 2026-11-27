@@ -15,6 +15,41 @@ Entry template:
 
 ---
 
+## 2026-11-26 · The fund traded on Thanksgiving
+
+- **Symptom.** A scheduled run started at 19:35 UTC (14:35 ET) on Thanksgiving Day,
+  with the NYSE closed, passed the market-hours guard, and sold the whole ORCL position
+  (113 shares at $103.88) on a thesis about a five-day decline. The exchange printed
+  nothing that day: the fill price was Wednesday's close, served by yfinance as "the
+  latest price" because that is what it was.
+- **Root cause.** `is_regular_market_hours()` knew weekdays and 09:30–16:00 ET, and
+  its docstring said holidays were ignored on purpose because "a holiday just means a
+  no-op run". That was true of the *research* half of the cycle and false of the
+  execution half: a holiday is a weekday on which the data source still answers, so
+  the guard, the in-cycle gate and the price feed all said yes. The run also fired
+  ~1h45m after its 17:50 UTC slot, past the wait headroom, so it started the moment it
+  woke — the same scheduler drift as the September incident, now landing inside a
+  session that did not exist. The next day, 2026-11-27, was a 13:00 ET early close the
+  check did not know about either; an afternoon run after 18:00 UTC would have filled
+  on a closed market again.
+- **Fix.** `src/utils/market_hours.py` now carries the NYSE calendar for 2026 and 2027:
+  full-day closures (the list `scripts/check_run_health.py` already had, now with a
+  test asserting the two copies agree, since the watchdog must stay dependency-free)
+  and the 13:00 early closes. `market_status()` returns the reason alongside the
+  verdict, and both the guard and the execution gate print it, so a skipped run's log
+  says *holiday*, *after the early close* or *after the close* instead of a bare
+  "outside market hours". Tests pin the two runs that got through: 19:34 UTC on
+  2026-11-26 and 18:30 UTC on 2026-11-27 are both refused.
+- **Detection gap.** Nothing checked whether the market had opened; everything
+  checked the clock. The watchdog knew the holiday list and so stayed quiet on a day it
+  did not expect a run — correct for its question ("did the fund run?"), blind to the
+  inverse ("did it run when it shouldn't have?"). The trade was found by reading the
+  trades CSV the next morning.
+- **Article angle.** The stale-price trade from the manual-run stub below, back on the
+  *scheduled* path this time. A data source that answers is not a market that is open,
+  and "this case is a harmless no-op" is a claim about the whole pipeline, not the one
+  node you were thinking about when you wrote it.
+
 ## 2026-08-27 → 2026-10-02 · The scheduler drifted to 2–5 hours late and the fund quietly halved
 
 - **Symptom.** Four whole trading days with no run at all (08-27, 08-28, 08-31, 09-28),

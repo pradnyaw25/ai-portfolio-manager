@@ -53,6 +53,14 @@ EXPECTED_SLOTS = ("morning", "afternoon")
 # or a new package to decide whether to alarm. If this list goes stale the failure
 # mode is one benign false alarm on an unlisted holiday, and the message below says
 # exactly how to fix it. Extend before each January.
+#
+# The source of truth is src.utils.market_hours.MARKET_HOLIDAYS (the guard and the
+# execution gate read that one); tests/test_market_hours_guard.py fails if this copy
+# drifts from it. Early closes are deliberately absent here: the fund still owes two
+# runs on a 13:00 ET day. Both slots (14:40 / 17:50 UTC = 09:40 / 12:50 EST) land
+# before that bell, with ten minutes to spare on the afternoon one, so a late fire
+# that the guard skips as "after the early close" is a genuinely lost slot and the
+# page is correct.
 MARKET_HOLIDAYS = {
     # 2026
     "2026-01-01", "2026-01-19", "2026-02-16", "2026-04-03", "2026-05-25",
