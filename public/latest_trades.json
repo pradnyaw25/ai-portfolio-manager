@@ -1,12 +1,62 @@
 [
   {
-    "run_id": "run_20261126T193521Z_3e914bd8",
-    "date": "2026-11-26",
-    "symbol": "ORCL",
+    "run_id": "run_20261127T192724Z_fa1eb298",
+    "date": "2026-11-27",
+    "symbol": "XOM",
     "action": "SELL",
-    "shares": 113,
-    "price": 103.87999725341797,
-    "total": 11738.43968963623,
-    "reasoning": "Exit the small ORCL position. It is 6.70% below average cost and down 17.25% over 30 days, materially weaker than SPY, with a further 6.05% decline over five days and no tool-confirmed catalyst supporting retention. This follows the fund's higher-priority discipline of trimming sustained momentum failures rather than averaging down."
+    "shares": 70,
+    "price": 160.17999267578125,
+    "total": 11212.599487304688,
+    "reasoning": "Exit the small position: XOM is down 13.17% over 30 days, down 1.19% over five days, and 5.15% below average cost. There is no supplied catalyst supporting continued ownership, while the portfolio already has sufficient market exposure and cash."
+  },
+  {
+    "run_id": "run_20261127T192724Z_fa1eb298",
+    "date": "2026-11-27",
+    "symbol": "UNH",
+    "action": "BUY",
+    "shares": 32,
+    "price": 351.4100036621094,
+    "total": 11245.1201171875,
+    "reasoning": "Adds a new defensive healthcare position, diversifying a portfolio currently concentrated in large-cap technology and consumer names. The purchase is approximately $11,245.12."
+  },
+  {
+    "run_id": "run_20261127T192724Z_fa1eb298",
+    "date": "2026-11-27",
+    "symbol": "CAT",
+    "action": "BUY",
+    "shares": 20,
+    "price": 561.739990234375,
+    "total": 11234.7998046875,
+    "reasoning": "Introduces industrial and infrastructure exposure, providing a cyclical diversifier outside the portfolio's existing technology-heavy allocation. The purchase is approximately $11,234.80."
+  },
+  {
+    "run_id": "run_20261127T192724Z_fa1eb298",
+    "date": "2026-11-27",
+    "symbol": "ORCL",
+    "action": "BUY",
+    "shares": 107,
+    "price": 107.12999725341797,
+    "total": 11462.909706115723,
+    "reasoning": "Adds enterprise software and cloud-infrastructure exposure with a different business mix from the existing mega-cap technology holdings. The purchase is approximately $11,462.91."
+  },
+  {
+    "run_id": "run_20261127T192724Z_fa1eb298",
+    "date": "2026-11-27",
+    "symbol": "GLW",
+    "action": "BUY",
+    "shares": 109,
+    "price": 105.08000183105469,
+    "total": 11453.720199584961,
+    "reasoning": "Adds communications infrastructure, specialty materials, and display/optical connectivity exposure at a position size consistent with the rebalance mandate. The purchase is approximately $11,453.72."
+  },
+  {
+    "run_id": "run_20261127T192724Z_fa1eb298",
+    "date": "2026-11-27",
+    "symbol": "AMD",
+    "action": "BUY",
+    "shares": 27,
+    "price": 424.5400085449219,
+    "total": 11462.58023071289,
+    "reasoning": "Adds a semiconductor competitor with exposure to data-center and AI compute demand, while using a disciplined, equal-sized allocation rather than concentrating further in an existing holding. The purchase is approximately $11,462.58."
   }
 ]
